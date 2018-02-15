@@ -56,18 +56,18 @@ objects:
         containers:
         - image: xchem/fragalysis-stack:${WEB_TAG}
           name: web
-#          readinessProbe:
-#            initialDelaySeconds: 20
-#            timeoutSeconds: 1
-#            tcpSocket:
-#              port: 80
-#          livenessProbe:
-#            timeoutSeconds: 1
-#            initialDelaySeconds: 30
-#            tcpSocket:
-#              port: 80
+          readinessProbe:
+            initialDelaySeconds: 60
+            timeoutSeconds: 3
+            tcpSocket:
+              port: 8000
+          livenessProbe:
+            initialDelaySeconds: 60
+            timeoutSeconds: 3
+            tcpSocket:
+              port: 8000
           ports:
-          - containerPort: 80
+          - containerPort: 8000
           volumeMounts:
           - name: fs-web-log
             mountPath: /code/logs
