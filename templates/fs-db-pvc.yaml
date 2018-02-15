@@ -1,0 +1,37 @@
+---
+
+# The Application's Persistent Volume Claims.
+#
+# oc process -f fs-db-pvc.yaml | oc create -f -
+# oc delete pv --selector template=fs-db-pvc
+
+kind: Template
+apiVersion: v1
+metadata:
+  name: fs-db-pvc
+  annotations:
+    description: Fragalysis Stack's Persistent Volume Claims
+    tags: fragalysis,db,postgres
+labels:
+  template: fs-db-pvc
+
+parameters:
+
+- name: PG_PV_SIZE
+  value: 50Gi
+- name: PG_NAMESPACE
+  value: fragalysis-stack
+
+objects:
+
+- apiVersion: v1
+  kind: PersistentVolumeClaim
+  metadata:
+    name: fs-pg-data-claim
+    namespace: ${PG_NAMESPACE}
+  spec:
+    accessModes:
+    - ReadWriteOnce
+    resources:
+      requests:
+        storage: ${PG_PV_SIZE}

@@ -1,0 +1,37 @@
+---
+
+# The Cartridge's Persistent Volume Claims.
+#
+# oc process -f fs-cartridge-pvc.yaml | oc create -f -
+# oc delete pv --selector template=fs-cartridge-pvc
+
+kind: Template
+apiVersion: v1
+metadata:
+  name: fs-cartridge-pvc
+  annotations:
+    description: Fragalysis Stack's Persistent Volume Claims
+    tags: fragalysis
+labels:
+  template: fs-cartridge-pvc
+
+parameters:
+
+- name: CARTRIDGE_NAMESPACE
+  value: fragalysis-stack
+- name: CARTRIDGE_PV_SIZE
+  value: 50Gi
+
+objects:
+
+- apiVersion: v1
+  kind: PersistentVolumeClaim
+  metadata:
+    name: fs-cartridge-data-claim
+    namespace: ${CARTRIDGE_NAMESPACE}
+  spec:
+    accessModes:
+    - ReadWriteOnce
+    resources:
+      requests:
+        storage: ${CARTRIDGE_PV_SIZE}

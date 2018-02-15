@@ -1,0 +1,103 @@
+---
+
+# The Fragalysis Stack's RDKit deployment.
+#
+# oc process -f fs-cartridge.yaml | oc create -f -
+# oc delete all,secrets --selector template=fs-cartridge
+
+kind: Template
+apiVersion: v1
+metadata:
+  name: fs-cartridge
+  annotations:
+    description: Fragalysis Stack's RDKit Cartridge Definition
+    tags: fragalysis,rdkit
+labels:
+  template: fs-cartridge
+
+parameters:
+
+- name: CARTRIDGE_NAMESPACE
+  value: fragalysis-stack
+
+- name: RDKIT_TAG
+  value: Release_2017_09_1
+
+- name: POSTGRES_PASSWORD
+  from: "[a-zA-Z0-9]{16}"
+  generate: expression
+  required: true
+
+objects:
+
+# -------
+# Secrets
+# -------
+
+- kind: Secret
+  apiVersion: v1
+  metadata:
+    name: cartridge-secrets
+    namespace: ${CARTRIDGE_NAMESPACE}
+  stringData:
+    postgres-password: ${POSTGRES_PASSWORD}
+
+# ----------
+# Deployment
+# ----------
+
+- kind: DeploymentConfig
+  apiVersion: v1
+  metadata:
+    name: cartridge
+    namespace: ${CARTRIDGE_NAMESPACE}
+  spec:
+    replicas: 1
+    selector:
+      name: cartridge
+    template:
+      metadata:
+        labels:
+          name: cartridge
+      spec:
+#        serviceAccountName: diamond
+        # Application containers
+        containers:
+        - image: informaticsmatters/rdkit_cartridge:${RDKIT_TAG}
+          name: cartridge
+          readinessProbe:
+            initialDelaySeconds: 20
+            timeoutSeconds: 1
+            tcpSocket:
+              port: 5432
+          livenessProbe:
+            timeoutSeconds: 1
+            initialDelaySeconds: 30
+            tcpSocket:
+              port: 5432
+          env:
+          - name: POSTGRES_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: cartridge-secrets
+                key: postgres-password
+          volumeMounts:
+          - name: fs-cartridge-data
+            mountPath: /var/lib/postgresql/data
+        volumes:
+        - name: fs-cartridge-data
+          persistentVolumeClaim:
+            claimName: fs-cartridge-data-claim
+
+- kind: Service
+  apiVersion: v1
+  metadata:
+    name: cartridge
+    namespace: ${CARTRIDGE_NAMESPACE}
+  spec:
+    ports:
+    - name: api
+      port: 5432
+      targetPort: 5432
+    selector:
+      name: cartridge

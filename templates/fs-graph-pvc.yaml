@@ -1,0 +1,51 @@
+---
+
+# The Application's Persistent Volume Claims.
+#
+# oc process -f fs-graph-pvc.yaml | oc create -f -
+# oc delete pv --selector template=fs-graph-pvc
+
+kind: Template
+apiVersion: v1
+metadata:
+  name: fs-graph-pvc
+  annotations:
+    description: Fragalysis Stack's Persistent Volume Claims
+    tags: fragalysis,graph,neo4j
+labels:
+  template: fs-graph-pvc
+
+parameters:
+
+- name: NEO4J_NAMESPACE
+  value: fragalysis-stack
+- name: NEO4J_DATA_PV_SIZE
+  value: 40Gi
+- name: NEO4J_LOG_PV_SIZE
+  value: 2Gi
+
+objects:
+
+- apiVersion: v1
+  kind: PersistentVolumeClaim
+  metadata:
+    name: fs-neo4j-data-claim
+    namespace: ${NEO4J_NAMESPACE}
+  spec:
+    accessModes:
+    - ReadWriteOnce
+    resources:
+      requests:
+        storage: ${NEO4J_DATA_PV_SIZE}
+
+- apiVersion: v1
+  kind: PersistentVolumeClaim
+  metadata:
+    name: fs-neo4j-log-claim
+    namespace: ${NEO4J_NAMESPACE}
+  spec:
+    accessModes:
+    - ReadWriteOnce
+    resources:
+      requests:
+        storage: ${NEO4J_LOG_PV_SIZE}
