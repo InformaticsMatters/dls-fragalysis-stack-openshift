@@ -3,7 +3,7 @@
 # The Application's Persistent Volume Claims.
 #
 # oc process -f fs-graph-pvc.yaml | oc create -f -
-# oc delete pv --selector template=fs-graph-pvc
+# oc delete pvc --selector template=fs-graph-pvc
 
 kind: Template
 apiVersion: v1

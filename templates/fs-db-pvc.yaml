@@ -3,7 +3,7 @@
 # The Application's Persistent Volume Claims.
 #
 # oc process -f fs-db-pvc.yaml | oc create -f -
-# oc delete pv --selector template=fs-db-pvc
+# oc delete pvc --selector template=fs-db-pvc
 
 kind: Template
 apiVersion: v1

@@ -3,7 +3,7 @@
 # The Application's Persistent Volume Claims.
 #
 # oc process -f fs-web-pvc.yaml | oc create -f -
-# oc delete pv --selector template=fs-web-pvc
+# oc delete pvc --selector template=fs-web-pvc
 
 kind: Template
 apiVersion: v1

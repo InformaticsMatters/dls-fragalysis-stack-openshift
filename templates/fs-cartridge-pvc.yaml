@@ -3,7 +3,7 @@
 # The Cartridge's Persistent Volume Claims.
 #
 # oc process -f fs-cartridge-pvc.yaml | oc create -f -
-# oc delete pv --selector template=fs-cartridge-pvc
+# oc delete pvc --selector template=fs-cartridge-pvc
 
 kind: Template
 apiVersion: v1

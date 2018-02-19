@@ -45,6 +45,8 @@ set -e pipefail
 
 # Login as the Fragalysis user...
 oc login -u developer > /dev/null
+# And move to the project
+oc project fragalysis-stack > /dev/null
 
 echo "+ Creating PVCs..."
 
