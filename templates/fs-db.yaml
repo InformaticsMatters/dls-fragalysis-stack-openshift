@@ -41,7 +41,7 @@ objects:
         labels:
           name: db
       spec:
-#        serviceAccountName: diamond
+        serviceAccountName: diamond
         # Application containers
         containers:
         - image: postgres:${PG_TAG}

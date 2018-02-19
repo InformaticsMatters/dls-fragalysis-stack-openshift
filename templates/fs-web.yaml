@@ -17,6 +17,9 @@ labels:
 
 parameters:
 
+- name: BUSYBOX_IMAGE
+  value: busybox:1.28.0
+
 - name: WEB_NAMESPACE
   value: fragalysis-stack
 - name: WEB_TAG
@@ -40,27 +43,27 @@ objects:
         labels:
           name: web
       spec:
-#        serviceAccountName: diamond
+        serviceAccountName: diamond
         # Init Containers
         initContainers:
-        - image: busybox
+        - image: ${BUSYBOX_IMAGE}
           name: wait-for-db
           command: ['sh', '-c', 'until nslookup db; do echo waiting for db; sleep 1; done;']
-        - image: busybox
+        - image: ${BUSYBOX_IMAGE}
           name: wait-for-graph
           command: ['sh', '-c', 'until nslookup graph; do echo waiting for graph; sleep 1; done;']
-        - image: busybox
+        - image: ${BUSYBOX_IMAGE}
           name: wait-for-cartridge
           command: ['sh', '-c', 'until nslookup cartridge; do echo waiting for cartridge; sleep 1; done;']
         # Application containers
         containers:
         - image: xchem/fragalysis-stack:${WEB_TAG}
           name: web
-          readinessProbe:
-            initialDelaySeconds: 30
-            timeoutSeconds: 1
-            tcpSocket:
-              port: 80
+#          readinessProbe:
+#            initialDelaySeconds: 30
+#            timeoutSeconds: 1
+#            tcpSocket:
+#              port: 80
           livenessProbe:
             initialDelaySeconds: 30
             timeoutSeconds: 1

@@ -45,7 +45,7 @@ objects:
         labels:
           name: graph
       spec:
-#        serviceAccountName: diamond
+        serviceAccountName: diamond
         # Application containers
         containers:
         - image: neo4j:${NEO4J_TAG}

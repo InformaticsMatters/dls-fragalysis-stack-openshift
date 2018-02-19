@@ -27,11 +27,12 @@ fi
 oc get sa/diamond > /dev/null 2> /dev/null
 if [ $? -ne 0 ]
 then
+    # Create Diamond-specific service account in the Fragalysys Stack project.
+    # To avoid privilege escalation in the default account.
     # An experiment with Service Accounts (unused ATM)
     echo "+ Creating Service Account..."
     oc login -u system:admin > /dev/null
-    # Create Diamond-specific service account in the Fragalysys Stack project.
-    # To avoid privilege escalation in the default account.
+    oc project fragalysis-stack > /dev/null
     oc create sa diamond
     # provide cluster-admin role (ability to launch containers)
     oc adm policy add-cluster-role-to-user cluster-admin -z diamond
@@ -43,9 +44,7 @@ fi
 
 set -e pipefail
 
-# Login as the Fragalysis user...
 oc login -u developer > /dev/null
-# And move to the project
 oc project fragalysis-stack > /dev/null
 
 echo "+ Creating PVCs..."
