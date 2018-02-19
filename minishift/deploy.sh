@@ -54,6 +54,10 @@ oc process -f ../templates/fs-db-pvc.yaml | oc create -f -
 oc process -f ../templates/fs-cartridge-pvc.yaml | oc create -f -
 #oc process -f ../templates/fs-web-pvc.yaml | oc create -f -
 
+echo "+ Creating Secrets..."
+
+oc process -f ../templates/fs-secrets.yaml | oc create -f -
+
 echo "+ Deploying Application..."
 
 oc process -f ../templates/fs-graph.yaml | oc create -f -

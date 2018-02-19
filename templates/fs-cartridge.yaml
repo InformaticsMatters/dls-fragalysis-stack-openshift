@@ -23,24 +23,7 @@ parameters:
 - name: RDKIT_TAG
   value: Release_2017_09_1
 
-- name: POSTGRES_PASSWORD
-  from: "[a-zA-Z0-9]{16}"
-  generate: expression
-  required: true
-
 objects:
-
-# -------
-# Secrets
-# -------
-
-- kind: Secret
-  apiVersion: v1
-  metadata:
-    name: cartridge-secrets
-    namespace: ${CARTRIDGE_NAMESPACE}
-  stringData:
-    postgres-password: ${POSTGRES_PASSWORD}
 
 # ----------
 # Deployment
@@ -79,7 +62,7 @@ objects:
           - name: POSTGRES_PASSWORD
             valueFrom:
               secretKeyRef:
-                name: cartridge-secrets
+                name: fs-cartridge-secrets
                 key: postgres-password
           volumeMounts:
           - name: fs-cartridge-data

@@ -18,3 +18,7 @@ echo "- Deleting PVCs..."
 oc delete pvc --selector template=fs-cartridge-pvc
 oc delete pvc --selector template=fs-db-pvc
 oc delete pvc --selector template=fs-graph-pvc
+
+echo "- Removing Secrets..."
+
+oc delete secrets --selector template=fs-secrets
