@@ -10,7 +10,7 @@ object templates at the moment.
 >   The **web** services remains un-deployed for the time-being.
 
 The deployment creates a `fragalysis-stack` project and the following
-deployments (services): -
+OpenShift 3.7 deployments (services): -
 
 -   cartridge
 -   db
@@ -35,8 +35,8 @@ From the `minishift` directory run: -
 
     $ ./undeploy.sh
 
->   Note: the project created by `deploy` is not removed by `undeploy`.
-    This is deliberate for now to simplify testing.
+>   Note: the `project` and `service account` created by `deploy`
+    is not removed by `undeploy`. This is deliberate to simplify testing.
     
 ---
 
