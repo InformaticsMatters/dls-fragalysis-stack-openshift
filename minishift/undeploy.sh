@@ -1,8 +1,12 @@
 #!/usr/bin/env bash
 
+# User
+USER=diamond
+PASSWORD=diamond
+
 set -e pipefail
 
-oc login -u developer > /dev/null
+oc login -u $USER -p $PASSWORD > /dev/null
 oc project fragalysis-stack > /dev/null
 
 echo "- Undeploying Application..."

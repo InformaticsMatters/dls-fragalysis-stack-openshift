@@ -17,6 +17,11 @@ deployments (services): -
 -   graph
 -   web
 
+For the demo (minishift) we also create: -
+
+-   A user ('diamond')
+-   A service account ('diamond')
+
 ## Deploy (Minishift)
 Assuming you ave a suitable minishift instance running,
 from the `minishift` directory run: -

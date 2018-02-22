@@ -1,13 +1,20 @@
 #!/usr/bin/env bash
 
 # Assumes the Application's Persistent Volumes are available
-# (which is true for minishift). T deploy outside of minishift
+# (which is true for minishift). To deploy outside of minishift
 # you need to ensure appropriate PVs have been created.
 #
+# Assumne
 # This deployment also assumes you have a fragalysis container image.
 # Normally built from the project's root with something like: -
 #
 #   $ docker build . -t fragalysis-stack:1.0.0
+
+# Service account
+SA=diamond
+# User
+USER=diamond
+PASSWORD=diamond
 
 # As system admin...
 oc login -u system:admin > /dev/null
@@ -20,11 +27,11 @@ oc get projects/fragalysis-stack > /dev/null 2> /dev/null
 if [ $? -ne 0 ]
 then
     echo "+ Creating Fragalysis Project..."
-    oc login -u developer > /dev/null
+    oc login -u $USER -p $PASSWORD > /dev/null
     oc new-project fragalysis-stack --display-name='Fragalysis Stack' > /dev/null
 fi
 
-oc get sa/diamond > /dev/null 2> /dev/null
+oc get sa/$SA > /dev/null 2> /dev/null
 if [ $? -ne 0 ]
 then
     # Create Diamond-specific service account in the Fragalysys Stack project.
@@ -33,18 +40,18 @@ then
     echo "+ Creating Service Account..."
     oc login -u system:admin > /dev/null
     oc project fragalysis-stack > /dev/null
-    oc create sa diamond
+    oc create sa $SA
     # provide cluster-admin role (ability to launch containers)
-    oc adm policy add-cluster-role-to-user cluster-admin -z diamond
+    oc adm policy add-cluster-role-to-user cluster-admin -z $SA
     # Allow (legacy) containers to run as root...
-    oc adm policy add-scc-to-user anyuid -z diamond
+    oc adm policy add-scc-to-user anyuid -z $SA
     # Back to developer
-    oc login -u developer > /dev/null
+    oc login -u $USER -p $PASSWORD > /dev/null
 fi
 
 set -e pipefail
 
-oc login -u developer > /dev/null
+oc login -u $USER -p $PASSWORD > /dev/null
 oc project fragalysis-stack > /dev/null
 
 echo "+ Creating PVCs..."
