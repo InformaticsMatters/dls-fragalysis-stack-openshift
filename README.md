@@ -25,6 +25,11 @@ For the demo (minishift) we also create: -
 ## Creating PVs (Minishift)
 You can create your own PVs in Minishift.
 Follow the instructions in `minishift/mkpvs.sh`.
+
+Tested with Minishift using:
+
+-   `--openshift-version 3.6.1`
+-   `--openshift-version 3.7.1`
     
 ## Deploy (Minishift)
 Assuming you ave a suitable minishift instance running,

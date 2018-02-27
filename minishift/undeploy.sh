@@ -6,6 +6,9 @@ PASSWORD=diamond
 
 set -e pipefail
 
+# Pickup the OC command suite...
+eval $(minishift oc-env)
+
 oc login -u $USER -p $PASSWORD > /dev/null
 oc project fragalysis-stack > /dev/null
 

@@ -1,20 +1,20 @@
 #!/usr/bin/env bash
 
-# Assumes the Application's Persistent Volumes are available
-# (which is true for minishift). To deploy outside of minishift
-# you need to ensure appropriate PVs have been created.
+# Assumes the Application's Persistent Volumes are available.
 #
-# Assumne
 # This deployment also assumes you have a fragalysis container image.
 # Normally built from the project's root with something like: -
 #
-#   $ docker build . -t fragalysis-stack:1.0.0
+#   $ docker build . -t xchem/fragalysis-stack:1.0.0
 
 # Service account
 SA=diamond
 # User
 USER=diamond
 PASSWORD=diamond
+
+# Pickup the OC command suite...
+eval $(minishift oc-env)
 
 # As system admin...
 oc login -u system:admin > /dev/null

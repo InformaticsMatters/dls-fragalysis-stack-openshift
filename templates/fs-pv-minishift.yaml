@@ -9,7 +9,6 @@
 #   $(MINI_PATH)/pv-fs-neo4j-log
 #   $(MINI_PATH)/pv-fs-pg-data
 #   $(MINI_PATH)/pv-fs-web-log
-#   $(MINI_PATH)/pv-fs-web-media
 #
 # oc process -f fs-pv-minishift.yaml | oc create -f -
 # oc delete pv --selector template=fs-pv-minishift
@@ -48,8 +47,6 @@ parameters:
 
 - name: WEB_NAMESPACE
   value: fragalysis-stack
-- name: WEB_MEDIA_PV_SIZE
-  value: 2Gi
 - name: WEB_LOG_PV_SIZE
   value: 2Gi
 
@@ -68,7 +65,6 @@ objects:
       storage: ${NEO4J_DATA_PV_SIZE}
     accessModes:
     - ReadWriteMany
- #   storageClassName: slow
     persistentVolumeReclaimPolicy: Recycle
     hostPath:
       path: ${MINI_PATH}/pv-fs-neo4j-data/registry
@@ -135,22 +131,6 @@ objects:
 # -----------
 # Web Volumes
 # -----------
-
-- kind: PersistentVolume
-  apiVersion: v1
-  metadata:
-    name: fs-web-media
-  spec:
-    capacity:
-      storage: ${WEB_MEDIA_PV_SIZE}
-    accessModes:
-    - ReadWriteMany
-    persistentVolumeReclaimPolicy: Recycle
-    hostPath:
-      path: ${MINI_PATH}/fs-web-media/registry
-    claimRef:
-      name: fs-web-media-claim
-      namespace: ${WEB_NAMESPACE}
 
 - kind: PersistentVolume
   apiVersion: v1

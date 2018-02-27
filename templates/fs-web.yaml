@@ -95,15 +95,10 @@ objects:
           volumeMounts:
           - name: fs-web-log
             mountPath: /code/logs
-          - name: fs-web-media
-            mountPath: /code/media
         volumes:
         - name: fs-web-log
           persistentVolumeClaim:
             claimName: fs-web-log-claim
-        - name: fs-web-media
-          persistentVolumeClaim:
-            claimName: fs-web-media-claim
         restartPolicy: Always
 
 - kind: Service
