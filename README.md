@@ -22,6 +22,10 @@ For the demo (minishift) we also create: -
 -   A user ('diamond')
 -   A service account ('diamond')
 
+## Creating PVs (Minishift)
+You can create your own PVs in Minishift.
+Follow the instructions in `minishift/mkpvs.sh`.
+    
 ## Deploy (Minishift)
 Assuming you ave a suitable minishift instance running,
 from the `minishift` directory run: -
@@ -40,4 +44,5 @@ From the `minishift` directory run: -
     
 ---
 
+[Blog]: https://developers.redhat.com/blog/2017/04/05/adding-persistent-storage-to-minishift-cdk-3-in-minutes/
 [Fragalysis]: https://github.com/xchem/fragalysis-stack

@@ -33,7 +33,7 @@ objects:
     namespace: ${WEB_NAMESPACE}
   spec:
     accessModes:
-    - ReadWriteOnce
+    - ReadWriteMany
     resources:
       requests:
         storage: ${WEB_MEDIA_PV_SIZE}
@@ -45,7 +45,7 @@ objects:
     namespace: ${WEB_NAMESPACE}
   spec:
     accessModes:
-    - ReadWriteOnce
+    - ReadWriteMany
     resources:
       requests:
         storage: ${WEB_LOG_PV_SIZE}

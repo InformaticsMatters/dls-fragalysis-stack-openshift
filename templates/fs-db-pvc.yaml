@@ -31,7 +31,7 @@ objects:
     namespace: ${PG_NAMESPACE}
   spec:
     accessModes:
-    - ReadWriteOnce
+    - ReadWriteMany
     resources:
       requests:
         storage: ${PG_PV_SIZE}

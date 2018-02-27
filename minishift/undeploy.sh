@@ -16,13 +16,18 @@ oc delete all,secrets --selector template=fs-cartridge
 oc delete all --selector template=fs-db
 oc delete all --selector template=fs-graph
 
+echo "- Removing Secrets..."
+
+oc delete secrets --selector template=fs-secrets
+
 echo "- Deleting PVCs..."
 
-#oc delete pvc --selector template=fs-web-pvc
+oc delete pvc --selector template=fs-web-pvc
 oc delete pvc --selector template=fs-cartridge-pvc
 oc delete pvc --selector template=fs-db-pvc
 oc delete pvc --selector template=fs-graph-pvc
 
-echo "- Removing Secrets..."
+echo "- Deleting PVs..."
 
-oc delete secrets --selector template=fs-secrets
+oc login -u system:admin > /dev/null
+oc delete pv --selector template=fs-pv-minishift

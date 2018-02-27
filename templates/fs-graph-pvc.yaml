@@ -33,7 +33,7 @@ objects:
     namespace: ${NEO4J_NAMESPACE}
   spec:
     accessModes:
-    - ReadWriteOnce
+    - ReadWriteMany
     resources:
       requests:
         storage: ${NEO4J_DATA_PV_SIZE}
@@ -45,7 +45,7 @@ objects:
     namespace: ${NEO4J_NAMESPACE}
   spec:
     accessModes:
-    - ReadWriteOnce
+    - ReadWriteMany
     resources:
       requests:
         storage: ${NEO4J_LOG_PV_SIZE}

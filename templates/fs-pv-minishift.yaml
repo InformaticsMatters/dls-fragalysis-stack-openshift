@@ -1,35 +1,33 @@
 ---
 
-# The Application's Persistent Volumes (NFS).
+# The Application's Persistent Volumes (Minishift).
 #
-# This expects these volumes:
+# This expects these volumes in Minishift:
 #
-#   ${NFS_PATH}/pv-fs-cartridge-data
-#   ${NFS_PATH}/pv-fs-neo4j-data
-#   ${NFS_PATH}/pv-fs-neo4j-log
-#   ${NFS_PATH}/pv-fs-pg-data
-#   ${NFS_PATH}/pv-fs-web-log
-#   ${NFS_PATH}/pv-fs-web-media
+#   $(MINI_PATH)/pv-fs-cartridge-data
+#   $(MINI_PATH)/pv-fs-neo4j-data
+#   $(MINI_PATH)/pv-fs-neo4j-log
+#   $(MINI_PATH)/pv-fs-pg-data
+#   $(MINI_PATH)/pv-fs-web-log
+#   $(MINI_PATH)/pv-fs-web-media
 #
-# oc process -f fs-pv-nfs.yaml | oc create -f -
-# oc delete pv --selector template=fs-pv-nfs
+# oc process -f fs-pv-minishift.yaml | oc create -f -
+# oc delete pv --selector template=fs-pv-minishift
 
 kind: Template
 apiVersion: v1
 metadata:
-  name: fs-pv-nfs
+  name: fs-pv-minishift
   annotations:
-    description: Fragalysis Stack's Persistent Volumes (using NFS)
+    description: Fragalysis Stack's Persistent Volumes (using Minishift)
     tags: fragalysis
 labels:
-  template: fs-pv-nfs
+  template: fs-pv-minishift
 
 parameters:
 
-- name: NFS_SERVER
-  value: infra-1
-- name: NFS_PATH
-  value: /exports
+- name: MINI_PATH
+  value: /mnt/sda1/var/lib/minishift/openshift.local.volumes
 
 - name: CARTRIDGE_NAMESPACE
   value: fragalysis-stack
@@ -70,10 +68,10 @@ objects:
       storage: ${NEO4J_DATA_PV_SIZE}
     accessModes:
     - ReadWriteMany
+ #   storageClassName: slow
     persistentVolumeReclaimPolicy: Recycle
-    nfs:
-      server: ${NFS_SERVER}
-      path: ${NFS_PATH}/pv-fs-neo4j-data
+    hostPath:
+      path: ${MINI_PATH}/pv-fs-neo4j-data/registry
     claimRef:
       name: fs-neo4j-data-claim
       namespace: ${NEO4J_NAMESPACE}
@@ -88,9 +86,8 @@ objects:
     accessModes:
     - ReadWriteMany
     persistentVolumeReclaimPolicy: Recycle
-    nfs:
-      server: ${NFS_SERVER}
-      path: ${NFS_PATH}/pv-fs-neo4j-log
+    hostPath:
+      path: ${MINI_PATH}/pv-fs-neo4j-log/registry
     claimRef:
       name: fs-neo4j-log-claim
       namespace: ${NEO4J_NAMESPACE}
@@ -109,9 +106,8 @@ objects:
     accessModes:
     - ReadWriteMany
     persistentVolumeReclaimPolicy: Recycle
-    nfs:
-      server: ${NFS_SERVER}
-      path: ${NFS_PATH}/pv-fs-pg-data
+    hostPath:
+      path: ${MINI_PATH}/fs-pg-data/registry
     claimRef:
       name: fs-pg-data-claim
       namespace: ${PG_NAMESPACE}
@@ -130,9 +126,8 @@ objects:
     accessModes:
     - ReadWriteMany
     persistentVolumeReclaimPolicy: Recycle
-    nfs:
-      server: ${NFS_SERVER}
-      path: ${NFS_PATH}/pv-fs-cartridge-data
+    hostPath:
+      path: ${MINI_PATH}/fs-cartridge-data/registry
     claimRef:
       name: fs-cartridge-data-claim
       namespace: ${CARTRIDGE_NAMESPACE}
@@ -151,9 +146,8 @@ objects:
     accessModes:
     - ReadWriteMany
     persistentVolumeReclaimPolicy: Recycle
-    nfs:
-      server: ${NFS_SERVER}
-      path: ${NFS_PATH}/pv-fs-web-media
+    hostPath:
+      path: ${MINI_PATH}/fs-web-media/registry
     claimRef:
       name: fs-web-media-claim
       namespace: ${WEB_NAMESPACE}
@@ -168,9 +162,8 @@ objects:
     accessModes:
     - ReadWriteMany
     persistentVolumeReclaimPolicy: Recycle
-    nfs:
-      server: ${NFS_SERVER}
-      path: ${NFS_PATH}/pv-fs-web-log
+    hostPath:
+      path: ${MINI_PATH}/fs-web-log/registry
     claimRef:
       name: fs-web-log-claim
       namespace: ${WEB_NAMESPACE}
