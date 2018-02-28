@@ -71,6 +71,8 @@ objects:
           volumeMounts:
           - name: fs-neo4j-data
             mountPath: /data
+          - name: neo4j-data-loader
+            mountPath: /data-loader
           - name: fs-neo4j-log
             mountPath: /log
         volumes:
@@ -80,6 +82,9 @@ objects:
         - name: fs-neo4j-log
           persistentVolumeClaim:
             claimName: fs-neo4j-log-claim
+        - name: neo4j-data-loader
+          persistentVolumeClaim:
+            claimName: fs-neo4j-data-loader-claim
         restartPolicy: Always
 
 - kind: Service

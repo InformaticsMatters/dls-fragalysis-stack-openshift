@@ -6,6 +6,7 @@
 #
 #   ${NFS_PATH}/pv-fs-cartridge-data
 #   ${NFS_PATH}/pv-fs-neo4j-data
+#   ${NFS_PATH}/pv-fs-neo4j-data-loader
 #   ${NFS_PATH}/pv-fs-neo4j-log
 #   ${NFS_PATH}/pv-fs-pg-data
 #   ${NFS_PATH}/pv-fs-web-log
@@ -38,6 +39,8 @@ parameters:
 
 - name: NEO4J_NAMESPACE
   value: fragalysis-stack
+- name: NEO4J_DATA_LOADER_PV_SIZE
+  value: 2Gi
 - name: NEO4J_DATA_PV_SIZE
   value: 40Gi
 - name: NEO4J_LOG_PV_SIZE
@@ -76,6 +79,23 @@ objects:
       path: ${NFS_PATH}/pv-fs-neo4j-data
     claimRef:
       name: fs-neo4j-data-claim
+      namespace: ${NEO4J_NAMESPACE}
+
+- kind: PersistentVolume
+  apiVersion: v1
+  metadata:
+    name: fs-neo4j-data-loader
+  spec:
+    capacity:
+      storage: ${NEO4J_DATA_LOADER_PV_SIZE}
+    accessModes:
+    - ReadWriteMany
+    persistentVolumeReclaimPolicy: Retain
+    nfs:
+      server: ${NFS_SERVER}
+      path: ${NFS_PATH}/pv-fs-neo4j-data-loader
+    claimRef:
+      name: fs-neo4j-data-loader-claim
       namespace: ${NEO4J_NAMESPACE}
 
 - kind: PersistentVolume

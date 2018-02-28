@@ -77,6 +77,7 @@ oc process -f ../templates/fs-secrets.yaml | oc create -f -
 #echo "+ Deploying Loaders..."
 
 #oc process -f ../templates/fs-web-media-loader.yaml | oc create -f -
+#oc process -f ../templates/fs-graph-data-loader.yaml | oc create -f -
 
 echo
 echo "+ Deploying Application..."

@@ -2,11 +2,13 @@
 An OpenShift deployment of Anthony Bradley's [Fragalysis], consisting of
 object templates at the moment.
 
->   Note: This is _work in progress_ and, at the moment, relies on changes
-    to the Fragalysis Stack's `web` service that have not been published.
-    Until this is resolved you will need`xchem/fragalysis-stack:1.0.0`
-    and `xzchem/fragalysis-stack-media-loader:1.0.0` images
-    before the `web` service and its `loader` can be deployed.
+Note: This is _work in progress_ and, at the moment, relies on changes
+to the Fragalysis Stack's `web` service that have not been published.
+Until this is resolved you will need the following images available: -
+
+-   `xchem/fragalysis-stack:1.0.0`
+-   `xchem/fragalysis-stack-media-loader:1.0.0`
+-   `xchem/neo4j-data-loader:1.0.0`
 
 >   The **web** services remains un-deployed for the time-being.
 

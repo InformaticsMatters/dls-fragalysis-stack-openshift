@@ -29,6 +29,7 @@ echo
 echo "+ Deleting Loaders..."
 
 oc delete all --selector template=fs-web-media-loader
+oc delete all --selector template=fs-neo4j-data-loader
 
 echo
 echo "- Deleting PVCs..."

@@ -21,6 +21,8 @@ parameters:
   value: fragalysis-stack
 - name: NEO4J_DATA_PV_SIZE
   value: 40Gi
+- name: NEO4J_DATA_LOADER_PV_SIZE
+  value: 2Gi
 - name: NEO4J_LOG_PV_SIZE
   value: 2Gi
 
@@ -37,6 +39,18 @@ objects:
     resources:
       requests:
         storage: ${NEO4J_DATA_PV_SIZE}
+
+- apiVersion: v1
+  kind: PersistentVolumeClaim
+  metadata:
+    name: fs-neo4j-data-loader-claim
+    namespace: ${NEO4J_NAMESPACE}
+  spec:
+    accessModes:
+    - ReadWriteMany
+    resources:
+      requests:
+        storage: ${NEO4J_DATA_LOADER_PV_SIZE}
 
 - apiVersion: v1
   kind: PersistentVolumeClaim

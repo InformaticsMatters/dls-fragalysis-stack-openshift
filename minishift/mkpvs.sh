@@ -15,6 +15,11 @@ mkdir -p /mnt/sda1/var/lib/minishift/openshift.local.volumes/pv-fs-neo4j-data
 mkdir /mnt/sda1/var/lib/minishift/openshift.local.volumes/pv-fs-neo4j-data/registry
 chmod 777 -R /mnt/sda1/var/lib/minishift/openshift.local.volumes/pv-fs-neo4j-data
 
+# pv-fs-neo4j-data-loader
+mkdir -p /mnt/sda1/var/lib/minishift/openshift.local.volumes/pv-fs-neo4j-data-loader
+mkdir /mnt/sda1/var/lib/minishift/openshift.local.volumes/pv-fs-neo4j-data-loader/registry
+chmod 777 -R /mnt/sda1/var/lib/minishift/openshift.local.volumes/pv-fs-neo4j-data-loader
+
 # pv-fs-neo4j-log
 mkdir -p /mnt/sda1/var/lib/minishift/openshift.local.volumes/pv-fs-neo4j-log
 mkdir /mnt/sda1/var/lib/minishift/openshift.local.volumes/pv-fs-neo4j-log/registry
