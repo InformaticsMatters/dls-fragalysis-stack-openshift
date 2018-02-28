@@ -64,11 +64,11 @@ objects:
 #            timeoutSeconds: 1
 #            tcpSocket:
 #              port: 80
-          livenessProbe:
-            initialDelaySeconds: 30
-            timeoutSeconds: 1
-            tcpSocket:
-              port: 80
+#          livenessProbe:
+#            initialDelaySeconds: 30
+#            timeoutSeconds: 1
+#            tcpSocket:
+#              port: 80
           env:
           - name: WEB_DJANGO_SECRET_KEY
             valueFrom:
@@ -95,7 +95,12 @@ objects:
           volumeMounts:
           - name: fs-web-log
             mountPath: /code/logs
+          - name: fs-web-media
+            mountPath: /code/media
         volumes:
+        - name: fs-web-media
+          persistentVolumeClaim:
+            claimName: fs-web-media-claim
         - name: fs-web-log
           persistentVolumeClaim:
             claimName: fs-web-log-claim
@@ -122,4 +127,3 @@ objects:
     to:
       kind: Service
       name: web
-

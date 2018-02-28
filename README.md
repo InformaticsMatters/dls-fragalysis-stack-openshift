@@ -4,8 +4,9 @@ object templates at the moment.
 
 >   Note: This is _work in progress_ and, at the moment, relies on changes
     to the Fragalysis Stack's `web` service that have not been published.
-    Until this is resolved you will need `xchem/fragalysis-stack:1.0.0` image
-    before the `web` service can be deployed.
+    Until this is resolved you will need`xchem/fragalysis-stack:1.0.0`
+    and `xzchem/fragalysis-stack-media-loader:1.0.0` images
+    before the `web` service and its `loader` can be deployed.
 
 >   The **web** services remains un-deployed for the time-being.
 

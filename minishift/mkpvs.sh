@@ -35,6 +35,11 @@ mkdir -p /mnt/sda1/var/lib/minishift/openshift.local.volumes/pv-fs-web-log
 mkdir /mnt/sda1/var/lib/minishift/openshift.local.volumes/pv-fs-web-log/registry
 chmod 777 -R /mnt/sda1/var/lib/minishift/openshift.local.volumes/pv-fs-web-log
 
+# pv-fs-web-media
+mkdir -p /mnt/sda1/var/lib/minishift/openshift.local.volumes/pv-fs-web-media
+mkdir /mnt/sda1/var/lib/minishift/openshift.local.volumes/pv-fs-web-media/registry
+chmod 777 -R /mnt/sda1/var/lib/minishift/openshift.local.volumes/pv-fs-web-media
+
 # Then..
 #   exit
 #   exit
