@@ -21,7 +21,7 @@ parameters:
   value: fragalysis-stack
 
 - name: RDKIT_TAG
-  value: Release_2017_09_1
+  value: 'Release_2017_09_1'
 
 objects:
 
@@ -54,8 +54,8 @@ objects:
             tcpSocket:
               port: 5432
           livenessProbe:
+            initialDelaySeconds: 60
             timeoutSeconds: 1
-            initialDelaySeconds: 30
             tcpSocket:
               port: 5432
           env:

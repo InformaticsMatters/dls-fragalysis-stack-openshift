@@ -21,7 +21,7 @@ parameters:
   value: fragalysis-stack
 
 - name: PG_TAG
-  value: 9.6.7
+  value: '10.2'
 - name: PG_REPLICAS
   value: '1'
 
@@ -54,8 +54,8 @@ objects:
             tcpSocket:
               port: 5432
           livenessProbe:
+            initialDelaySeconds: 60
             timeoutSeconds: 1
-            initialDelaySeconds: 30
             tcpSocket:
               port: 5432
           volumeMounts:

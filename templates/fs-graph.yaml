@@ -21,7 +21,7 @@ parameters:
   value: fragalysis-stack
 
 - name: NEO4J_TAG
-  value: 3.3.2
+  value: '3.3.3'
 - name: NEO4J_AUTH
   value: none
 - name: NEO4J_PAGECACHE
@@ -56,8 +56,8 @@ objects:
             tcpSocket:
               port: 7474
           livenessProbe:
+            initialDelaySeconds: 60
             timeoutSeconds: 1
-            initialDelaySeconds: 30
             tcpSocket:
               port: 7474
           env:

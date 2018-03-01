@@ -26,7 +26,7 @@ echo "- Removing Secrets..."
 oc delete secrets --selector template=fs-secrets
 
 echo
-echo "+ Deleting Loaders..."
+echo "- Deleting Loaders..."
 
 oc delete all --selector template=fs-web-media-loader
 oc delete all --selector template=fs-neo4j-data-loader
