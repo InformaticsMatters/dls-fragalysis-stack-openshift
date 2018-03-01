@@ -51,7 +51,7 @@ objects:
           command: ['sh', '-c', 'until nslookup db; do echo waiting for db; sleep 1; done;']
         - image: ${BUSYBOX_IMAGE}
           name: wait-for-graph
-          command: ['sh', '-c', 'until nslookup graph; do echo waiting for graph; sleep 1; done;']
+          command: ['sh', '-c', 'until nslookup neo4j; do echo waiting for neo4j; sleep 1; done;']
         - image: ${BUSYBOX_IMAGE}
           name: wait-for-cartridge
           command: ['sh', '-c', 'until nslookup cartridge; do echo waiting for cartridge; sleep 1; done;']

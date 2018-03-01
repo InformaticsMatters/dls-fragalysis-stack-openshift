@@ -34,22 +34,22 @@ objects:
 - kind: DeploymentConfig
   apiVersion: v1
   metadata:
-    name: neo4j
+    name: graph
     namespace: ${GRAPH_NAMESPACE}
   spec:
     replicas: ${NEO4J_REPLICAS}
     selector:
-      name: neo4j
+      name: graph
     template:
       metadata:
         labels:
-          name: neo4j
+          name: graph
       spec:
         serviceAccountName: diamond
         # Application containers
         containers:
         - image: neo4j:${NEO4J_TAG}
-          name: neo4j
+          name: graph
           readinessProbe:
             initialDelaySeconds: 20
             timeoutSeconds: 1
@@ -101,4 +101,4 @@ objects:
       port: 7687
       targetPort: 7687
     selector:
-      name: neo4j
+      name: graph
