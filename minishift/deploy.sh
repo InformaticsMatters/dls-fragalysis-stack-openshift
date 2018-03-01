@@ -2,10 +2,12 @@
 
 # Assumes the Application's Persistent Volumes are available.
 #
-# This deployment also assumes you have a fragalysis container image.
-# Normally built from the project's root with something like: -
+# This deployment also assumes you have a number of other container
+# images that (at the time of writing) have not been deployed. Namely: -
 #
-#   $ docker build . -t xchem/fragalysis-stack:1.0.0
+#   xchem/fragalysis-stack:1.0.0
+#   xchem/fragalysis-stack-media-loader:1.0.0
+#   xchem/neo4j-data-loader:1.0.0
 
 # Service account
 SA=diamond

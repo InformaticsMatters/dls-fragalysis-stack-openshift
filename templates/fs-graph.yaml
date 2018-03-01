@@ -17,6 +17,9 @@ labels:
 
 parameters:
 
+- name: BUSYBOX_IMAGE
+  value: busybox:1.28.0
+
 - name: GRAPH_NAMESPACE
   value: fragalysis-stack
 
@@ -46,6 +49,23 @@ objects:
           name: graph
       spec:
         serviceAccountName: diamond
+
+        # Init Containers
+        initContainers:
+        - image: ${BUSYBOX_IMAGE}
+          name: wait-for-data-loader
+          command:
+          - 'sh'
+          - '-c'
+          - 'until [ -f /data-loader/loaded ]; do echo waiting for db; sleep 2; done;'
+          volumeMounts:
+          - name: neo4j-data-loader
+            mountPath: /data-loader
+        volumes:
+        - name: neo4j-data-loader
+          persistentVolumeClaim:
+            claimName: fs-neo4j-data-loader-claim
+
         # Application containers
         containers:
         - image: neo4j:${NEO4J_TAG}
@@ -65,6 +85,8 @@ objects:
             value: ${NEO4J_AUTH}
           - name: NEO4J_dbms_memory_pagecache_size
             value: ${NEO4J_PAGECACHE}
+          - name: EXTENSION_SCRIPT
+            value: /data-loader/load_neo4j.sh
           ports:
           - containerPort: 7474
           - containerPort: 7687

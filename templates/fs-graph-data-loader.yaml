@@ -39,6 +39,7 @@ objects:
           name: neo4j-data-loader
       spec:
         serviceAccountName: diamond
+
         # Application containers
         containers:
         - image: xchem/neo4j-data-loader:${DATA_TAG}

@@ -44,6 +44,7 @@ objects:
           name: cartridge
       spec:
         serviceAccountName: diamond
+
         # Application containers
         containers:
         - image: informaticsmatters/rdkit_cartridge:${RDKIT_TAG}
