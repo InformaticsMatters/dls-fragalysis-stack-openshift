@@ -34,22 +34,22 @@ objects:
 - kind: DeploymentConfig
   apiVersion: v1
   metadata:
-    name: graph
+    name: neo4j
     namespace: ${GRAPH_NAMESPACE}
   spec:
     replicas: ${NEO4J_REPLICAS}
     selector:
-      name: graph
+      name: neo4j
     template:
       metadata:
         labels:
-          name: graph
+          name: neo4j
       spec:
         serviceAccountName: diamond
         # Application containers
         containers:
         - image: neo4j:${NEO4J_TAG}
-          name: graph
+          name: neo4j
           readinessProbe:
             initialDelaySeconds: 20
             timeoutSeconds: 1
@@ -74,7 +74,7 @@ objects:
           - name: neo4j-data-loader
             mountPath: /data-loader
           - name: fs-neo4j-log
-            mountPath: /log
+            mountPath: /logs
         volumes:
         - name: fs-neo4j-data
           persistentVolumeClaim:
@@ -90,7 +90,7 @@ objects:
 - kind: Service
   apiVersion: v1
   metadata:
-    name: graph
+    name: neo4j
     namespace: ${GRAPH_NAMESPACE}
   spec:
     ports:
@@ -101,4 +101,4 @@ objects:
       port: 7687
       targetPort: 7687
     selector:
-      name: graph
+      name: neo4j

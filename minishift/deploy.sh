@@ -42,7 +42,7 @@ then
     echo "+ Creating Service Account..."
     oc login -u system:admin > /dev/null
     oc project fragalysis-stack > /dev/null
-    oc create sa $SA
+    oc create sa $SA 2> /dev/null
     # provide cluster-admin role (ability to launch containers)
     oc adm policy add-cluster-role-to-user cluster-admin -z $SA
     # Allow (legacy) containers to run as root...
@@ -75,7 +75,7 @@ oc process -f ../templates/fs-secrets.yaml | oc create -f -
 
 #echo
 #echo "+ Deploying Loaders..."
-
+#
 #oc process -f ../templates/fs-web-media-loader.yaml | oc create -f -
 #oc process -f ../templates/fs-graph-data-loader.yaml | oc create -f -
 
