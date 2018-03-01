@@ -1,6 +1,5 @@
-# The FragAlysis-Stack Django Media loader.
-# Copies media files to the app's media volume,
-# anxd expected to run prior to the app.
+# The FragAlysis-Stack Neo4J Data Loader.
+# Copies data files to the app's data volume,
 FROM alpine:3.7
 
 # Base directory for the application
