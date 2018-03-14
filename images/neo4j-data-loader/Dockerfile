@@ -13,11 +13,10 @@ ENV PGID 6000
 RUN addgroup -g ${PGID} loader && \
     adduser -D -u ${PUID} -G loader loader
 
-ADD data/data.tar.gz ${APP_ROOT}/
+COPY data/data.tar.gz ${APP_ROOT}/
 COPY docker-entrypoint.sh ${APP_ROOT}/
 
-RUN chmod 755 ${APP_ROOT}/*.sh
-RUN chmod 777 ${APP_ROOT}/data
+RUN chmod 777 ${APP_ROOT}/*
 
 WORKDIR ${APP_ROOT}
 CMD ["./docker-entrypoint.sh"]

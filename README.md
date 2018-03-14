@@ -7,8 +7,11 @@ to the Fragalysis Stack's `web` service that have not been published.
 Until this is resolved you will need the following images available: -
 
 -   `docker build . -t xchem/fragalysis-stack:1.0.0`
+    from the fragalysis stack directory
 -   `docker build . -t xchem/fragalysis-stack-media-loader:1.0.0`
+    from the `web-media-loader` directory
 -   `docker build . -t xchem/neo4j-data-loader:1.0.0`
+    from the `neo4j-data-loader` directory
 
 >   The **web** services remains un-deployed for the time-being.
 
@@ -38,6 +41,8 @@ Tested with Minishift using:
 Assuming you ave a suitable minishift instance running,
 from the `minishift` directory run: -
 
+    $ eval $(minishift oc-env)
+    
     $ ./deploy.sh
     
 This should create a `fragalysis-stack` project and deploy the services.
