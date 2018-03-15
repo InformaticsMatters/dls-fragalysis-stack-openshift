@@ -70,16 +70,16 @@ objects:
         containers:
         - image: abradle/fragalysis-stack:${WEB_TAG}
           name: web
-#          readinessProbe:
-#            initialDelaySeconds: 240
-#            timeoutSeconds: 1
-#            tcpSocket:
-#              port: 80
-#          livenessProbe:
-#            initialDelaySeconds: 180
-#            timeoutSeconds: 1
-#            tcpSocket:
-#              port: 80
+          readinessProbe:
+            initialDelaySeconds: 120
+            timeoutSeconds: 1
+            tcpSocket:
+              port: 80
+          livenessProbe:
+            initialDelaySeconds: 240
+            timeoutSeconds: 1
+            tcpSocket:
+              port: 80
           env:
           - name: WEB_DJANGO_SECRET_KEY
             valueFrom:

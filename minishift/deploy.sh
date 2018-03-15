@@ -75,11 +75,11 @@ echo "+ Creating Secrets..."
 
 oc process -f ../templates/fs-secrets.yaml | oc create -f -
 
-#echo
-#echo "+ Deploying Loaders..."
-#
-#oc process -f ../templates/fs-web-media-loader.yaml | oc create -f -
-#oc process -f ../templates/fs-graph-data-loader.yaml | oc create -f -
+echo
+echo "+ Deploying Loaders..."
+
+oc process -f ../templates/fs-web-media-loader.yaml | oc create -f -
+oc process -f ../templates/fs-graph-data-loader.yaml | oc create -f -
 
 echo
 echo "+ Deploying Application..."
@@ -87,4 +87,4 @@ echo "+ Deploying Application..."
 oc process -f ../templates/fs-graph.yaml | oc create -f -
 oc process -f ../templates/fs-db.yaml | oc create -f -
 oc process -f ../templates/fs-cartridge.yaml | oc create -f -
-#oc process -f ../templates/fs-web.yaml | oc create -f -
+oc process -f ../templates/fs-web.yaml | oc create -f -
