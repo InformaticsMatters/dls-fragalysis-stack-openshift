@@ -14,7 +14,7 @@ ENV PGID 6000
 RUN addgroup -g ${PGID} loader && \
     adduser -D -u ${PUID} -G loader loader
 
-COPY media/media.tar.gz ${APP_ROOT}/
+COPY media/media-slim.tar.gz ${APP_ROOT}/
 COPY docker-entrypoint.sh ${APP_ROOT}/
 
 RUN chmod 777 ${APP_ROOT}/*

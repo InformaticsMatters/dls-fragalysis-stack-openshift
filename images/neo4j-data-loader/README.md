@@ -9,4 +9,4 @@ It expects a volume mount at `/data-loader`.
 ## Building
 Build with...
 
-    $ docker build . -t xchem/neo4j-data-loader:1.0.0
+    $ docker build . -t abradle/neo4j-data-loader:1.0.0
