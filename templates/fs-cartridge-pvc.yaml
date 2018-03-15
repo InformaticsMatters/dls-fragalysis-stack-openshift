@@ -20,7 +20,7 @@ parameters:
 - name: CARTRIDGE_NAMESPACE
   value: fragalysis-stack
 - name: CARTRIDGE_PV_SIZE
-  value: 50Gi
+  value: 20Gi
 
 objects:
 

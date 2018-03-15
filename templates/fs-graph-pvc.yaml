@@ -20,7 +20,7 @@ parameters:
 - name: NEO4J_NAMESPACE
   value: fragalysis-stack
 - name: NEO4J_DATA_PV_SIZE
-  value: 40Gi
+  value: 20Gi
 - name: NEO4J_DATA_LOADER_PV_SIZE
   value: 2Gi
 - name: NEO4J_LOG_PV_SIZE
