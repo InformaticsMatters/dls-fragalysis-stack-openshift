@@ -28,9 +28,9 @@ labels:
 parameters:
 
 - name: NFS_SERVER
-  value: infra-1
+  value: nf-infra
 - name: NFS_PATH
-  value: /exports
+  value: /exports-fs
 
 - name: CARTRIDGE_NAMESPACE
   value: fragalysis-stack

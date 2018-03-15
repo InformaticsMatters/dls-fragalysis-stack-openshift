@@ -57,7 +57,7 @@ echo
 echo "+ Creating PVs..."
 
 oc login -u system:admin > /dev/null
-oc process -f ../templates/fs-pv-minishift.yaml | oc create -f -
+oc process -f fs-pv-minishift.yaml | oc create -f -
 
 echo
 echo "+ Creating PVCs..."
