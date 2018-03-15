@@ -6,11 +6,11 @@ Note: This is _work in progress_ and, at the moment, relies on changes
 to the Fragalysis Stack's `web` service that have not been published.
 Until this is resolved you will need the following images available: -
 
--   `docker build . -t xchem/fragalysis-stack:1.0.0`
+-   `docker build . -t abradle/fragalysis-stack:1.0.0`
     from the fragalysis stack directory
--   `docker build . -t xchem/fragalysis-stack-media-loader:1.0.0`
+-   `docker build . -t abradle/fragalysis-stack-media-loader:1.0.0`
     from the `web-media-loader` directory
--   `docker build . -t xchem/neo4j-data-loader:1.0.0`
+-   `docker build . -t abradle/neo4j-data-loader:1.0.0`
     from the `neo4j-data-loader` directory
 
 >   The **web** services remains un-deployed for the time-being.

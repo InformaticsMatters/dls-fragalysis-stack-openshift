@@ -42,7 +42,7 @@ objects:
 
         # Application containers
         containers:
-        - image: xchem/neo4j-data-loader:${DATA_TAG}
+        - image: abradle/neo4j-data-loader:${DATA_TAG}
           name: neo4j-data-loader
           volumeMounts:
           - name: neo4j-data-loader
