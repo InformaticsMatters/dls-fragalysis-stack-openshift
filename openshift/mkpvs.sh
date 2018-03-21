@@ -20,12 +20,16 @@ mkdir pv-fs-web-media
 chmod -R 777 pv-*
 chown -R nfsnobody.nfsnobody pv-*
 
+# Note the use of (rw,sync,no_subtree_check,no_root_squash)
+# for the postgres volumes!
+# See https://github.com/kubernetes/kubernetes/issues/54601
+
 cd /etc/exports.d/
 echo '/exports-fs/pv-fs-neo4j-data *(rw,root_squash)' >> frag.exports
 echo '/exports-fs/pv-fs-neo4j-data-loader *(rw,root_squash)' >> frag.exports
 echo '/exports-fs/pv-fs-neo4j-log *(rw,root_squash)' >> frag.exports
-echo '/exports-fs/pv-fs-pg-data *(rw,root_squash)' >> frag.exports
-echo '/exports-fs/pv-fs-cartridge-data *(rw,root_squash)' >> frag.exports
+echo '/exports-fs/pv-fs-pg-data *(rw,sync,no_subtree_check,no_root_squash)' >> frag.exports
+echo '/exports-fs/pv-fs-cartridge-data *(rw,sync,no_subtree_check,no_root_squash)' >> frag.exports
 echo '/exports-fs/pv-fs-web-log *(rw,root_squash)' >> frag.exports
 echo '/exports-fs/pv-fs-web-media *(rw,root_squash)' >> frag.exports
 
