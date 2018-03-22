@@ -2,19 +2,25 @@
 An OpenShift deployment of Anthony Bradley's [Fragalysis], consisting of
 object templates at the moment.
 
+## Preliminary builds
+Because the stack data and container images are not available in DockerHub
+we must build some container images locally (using `evel $(minishift docker-env)`
+for example).
+
 Note: This is _work in progress_ and, at the moment, relies on changes
 to the Fragalysis Stack's `web` service that have not been published.
 Until this is resolved you will need the following images available: -
 
+-   `docker build . -t abradle/fragalysis-backend:1.0.0`
+    from your `fragalysis-backend` working directory
 -   `docker build . -t abradle/fragalysis-stack:1.0.0`
-    from the fragalysis stack directory
+    from your `fragalysis-stack` working directory
 -   `docker build . -t abradle/fragalysis-stack-media-loader:1.0.0`
     from the `web-media-loader` directory
 -   `docker build . -t abradle/neo4j-data-loader:1.0.0`
     from the `neo4j-data-loader` directory
 
->   The **web** services remains un-deployed for the time-being.
-
+## Deployment
 The deployment creates a `fragalysis-stack` project and the following
 OpenShift 3.7 deployments (services): -
 

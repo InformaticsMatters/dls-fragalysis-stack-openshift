@@ -3,7 +3,7 @@
 # The Fragalysis Stack's Web (Front-End) deployment.
 #
 # oc process -f fs-web.yaml | oc create -f -
-# oc delete all --selector template=fs-web
+# oc delete all,route --selector template=fs-web
 
 kind: Template
 apiVersion: v1
