@@ -20,7 +20,7 @@ parameters:
 - name: MEDIA_NAMESPACE
   value: fragalysis-stack
 - name: MEDIA_TAG
-  value: 1.0.0
+  value: stable
 
 objects:
 

@@ -23,7 +23,7 @@ parameters:
 - name: WEB_NAMESPACE
   value: fragalysis-stack
 - name: WEB_TAG
-  value: 1.0.0
+  value: stable
 - name: WEB_REPLICAS
   value: '1'
 

@@ -8,17 +8,20 @@ we must build some container images locally (using `evel $(minishift docker-env)
 for example).
 
 Note: This is _work in progress_ and, at the moment, relies on changes
-to the Fragalysis Stack's `web` service that have not been published.
-Until this is resolved you will need the following images available: -
+to the Fragalysis Stack's `web` service that have not been propagated back to
+the original repository. Until then you will need the following images: -
 
 -   `docker build . -t informaticsmatters/fragalysis-backend:1.0.0`
-    from your `fragalysis-backend` working directory
--   `docker build . -t informaticsmatters/fragalysis-stack:1.0.0`
-    from your `fragalysis-stack` working directory
--   `docker build . -t informaticsmatters/fragalysis-stack-media-loader:1.0.0`
-    from the `web-media-loader` directory
--   `docker build . -t informaticsmatters/neo4j-data-loader:1.0.0`
-    from the `neo4j-data-loader` directory
+    from the working directory of the Informatics Matters fork of the
+    `fragalysis-backend` repository
+-   `docker build . -t informaticsmatters/fragalysis-stack:stable`
+    from the working directory of the Informatics Matters fork of the
+    `fragalysis-stack` repository
+
+-   `docker build . -t informaticsmatters/fragalysis-stack-media-loader:stable`
+    from the `images/web-media-loader` directory
+-   `docker build . -t informaticsmatters/neo4j-data-loader:stable`
+    from the `images/neo4j-data-loader` directory
 
 ## Deployment
 The deployment creates a `fragalysis-stack` project and the following

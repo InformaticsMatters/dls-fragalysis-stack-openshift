@@ -20,7 +20,7 @@ parameters:
 - name: DATA_NAMESPACE
   value: fragalysis-stack
 - name: DATA_TAG
-  value: 1.0.0
+  value: stable
 
 objects:
 
