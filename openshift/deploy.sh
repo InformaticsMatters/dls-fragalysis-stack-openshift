@@ -1,13 +1,9 @@
 #!/usr/bin/env bash
 
-# Assumes the Application's Persistent Volumes are available.
-#
-# This deployment also assumes you have a number of other container
-# images that (at the time of writing) have not been deployed. Namely: -
-#
-#   abradle/fragalysis-stack:1.0.0
-#   abradle/fragalysis-stack-media-loader:1.0.0
-#   abradle/neo4j-data-loader:1.0.0
+# Assumes the Application's Persistent Volumes are available
+# and a number of other container images have been deployed
+# (namely the informatics matters images for the data loaders
+# and forked repos).
 
 # Service account
 SA=diamond
