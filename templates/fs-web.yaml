@@ -68,7 +68,7 @@ objects:
 
         # Application containers
         containers:
-        - image: abradle/fragalysis-stack:${WEB_TAG}
+        - image: informaticsmatters/fragalysis-stack:${WEB_TAG}
           name: web
 # The new fragalysis stack is slow at starting.
 # so the readiness/liveness probes have been disabled for now...

@@ -11,4 +11,4 @@ It expects a volume mount at `/media-volume`.
 ## Building
 Build with...
 
-    $ docker build . -t abradle/fragalysis-stack-media-loader:1.0.0
+    $ docker build . -t informaticsmatters/fragalysis-stack-media-loader:1.0.0

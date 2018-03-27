@@ -42,7 +42,7 @@ objects:
 
         # Application containers
         containers:
-        - image: abradle/fragalysis-stack-media-loader:${MEDIA_TAG}
+        - image: informaticsmatters/fragalysis-stack-media-loader:${MEDIA_TAG}
           name: web-media-loader
           volumeMounts:
           - name: fs-web-media
