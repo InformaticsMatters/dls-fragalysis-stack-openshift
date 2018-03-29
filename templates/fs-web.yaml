@@ -143,3 +143,6 @@ objects:
     to:
       kind: Service
       name: web
+    tls:
+      termination: edge
+      insecureEdgeTerminationPolicy: Redirect
