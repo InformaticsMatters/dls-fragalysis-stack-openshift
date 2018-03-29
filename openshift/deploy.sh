@@ -5,11 +5,15 @@
 # (namely the informatics matters images for the data loaders
 # and forked repos).
 
+# You will need to define the following environment variables: -
+#
+#   -   OS_ADMIN_PASSWORD
+#   -   OS_DEVELOPER_PASSWORD
+
 # Service account
 SA=diamond
 # User
-USER=diamond
-PASSWORD=diamond
+OS_DEVELOPER_USER=developer
 
 # It is assumed that the PVs NFS volumes
 # have been made available to the OpenShift cluster.
@@ -23,7 +27,7 @@ oc process -f fs-pv-nfs.yaml | oc create -f -
 echo
 echo "+ Creating PVCs..."
 
-oc login -u $USER -p $PASSWORD > /dev/null
+oc login -u $OS_DEVELOPER_USER -p $OS_DEVELOPER_PASSWORD > /dev/null
 oc project fragalysis-stack > /dev/null
 
 oc process -f ../templates/fs-graph-pvc.yaml | oc create -f -
