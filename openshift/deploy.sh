@@ -5,6 +5,12 @@
 # (namely the informatics matters images for the data loaders
 # and forked repos).
 
+# You will need to be logged into the cluster (master).
+# In UPPMAX, from the bastion, you can do this with the IP of the
+# master: -
+#
+#   oc login 130.238.28.25 -u admin
+
 # You will need to define the following environment variables: -
 #
 #   -   OS_ADMIN_PASSWORD
