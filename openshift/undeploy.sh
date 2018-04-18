@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 
 # User
-OS_DEVELOPER_USER=diamond
+OS_DEVELOPER_USER=developer
 
 set -e pipefail
 
-oc login -u OS_DEVELOPER_USER -p $OS_DEVELOPER_PASSWORD > /dev/null
+oc login -u $OS_DEVELOPER_USER -p $OS_DEVELOPER_PASSWORD > /dev/null
 oc project fragalysis-stack > /dev/null
 
 echo

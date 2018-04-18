@@ -4,25 +4,20 @@
 # and a number of other container images have been deployed
 # (namely the informatics matters images for the data loaders
 # and forked repos).
+#
+# Here I also assumed that the project (fragalysis-stack) also exists.
+#
+# It is assumed that the PVs NFS volumes
+# have been made available to the OpenShift cluster.
 
 # You will need to be logged into the cluster (master).
-# In UPPMAX, from the bastion, you can do this with the IP of the
-# master: -
+# The master is exposed on 130.246.215.45: -
 #
-#   oc login 130.238.28.25 -u admin
+#   oc login 130.246.215.45 -u admin
 
 # You will need to define the following environment variables: -
 #
 #   -   OS_ADMIN_PASSWORD
-#   -   OS_DEVELOPER_PASSWORD
-
-# Service account
-SA=diamond
-# User
-OS_DEVELOPER_USER=developer
-
-# It is assumed that the PVs NFS volumes
-# have been made available to the OpenShift cluster.
 
 echo
 echo "+ Creating PVs..."
@@ -33,7 +28,6 @@ oc process -f fs-pv-nfs.yaml | oc create -f -
 echo
 echo "+ Creating PVCs..."
 
-oc login -u $OS_DEVELOPER_USER -p $OS_DEVELOPER_PASSWORD > /dev/null
 oc project fragalysis-stack > /dev/null
 
 oc process -f ../templates/fs-graph-pvc.yaml | oc create -f -
