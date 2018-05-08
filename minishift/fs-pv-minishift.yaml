@@ -56,11 +56,6 @@ parameters:
 - name: WEB_MEDIA_PV_SIZE
   value: 10Gi
 
-- name: CICD_NAMESPACE
-  value: fragalysis-cicd
-- name: CICD_GRAPH_SOURCE_DATA_PV_SIZE
-  value: 100Gi
-
 objects:
 
 # ---------------------
@@ -191,22 +186,3 @@ objects:
       name: fs-web-media-claim
       namespace: ${WEB_NAMESPACE}
 
-# -------------------
-# CI/CD Graph Builder
-# -------------------
-
-- kind: PersistentVolume
-  apiVersion: v1
-  metadata:
-    name: fs-graph-source-data
-  spec:
-    capacity:
-      storage: ${CICD_GRAPH_SOURCE_DATA_PV_SIZE}
-    accessModes:
-    - ReadWriteMany
-    persistentVolumeReclaimPolicy: Retain
-    hostPath:
-      path: ${MINI_PATH}/pv-graph-source-data/registry
-    claimRef:
-      name: fs-graph-source-data-claim
-      namespace: ${CICD_NAMESPACE}
