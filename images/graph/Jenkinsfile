@@ -15,7 +15,10 @@ pipeline {
             steps {
 
                 dir('images/graph') {
-                    sh 'get_unbuilt_data_directory.py'
+                    script {
+                        DATA_DIR = sh(script: 'get_unbuilt_data_directory.py', returnStdout: true).trim()
+                    }
+                    echo "Data to build = ${DATA_DIR}"
                 }
 
             }
