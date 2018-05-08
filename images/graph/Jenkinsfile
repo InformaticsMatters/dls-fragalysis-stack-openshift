@@ -1,0 +1,27 @@
+#!groovy​
+
+// The Fragalysis Graph Database Builder.
+
+pipeline {
+
+    agent {
+        label 'buildah-slave'
+    }
+
+    stages {
+
+        stage('Check') {
+
+            steps {
+
+                dir('images/graph') {
+                    sh 'get_unbuilt_data_directory.py'
+                }
+
+            }
+
+        }
+
+    }
+
+}

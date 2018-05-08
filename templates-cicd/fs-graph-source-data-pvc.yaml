@@ -1,0 +1,37 @@
+---
+
+# The Graph Builder CI/CD Persistent Volume Claims.
+#
+# oc process -f fs-graph-source-data-pvc.yaml | oc create -f -
+# oc delete pvc --selector template=fs-graph-source-data-pvc
+
+kind: Template
+apiVersion: v1
+metadata:
+  name: fs-graph-source-data-pvc
+  annotations:
+    description: Fragalysis Stack's Graph Source Data Volumne
+    tags: fragalysis,graph,neo4j,cicd
+labels:
+  template: fs-graph-source-data-pvc
+
+parameters:
+
+- name: CICD_NAMESPACE
+  value: fragalysis-cicd
+- name: SOURCE_DATA_PV_SIZE
+  value: 100Gi
+
+objects:
+
+- apiVersion: v1
+  kind: PersistentVolumeClaim
+  metadata:
+    name: fs-graph-source-data-claim
+    namespace: ${CICD_NAMESPACE}
+  spec:
+    accessModes:
+    - ReadWriteMany
+    resources:
+      requests:
+        storage: ${SOURCE_DATA_PV_SIZE}

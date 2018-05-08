@@ -45,6 +45,11 @@ mkdir -p /mnt/sda1/var/lib/minishift/openshift.local.volumes/pv-fs-web-media
 mkdir /mnt/sda1/var/lib/minishift/openshift.local.volumes/pv-fs-web-media/registry
 chmod 777 -R /mnt/sda1/var/lib/minishift/openshift.local.volumes/pv-fs-web-media
 
+# pv-graph-source-data
+mkdir -p /mnt/sda1/var/lib/minishift/openshift.local.volumes/pv-graph-source-data
+mkdir /mnt/sda1/var/lib/minishift/openshift.local.volumes/pv-graph-source-data/registry
+chmod 777 -R /mnt/sda1/var/lib/minishift/openshift.local.volumes/pv-graph-source-data
+
 # Then..
 #   exit
 #   exit
