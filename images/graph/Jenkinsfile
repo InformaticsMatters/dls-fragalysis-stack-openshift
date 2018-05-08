@@ -24,8 +24,7 @@ pipeline {
       }
       steps {
         dir('images/graph') {
-          script {
-          }
+          echo "Building ${DATA_DIR}..."
         }
       }
     }
