@@ -20,7 +20,7 @@ pipeline {
 
     stage('Build') {
       when {
-        expression { DATA_DIR.length() > 0 }
+        expression { DATA_DIR.length() == 0 }
       }
       steps {
         dir('images/graph') {
