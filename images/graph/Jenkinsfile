@@ -4,13 +4,17 @@
 
 pipeline {
 
-    agent {
-        label 'buildah-slave'
-    }
+    // As we may need different flavours of agent,
+    // the agent definition is deferred to each stage.
+    agent none
 
     stages {
 
-        stage('Check') {
+        stage('Check and Build') {
+
+            agent {
+                label 'buildah-slave'
+            }
 
             steps {
 
