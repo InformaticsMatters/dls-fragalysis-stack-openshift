@@ -75,18 +75,23 @@ if not os.path.exists(os.path.join(most_recent_data_path, 'READY')):
 # We need to build a new image for all these conditions.
 image = '%s:%s' % (GRAPH_IMAGE, GRAPH_TAG)
 cmd = 'skopeo inspect docker://docker.io/%s' % image
-image_str_info = subprocess.check_output(cmd.split())
-image_json_info = json.loads(image_str_info)
-if IMAGE_LABELS_KEY not in image_json_info:
-    sys.exit(0)
-# There are some labels.
-# Does one look like a data source label?
+image_str_info = None
+image_json_info = None
 current_label = None
-labels = image_json_info[IMAGE_LABELS_KEY]
-if labels:
-    for label in labels:
-        if label.startswith(SOURCE_LABEL_PREFIX):
-            current_label = label[len(SOURCE_LABEL_PREFIX):]
+# Protect from failure...
+try:
+    image_str_info = subprocess.check_output(cmd.split())
+except subprocess.CalledProcessError:
+    pass
+if image_str_info:
+    image_json_info = json.loads(image_str_info)
+    # There are some labels.
+    # Does one look like a data source label?
+    labels = image_json_info[IMAGE_LABELS_KEY]
+    if labels:
+        for label in labels:
+            if label.startswith(SOURCE_LABEL_PREFIX):
+                current_label = label[len(SOURCE_LABEL_PREFIX):]
 
 # If the current label matches the most recent data directory
 # then there's nothing to do -

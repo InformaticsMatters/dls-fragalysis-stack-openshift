@@ -21,6 +21,9 @@ labels:
 
 parameters:
 
+- name: MINI_PATH
+  value: /mnt/sda1/var/lib/minishift/openshift.local.volumes
+
 - name: CICD_NAMESPACE
   value: fragalysis-cicd
 - name: CICD_GRAPH_SOURCE_DATA_PV_SIZE
