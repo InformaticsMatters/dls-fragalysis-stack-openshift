@@ -4,31 +4,32 @@
 
 pipeline {
 
-    // As we may need different flavours of agent,
-    // the agent definition is deferred to each stage.
-    agent none
+  agent { label 'buildah-slave' }
 
-    stages {
+  stages {
 
-        stage('Check and Build') {
-
-            agent {
-                label 'buildah-slave'
-            }
-
-            steps {
-
-                dir('images/graph') {
-                    script {
-                        DATA_DIR = sh(script: './get_unbuilt_data_directory.py', returnStdout: true).trim()
-                    }
-                    echo "Data to build = ${DATA_DIR}"
-                }
-
-            }
-
+    stage('Check') {
+      steps {
+        dir('images/graph') {
+          script {
+            DATA_DIR = sh(script: './get_unbuilt_data_directory.py', returnStdout: true).trim()
+          }
         }
-
+      }
     }
+
+    stage('Build') {
+      when {
+        expression { DATA_DIR.length() > 0 }
+      }
+      steps {
+        dir('images/graph') {
+          script {
+          }
+        }
+      }
+    }
+
+  }
 
 }
