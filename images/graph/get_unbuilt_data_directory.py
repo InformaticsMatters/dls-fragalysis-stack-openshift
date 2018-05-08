@@ -21,6 +21,7 @@ from __future__ import print_function
 
 import json
 import os
+import re
 import subprocess
 import sys
 
@@ -55,6 +56,10 @@ if DATA_DIRS:
     most_recent_data_dir = DATA_DIRS[-1]
 else:
     # No data directories.
+    sys.exit(0)
+# Is the directory name correct?
+if not re.match(DATA_DIR_RE, most_recent_data_dir):
+    # Doesn't look right
     sys.exit(0)
 most_recent_data_path = os.path.join(SOURCE_DATA_ROOT, most_recent_data_dir)
 if not os.path.isdir(most_recent_data_path):
