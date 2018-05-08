@@ -27,7 +27,7 @@ import sys
 
 # Extract environment variable values (with defaults)
 SOURCE_DATA_ROOT = os.environ.get('SOURCE_DATA_ROOT', '/source-data')
-GRAPH_IMAGE = os.environ.get('GRAPH_IMAGE', 'informaticsmatters/jenkins-slave-python3-centos7')
+GRAPH_IMAGE = os.environ.get('GRAPH_IMAGE', 'informaticsmatters/fs-graph-db')
 GRAPH_TAG = os.environ.get('GRAPH_TAG', 'latest')
 
 # The key for the image labels
