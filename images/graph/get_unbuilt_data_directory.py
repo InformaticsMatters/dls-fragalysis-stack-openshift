@@ -42,6 +42,10 @@ SOURCE_LABEL_PREFIX = 'Source='
 # These exist in the SOURCE_DATA_ROOT.
 DATA_DIR_RE = '\d\d\d\d-\d\d-\d\d'
 
+# Does the root data directory exist?
+if not os.path.isdir(SOURCE_DATA_ROOT):
+    sys.exit(0)
+
 # Search the root data directory for sub-directories.
 # We'll assume the last one holds the most recent data.
 # There may not be any data directories.
