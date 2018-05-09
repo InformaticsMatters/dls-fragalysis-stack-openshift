@@ -41,13 +41,12 @@ pipeline {
 
     stage('Push') {
       steps {
-          script {
-            TOKEN = sh(script: 'oc whoami -t', returnStdout: true).trim()
-          }
-          sh "podman login --tls-verify=false --username ${env.USER} --password ${TOKEN} ${env.REGISTRY}"
-          sh "buildah push --tls-verify=false ${env.GRAPH_STREAM_IMAGE} docker://${env.GRAPH_STREAM_IMAGE}"
-          sh "podman logout ${env.REGISTRY}"
+        script {
+          TOKEN = sh(script: 'oc whoami -t', returnStdout: true).trim()
         }
+        sh "podman login --tls-verify=false --username ${env.USER} --password ${TOKEN} ${env.REGISTRY}"
+        sh "buildah push --tls-verify=false ${env.GRAPH_STREAM_IMAGE} docker://${env.GRAPH_STREAM_IMAGE}"
+        sh "podman logout ${env.REGISTRY}"
       }
     }
 
