@@ -15,6 +15,9 @@ Environment control the operation of this module: -
 Source data is expected in subdirectories of the SOURCE_DATA_ROOT
 and the data is assumed to be 'ready for consumption' if the
 file  'READY' exists in the dub-directory.
+
+At the time of writing the Agent used in Jenkins has Python 2.7.5
+installed so this is a Python 2.7-compliant module.
 """
 
 from __future__ import print_function
@@ -86,7 +89,7 @@ current_label = None
 # Protect from failure...
 try:
     image_str_info = subprocess.check_output(cmd.split())
-except subprocess.CalledProcessError:
+except:
     pass
 if image_str_info:
     image_json_info = json.loads(image_str_info)

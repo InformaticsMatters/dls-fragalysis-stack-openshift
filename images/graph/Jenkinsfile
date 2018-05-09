@@ -15,6 +15,7 @@ pipeline {
     stage('Inspect') {
       steps {
         dir('images/graph') {
+          sh 'ls /source-data'
           script {
             DATA_ORIGIN = sh(script: './get_unbuilt_data_directory.py', returnStdout: true).trim()
           }
