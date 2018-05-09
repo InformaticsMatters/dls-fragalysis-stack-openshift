@@ -11,6 +11,7 @@ pipeline {
     REGISTRY = 'docker-registry.default:5000'
     STREAM_IMAGE = "${REGISTRY}/fragalysis-cicd/graph-stream:latest"
     SOURCE_DATA_ROOT = '/fragalysis/graph_data'
+    TARGET_IMAGE = 'fragalysis-cicd/graph-stream'
   }
 
   stages {
@@ -18,6 +19,7 @@ pipeline {
     stage('Inspect') {
       steps {
         dir('images') {
+          sh 'env'
           script {
             DATA_ORIGIN = sh(script: './get_unbuilt_data_directory.py', returnStdout: true).trim()
           }

@@ -9,8 +9,8 @@ Docker image.
 Environment control the operation of this module: -
 
 -   SOURCE_DATA_ROOT The root directory for source data
--   GRAPH_IMAGE      The name of the graph image
--   GRAPH_TAG        The name of the image tag to inspect
+-   TARGET_IMAGE     The name of the image to build
+-   FORCE_BUILD      Set to 'Yes' to always build a new image
 
 Source data is expected in subdirectories of the SOURCE_DATA_ROOT
 and the data is assumed to be 'ready for consumption' if the
@@ -30,11 +30,11 @@ import sys
 
 # Extract environment variable values (with defaults)
 SOURCE_DATA_ROOT = os.environ.get('SOURCE_DATA_ROOT', '/fragalysis/graph_data')
+TARGET_IMAGE = os.environ.get('TARGET_IMAGE', 'fragalysis-cicd/graph-stream')
 FORCE_BUILD = os.environ.get('FORCE_BUILD', 'No')
 
 # The image we'll be manufacturing...
 REGISTRY  = 'docker-registry.default:5000'
-IMAGE = 'fragalysis-cicd/graph-stream'
 TAG = 'latest'
 
 # The Registry
@@ -83,7 +83,7 @@ if not os.path.exists(os.path.join(most_recent_data_path, 'READY')):
 # We may not have an image, it may not have labels
 # or the label may be for an older data directory.
 # We need to build a new image for all these conditions.
-cmd = 'buildah inspect --type image %s/%s:%s' % (REGISTRY, IMAGE, TAG)
+cmd = 'buildah inspect --type image %s/%s:%s' % (REGISTRY, TARGET_IMAGE, TAG)
 image_str_info = None
 image_json_info = None
 image_data_origin = None
