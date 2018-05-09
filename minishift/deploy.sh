@@ -62,7 +62,6 @@ echo "+ Creating PVCs..."
 oc login -u $USER -p $PASSWORD > /dev/null
 oc project $PROJECT > /dev/null
 
-oc process -f ../templates/fs-graph-pvc.yaml | oc create -f -
 oc process -f ../templates/fs-db-pvc.yaml | oc create -f -
 oc process -f ../templates/fs-cartridge-pvc.yaml | oc create -f -
 oc process -f ../templates/fs-web-pvc.yaml | oc create -f -

@@ -83,13 +83,6 @@ objects:
           ports:
           - containerPort: 7474
           - containerPort: 7687
-          volumeMounts:
-          - name: fs-neo4j-log
-            mountPath: /logs
-        volumes:
-        - name: fs-neo4j-log
-          persistentVolumeClaim:
-            claimName: fs-neo4j-log-claim
         restartPolicy: Always
 
     triggers:

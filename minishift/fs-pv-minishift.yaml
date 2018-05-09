@@ -5,9 +5,6 @@
 # This expects these volumes in Minishift:
 #
 #   $(MINI_PATH)/pv-fs-cartridge-data
-#   $(MINI_PATH)/pv-fs-neo4j-data
-#   $(MINI_PATH)/pv-fs-neo4j-data-loader
-#   $(MINI_PATH)/pv-fs-neo4j-log
 #   $(MINI_PATH)/pv-fs-pg-data
 #   $(MINI_PATH)/pv-fs-web-log
 #   $(MINI_PATH)/pv-fs-web-media
@@ -35,11 +32,6 @@ parameters:
 - name: CARTRIDGE_PV_SIZE
   value: 20Gi
 
-- name: NEO4J_NAMESPACE
-  value: fragalysis-cicd
-- name: NEO4J_LOG_PV_SIZE
-  value: 2Gi
-
 - name: PG_NAMESPACE
   value: fragalysis-cicd
 - name: PG_PV_SIZE
@@ -53,25 +45,6 @@ parameters:
   value: 10Gi
 
 objects:
-
-# ---------------------
-# Graph (Neo4J) Volumes
-# ---------------------
-
-- kind: PersistentVolume
-  apiVersion: v1
-  metadata:
-    name: fs-neo4j-log
-  spec:
-    capacity:
-      storage: ${NEO4J_LOG_PV_SIZE}
-    accessModes:
-    - ReadWriteMany
-    hostPath:
-      path: ${MINI_PATH}/pv-fs-neo4j-log/registry
-    claimRef:
-      name: fs-neo4j-log-claim
-      namespace: ${NEO4J_NAMESPACE}
 
 # ---------------------------
 # Database (Postgres) Volumes
