@@ -11,7 +11,7 @@ Environment control the operation of this module: -
 -   SOURCE_DATA_ROOT The root directory for source data
 -   TARGET_IMAGE     The name of the image to build
 -   FORCE_BUILD      Set to 'Yes' to always build a new image
--   HOURLY_BUILD     Set to Yes of the sourtce data is expected to change
+-   HOURLY_BUILD     Set to Yes of the source data is expected to change
                      hourly. Data that changes hourly must use directory
                      namea odf the format YYYY-MM-DDTHH, i.e.
                      2018-01-02T10 for data available at 10AM
@@ -40,9 +40,9 @@ import sys
 # Extract environment variable values (with defaults)
 SOURCE_DATA_ROOT = os.environ.get('SOURCE_DATA_ROOT', '/fragalysis/graph_data')
 TARGET_IMAGE = os.environ.get('TARGET_IMAGE', 'fragalysis-cicd/graph-stream')
-FORCE_BUILD = os.environ.get('FORCE_BUILD', 'No')
-INSIST_ON_READY = os.environ.get('INSIST_ON_READY', 'No')
-HOURLY_BUILD = os.environ.get('HOURLY_BUILD', 'No')
+FORCE_BUILD = os.environ.get('FORCE_BUILD', 'No').lower() in ['y', 'yes']
+INSIST_ON_READY = os.environ.get('INSIST_ON_READY', 'No').lower() in ['y', 'yes']
+HOURLY_BUILD = os.environ.get('HOURLY_BUILD', 'No').lower() in ['y', 'yes']
 
 # The image we'll be manufacturing...
 REGISTRY  = 'docker-registry.default:5000'
@@ -92,7 +92,7 @@ if INSIST_ON_READY and not os.path.exists(os.path.join(most_recent_data_path,
 # Next stage build if the latest image does not contain this data
 # (or build regardless if FORCE_BUILD is set).
 
-if FORCE_BUILD.lower() in ['n', 'no']:
+if FORCE_BUILD:
 
     # Inspect the current image content and obtain the Labels.
     # One label will be the source data directory used to build the image
