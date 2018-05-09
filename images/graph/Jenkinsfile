@@ -35,6 +35,7 @@ pipeline {
           echo "Building ${DATA_ORIGIN}..."
           sh "cp /source-data/${DATA_ORIGIN}/* data-loader"
           sh "buildah bud --format docker --build-arg DATA_ORIGIN=$DATA_ORIGIN -f Dockerfile -t ${env.GRAPH_STREAM_IMAGE}"
+          sh "buildah images"
           // Push (with user login token)...
           script {
             TOKEN = sh(script: 'oc whoami -t', returnStdout: true).trim()
