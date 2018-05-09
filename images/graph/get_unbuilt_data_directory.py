@@ -30,15 +30,14 @@ import sys
 
 # Extract environment variable values (with defaults)
 SOURCE_DATA_ROOT = os.environ.get('SOURCE_DATA_ROOT', '/source-data')
-GRAPH_IMAGE = os.environ.get('GRAPH_IMAGE', 'informaticsmatters/fs-graph-db')
+GRAPH_IMAGE = os.environ.get('GRAPH_IMAGE', 'fragalysis-cicd/graph-stream')
 GRAPH_TAG = os.environ.get('GRAPH_TAG', 'latest')
 
-# The key for the image labels
-# What you'd typically find in a docker-inspect.
-IMAGE_LABELS_KEY = 'Labels'
+# The Registry
+REGISTRY  = 'docker-registry.default:5000'
 # The key of the label value used to record
 # the source data the image was built with.
-# If the image was build from data in '2018-01-01'
+# If the image was build from data from '2018-01-01'
 # one of its 'Labels' will be 'data.origin':'2018-01-01'
 DATA_ORIGIN_KEY = 'data.origin'
 
@@ -81,11 +80,11 @@ if not os.path.exists(os.path.join(most_recent_data_path, 'READY')):
 # We may not have an image, it may not have labels
 # or the label may be for an older data directory.
 # We need to build a new image for all these conditions.
-image = '%s:%s' % (GRAPH_IMAGE, GRAPH_TAG)
-cmd = 'skopeo inspect docker://docker.io/%s' % image
+image = '%s/%s:%s' % (REGISTRY, GRAPH_IMAGE, GRAPH_TAG)
+cmd = 'buildah inspect --type image %s' % image
 image_str_info = None
 image_json_info = None
-current_label = None
+image_data_origin = None
 # Protect from failure...
 try:
     image_str_info = subprocess.check_output(cmd.split())
@@ -96,14 +95,14 @@ if image_str_info:
     # If there are some labels
     # does one look like a data source label?
     # Labels should appear as a dictionary.
-    labels = image_json_info[IMAGE_LABELS_KEY]
+    labels = image_json_info['OCIv1']['config']['Labels']
     if labels and DATA_ORIGIN_KEY in labels:
-        current_label = labels[DATA_ORIGIN_KEY]
+        image_data_origin = labels[DATA_ORIGIN_KEY]
 
 # If the current label matches the most recent data directory
 # then there's nothing to do -
 # the latest image is build from the latest data directory.
-if current_label == most_recent_data_dir:
+if image_data_origin == most_recent_data_dir:
     sys.exit(0)
 
 # There is no image, or its label does not match the
