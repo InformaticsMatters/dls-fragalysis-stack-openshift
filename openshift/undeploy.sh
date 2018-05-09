@@ -22,18 +22,10 @@ echo "- Removing Secrets..."
 oc delete secrets --selector template=fs-secrets
 
 echo
-echo "- Deleting Loaders..."
-
-oc delete all --selector template=fs-web-media-loader
-oc delete all --selector template=fs-neo4j-data-loader
-
-echo
 echo "- Deleting PVCs..."
 
-oc delete pvc --selector template=fs-web-pvc
 oc delete pvc --selector template=fs-cartridge-pvc
 oc delete pvc --selector template=fs-db-pvc
-oc delete pvc --selector template=fs-graph-pvc
 
 echo
 echo "- Deleting PVs..."

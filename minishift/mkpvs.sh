@@ -10,11 +10,6 @@
 #
 # Then run...
 
-# pv-fs-neo4j-log
-mkdir -p /mnt/sda1/var/lib/minishift/openshift.local.volumes/pv-fs-neo4j-log
-mkdir /mnt/sda1/var/lib/minishift/openshift.local.volumes/pv-fs-neo4j-log/registry
-chmod 777 -R /mnt/sda1/var/lib/minishift/openshift.local.volumes/pv-fs-neo4j-log
-
 # pv-fs-pg-data
 mkdir -p /mnt/sda1/var/lib/minishift/openshift.local.volumes/pv-fs-pg-data
 mkdir /mnt/sda1/var/lib/minishift/openshift.local.volumes/pv-fs-pg-data/registry
@@ -24,16 +19,6 @@ chmod 777 -R /mnt/sda1/var/lib/minishift/openshift.local.volumes/pv-fs-pg-data
 mkdir -p /mnt/sda1/var/lib/minishift/openshift.local.volumes/pv-fs-cartridge-data
 mkdir /mnt/sda1/var/lib/minishift/openshift.local.volumes/pv-fs-cartridge-data/registry
 chmod 777 -R /mnt/sda1/var/lib/minishift/openshift.local.volumes/pv-fs-cartridge-data
-
-# pv-fs-web-log
-mkdir -p /mnt/sda1/var/lib/minishift/openshift.local.volumes/pv-fs-web-log
-mkdir /mnt/sda1/var/lib/minishift/openshift.local.volumes/pv-fs-web-log/registry
-chmod 777 -R /mnt/sda1/var/lib/minishift/openshift.local.volumes/pv-fs-web-log
-
-# pv-fs-web-media
-mkdir -p /mnt/sda1/var/lib/minishift/openshift.local.volumes/pv-fs-web-media
-mkdir /mnt/sda1/var/lib/minishift/openshift.local.volumes/pv-fs-web-media/registry
-chmod 777 -R /mnt/sda1/var/lib/minishift/openshift.local.volumes/pv-fs-web-media
 
 # pv-graph-source-data
 mkdir -p /mnt/sda1/var/lib/minishift/openshift.local.volumes/pv-graph-source-data

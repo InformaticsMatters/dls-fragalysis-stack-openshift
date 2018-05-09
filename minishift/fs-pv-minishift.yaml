@@ -6,8 +6,6 @@
 #
 #   $(MINI_PATH)/pv-fs-cartridge-data
 #   $(MINI_PATH)/pv-fs-pg-data
-#   $(MINI_PATH)/pv-fs-web-log
-#   $(MINI_PATH)/pv-fs-web-media
 #
 # oc process -f fs-pv-minishift.yaml | oc create -f -
 # oc delete pv --selector template=fs-pv-minishift
@@ -36,13 +34,6 @@ parameters:
   value: fragalysis-cicd
 - name: PG_PV_SIZE
   value: 20Gi
-
-- name: WEB_NAMESPACE
-  value: fragalysis-cicd
-- name: WEB_LOG_PV_SIZE
-  value: 2Gi
-- name: WEB_MEDIA_PV_SIZE
-  value: 10Gi
 
 objects:
 
@@ -83,38 +74,3 @@ objects:
     claimRef:
       name: fs-cartridge-data-claim
       namespace: ${CARTRIDGE_NAMESPACE}
-
-# -----------
-# Web Volumes
-# -----------
-
-- kind: PersistentVolume
-  apiVersion: v1
-  metadata:
-    name: fs-web-log
-  spec:
-    capacity:
-      storage: ${WEB_LOG_PV_SIZE}
-    accessModes:
-    - ReadWriteMany
-    hostPath:
-      path: ${MINI_PATH}/pv-fs-web-log/registry
-    claimRef:
-      name: fs-web-log-claim
-      namespace: ${WEB_NAMESPACE}
-
-- kind: PersistentVolume
-  apiVersion: v1
-  metadata:
-    name: fs-web-media
-  spec:
-    capacity:
-      storage: ${WEB_MEDIA_PV_SIZE}
-    accessModes:
-    - ReadWriteMany
-    hostPath:
-      path: ${MINI_PATH}/pv-fs-web-media/registry
-    claimRef:
-      name: fs-web-media-claim
-      namespace: ${WEB_NAMESPACE}
-

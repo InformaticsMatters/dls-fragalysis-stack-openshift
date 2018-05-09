@@ -24,7 +24,7 @@ the original repository. Until then you will need the following images: -
     from the `images/neo4j-data-loader` directory
 
 ## Deployment
-The deployment creates a `fragalysis-stack` project and the following
+The deployment creates a `fragalysis-cicd` project and the following
 OpenShift 3.7 deployments (services): -
 
 -   cartridge
@@ -54,7 +54,7 @@ from the `minishift` directory run: -
     
     $ ./deploy.sh
     
-This should create a `fragalysis-stack` project and deploy the services.
+This should create a `fragalysis-cicd` project and deploy the services.
 
 ## Undeploy (Minishift)
 From the `minishift` directory run: -
@@ -62,7 +62,9 @@ From the `minishift` directory run: -
     $ ./undeploy.sh
 
 >   Note: the `project` and `service account` created by `deploy`
-    is not removed by `undeploy`. This is deliberate to simplify testing.
+    is not removed by `undeploy`. This is deliberate because
+    the Jenkins CI/CD platform is currently installed (separately)
+    into the same project.
     
 ---
 

@@ -1,6 +1,6 @@
 #!groovy​
 
-// The Fragalysis Graph Database Builder.
+// The Fragalysis Stack (Django application) Database Builder.
 
 pipeline {
 
@@ -9,15 +9,15 @@ pipeline {
   environment {
     USER = 'jenkins'
     REGISTRY = 'docker-registry.default:5000'
-    STREAM_IMAGE = "${REGISTRY}/fragalysis-cicd/graph-stream:latest"
-    SOURCE_DATA_ROOT = '/fragalysis/graph_data'
+    STREAM_IMAGE = "${REGISTRY}/fragalysis-cicd/web-stream:latest"
+    SOURCE_DATA_ROOT = '/fragalysis/django_data'
   }
 
   stages {
 
     stage('Inspect') {
       steps {
-        dir('images/graph') {
+        dir('images/web') {
           script {
             DATA_ORIGIN = sh(script: './get_unbuilt_data_directory.py', returnStdout: true).trim()
           }
@@ -30,9 +30,9 @@ pipeline {
         expression { DATA_ORIGIN.length() > 0 }
       }
       steps {
-        dir('images/graph') {
+        dir('images/web') {
           echo "Building ${DATA_ORIGIN}..."
-          sh "cp ${SOURCE_DATA_ROOT}/${DATA_ORIGIN}/* data-loader"
+          sh "cp /source-data/${DATA_ORIGIN}/* data-loader"
           sh "buildah bud --format docker --build-arg DATA_ORIGIN=$DATA_ORIGIN -f Dockerfile -t ${env.STREAM_IMAGE}"
         }
       }

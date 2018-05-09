@@ -34,10 +34,8 @@ oc delete all --selector template=fs-web-media-loader
 echo
 echo "- Deleting PVCs..."
 
-oc delete pvc --selector template=fs-web-pvc
 oc delete pvc --selector template=fs-cartridge-pvc
 oc delete pvc --selector template=fs-db-pvc
-oc delete pvc --selector template=fs-graph-pvc
 
 echo
 echo "- Deleting PVs..."

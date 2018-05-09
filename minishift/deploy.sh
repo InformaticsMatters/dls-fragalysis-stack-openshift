@@ -64,17 +64,11 @@ oc project $PROJECT > /dev/null
 
 oc process -f ../templates/fs-db-pvc.yaml | oc create -f -
 oc process -f ../templates/fs-cartridge-pvc.yaml | oc create -f -
-oc process -f ../templates/fs-web-pvc.yaml | oc create -f -
 
 echo
 echo "+ Creating Secrets..."
 
 oc process -f ../templates/fs-secrets.yaml | oc create -f -
-
-echo
-echo "+ Deploying Loaders..."
-
-oc process -f ../templates/fs-web-media-loader.yaml | oc create -f -
 
 echo
 echo "+ Deploying Application..."

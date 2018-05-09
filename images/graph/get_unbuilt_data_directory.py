@@ -29,7 +29,7 @@ import subprocess
 import sys
 
 # Extract environment variable values (with defaults)
-SOURCE_DATA_ROOT = os.environ.get('SOURCE_DATA_ROOT', '/source-data')
+SOURCE_DATA_ROOT = os.environ.get('SOURCE_DATA_ROOT', '/fragalysis/graph_data')
 FORCE_BUILD = os.environ.get('FORCE_BUILD', 'No')
 
 # The image we'll be manufacturing...
