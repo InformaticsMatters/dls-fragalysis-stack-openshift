@@ -10,8 +10,8 @@ pipeline {
     USER = 'jenkins'
     REGISTRY = 'docker-registry.default:5000'
 
-    GRAPH_IMAGE = 'xchem/graph:latest'
-    GRAPH_STREAM_IMAGE = "${REGISTRY}/fragalysis-stack/graph-stream:latest"
+    GRAPH_IMAGE = 'fragalysis-cicd/graph:latest'
+    GRAPH_STREAM_IMAGE = "${REGISTRY}/fragalysis-cicd/graph:latest"
   }
 
   stages {
