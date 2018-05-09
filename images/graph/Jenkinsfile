@@ -8,6 +8,10 @@ pipeline {
 
   environment {
     GRAPH_IMAGE = 'xchem/graph:latest'
+
+    USER = 'jenkins'
+    REGISTRY = 'docker-registry.default:5000'
+    NAMESPACE = 'squonk-cicd'
   }
 
   stages {
@@ -30,7 +34,14 @@ pipeline {
         dir('images/graph') {
           echo "Building ${DATA_ORIGIN}..."
           sh "cp /source-data/${DATA_ORIGIN}/* data-loader"
-          sh "buildah bud --format docker --build-arg DATA_ORIGIN=$DATA_ORIGIN -f Dockerfile -t ${env.GRAPH_IMAGE}"
+          sh "buildah bud --format docker --build-arg DATA_ORIGIN=$DATA_ORIGIN -f Dockerfile -t ${env.REGISTRY}/fragalysis-stack/graph-stream:latest"
+          // Push (with user login token)...
+          script {
+            TOKEN = sh(script: 'oc whoami -t', returnStdout: true).trim()
+          }
+          sh "podman login --tls-verify=false --username ${env.USER} --password ${TOKEN} ${env.REGISTRY}"
+          sh "buildah push --tls-verify=false ${env.CELL_IMAGE} docker://${env.REGISTRY}/fragalysis-stack/graph-stream:latest"
+          sh "podman logout ${env.REGISTRY}"
         }
       }
     }
