@@ -30,11 +30,13 @@ import sys
 
 # Extract environment variable values (with defaults)
 SOURCE_DATA_ROOT = os.environ.get('SOURCE_DATA_ROOT', '/source-data')
-GRAPH_IMAGE = os.environ.get('GRAPH_IMAGE', 'fragalysis-cicd/graph-stream')
-GRAPH_TAG = os.environ.get('GRAPH_TAG', 'latest')
+
+# The image we'll be manufacturing...
+REGISTRY  = 'docker-registry.default:5000'
+IMAGE = 'fragalysis-cicd/graph-stream'
+TAG = 'latest'
 
 # The Registry
-REGISTRY  = 'docker-registry.default:5000'
 # The key of the label value used to record
 # the source data the image was built with.
 # If the image was build from data from '2018-01-01'
@@ -80,8 +82,7 @@ if not os.path.exists(os.path.join(most_recent_data_path, 'READY')):
 # We may not have an image, it may not have labels
 # or the label may be for an older data directory.
 # We need to build a new image for all these conditions.
-image = '%s/%s:%s' % (REGISTRY, GRAPH_IMAGE, GRAPH_TAG)
-cmd = 'buildah inspect --type image %s' % image
+cmd = 'buildah inspect --type image %s/%s:%s' % (REGISTRY, IMAGE, TAG)
 image_str_info = None
 image_json_info = None
 image_data_origin = None
