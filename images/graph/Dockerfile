@@ -1,7 +1,5 @@
 # The Graph DB Dockerfile.
-
-# Based on Neo4J v3.3.5...
-FROM neo4j@sha256:2066e148f6b1339e31af58f573f1478611e90598e70ff66e9876149404fc6cd7
+FROM neo4j:3.3.5
 
 # Label the image with the origin of the pre-laoded data.
 # Passed to the build process using "--build-arg data_origin=<value>".
