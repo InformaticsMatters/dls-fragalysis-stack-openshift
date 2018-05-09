@@ -41,8 +41,6 @@ objects:
         kind: DockerImage
         name: xchem/web:${WEB_TAG}
       name: latest
-      importPolicy:
-        scheduled: true
 
 - kind: DeploymentConfig
   apiVersion: v1

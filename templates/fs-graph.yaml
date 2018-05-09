@@ -41,8 +41,6 @@ objects:
         kind: DockerImage
         name: xchem/graph:${GRAPH_TAG}
       name: latest
-      importPolicy:
-        scheduled: true
 
 - kind: DeploymentConfig
   apiVersion: v1
