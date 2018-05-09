@@ -87,7 +87,6 @@ image_str_info = None
 image_json_info = None
 image_data_origin = None
 # Protect from failure...
-print(cmd)
 try:
     image_str_info = subprocess.check_output(cmd.split())
 except:
