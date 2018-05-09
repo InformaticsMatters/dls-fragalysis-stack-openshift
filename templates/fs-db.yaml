@@ -18,7 +18,7 @@ labels:
 parameters:
 
 - name: DB_NAMESPACE
-  value: fragalysis-stack
+  value: fragalysis-cicd
 
 - name: PG_TAG
   value: '10.2'

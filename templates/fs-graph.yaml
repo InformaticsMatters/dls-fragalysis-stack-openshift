@@ -17,14 +17,11 @@ labels:
 
 parameters:
 
-- name: BUSYBOX_IMAGE
-  value: busybox:1.28.0
-
 - name: GRAPH_NAMESPACE
-  value: fragalysis-stack
+  value: fragalysis-cicd
 
-- name: NEO4J_TAG
-  value: '3.3.3'
+- name: GRAPH_TAG
+  value: 'latest'
 - name: NEO4J_AUTH
   value: none
 - name: NEO4J_PAGECACHE
@@ -33,6 +30,19 @@ parameters:
   value: '1'
 
 objects:
+
+- kind: ImageStream
+  apiVersion: v1
+  metadata:
+    name: graph-stream
+  spec:
+    tags:
+    - from:
+        kind: DockerImage
+        name: xchem/graph:${GRAPH_TAG}
+      name: latest
+      importPolicy:
+        scheduled: true
 
 - kind: DeploymentConfig
   apiVersion: v1
@@ -50,26 +60,9 @@ objects:
       spec:
         serviceAccountName: diamond
 
-        # Init Containers
-        initContainers:
-        - image: ${BUSYBOX_IMAGE}
-          name: wait-for-data-loader
-          command:
-          - 'sh'
-          - '-c'
-          - 'until [ -f /data-loader/loaded ]; do echo waiting for db; sleep 2; done;'
-          volumeMounts:
-          - name: neo4j-data-loader
-            mountPath: /data-loader
-        volumes:
-        - name: neo4j-data-loader
-          persistentVolumeClaim:
-            claimName: fs-neo4j-data-loader-claim
-
         # Application containers
         containers:
-        - image: neo4j:${NEO4J_TAG}
-          name: graph
+        - name: graph
           readinessProbe:
             initialDelaySeconds: 20
             timeoutSeconds: 1
@@ -91,23 +84,24 @@ objects:
           - containerPort: 7474
           - containerPort: 7687
           volumeMounts:
-          - name: fs-neo4j-data
-            mountPath: /data
-          - name: neo4j-data-loader
-            mountPath: /data-loader
           - name: fs-neo4j-log
             mountPath: /logs
         volumes:
-        - name: fs-neo4j-data
-          persistentVolumeClaim:
-            claimName: fs-neo4j-data-claim
         - name: fs-neo4j-log
           persistentVolumeClaim:
             claimName: fs-neo4j-log-claim
-        - name: neo4j-data-loader
-          persistentVolumeClaim:
-            claimName: fs-neo4j-data-loader-claim
         restartPolicy: Always
+
+    triggers:
+     - type: ConfigChange
+     - type: ImageChange
+       imageChangeParams:
+         automatic: true
+         containerNames:
+         - graph
+         from:
+           kind: ImageStreamTag
+           name: graph-stream:latest
 
 - kind: Service
   apiVersion: v1

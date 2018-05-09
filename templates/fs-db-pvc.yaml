@@ -20,7 +20,7 @@ parameters:
 - name: PG_PV_SIZE
   value: 20Gi
 - name: PG_NAMESPACE
-  value: fragalysis-stack
+  value: fragalysis-cicd
 
 objects:
 

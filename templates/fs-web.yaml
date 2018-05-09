@@ -23,7 +23,7 @@ parameters:
 - name: WEB_HOSTNAME
   value: fragalysis.apps.xchem.diamond.ac.uk
 - name: WEB_NAMESPACE
-  value: fragalysis-stack
+  value: fragalysis-cicd
 - name: WEB_TAG
   value: stable
 - name: WEB_REPLICAS

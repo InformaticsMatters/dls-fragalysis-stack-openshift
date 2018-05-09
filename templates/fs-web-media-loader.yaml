@@ -18,7 +18,7 @@ labels:
 parameters:
 
 - name: MEDIA_NAMESPACE
-  value: fragalysis-stack
+  value: fragalysis-cicd
 - name: MEDIA_TAG
   value: stable
 

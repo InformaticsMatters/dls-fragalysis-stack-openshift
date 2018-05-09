@@ -8,8 +8,9 @@
 # Service account
 SA=diamond
 # User
-USER=diamond
-PASSWORD=diamond
+USER=admin
+PASSWORD=admin
+PROJECT=fragalysis-cicd
 
 # Pickup the OC command suite...
 eval $(minishift oc-env)
@@ -21,13 +22,13 @@ oc login -u system:admin > /dev/null
 oc adm policy add-scc-to-user anyuid -z default > /dev/null
 
 # Create the project?
-oc get projects/fragalysis-stack > /dev/null 2> /dev/null
+oc get projects/$PROJECT > /dev/null 2> /dev/null
 if [ $? -ne 0 ]
 then
     echo
     echo "+ Creating Fragalysis Project..."
     oc login -u $USER -p $PASSWORD > /dev/null
-    oc new-project fragalysis-stack --display-name='Fragalysis Stack' > /dev/null
+    oc new-project $PROJECT --display-name='Fragalysis Stack' > /dev/null
 fi
 
 oc get sa/$SA > /dev/null 2> /dev/null
@@ -39,7 +40,7 @@ then
     echo
     echo "+ Creating Service Account..."
     oc login -u system:admin > /dev/null
-    oc project fragalysis-stack > /dev/null
+    oc project $PROJECT > /dev/null
     oc create sa $SA 2> /dev/null
     # provide cluster-admin role (ability to launch containers)
     oc adm policy add-cluster-role-to-user cluster-admin -z $SA
@@ -59,7 +60,7 @@ echo
 echo "+ Creating PVCs..."
 
 oc login -u $USER -p $PASSWORD > /dev/null
-oc project fragalysis-stack > /dev/null
+oc project $PROJECT > /dev/null
 
 oc process -f ../templates/fs-graph-pvc.yaml | oc create -f -
 oc process -f ../templates/fs-db-pvc.yaml | oc create -f -
@@ -75,7 +76,6 @@ echo
 echo "+ Deploying Loaders..."
 
 oc process -f ../templates/fs-web-media-loader.yaml | oc create -f -
-oc process -f ../templates/fs-graph-data-loader.yaml | oc create -f -
 
 echo
 echo "+ Deploying Application..."

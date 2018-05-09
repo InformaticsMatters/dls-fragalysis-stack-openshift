@@ -18,7 +18,7 @@ labels:
 parameters:
 
 - name: CARTRIDGE_NAMESPACE
-  value: fragalysis-stack
+  value: fragalysis-cicd
 
 - name: RDKIT_TAG
   value: 'Release_2017_09_1'

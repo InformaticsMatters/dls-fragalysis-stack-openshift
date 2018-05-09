@@ -1,8 +1,9 @@
 #!/usr/bin/env bash
 
 # User
-USER=diamond
-PASSWORD=diamond
+USER=admin
+PASSWORD=admin
+PROJECT=fragalysis-cicd
 
 set -e pipefail
 
@@ -10,7 +11,7 @@ set -e pipefail
 eval $(minishift oc-env)
 
 oc login -u $USER -p $PASSWORD > /dev/null
-oc project fragalysis-stack > /dev/null
+oc project $PROJECT > /dev/null
 
 echo
 echo "- Undeploying Application..."
@@ -29,7 +30,6 @@ echo
 echo "- Deleting Loaders..."
 
 oc delete all --selector template=fs-web-media-loader
-oc delete all --selector template=fs-neo4j-data-loader
 
 echo
 echo "- Deleting PVCs..."

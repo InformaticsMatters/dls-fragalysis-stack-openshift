@@ -2,6 +2,10 @@
 
 # The Graph Builder CI/CD Persistent Volume Claims.
 #
+# This claim is used by the buildah Jenkins Slave Agent
+# and the volume is expected to contain original data
+# for the Neo4J database and the Fragalysis Django application.
+#
 # oc process -f fs-graph-source-data-pvc.yaml | oc create -f -
 # oc delete pvc --selector template=fs-graph-source-data-pvc
 
