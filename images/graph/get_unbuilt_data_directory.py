@@ -33,11 +33,11 @@ GRAPH_TAG = os.environ.get('GRAPH_TAG', 'latest')
 # The key for the image labels
 # What you'd typically find in a docker-inspect.
 IMAGE_LABELS_KEY = 'Labels'
-# The prefix of the label value used to record
-# the source data the image was built qwith.
-# If the image was build from data in '2018-01-01' it
-# one of its 'Labels' will be 'Source=2018-01-01'
-SOURCE_LABEL_PREFIX = 'Source='
+# The key of the label value used to record
+# the source data the image was built with.
+# If the image was build from data in '2018-01-01'
+# one of its 'Labels' will be 'data.origin':'2018-01-01'
+DATA_ORIGIN_KEY = 'data.origin'
 
 # Regular expression for each source data directory.
 # These exist in the SOURCE_DATA_ROOT.
@@ -90,13 +90,12 @@ except subprocess.CalledProcessError:
     pass
 if image_str_info:
     image_json_info = json.loads(image_str_info)
-    # There are some labels.
-    # Does one look like a data source label?
+    # If there are some labels
+    # does one look like a data source label?
+    # Labels should appear as a dictionary.
     labels = image_json_info[IMAGE_LABELS_KEY]
-    if labels:
-        for label in labels:
-            if label.startswith(SOURCE_LABEL_PREFIX):
-                current_label = label[len(SOURCE_LABEL_PREFIX):]
+    if labels and DATA_ORIGIN_KEY in labels:
+        current_label = labels[DATA_ORIGIN_KEY]
 
 # If the current label matches the most recent data directory
 # then there's nothing to do -
