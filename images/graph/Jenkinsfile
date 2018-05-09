@@ -11,7 +11,7 @@ pipeline {
     REGISTRY = 'docker-registry.default:5000'
 
     GRAPH_IMAGE = 'xchem/graph:latest'
-    GRAPH_STREAM_IMAGE = "${env.REGISTRY}/fragalysis-stack/graph-stream:latest"
+    GRAPH_STREAM_IMAGE = "${REGISTRY}/fragalysis-stack/graph-stream:latest"
   }
 
   stages {
@@ -34,13 +34,13 @@ pipeline {
         dir('images/graph') {
           echo "Building ${DATA_ORIGIN}..."
           sh "cp /source-data/${DATA_ORIGIN}/* data-loader"
-          sh "buildah bud --format docker --build-arg DATA_ORIGIN=$DATA_ORIGIN -f Dockerfile -t ${GRAPH_IAMGE}"
+          sh "buildah bud --format docker --build-arg DATA_ORIGIN=$DATA_ORIGIN -f Dockerfile -t ${env.GRAPH_IAMGE}"
           // Push (with user login token)...
           script {
             TOKEN = sh(script: 'oc whoami -t', returnStdout: true).trim()
           }
           sh "podman login --tls-verify=false --username ${env.USER} --password ${TOKEN} ${env.REGISTRY}"
-          sh "buildah push --tls-verify=false ${GRAPH_IMAGE} docker://${GRAPH_STREAM_IMAGE}"
+          sh "buildah push --tls-verify=false ${env.GRAPH_IMAGE} docker://${env.GRAPH_STREAM_IMAGE}"
           sh "podman logout ${env.REGISTRY}"
         }
       }
