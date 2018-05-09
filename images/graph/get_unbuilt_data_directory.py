@@ -30,6 +30,7 @@ import sys
 
 # Extract environment variable values (with defaults)
 SOURCE_DATA_ROOT = os.environ.get('SOURCE_DATA_ROOT', '/source-data')
+FORCE_BUILD = os.environ.get('FORCE_BUILD', 'No')
 
 # The image we'll be manufacturing...
 REGISTRY  = 'docker-registry.default:5000'
@@ -103,7 +104,8 @@ if image_str_info:
 # If the current label matches the most recent data directory
 # then there's nothing to do -
 # the latest image is build from the latest data directory.
-if image_data_origin == most_recent_data_dir:
+if FORCE_BUILD.lower() in ['n', 'no'] and \
+        image_data_origin == most_recent_data_dir:
     sys.exit(0)
 
 # There is no image, or its label does not match the
