@@ -122,7 +122,11 @@ if INSIST_ON_READY and not os.path.exists(os.path.join(most_recent_data_path,
 # Next stage build if the latest image does not contain this data
 # (or build regardless if FORCE_BUILD is set).
 
-if not FORCE_BUILD:
+if FORCE_BUILD:
+
+    LOGGER.warning('Forcing build')
+
+else:
 
     # Inspect the current image content and obtain the Labels.
     # One label will be the source data directory used to build the image
@@ -150,16 +154,20 @@ if not FORCE_BUILD:
         if labels and DATA_ORIGIN_KEY in labels:
             image_data_origin = labels[DATA_ORIGIN_KEY]
         else:
-            LOGGER.warning('Image has no "%s" label (%s)',
-                           DATA_ORIGIN_KEY, image)
+            LOGGER.warning('Image (%s) has no "%s" label (%s)',
+                           image, DATA_ORIGIN_KEY, image)
 
     # If the current label matches the most recent data directory
     # then there's nothing to do -
     # the latest image is build from the latest data directory.
     if image_data_origin == most_recent_data_dir:
-        LOGGER.info('The Latest image is built from'
-                    'the most recent data directory (%s)', image_data_origin)
+        LOGGER.info('The Latest image (%s) is built from'
+                    'the most recent data directory (%s)',
+                    image, image_data_origin)
         sys.exit(0)
+
+    LOGGER.warning('Latest image (%s) is built from %s, not %s',
+                   image, image_data_origin, most_recent_data_dir)
 
 # There is no image, or its label does not match the
 # most recent data directory and so we print the
