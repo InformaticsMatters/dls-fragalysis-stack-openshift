@@ -29,25 +29,38 @@ pipeline {
       }
     }
 
-    stage('Build') {
+    stage('Build Backend') {
       when {
         expression { DATA_ORIGIN.length() > 0 }
       }
       steps {
-
         dir('images/web/backend') {
           echo "Building fragalysis-backend..."
           git url: 'https://github.com/xchem/fragalysis-backend.git'
           sh "buildah bud --format docker -f Dockerfile -t abradle/fragalysis_backend:latest"
         }
+      }
+    }
 
+    stage('Build Stack') {
+      when {
+        expression { DATA_ORIGIN.length() > 0 }
+      }
+      steps {
         dir('images/web/stack') {
           echo "Building fragalysis-stack..."
           git url: 'https://github.com/xchem/fragalysis-stack.git'
           sh "buildah bud --format docker -f Dockerfile -t abradle/fragalysis_stack:latest"
           sh "buildah images"
         }
+      }
+    }
 
+    stage('Build OpenShift Image') {
+      when {
+        expression { DATA_ORIGIN.length() > 0 }
+      }
+      steps {
         dir('images/web') {
           echo "Building fragalysis-web..."
 //          sh "cp ${SOURCE_DATA_ROOT}/${DATA_ORIGIN}/* media"
