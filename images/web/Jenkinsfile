@@ -30,9 +30,9 @@ pipeline {
     }
 
     stage('Build') {
-      when {
-        expression { DATA_ORIGIN.length() > 0 }
-      }
+ //     when {
+ //       expression { DATA_ORIGIN.length() > 0 }
+ //     }
       steps {
         dir('images/web/backend') {
           echo "Building fragalysis-backend..."
@@ -43,6 +43,7 @@ pipeline {
           echo "Building fragalysis-stack..."
           git url: 'https://github.com/xchem/fragalysis-stack.git'
           sh "buildah bud --format docker -f Dockerfile -t abradle/fragalysis-stack:latest"
+          sh "buildah images"
         }
 //        dir('images/web') {
 //          echo "Building fragalysis-stack..."
