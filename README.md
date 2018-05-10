@@ -18,10 +18,11 @@ the original repository. Until then you will need the following images: -
     from the working directory of the Informatics Matters fork of the
     `fragalysis-stack` repository
 
--   `docker build . -t informaticsmatters/fragalysis-stack-media-loader:stable`
-    from the `images/web-media-loader` directory
--   `docker build . -t informaticsmatters/neo4j-data-loader:stable`
-    from the `images/neo4j-data-loader` directory
+x
+x -   `docker build . -t informaticsmatters/fragalysis-stack-media-loader:stable`
+x     from the `images/web-media-loader` directory
+x -   `docker build . -t informaticsmatters/neo4j-data-loader:stable`
+x     from the `images/neo4j-data-loader` directory
 
 ## Deployment
 The deployment creates a `fragalysis-cicd` project and the following
