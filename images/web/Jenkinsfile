@@ -1,6 +1,6 @@
 #!groovy​
 
-// The Fragalysis Stack (Django application) Database Builder.
+// The Fragalysis Stack (Django application) Builder.
 
 pipeline {
 
