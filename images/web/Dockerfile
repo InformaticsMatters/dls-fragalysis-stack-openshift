@@ -6,6 +6,6 @@ FROM abradle/fragalysis_stack:latest
 ARG DATA_ORIGIN
 LABEL data.origin=$DATA_ORIGIN
 
-# Copy source data in (to be used to load the DB).
-# This is the content of the data-loader directory.
-COPY media/ /media/
+# Copy source data in.
+# This is the content of the media directory.
+COPY media/ /code/media/
