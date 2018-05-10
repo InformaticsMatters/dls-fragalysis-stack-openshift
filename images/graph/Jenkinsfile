@@ -11,7 +11,6 @@ pipeline {
     REGISTRY = 'docker-registry.default:5000'
     STREAM_IMAGE = "${REGISTRY}/fragalysis-cicd/graph-stream:latest"
     SOURCE_DATA_ROOT = '/fragalysis/graph_data'
-    TARGET_IMAGE = 'fragalysis-cicd/graph-stream'
   }
 
   stages {
