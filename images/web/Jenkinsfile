@@ -35,11 +35,11 @@ pipeline {
       }
       steps {
 
-//        dir('images/web/backend') {
-//          echo "Building fragalysis-backend..."
-//          git url: 'https://github.com/xchem/fragalysis-backend.git'
-//          sh "buildah bud --format docker -f Dockerfile -t abradle/fragalysis-backend:latest"
-//        }
+        dir('images/web/backend') {
+          echo "Building fragalysis-backend..."
+          git url: 'https://github.com/xchem/fragalysis-backend.git'
+          sh "buildah bud --format docker -f Dockerfile -t abradle/fragalysis-backend:latest"
+        }
 
 //        dir('images/web/stack') {
 //          echo "Building fragalysis-stack..."
