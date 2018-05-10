@@ -132,15 +132,15 @@ if not FORCE_BUILD:
     # We may not have an image, it may not have labels
     # or the label may be for an older data directory.
     # We need to build a new image for all these conditions.
-    cmd = 'buildah inspect --type image %s/%s:%s' % \
-          (REGISTRY, TARGET_IMAGE, TAG)
+    image = '%s/%s:%s' % (REGISTRY, TARGET_IMAGE, TAG)
+    cmd = 'buildah inspect --type image %' % image
     image_str_info = None
     image_data_origin = None
     # Protect from failure...
     try:
         image_str_info = subprocess.check_output(cmd.split())
     except:
-        pass
+        LOGGER.warning('Failed inspecting the image (%s)', image)
     if image_str_info:
         image_json_info = json.loads(image_str_info)
         # If there are some labels
@@ -149,6 +149,9 @@ if not FORCE_BUILD:
         labels = image_json_info['OCIv1']['config']['Labels']
         if labels and DATA_ORIGIN_KEY in labels:
             image_data_origin = labels[DATA_ORIGIN_KEY]
+        else:
+            LOGGER.warning('Image has no "%s" label (%s)',
+                           DATA_ORIGIN_KEY, image)
 
     # If the current label matches the most recent data directory
     # then there's nothing to do -
