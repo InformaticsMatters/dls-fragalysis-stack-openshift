@@ -143,15 +143,15 @@ else:
     # We may not have an image, it may not have labels
     # or the label may be for an older data directory.
     # We need to build a new image for all these conditions.
-    image = '%s/%s:%s' % (REGISTRY, TARGET_IMAGE, TAG)
-    cmd = 'buildah inspect --type image %' % image
+    image_spec = '%s/%s:%s' % (REGISTRY, TARGET_IMAGE, TAG)
+    cmd = 'buildah inspect --type image %s' % image_spec
     image_str_info = None
     image_data_origin = None
     # Protect from failure...
     try:
         image_str_info = subprocess.check_output(cmd.split())
     except:
-        LOGGER.warning('Failed inspecting the image (%s)', image)
+        LOGGER.warning('Failed inspecting the image (%s)', image_spec)
     if image_str_info:
         image_json_info = json.loads(image_str_info)
         # If there are some labels
@@ -161,8 +161,8 @@ else:
         if labels and DATA_ORIGIN_KEY in labels:
             image_data_origin = labels[DATA_ORIGIN_KEY]
         else:
-            LOGGER.warning('Image (%s) has no "%s" label (%s)',
-                           image, DATA_ORIGIN_KEY, image)
+            LOGGER.warning('Image (%s) has no "%s" label',
+                           image_spec, DATA_ORIGIN_KEY)
 
     # If the current label matches the most recent data directory
     # then there's nothing to do -
@@ -170,11 +170,11 @@ else:
     if image_data_origin == most_recent_data_dir:
         LOGGER.info('The Latest image (%s) is built from'
                     'the most recent data directory (%s)',
-                    image, image_data_origin)
+                    image_spec, image_data_origin)
         sys.exit(0)
 
     LOGGER.warning('Latest image (%s) is built from %s, not %s',
-                   image, image_data_origin, most_recent_data_dir)
+                   image_spec, image_data_origin, most_recent_data_dir)
 
 # There is no image, or its label does not match the
 # most recent data directory and so we print the
