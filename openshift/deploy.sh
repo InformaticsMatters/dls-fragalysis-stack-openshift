@@ -15,14 +15,12 @@
 #
 #   oc login 130.246.215.45 -u admin
 
-# You will need to define the following environment variables: -
-#
-#   -   OS_ADMIN_PASSWORD
+# You will need to have logged in as the admin user at some point in the past.
 
 echo
 echo "+ Creating PVs..."
 
-oc login -u admin -p $OS_ADMIN_PASSWORD > /dev/null
+oc login -u admin > /dev/null
 oc process -f fs-pv-nfs.yaml | oc create -f -
 
 echo
