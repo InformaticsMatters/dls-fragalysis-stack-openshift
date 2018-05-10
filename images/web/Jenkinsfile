@@ -12,10 +12,12 @@ pipeline {
     STREAM_IMAGE = "${REGISTRY}/fragalysis-cicd/web-stream:latest"
     SOURCE_DATA_ROOT = '/fragalysis/django_data'
     TARGET_IMAGE = 'fragalysis-cicd/web-stream'
+
+    INSIST_ON_READY = 'Yes'
     HOURLY_DATA = 'No'
-    ALWAYS_PUSH = 'No'
+    FORCE_BUILD = 'No'
     BUILD_FROM_SOURCE = 'No'
-    FORCE_BUILD = 'Yes'
+    ALWAYS_PUSH = 'No'
   }
 
   stages {
