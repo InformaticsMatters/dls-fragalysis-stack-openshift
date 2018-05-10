@@ -28,7 +28,7 @@ oc process -f fs-pv-nfs.yaml | oc create -f -
 echo
 echo "+ Creating PVCs..."
 
-oc project fragalysis-stack > /dev/null
+oc project fragalysis-cicd > /dev/null
 
 oc process -f ../templates/fs-db-pvc.yaml | oc create -f -
 oc process -f ../templates/fs-cartridge-pvc.yaml | oc create -f -
