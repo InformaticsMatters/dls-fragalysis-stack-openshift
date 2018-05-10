@@ -15,6 +15,7 @@ pipeline {
     HOURLY_DATA = 'No'
     ALWAYS_PUSH = 'No'
     BUILD_FROM_SOURCE = 'No'
+    FORCE_BUILD = 'Yes'
   }
 
   stages {
