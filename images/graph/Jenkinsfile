@@ -36,7 +36,7 @@ pipeline {
       steps {
         dir('images/graph') {
           echo "Building ${DATA_ORIGIN}..."
-          sh "cp ${SOURCE_DATA_ROOT}/${DATA_ORIGIN}/* data-loader"
+//          sh "cp ${SOURCE_DATA_ROOT}/${DATA_ORIGIN}/* data-loader"
           sh "buildah bud --format docker --build-arg DATA_ORIGIN=$DATA_ORIGIN -f Dockerfile -t ${env.STREAM_IMAGE}"
         }
       }
