@@ -20,7 +20,6 @@ pipeline {
 
     stage('Inspect') {
       steps {
-        sh 'env'
         dir('images') {
           script {
             DATA_ORIGIN = sh(script: './get_unbuilt_data_directory.py', returnStdout: true).trim()
