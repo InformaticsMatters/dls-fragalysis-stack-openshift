@@ -31,11 +31,14 @@ installed so this is a Python 2.7-compliant module.
 
 from __future__ import print_function
 
+import logging
+from logging.config import dictConfig
 import json
 import os
 import re
 import subprocess
 import sys
+import yaml
 
 # Extract environment variable values (with defaults)
 SOURCE_DATA_ROOT = os.environ.get('SOURCE_DATA_ROOT', '/fragalysis/graph_data')
@@ -60,8 +63,28 @@ DATA_DIR_RE = '\d\d\d\d-\d\d-\d\d'
 if HOURLY_BUILD:
     DATA_DIR_RE += 'T\d\d'
 
+# -----------------------------------------------------------------------------
+
+# Load logger configuration (from cwd)...
+# But only if the logging configuration is present!
+LOGGING_CONFIG_FILE = 'logging.yml'
+if os.path.isfile(LOGGING_CONFIG_FILE):
+    LOGGING_CONFIG = None
+    with open(LOGGING_CONFIG_FILE, 'r') as stream:
+        try:
+            LOGGING_CONFIG = yaml.load(stream)
+        except yaml.YAMLError as exc:
+            print(exc)
+    dictConfig(LOGGING_CONFIG)
+# Our logger...
+LOGGER = logging.getLogger(os.path.basename(sys.argv[0])[:-3])
+
+# -----------------------------------------------------------------------------
+
 # Does the root data directory exist?
 if not os.path.isdir(SOURCE_DATA_ROOT):
+    LOGGER.warning('The data root directory does not exist'
+                   ' (%s)', SOURCE_DATA_ROOT)
     sys.exit(0)
 
 # Search the root data directory for sub-directories.
@@ -73,19 +96,26 @@ if DATA_DIRS:
     most_recent_data_dir = DATA_DIRS[-1]
 else:
     # No data directories.
+    LOGGER.warning('No data directories in the root (%s)', SOURCE_DATA_ROOT)
     sys.exit(0)
 # Is the directory name correct?
 if not re.match(DATA_DIR_RE, most_recent_data_dir):
     # Doesn't look right
+    LOGGER.error('Most recent data directory name'
+                 ' is not correct (%s)', most_recent_data_dir)
     sys.exit(0)
 most_recent_data_path = os.path.join(SOURCE_DATA_ROOT, most_recent_data_dir)
 if not os.path.isdir(most_recent_data_path):
     # Most recent does not look like a directory.
+    LOGGER.error('Most recent data directory is not a directory'
+                 ' (%s)', most_recent_data_dir)
     sys.exit(0)
 # Check data is READY?
 if INSIST_ON_READY and not os.path.exists(os.path.join(most_recent_data_path,
                                                        'READY')):
     # Directory exists but it's not 'ready'.
+    LOGGER.info('Most recent data directory is not READY'
+                ' (%s)', most_recent_data_dir)
     sys.exit(0)
 
 # We have source data (that is READY) if we get here!
@@ -124,9 +154,12 @@ if not FORCE_BUILD:
     # then there's nothing to do -
     # the latest image is build from the latest data directory.
     if image_data_origin == most_recent_data_dir:
+        LOGGER.info('The Latest image is built from'
+                    'the most recent data directory (%s)', image_data_origin)
         sys.exit(0)
 
 # There is no image, or its label does not match the
 # most recent data directory and so we print the
 # data directory, which can be used to trigger a build...
+LOGGER.info('Data needs building (%s)', most_recent_data_dir)
 print(most_recent_data_dir)

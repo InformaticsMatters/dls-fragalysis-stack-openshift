@@ -1,0 +1,15 @@
+version: 1
+disable_existing_loggers: false
+formatters:
+  simple:
+    format: '%(asctime)s.%(msecs)03dZ %(levelname)s # %(message)s'
+    datefmt: '%Y-%m-%dT%H:%M:%S'
+handlers:
+  file:
+    class: logging.handlers.RotatingFileHandler
+    formatter: simple
+    filename: get_unbuilt_data_directory.log
+    mode: w
+root:
+  level: INFO
+  handlers: [file]

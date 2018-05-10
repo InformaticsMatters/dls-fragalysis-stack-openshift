@@ -1,28 +1,7 @@
 # An OpenShift deployment of Fragalysis Stack
-An OpenShift deployment of Anthony Bradley's [Fragalysis], consisting of
-object templates at the moment.
-
-## Preliminary builds
-Because the stack data and container images are not available in DockerHub
-we must build some container images locally (using `evel $(minishift docker-env)`
-for example).
-
-Note: This is _work in progress_ and, at the moment, relies on changes
-to the Fragalysis Stack's `web` service that have not been propagated back to
-the original repository. Until then you will need the following images: -
-
--   `docker build . -t informaticsmatters/fragalysis-backend:1.0.0`
-    from the working directory of the Informatics Matters fork of the
-    `fragalysis-backend` repository
--   `docker build . -t informaticsmatters/fragalysis-stack:stable`
-    from the working directory of the Informatics Matters fork of the
-    `fragalysis-stack` repository
-
-x
-x -   `docker build . -t informaticsmatters/fragalysis-stack-media-loader:stable`
-x     from the `images/web-media-loader` directory
-x -   `docker build . -t informaticsmatters/neo4j-data-loader:stable`
-x     from the `images/neo4j-data-loader` directory
+An OpenShift deployment of Anthony Bradley's [Fragalysis], that automatically
+restarts the Graph (Neo4J) and Web (Django) application containers based
+on scheduled CI/CD jobs running in Jenkins.
 
 ## Deployment
 The deployment creates a `fragalysis-cicd` project and the following
@@ -30,8 +9,8 @@ OpenShift 3.7 deployments (services): -
 
 -   cartridge
 -   db
--   graph
--   web
+-   graph (driven by an ImageStream)
+-   web (driven by an ImageStream)
 
 For the demo (minishift) we also create: -
 

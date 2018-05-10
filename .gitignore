@@ -1,9 +1,6 @@
 .DS_Store
 
-# Transient Graph Data
-# (used to build the Neo4J image)
-#images/graph/data-loader/*.csv
-#images/graph/data-loader/*.txt
+images/get_unbuilt_data_directory.log
 
 # Following created by .ignore support plugin (hsz.mobi)
 
