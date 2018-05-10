@@ -92,7 +92,7 @@ if INSIST_ON_READY and not os.path.exists(os.path.join(most_recent_data_path,
 # Next stage build if the latest image does not contain this data
 # (or build regardless if FORCE_BUILD is set).
 
-if FORCE_BUILD:
+if not FORCE_BUILD:
 
     # Inspect the current image content and obtain the Labels.
     # One label will be the source data directory used to build the image
