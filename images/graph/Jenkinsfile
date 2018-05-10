@@ -13,6 +13,7 @@ pipeline {
     SOURCE_DATA_ROOT = '/fragalysis/graph_data'
     TARGET_IMAGE = 'fragalysis-cicd/graph-stream'
     HOURLY_BUILD = 'No'
+    ALWAYS_PUSH = 'No'
   }
 
   stages {
@@ -42,6 +43,9 @@ pipeline {
     }
 
     stage('Push') {
+      when {
+        expression { DATA_ORIGIN.length() > 0 || ALWAYS_PUSH == 'Yes' }
+      }
       steps {
         script {
           TOKEN = sh(script: 'oc whoami -t', returnStdout: true).trim()

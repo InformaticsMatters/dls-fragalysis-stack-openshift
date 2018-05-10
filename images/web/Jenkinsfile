@@ -13,6 +13,7 @@ pipeline {
     SOURCE_DATA_ROOT = '/fragalysis/django_data'
     TARGET_IMAGE = 'fragalysis-cicd/web-stream'
     HOURLY_BUILD = 'No'
+    ALWAYS_PUSH = 'No'
   }
 
   stages {
@@ -43,15 +44,18 @@ pipeline {
           git url: 'https://github.com/xchem/fragalysis-stack.git'
           sh "buildah bud --format docker -f Dockerfile -t abradle/fragalysis-stack:latest"
         }
-        dir('images/web') {
-          echo "Building fragalysis-stack..."
-          sh "cp ${SOURCE_DATA_ROOT}/${DATA_ORIGIN}/* media"
-          sh "buildah bud --format docker --build-arg DATA_ORIGIN=$DATA_ORIGIN -f Dockerfile -t ${STREAM_IMAGE}"
-        }
+//        dir('images/web') {
+//          echo "Building fragalysis-stack..."
+//          sh "cp ${SOURCE_DATA_ROOT}/${DATA_ORIGIN}/* media"
+//          sh "buildah bud --format docker --build-arg DATA_ORIGIN=$DATA_ORIGIN -f Dockerfile -t ${STREAM_IMAGE}"
+//        }
       }
     }
 
     stage('Push') {
+      when {
+        expression { DATA_ORIGIN.length() > 0 || ALWAYS_PUSH == 'Yes' }
+      }
       steps {
         script {
           TOKEN = sh(script: 'oc whoami -t', returnStdout: true).trim()
