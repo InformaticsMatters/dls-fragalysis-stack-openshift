@@ -1,5 +1,5 @@
 # The Fragalysis image (sans-media).
-FROM abradle/fragalysis-stack:latest
+FROM abradle/fragalysis_stack:latest
 
 # Label the image with the origin of the pre-laoded data.
 # Passed to the build process using "--build-arg data_origin=<value>".
