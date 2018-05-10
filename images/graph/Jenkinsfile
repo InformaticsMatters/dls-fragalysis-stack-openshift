@@ -12,7 +12,7 @@ pipeline {
     STREAM_IMAGE = "${REGISTRY}/fragalysis-cicd/graph-stream:latest"
     SOURCE_DATA_ROOT = '/fragalysis/graph_data'
     TARGET_IMAGE = 'fragalysis-cicd/graph-stream'
-    HOURLY_BUILD = 'No'
+    HOURLY_DATA = 'No'
     ALWAYS_PUSH = 'No'
   }
 

@@ -43,9 +43,10 @@ import yaml
 # Extract environment variable values (with defaults)
 SOURCE_DATA_ROOT = os.environ.get('SOURCE_DATA_ROOT', '/fragalysis/graph_data')
 TARGET_IMAGE = os.environ.get('TARGET_IMAGE', 'fragalysis-cicd/graph-stream')
+
 FORCE_BUILD = os.environ.get('FORCE_BUILD', 'No').lower() in ['y', 'yes']
+HOURLY_DATA = os.environ.get('HOURLY_DATA', 'No').lower() in ['y', 'yes']
 INSIST_ON_READY = os.environ.get('INSIST_ON_READY', 'No').lower() in ['y', 'yes']
-HOURLY_BUILD = os.environ.get('HOURLY_BUILD', 'No').lower() in ['y', 'yes']
 
 # The image we'll be manufacturing...
 REGISTRY  = 'docker-registry.default:5000'
@@ -60,7 +61,7 @@ DATA_ORIGIN_KEY = 'data.origin'
 # Regular expression for each source data directory.
 # These exist in the SOURCE_DATA_ROOT.
 DATA_DIR_RE = '\d\d\d\d-\d\d-\d\d'
-if HOURLY_BUILD:
+if HOURLY_DATA:
     DATA_DIR_RE += 'T\d\d'
 
 # -----------------------------------------------------------------------------
@@ -80,6 +81,12 @@ if os.path.isfile(LOGGING_CONFIG_FILE):
 LOGGER = logging.getLogger(os.path.basename(sys.argv[0])[:-3])
 
 # -----------------------------------------------------------------------------
+
+LOGGER.info('SOURCE_DATA_ROOT="%s"', SOURCE_DATA_ROOT)
+LOGGER.info('TARGET_IMAGE="%s"', TARGET_IMAGE)
+LOGGER.info('FORCE_BUILD=%s', FORCE_BUILD)
+LOGGER.info('HOURLY_DATA=%s', HOURLY_DATA)
+LOGGER.info('INSIST_ON_READY=%s', INSIST_ON_READY)
 
 # Does the root data directory exist?
 if not os.path.isdir(SOURCE_DATA_ROOT):
