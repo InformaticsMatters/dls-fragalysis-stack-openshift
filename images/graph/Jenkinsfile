@@ -29,7 +29,7 @@ pipeline {
       }
     }
 
-    stage('Build') {
+    stage('Build Image') {
       when {
         expression { DATA_ORIGIN.length() > 0 }
       }
@@ -42,7 +42,7 @@ pipeline {
       }
     }
 
-    stage('Push') {
+    stage('Push Image') {
       when {
         expression { DATA_ORIGIN.length() > 0 || ALWAYS_PUSH == 'Yes' }
       }
