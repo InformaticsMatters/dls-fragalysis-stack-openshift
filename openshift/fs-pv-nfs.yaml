@@ -24,9 +24,9 @@ labels:
 parameters:
 
 - name: NFS_SERVER
-  value: xchem-infra.novalocal
+  value: bastion.novalocal
 - name: NFS_PATH
-  value: /exports
+  value: /data
 
 - name: CARTRIDGE_NAMESPACE
   value: fragalysis-cicd
