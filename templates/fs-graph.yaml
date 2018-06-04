@@ -61,16 +61,28 @@ objects:
         # Application containers
         containers:
         - name: graph
-          readinessProbe:
-            initialDelaySeconds: 20
-            timeoutSeconds: 1
-            tcpSocket:
-              port: 7474
-          livenessProbe:
-            initialDelaySeconds: 60
-            timeoutSeconds: 1
-            tcpSocket:
-              port: 7474
+# The new graph stack is slow at starting.
+# so the readiness/liveness probes have been disabled for now...
+# Foloowing is more flexible but not tested and not sure the
+# failureThreshold is properly supported.
+#
+#          # Expect the container to be ready in 60 seconds
+#          # but check every 30 seconds (40 times) to allow it
+#          # to take a further 20 minutes to become available.
+#          readinessProbe:
+#            initialDelaySeconds: 60
+#            periodSeconds: 30
+#            timeoutSeconds: 1
+#            failureThreshold: 40
+#            tcpSocket:
+#              port: 7474
+#          livenessProbe:
+#            initialDelaySeconds: 60
+#            periodSeconds: 30
+#            timeoutSeconds: 1
+#            failureThreshold: 40
+#            tcpSocket:
+#              port: 7474
           env:
           - name: NEO4J_AUTH
             value: ${NEO4J_AUTH}
