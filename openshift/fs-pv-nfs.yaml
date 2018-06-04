@@ -7,6 +7,7 @@
 #   ${NFS_PATH}/pv-fs-cartridge-data
 #   ${NFS_PATH}/pv-fs-pg-data
 #   ${NFS_PATH}/pv-fs-jenkins
+#   ${NFS_PATH}/pv-fs-input
 #
 # oc process -f fs-pv-nfs.yaml | oc create -f -
 # oc delete pv --selector template=fs-pv-nfs
@@ -41,6 +42,13 @@ parameters:
   value: pv-fs-postgresql-data
 - name: PG_PV_SIZE
   value: 20Gi
+
+- name: INPUT_NAMESPACE
+  value: fragalysis-cicd
+- name: INPUT_PV_DIR
+  value: fs-input
+- name: INPUT_PV_SIZE
+  value: 50Gi
 
 - name: JENKINS_NAMESPACE
   value: fragalysis-cicd
@@ -113,3 +121,24 @@ objects:
     claimRef:
       name: jenkins
       namespace: ${JENKINS_NAMESPACE}
+
+# -----------------------------
+# Fragalysis Data-Input Volumes
+# -----------------------------
+
+- kind: PersistentVolume
+  apiVersion: v1
+  metadata:
+    name: fs-input
+  spec:
+    capacity:
+      storage: ${INPUT_PV_SIZE}
+    accessModes:
+    - ReadWriteMany
+    persistentVolumeReclaimPolicy: Retain
+    nfs:
+      server: ${NFS_SERVER}
+      path: ${NFS_PATH}/${INPUT_PV_DIR}
+    claimRef:
+      name: fs-input
+      namespace: ${INPUT_NAMESPACE}
