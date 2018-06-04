@@ -17,7 +17,7 @@ pipeline {
     TARGET_IMAGE = 'fragalysis-cicd/web-stream'
     INSIST_ON_READY = 'Yes'
     HOURLY_DATA = 'No'
-    FORCE_BUILD = 'No'
+    FORCE_BUILD = 'Yes'
     BUILD_FROM_SOURCE = 'No'
 
     // Always push the image (whether it's new or not)
