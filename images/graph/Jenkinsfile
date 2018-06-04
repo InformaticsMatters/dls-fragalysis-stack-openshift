@@ -15,7 +15,7 @@ pipeline {
 
     INSIST_ON_READY = 'Yes'
     HOURLY_DATA = 'No'
-    FORCE_BUILD = 'No'
+    FORCE_BUILD = 'Yes'
     BUILD_FROM_SOURCE = 'No'
     ALWAYS_PUSH = 'No'
   }

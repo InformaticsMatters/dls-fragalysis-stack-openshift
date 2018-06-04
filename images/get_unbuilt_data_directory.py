@@ -4,26 +4,36 @@
 
 Prints the relative source data directory name if the most recent
 data directory does not appear to be in the latest corresponding
-Docker image.
+Docker image. As this utility is used to build more than one type of
+image (i.e. graph and web) the precise behaviour is controlled by a number
+of environment variables (described below).
 
-Environment control the operation of this module: -
+Optional environment variables: -
 
 -   SOURCE_DATA_ROOT The root directory for source data
+                     Default: /fragalysis/graph_data
+
 -   TARGET_IMAGE     The name of the image to build
+                     Default: fragalysis-cicd/graph-stream
+
 -   FORCE_BUILD      Set to 'Yes' to always build a new image
--   HOURLY_BUILD     Set to Yes of the source data is expected to change
+                     Default: No
+
+-   HOURLY_DATA      Set to Yes of the source data is expected to change
                      hourly. Data that changes hourly must use directory
-                     namea odf the format YYYY-MM-DDTHH, i.e.
+                     names of the format YYYY-MM-DDTHH, i.e.
                      2018-01-02T10 for data available at 10AM
                      on the 2nd January 2018. If not set the data is expected
                      to change daily, using directory names of the format
                      YYYY-MM-DD.
--   INSIST_ON_READY  Set to 'Yes' to avoid building data unless the file
-                     'READY' is present in the source directory.
+                     Source data is expected in subdirectories of the
+                     SOURCE_DATA_ROOT.
+                     Default: No
 
-Source data is expected in subdirectories of the SOURCE_DATA_ROOT
-and the data is assumed to be 'ready for consumption' if the
-file  'READY' exists in the dub-directory.
+-   INSIST_ON_READY  Set to 'Yes' to avoid building a directory of data
+                     unless the file 'READY' is present in the source
+                     directory.
+                     Default: No
 
 At the time of writing the Agent used in Jenkins has Python 2.7.5
 installed so this is a Python 2.7-compliant module.
