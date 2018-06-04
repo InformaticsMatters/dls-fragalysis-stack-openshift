@@ -7,16 +7,19 @@ pipeline {
   agent { label 'buildah-slave' }
 
   environment {
+    // Registry details
     USER = 'jenkins'
     REGISTRY = 'docker-registry.default:5000'
     STREAM_IMAGE = "${REGISTRY}/fragalysis-cicd/graph-stream:latest"
+
+    // get_unbuilt_data_dirtectory environment...
     SOURCE_DATA_ROOT = '/fragalysis/graph_data'
     TARGET_IMAGE = 'fragalysis-cicd/graph-stream'
-
     INSIST_ON_READY = 'Yes'
     HOURLY_DATA = 'No'
-    FORCE_BUILD = 'Yes'
-    BUILD_FROM_SOURCE = 'No'
+    FORCE_BUILD = 'No'
+
+    // Always push the image (whether it's new or not)
     ALWAYS_PUSH = 'No'
   }
 
