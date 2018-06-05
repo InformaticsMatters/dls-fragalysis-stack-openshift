@@ -27,12 +27,13 @@ pipeline {
 
   stages {
 
-    def causes = currentBuild.rawBuild.getCauses()
-    for (cause in causes) {
-      println "CAUSE = " + cause.class.toString()
-    }
-
     stage('Inspect') {
+
+      def causes = currentBuild.rawBuild.getCauses()
+      for (cause in causes) {
+        println "CAUSE = " + cause.class.toString()
+      }
+
       steps {
         dir('images') {
           script {
