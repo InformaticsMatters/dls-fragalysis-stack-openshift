@@ -29,9 +29,11 @@ pipeline {
 
     stage('Inspect') {
 
-      def causes = currentBuild.rawBuild.getCauses()
-      for (cause in causes) {
-        println "CAUSE = " + cause.class.toString()
+      script {
+        def causes = currentBuild.rawBuild.getCauses()
+        for (cause in causes) {
+          println "CAUSE = " + cause.class.toString()
+        }
       }
 
       steps {
