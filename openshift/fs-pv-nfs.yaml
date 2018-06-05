@@ -30,14 +30,14 @@ parameters:
 - name: CARTRIDGE_NAMESPACE
   value: fragalysis-cicd
 - name: CARTRIDGE_PV_DIR
-  value: pv-fs-rdkit-cartridge-data
+  value: pv-fs-cartridge-data
 - name: CARTRIDGE_PV_SIZE
   value: 20Gi
 
 - name: PG_NAMESPACE
   value: fragalysis-cicd
 - name: PG_PV_DIR
-  value: pv-fs-postgresql-data
+  value: pv-fs-pg-data
 - name: PG_PV_SIZE
   value: 20Gi
 
