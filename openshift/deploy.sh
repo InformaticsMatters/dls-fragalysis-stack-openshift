@@ -1,21 +1,12 @@
 #!/usr/bin/env bash
 
-# Assumes the Application's Persistent Volumes are available
-# and a number of other container images have been deployed
-# (namely the informatics matters images for the data loaders
-# and forked repos).
-#
-# Here I also assumed that the project (fragalysis-stack) also exists.
-#
 # It is assumed that the PVs NFS volumes
 # have been made available to the OpenShift cluster.
 
-# You will need to be logged into the cluster (master).
-# The master is exposed on 130.246.215.45: -
-#
-#   oc login 130.246.215.45 -u admin
-
-# You will need to have logged in as the admin user at some point in the past.
+# You will need to be logged into the cluster (master)
+# with the oc command set available at the command-line
+# and you will need to have logged in as the admin user
+# at some point in the past.
 
 echo
 echo "+ Creating PVs..."
