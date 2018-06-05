@@ -61,25 +61,20 @@ objects:
         # Application containers
         containers:
         - name: graph
-# The new graph stack is slow at starting.
-# so the readiness/liveness probes have been disabled for now...
-# Foloowing is more flexible but not tested and not sure the
-# failureThreshold is properly supported.
-#
-#          # Expect the container to be ready in 60 seconds
-#          # but check every 30 seconds (40 times) to allow it
-#          # to take a further 20 minutes to become available.
-#          readinessProbe:
-#            initialDelaySeconds: 60
-#            periodSeconds: 30
-#            timeoutSeconds: 1
-#            failureThreshold: 40
-#            tcpSocket:
-#              port: 7474
+          # Expect the earliest that the container can be ready is 60 seconds.
+          # But check every 15 seconds and permit 56 failures before
+          # considering the startup to have failed (that's about 15 minutes).
+          readinessProbe:
+            initialDelaySeconds: 60
+            periodSeconds: 15
+            timeoutSeconds: 3
+            failureThreshold: 56
+            tcpSocket:
+              port: 7474
 #          livenessProbe:
 #            initialDelaySeconds: 60
-#            periodSeconds: 30
-#            timeoutSeconds: 1
+#            periodSeconds: 15
+#            timeoutSeconds: 3
 #            failureThreshold: 40
 #            tcpSocket:
 #              port: 7474
