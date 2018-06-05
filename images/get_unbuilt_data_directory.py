@@ -35,6 +35,9 @@ Optional environment variables: -
                      directory.
                      Default: No
 
+-   READY_FILE       Provides the name of the _ready_ file.
+                     Default: READY
+
 At the time of writing the Agent used in Jenkins has Python 2.7.5
 installed so this is a Python 2.7-compliant module.
 """
@@ -57,6 +60,7 @@ TARGET_IMAGE = os.environ.get('TARGET_IMAGE', 'fragalysis-cicd/graph-stream')
 FORCE_BUILD = os.environ.get('FORCE_BUILD', 'No').lower() in ['y', 'yes']
 HOURLY_DATA = os.environ.get('HOURLY_DATA', 'No').lower() in ['y', 'yes']
 INSIST_ON_READY = os.environ.get('INSIST_ON_READY', 'No').lower() in ['y', 'yes']
+READY_FILE = os.environ.get('READY_FILE', 'READY')
 
 # The image we'll be manufacturing...
 REGISTRY  = 'docker-registry.default:5000'
@@ -97,6 +101,7 @@ LOGGER.info('TARGET_IMAGE="%s"', TARGET_IMAGE)
 LOGGER.info('FORCE_BUILD=%s', FORCE_BUILD)
 LOGGER.info('HOURLY_DATA=%s', HOURLY_DATA)
 LOGGER.info('INSIST_ON_READY=%s', INSIST_ON_READY)
+LOGGER.info('READY_FILE=%s', READY_FILE)
 
 # Does the root data directory exist?
 if not os.path.isdir(SOURCE_DATA_ROOT):
@@ -129,7 +134,7 @@ if not os.path.isdir(most_recent_data_path):
     sys.exit(0)
 # Check data is READY?
 if INSIST_ON_READY and not os.path.exists(os.path.join(most_recent_data_path,
-                                                       'READY')):
+                                                       READY_FILE)):
     # Directory exists but it's not 'ready'.
     LOGGER.info('Most recent data directory is not READY'
                 ' (%s)', most_recent_data_dir)

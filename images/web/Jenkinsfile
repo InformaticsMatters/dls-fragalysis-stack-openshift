@@ -16,6 +16,7 @@ pipeline {
     SOURCE_DATA_ROOT = '/fragalysis/django_data'
     TARGET_IMAGE = 'fragalysis-cicd/web-stream'
     INSIST_ON_READY = 'Yes'
+    READY_FILE = 'READY'
     HOURLY_DATA = 'Yes'
     FORCE_BUILD = 'No'
     BUILD_FROM_SOURCE = 'No'

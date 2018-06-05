@@ -16,6 +16,7 @@ pipeline {
     SOURCE_DATA_ROOT = '/fragalysis/graph_data'
     TARGET_IMAGE = 'fragalysis-cicd/graph-stream'
     INSIST_ON_READY = 'Yes'
+    READY_FILE = 'READY'
     HOURLY_DATA = 'No'
     FORCE_BUILD = 'No'
 
