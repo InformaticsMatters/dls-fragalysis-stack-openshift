@@ -1,11 +1,8 @@
 #!/usr/bin/env bash
 
-# User
-OS_DEVELOPER_USER=developer
-
 set -e pipefail
 
-oc login -u $OS_DEVELOPER_USER -p $OS_DEVELOPER_PASSWORD > /dev/null
+oc login -u admin > /dev/null
 oc project fragalysis-stack > /dev/null
 
 echo
@@ -30,5 +27,4 @@ oc delete pvc --selector template=fs-db-pvc
 echo
 echo "- Deleting PVs..."
 
-oc login -u admin -p $OS_ADMIN_PASSWORD > /dev/null
 oc delete pv --selector template=fs-pv-nfs
