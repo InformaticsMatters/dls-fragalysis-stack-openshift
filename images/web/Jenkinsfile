@@ -28,7 +28,6 @@ pipeline {
   stages {
 
     stage('Inspect') {
-
       steps {
         dir('images') {
           script {
