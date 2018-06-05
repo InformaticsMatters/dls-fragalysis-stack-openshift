@@ -29,7 +29,7 @@ parameters:
 - name: INPUT_NAMESPACE
   value: fragalysis-cicd
 - name: INPUT_PV_DIR
-  value: pv-fs-input
+  value: fs-input
 - name: INPUT_PV_SIZE
   value: 500Gi
 
