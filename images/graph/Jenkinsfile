@@ -18,7 +18,7 @@ pipeline {
     INSIST_ON_READY = 'Yes'
     READY_FILE = 'READY'
     HOURLY_DATA = 'No'
-    FORCE_BUILD = 'No'
+    FORCE_BUILD = 'Yes'
 
     // Always push the image (whether it's new or not)
     ALWAYS_PUSH = 'No'
