@@ -53,5 +53,5 @@ objects:
       server: ${NFS_SERVER}
       path: ${NFS_PATH}/${INPUT_PV_DIR}
     claimRef:
-      name: fs-input
+      name: fs-input-claim
       namespace: ${INPUT_NAMESPACE}
