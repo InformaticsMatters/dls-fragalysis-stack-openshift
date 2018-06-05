@@ -33,7 +33,7 @@ pipeline {
           script {
             def causes = currentBuild.rawBuild.getCauses()
             for (cause in causes) {
-              println "CAUSE = " + cause.class.toString()
+              println "CAUSE = " + cause
             }
             DATA_ORIGIN = sh(script: './get_unbuilt_data_directory.py', returnStdout: true).trim()
           }
