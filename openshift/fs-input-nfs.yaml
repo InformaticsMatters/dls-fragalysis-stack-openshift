@@ -1,0 +1,57 @@
+---
+
+# The Application's Data Input Persistent Volumes (NFS).
+#
+# This expects these volumes:
+#
+#   ${NFS_PATH}/pv-fs-input
+#
+# oc process -f fs-input-nfs.yaml | oc create -f -
+# oc delete pv --selector template=fs-input-nfs
+
+kind: Template
+apiVersion: v1
+metadata:
+  name: fs-input-nfs
+  annotations:
+    description: Fragalysis Stack's Persistent Volumes (using NFS)
+    tags: fragalysis,input
+labels:
+  template: fs-input-nfs
+
+parameters:
+
+- name: NFS_SERVER
+  value: bastion.novalocal
+- name: NFS_PATH
+  value: /data
+
+- name: INPUT_NAMESPACE
+  value: fragalysis-cicd
+- name: INPUT_PV_DIR
+  value: fs-input
+- name: INPUT_PV_SIZE
+  value: 500Gi
+
+objects:
+
+# -----------------------------
+# Fragalysis Data-Input Volumes
+# -----------------------------
+
+- kind: PersistentVolume
+  apiVersion: v1
+  metadata:
+    name: fs-input
+  spec:
+    capacity:
+      storage: ${INPUT_PV_SIZE}
+    accessModes:
+    - ReadWriteMany
+    persistentVolumeReclaimPolicy: Retain
+    nfs:
+      server: ${NFS_SERVER}
+      path: ${NFS_PATH}/${INPUT_PV_DIR}
+    claimRef:
+      name: fs-input
+      namespace: ${INPUT_NAMESPACE}
