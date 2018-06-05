@@ -6,18 +6,18 @@
 #
 #   ${NFS_PATH}/pv-fs-input
 #
-# oc process -f fs-input-nfs.yaml | oc create -f -
-# oc delete pv --selector template=fs-input-nfs
+# oc process -f fs-input-pv-nfs.yaml | oc create -f -
+# oc delete pv --selector template=fs-input-pv-nfs
 
 kind: Template
 apiVersion: v1
 metadata:
-  name: fs-input-nfs
+  name: fs-input-pv-nfs
   annotations:
     description: Fragalysis Stack's Persistent Volumes (using NFS)
     tags: fragalysis,input
 labels:
-  template: fs-input-nfs
+  template: fs-input-pv-nfs
 
 parameters:
 
@@ -29,7 +29,7 @@ parameters:
 - name: INPUT_NAMESPACE
   value: fragalysis-cicd
 - name: INPUT_PV_DIR
-  value: fs-input
+  value: pv-fs-input
 - name: INPUT_PV_SIZE
   value: 500Gi
 

@@ -15,6 +15,7 @@ cd ${EXPORT_DIR}
 mkdir pv-fs-pg-data
 mkdir pv-fs-cartridge-data
 mkdir pv-fs-jenkins
+mkdir pv-fs-input
 chmod -R 777 pv-*
 chown -R nfsnobody.nfsnobody pv-*
 
@@ -26,6 +27,7 @@ cd /etc/exports.d/
 echo ${EXPORT_DIR}/pv-fs-pg-data *(rw,sync,no_subtree_check,no_root_squash) >> frag.exports
 echo ${EXPORT_DIR}/pv-fs-cartridge-data *(rw,sync,no_subtree_check,no_root_squash) >> frag.exports
 echo ${EXPORT_DIR}/pv-fs-jenkins *(rw,root_squash) >> frag.exports
+echo ${EXPORT_DIR}/pv-fs-input *(rw,root_squash) >> frag.exports
 
 systemctl restart nfs-server
 showmount -e localhost
