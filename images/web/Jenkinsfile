@@ -27,6 +27,11 @@ pipeline {
 
   stages {
 
+    def causes = currentBuild.rawBuild.getCauses()
+    for (cause in causes) {
+      println "CAUSE = " + cause.class.toString()
+    }
+
     stage('Inspect') {
       steps {
         dir('images') {
