@@ -143,15 +143,15 @@ objects:
     selector:
       name: web
 
-- kind: Route
-  apiVersion: v1
-  metadata:
-    name: web
-  spec:
-    host: ${WEB_HOSTNAME}
-    to:
-      kind: Service
-      name: web
-    tls:
-      termination: edge
-      insecureEdgeTerminationPolicy: Redirect
+#- kind: Route
+#  apiVersion: v1
+#  metadata:
+#    name: web
+#  spec:
+#    host: ${WEB_HOSTNAME}
+#    to:
+#      kind: Service
+#      name: web
+#    tls:
+#      termination: edge
+#      insecureEdgeTerminationPolicy: Redirect
