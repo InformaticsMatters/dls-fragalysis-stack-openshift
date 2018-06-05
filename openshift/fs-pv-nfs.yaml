@@ -48,7 +48,7 @@ parameters:
 - name: INPUT_PV_DIR
   value: fs-input
 - name: INPUT_PV_SIZE
-  value: 50Gi
+  value: 500Gi
 
 - name: JENKINS_NAMESPACE
   value: fragalysis-cicd

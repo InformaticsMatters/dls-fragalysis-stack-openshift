@@ -1,0 +1,37 @@
+---
+
+# The Input Data's Persistent Volume Claims.
+#
+# oc process -f fs-input-pvc.yaml | oc create -f -
+# oc delete pvc --selector template=fs-input-pvc
+
+kind: Template
+apiVersion: v1
+metadata:
+  name: fs-input-pvc
+  annotations:
+    description: Fragalysis Stack's Input Data Persistent Volume Claims
+    tags: fragalysis,input
+labels:
+  template: fs-input-pvc
+
+parameters:
+
+- name: INPUT_PV_SIZE
+  value: 500Gi
+- name: INPUT_NAMESPACE
+  value: fragalysis-cicd
+
+objects:
+
+- apiVersion: v1
+  kind: PersistentVolumeClaim
+  metadata:
+    name: fs-input-claim
+    namespace: ${INPUT_NAMESPACE}
+  spec:
+    accessModes:
+    - ReadWriteMany
+    resources:
+      requests:
+        storage: ${INPUT_PV_SIZE}
