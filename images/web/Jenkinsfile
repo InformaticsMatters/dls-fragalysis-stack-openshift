@@ -31,6 +31,10 @@ pipeline {
       steps {
         dir('images') {
           script {
+            def causes = currentBuild.rawBuild.getCauses()
+            for (cause in causes) {
+              println "CAUSE = " + cause.class.toString()
+            }
             DATA_ORIGIN = sh(script: './get_unbuilt_data_directory.py', returnStdout: true).trim()
           }
           sh 'cat get_unbuilt_data_directory.log'
