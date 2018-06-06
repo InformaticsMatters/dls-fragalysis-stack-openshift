@@ -30,7 +30,7 @@
             <triggers>
                 <jenkins.triggers.ReverseBuildTrigger>
                     <spec></spec>
-                    <upstreamProjects>Fragalysis Buildah (Master)</upstreamProjects>
+                    <upstreamProjects>Fragalysis (Master)</upstreamProjects>
                     <threshold>
                         <name>SUCCESS</name>
                         <ordinal>0</ordinal>
