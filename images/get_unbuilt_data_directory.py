@@ -62,9 +62,6 @@ HOURLY_DATA = os.environ.get('HOURLY_DATA', 'No').lower() in ['y', 'yes']
 INSIST_ON_READY = os.environ.get('INSIST_ON_READY', 'No').lower() in ['y', 'yes']
 READY_FILE = os.environ.get('READY_FILE', 'READY')
 
-BUILD_CAUSE = os.environ.get('BUILD_CAUSE', '-')
-BUILD_CAUSE_TIMERTRIGGER = os.environ.get('BUILD_CAUSE_TIMERTRIGGER', '-')
-
 # The image we'll be manufacturing...
 REGISTRY  = 'docker-registry.default:5000'
 TAG = 'latest'
@@ -105,8 +102,6 @@ LOGGER.info('FORCE_BUILD=%s', FORCE_BUILD)
 LOGGER.info('HOURLY_DATA=%s', HOURLY_DATA)
 LOGGER.info('INSIST_ON_READY=%s', INSIST_ON_READY)
 LOGGER.info('READY_FILE=%s', READY_FILE)
-LOGGER.info('BUILD_CAUSE=%s', BUILD_CAUSE)
-LOGGER.info('BUILD_CAUSE_TIMERTRIGGER=%s', BUILD_CAUSE_TIMERTRIGGER)
 
 # Does the root data directory exist?
 if not os.path.isdir(SOURCE_DATA_ROOT):

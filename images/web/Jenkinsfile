@@ -18,8 +18,7 @@ pipeline {
     INSIST_ON_READY = 'Yes'
     READY_FILE = 'READY'
     HOURLY_DATA = 'Yes'
-    FORCE_BUILD = 'No'
-    BUILD_FROM_SOURCE = 'No'
+    FORCE_BUILD = 'Yes'
 
     // Always push the image (whether it's new or not)
     ALWAYS_PUSH = 'No'
@@ -35,33 +34,6 @@ pipeline {
             DATA_ORIGIN = sh(script: './get_unbuilt_data_directory.py', returnStdout: true).trim()
           }
           sh 'cat get_unbuilt_data_directory.log'
-        }
-      }
-    }
-
-    stage('Build Backend') {
-      when {
-        expression { BUILD_FROM_SOURCE == 'Yes' && DATA_ORIGIN.length() > 0 }
-      }
-      steps {
-        dir('images/web/backend') {
-          echo "Building fragalysis-backend..."
-          git url: 'https://github.com/xchem/fragalysis-backend.git'
-          sh "buildah bud --format docker -f Dockerfile -t abradle/fragalysis_backend:latest"
-        }
-      }
-    }
-
-    stage('Build Stack') {
-      when {
-        expression { BUILD_FROM_SOURCE == 'Yes' && DATA_ORIGIN.length() > 0 }
-      }
-      steps {
-        dir('images/web/stack') {
-          echo "Building fragalysis-stack..."
-          git url: 'https://github.com/xchem/fragalysis-stack.git'
-          sh "buildah bud --format docker -f Dockerfile -t abradle/fragalysis_stack:latest"
-          sh "buildah images"
         }
       }
     }
