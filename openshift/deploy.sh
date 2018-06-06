@@ -11,7 +11,7 @@
 echo
 echo "+ Creating PVs..."
 
-oc login -u admin > /dev/null
+#oc login -u admin > /dev/null
 oc process -f fs-pv-nfs.yaml | oc create -f -
 
 echo
