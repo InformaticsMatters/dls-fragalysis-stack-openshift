@@ -1,5 +1,6 @@
 # The Fragalysis image (sans-media).
-FROM fragalysis-cicd/fragalysis-stack:latest
+ARG FROM_PROJECT=xchem
+FROM ${FROM_PROJECT}/fragalysis-stack:latest
 
 # Label the image with the origin of the pre-laoded data.
 # Passed to the build process using "--build-arg data_origin=<value>".

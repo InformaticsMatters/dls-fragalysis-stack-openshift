@@ -10,7 +10,8 @@ pipeline {
     // Registry details
     USER = 'jenkins'
     REGISTRY = 'docker-registry.default:5000'
-    STREAM_IMAGE = "${REGISTRY}/fragalysis-cicd/web-stream:latest"
+    PEGISTRY_PROJECT = "${REGISTRY}/fragalysis-cicd"
+    STREAM_IMAGE = "${REGISTRY_PROJECT}/web-stream:latest"
 
     // get_unbuilt_data_dirtectory environment...
     SOURCE_DATA_ROOT = '/fragalysis/django_data'
@@ -46,7 +47,7 @@ pipeline {
         dir('images/web') {
           echo "Building fragalysis-web..."
           sh "cp -r ${SOURCE_DATA_ROOT}/${DATA_ORIGIN}/* media"
-          sh "buildah bud --format docker --build-arg DATA_ORIGIN=$DATA_ORIGIN -f Dockerfile -t ${STREAM_IMAGE}"
+          sh "buildah bud --format docker --build-arg DATA_ORIGIN=$DATA_ORIGIN --build-arg FROM_PROJECT=${REGISTRY_PROJECT} -f Dockerfile -t ${STREAM_IMAGE}"
         }
       }
     }
