@@ -6,7 +6,7 @@
 #
 #   ${NFS_PATH}/pv-fs-jenkins
 #
-# oc process -f fs-jenkins-nfs.yaml | oc create -f -
+# oc process -f fs-jenkins-pv-nfs.yaml | oc create -f -
 # oc delete pv --selector template=fs-jenkins-nfs
 
 kind: Template

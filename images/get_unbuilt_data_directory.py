@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 
+# pylint: disable=invalid-name
+
 """get_unbuilt_data_directory.py
 
 Prints the relative source data directory name if the most recent
@@ -63,7 +65,7 @@ INSIST_ON_READY = os.environ.get('INSIST_ON_READY', 'No').lower() in ['y', 'yes'
 READY_FILE = os.environ.get('READY_FILE', 'READY')
 
 # The image we'll be manufacturing...
-REGISTRY  = 'docker-registry.default:5000'
+REGISTRY = 'docker-registry.default:5000'
 TAG = 'latest'
 
 # The key of the label value used to record
@@ -74,9 +76,9 @@ DATA_ORIGIN_KEY = 'data.origin'
 
 # Regular expression for each source data directory.
 # These exist in the SOURCE_DATA_ROOT.
-DATA_DIR_RE = '\d\d\d\d-\d\d-\d\d'
+DATA_DIR_RE = r'\d\d\d\d-\d\d-\d\d'
 if HOURLY_DATA:
-    DATA_DIR_RE += 'T\d\d'
+    DATA_DIR_RE += r'T\d\d'
 
 # -----------------------------------------------------------------------------
 
@@ -163,6 +165,7 @@ else:
     image_str_info = None
     image_data_origin = None
     # Protect from failure...
+    # pylint: disable=bare-except
     try:
         image_str_info = subprocess.check_output(cmd.split())
     except:
