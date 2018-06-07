@@ -19,6 +19,8 @@ parameters:
 
 - name: CARTRIDGE_NAMESPACE
   value: fragalysis-cicd
+- name: CARTRIDGE_NODE_SIZE_SELECTOR
+  value: 'small'
 
 - name: RDKIT_TAG
   value: 'Release_2017_09_1'
@@ -43,6 +45,8 @@ objects:
         labels:
           name: cartridge
       spec:
+        nodeSelector:
+          size: ${CARTRIDGE_NODE_SIZE_SELECTOR}
         serviceAccountName: diamond
 
         # Application containers

@@ -28,6 +28,8 @@ parameters:
   value: 'latest'
 - name: WEB_REPLICAS
   value: '1'
+- name: WEB_NODE_SIZE_SELECTOR
+  value: 'small'
 
 objects:
 
@@ -56,6 +58,8 @@ objects:
         labels:
           name: web
       spec:
+        nodeSelector:
+          size: ${WEB_NODE_SIZE_SELECTOR}
         serviceAccountName: diamond
 
         # Init Containers
@@ -153,6 +157,8 @@ objects:
 - kind: Route
   apiVersion: v1
   metadata:
+    annotations:
+      kubernetes.io/tls-acme: 'false'
     name: web
   spec:
     host: ${WEB_HOSTNAME}

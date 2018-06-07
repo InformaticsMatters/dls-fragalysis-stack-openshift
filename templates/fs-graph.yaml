@@ -28,6 +28,8 @@ parameters:
   value: 4G
 - name: NEO4J_REPLICAS
   value: '1'
+- name: NEO4J_NODE_SIZE_SELECTOR
+  value: 'big'
 
 objects:
 
@@ -56,6 +58,8 @@ objects:
         labels:
           name: graph
       spec:
+        nodeSelector:
+          size: ${NEO4J_NODE_SIZE_SELECTOR}
         serviceAccountName: diamond
 
         # Application containers

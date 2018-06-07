@@ -24,6 +24,8 @@ parameters:
   value: '10.2'
 - name: PG_REPLICAS
   value: '1'
+- name: PG_NODE_SIZE_SELECTOR
+  value: 'small'
 
 objects:
 
@@ -41,6 +43,8 @@ objects:
         labels:
           name: db
       spec:
+        nodeSelector:
+          size: ${PG_NODE_SIZE_SELECTOR}
         serviceAccountName: diamond
 
         # Application containers
