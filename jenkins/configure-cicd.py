@@ -37,8 +37,6 @@ SERVERS = {'test': 'jenkins-fragalysis-cicd.apps.xchem.diamond.ac.uk',
            'prod': 'jenkins-fragalysis-cicd-prod.apps.xchem.diamond.ac.uk'}
 # Our job configuration directory
 JOB_DIR = 'jobs'
-#  A list of recognised views...
-VIEW_NAMES = ['Fragalysis (Master)']
 
 # Load logger configuration (from cwd)...
 # But only if the logging configuration is present!
@@ -86,9 +84,11 @@ class JenkinsServer:
             if self.server_version:
                 LOGGER.info('Connected (Jenkins v%s)', self.server_version)
 
-    def get_jobs(self):
+    def get_jobs(self, server):
         """Gets all the job configurations from the 'known' views.
 
+        :param server: The server (test or prod)
+        :type server: ``String``
         :return: Number of jobs retrieved
         :rtype: ``int``
         """
@@ -98,26 +98,31 @@ class JenkinsServer:
 
         LOGGER.info('Getting job configurations...')
 
+        sub_dir = '%s-%s2' % (JOB_DIR, server)
+        if not os.path.exists(sub_dir):
+            os.mkdir(sub_dir)
+
         num_got = 0
-        for view_name in VIEW_NAMES:
-            jobs = self.server.get_jobs(view_name=view_name)
-            for job in jobs:
-                job_name = job['name']
-                LOGGER.info('Getting "%s" from "%s" view...', job_name, view_name)
-                job_config = self.server.get_job_config(job_name)
-                job_config_filename = os.path.join(JOB_DIR, job_name + '.xml')
-                job_file = open(job_config_filename, 'w')
-                job_file.write(job_config)
-                job_file.close()
-                num_got += 1
+        jobs = self.server.get_jobs()
+        for job in jobs:
+            job_name = job['name']
+            LOGGER.info('Getting "%s"...', job_name)
+            job_config = self.server.get_job_config(job_name)
+            job_config_filename = os.path.join(sub_dir, job_name + '.xml')
+            job_file = open(job_config_filename, 'w')
+            job_file.write(job_config)
+            job_file.close()
+            num_got += 1
 
         LOGGER.info('Got (%s)', num_got)
 
         return num_got
 
-    def set_jobs(self, force=False):
+    def set_jobs(self, server, force=False):
         """Sets up the fragalysis CI/CD Jobs.
 
+        :param server: The server (test or prod)
+        :type server: ``String``
         :param force: True to force the action
         :type force: ``Boolean``
         :return: True on success
@@ -131,18 +136,23 @@ class JenkinsServer:
 
         # Iterate through all the jobs...
         num_set = 0
-        job_files = glob.glob('jobs/*.xml')
+        job_files = glob.glob('%s-%s/*.xml' % (JOB_DIR, server))
         for job_file in job_files:
             # The name of the job is the basename of the file.
             # and we simply load the file contents (into a string)
             # to create the job (if the job does not exist)
             job_name = os.path.basename(job_file)[:-4]
-            if self.server.job_exists(job_name) and not force:
+            job_exists = self.server.job_exists(job_name)
+            if job_exists and not force:
                 LOGGER.info('Skipping "%s" (Already Present)', job_name)
             else:
-                LOGGER.info('Creating "%s"...', job_name)
                 job_definition = open(job_file, 'r').read()
-#                self.server.create_job(job_name, job_definition)
+                if job_exists:
+                    LOGGER.info('Reconfiguring "%s"...', job_name)
+                    self.server.reconfig_job(job_name, job_definition)
+                else:
+                    LOGGER.info('Creating "%s"...', job_name)
+                    self.server.create_job(job_name, job_definition)
                 num_set += 1
 
         LOGGER.info('Set (%s)', num_set)
@@ -174,6 +184,6 @@ if __name__ == '__main__':
     J_URL = 'https://%s:%s@%s' % (J_USER, J_TOKEN, J_URL)
     JS = JenkinsServer(J_URL)
     if ARGS.action == 'get':
-        JS.get_jobs()
+        JS.get_jobs(ARGS.server)
     elif ARGS.action == 'set':
-        JS.set_jobs(force= ARGS.force)
+        JS.set_jobs(ARGS.server, force=ARGS.force)
