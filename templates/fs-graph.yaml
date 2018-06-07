@@ -25,7 +25,11 @@ parameters:
 - name: NEO4J_AUTH
   value: none
 - name: NEO4J_PAGECACHE
-  value: 4G
+  value: 10000M
+- name: NEO4J_dbms_memory_heap_initial__size
+  value: 12000M
+- name: NEO4J_dbms_memory_heap_max__size
+  value: 12000M
 - name: NEO4J_REPLICAS
   value: '1'
 - name: NEO4J_NODE_SIZE_SELECTOR
