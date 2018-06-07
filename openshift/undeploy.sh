@@ -2,7 +2,7 @@
 
 set -e pipefail
 
-oc login -u admin > /dev/null
+#oc login -u admin > /dev/null
 oc project fragalysis-cicd > /dev/null
 
 echo
