@@ -17,5 +17,8 @@ if [ ! -d /data/databases/${DATABASE} ]; then
     echo "(load_neo4j.sh) Imported."
     touch loaded
     cd /var/lib/neo4j
-
+    /var/lib/neo4j/bin/neo4j-shell -p ${DATABASE} -f << EOF
+    CREATE INDEX ON :F2(smiles);
+    schema await
+    EOF
 fi
