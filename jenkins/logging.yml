@@ -1,0 +1,19 @@
+version: 1
+disable_existing_loggers: false
+formatters:
+  simple:
+    format: '%(asctime)s.%(msecs)03dZ %(levelname)s # %(message)s'
+    datefmt: '%Y-%m-%dT%H:%M:%S'
+handlers:
+  file:
+    class: logging.handlers.RotatingFileHandler
+    formatter: simple
+    filename: configure-cicd.log
+    mode: w
+  console:
+    class: logging.StreamHandler
+    formatter: simple
+    stream: ext://sys.stdout
+root:
+  level: INFO
+  handlers: [console]

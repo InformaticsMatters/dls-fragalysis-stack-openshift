@@ -8,15 +8,21 @@
       <parameters/>
     </org.jenkinsci.plugins.pipeline.modeldefinition.actions.DeclarativeJobPropertyTrackerAction>
   </actions>
-  <description>The Graph Image is a daily build of the custom Neo4J Graph service image.</description>
+  <description>The Web Image is the production container image for the Django application. At the moment it is based on the fragalysis-stack container image but adds the media data.</description>
   <keepDependencies>false</keepDependencies>
   <properties>
     <org.jenkinsci.plugins.workflow.job.properties.PipelineTriggersJobProperty>
       <triggers>
-        <hudson.triggers.TimerTrigger>
-          <spec># Just after 2AM (UTC)
-1 2 * * *</spec>
-        </hudson.triggers.TimerTrigger>
+        <jenkins.triggers.ReverseBuildTrigger>
+          <spec></spec>
+          <upstreamProjects>Fragalysis Stack</upstreamProjects>
+          <threshold>
+            <name>SUCCESS</name>
+            <ordinal>0</ordinal>
+            <color>BLUE</color>
+            <completeBuild>true</completeBuild>
+          </threshold>
+        </jenkins.triggers.ReverseBuildTrigger>
       </triggers>
     </org.jenkinsci.plugins.workflow.job.properties.PipelineTriggersJobProperty>
     <io.fabric8.jenkins.openshiftsync.BuildConfigProjectProperty plugin="openshift-sync@1.0.19">
@@ -27,8 +33,8 @@
     </io.fabric8.jenkins.openshiftsync.BuildConfigProjectProperty>
     <jenkins.model.BuildDiscarderProperty>
       <strategy class="hudson.tasks.LogRotator">
-        <daysToKeep>28</daysToKeep>
-        <numToKeep>28</numToKeep>
+        <daysToKeep>5</daysToKeep>
+        <numToKeep>25</numToKeep>
         <artifactDaysToKeep>-1</artifactDaysToKeep>
         <artifactNumToKeep>-1</artifactNumToKeep>
       </strategy>
@@ -52,10 +58,10 @@
       <submoduleCfg class="list"/>
       <extensions/>
     </scm>
-    <scriptPath>images/graph/Jenkinsfile</scriptPath>
+    <scriptPath>images/web/Jenkinsfile</scriptPath>
     <lightweight>true</lightweight>
   </definition>
   <triggers/>
-  <authToken>wD4DsKq28ucT9q</authToken>
+  <authToken>gw9087UAQyMTPj</authToken>
   <disabled>false</disabled>
 </flow-definition>

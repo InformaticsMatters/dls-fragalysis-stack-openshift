@@ -1,6 +1,7 @@
 .DS_Store
 
 images/get_unbuilt_data_directory.log
+jenkins/configure-cicd.log
 
 # Following created by .ignore support plugin (hsz.mobi)
 

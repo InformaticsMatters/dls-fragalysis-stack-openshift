@@ -8,15 +8,16 @@
       <parameters/>
     </org.jenkinsci.plugins.pipeline.modeldefinition.actions.DeclarativeJobPropertyTrackerAction>
   </actions>
-  <description>The Graph Image is a daily build of the custom Neo4J Graph service image.</description>
+  <description></description>
   <keepDependencies>false</keepDependencies>
   <properties>
     <org.jenkinsci.plugins.workflow.job.properties.PipelineTriggersJobProperty>
       <triggers>
-        <hudson.triggers.TimerTrigger>
-          <spec># Just after 2AM (UTC)
-1 2 * * *</spec>
-        </hudson.triggers.TimerTrigger>
+        <hudson.triggers.SCMTrigger>
+          <spec># Every 3 minutes
+H/3 * * * *</spec>
+          <ignorePostCommitHooks>false</ignorePostCommitHooks>
+        </hudson.triggers.SCMTrigger>
       </triggers>
     </org.jenkinsci.plugins.workflow.job.properties.PipelineTriggersJobProperty>
     <io.fabric8.jenkins.openshiftsync.BuildConfigProjectProperty plugin="openshift-sync@1.0.19">
@@ -27,8 +28,8 @@
     </io.fabric8.jenkins.openshiftsync.BuildConfigProjectProperty>
     <jenkins.model.BuildDiscarderProperty>
       <strategy class="hudson.tasks.LogRotator">
-        <daysToKeep>28</daysToKeep>
-        <numToKeep>28</numToKeep>
+        <daysToKeep>5</daysToKeep>
+        <numToKeep>25</numToKeep>
         <artifactDaysToKeep>-1</artifactDaysToKeep>
         <artifactNumToKeep>-1</artifactNumToKeep>
       </strategy>
@@ -40,7 +41,7 @@
       <configVersion>2</configVersion>
       <userRemoteConfigs>
         <hudson.plugins.git.UserRemoteConfig>
-          <url>https://github.com/InformaticsMatters/dls-fragalysis-stack-openshift.git</url>
+          <url>https://github.com/xchem/fragalysis.git</url>
         </hudson.plugins.git.UserRemoteConfig>
       </userRemoteConfigs>
       <branches>
@@ -52,10 +53,9 @@
       <submoduleCfg class="list"/>
       <extensions/>
     </scm>
-    <scriptPath>images/graph/Jenkinsfile</scriptPath>
+    <scriptPath>Jenkinsfile</scriptPath>
     <lightweight>true</lightweight>
   </definition>
   <triggers/>
-  <authToken>wD4DsKq28ucT9q</authToken>
   <disabled>false</disabled>
 </flow-definition>
