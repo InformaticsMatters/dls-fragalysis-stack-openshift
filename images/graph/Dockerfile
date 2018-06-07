@@ -12,3 +12,4 @@ LABEL data.origin=${DATA_ORIGIN}
 # Copy source data in (to be used to load the DB).
 # This is the content of the data-loader directory.
 COPY data-loader/ /data-loader/
+RUN chmod 755 /data-loader/index_neo4j.sh
