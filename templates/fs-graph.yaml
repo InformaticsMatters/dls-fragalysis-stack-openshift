@@ -25,7 +25,7 @@ parameters:
 - name: NEO4J_AUTH
   value: none
 - name: NEO4J_PAGECACHE
-  value: 4G
+  value: 20G
 - name: NEO4J_REPLICAS
   value: '1'
 - name: NEO4J_NODE_SIZE_SELECTOR
