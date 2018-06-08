@@ -2,7 +2,7 @@
 # Sadly ARG-before-FROM is not supported by buildah 1.0
 # otherwise I'd do this...
 #ARG FROM_NAMESPACE=docker-registry.default:5000/fragalysis-cicd
-FROM docker-registry.default:5000/fragalysis-cicd/fragalysis-stack:latest
+FROM docker-registry.default.svc:5000/fragalysis-cicd/fragalysis-stack:latest
 
 # Label the image with the origin of the pre-laoded data.
 # Passed to the build process using "--build-arg DATA_ORIGIN=<value>".
