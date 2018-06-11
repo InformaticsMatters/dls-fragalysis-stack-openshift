@@ -88,7 +88,11 @@ objects:
           - name: NEO4J_AUTH
             value: ${NEO4J_AUTH}
           - name: NEO4J_dbms_memory_pagecache_size
-            value: ${NEO4J_PAGECACHE}
+            value: 6000M
+          - name: NEO4J_dbms_memory_heap_initial__size
+            value: 5000M
+          - name: NEO4J_dbms_memory_heap_max__size
+            value: 5000M
           - name: EXTENSION_SCRIPT
             value: /data-loader/load_neo4j.sh
           ports:

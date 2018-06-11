@@ -5,7 +5,6 @@ DATABASE=graph.db
 # If the destination database exists (graph.db)
 # then leave...
 if [ ! -d /data/databases/${DATABASE} ]; then
-
     echo "(load_neo4j.sh) Importing into '${DATABASE}'..."
     cd /data-loader
     /var/lib/neo4j/bin/neo4j-admin import \
@@ -17,5 +16,6 @@ if [ ! -d /data/databases/${DATABASE} ]; then
     echo "(load_neo4j.sh) Imported."
     touch loaded
     cd /var/lib/neo4j
-
+    /data-loader/index_neo4j.sh
+    echo "(load_neo4j.sh) Imported."
 fi
