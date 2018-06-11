@@ -47,11 +47,17 @@ pipeline {
         expression { DATA_ORIGIN.length() > 0 }
       }
       steps {
+        script {
+          TOKEN = sh(script: 'oc whoami -t', returnStdout: true).trim()
+        }
+        sh "podman login --tls-verify=false --username ${env.REGISTRY_USER} --password ${TOKEN} ${env.REGISTRY}"
         dir('images/web') {
           echo "Building fragalysis-web..."
           sh "cp -r ${SOURCE_DATA_ROOT}/${DATA_ORIGIN}/* media"
           sh "buildah bud --format docker --build-arg DATA_ORIGIN=${DATA_ORIGIN} -f Dockerfile -t ${STREAM_IMAGE}"
+          sh "podman logout ${env.REGISTRY}"
         }
+
       }
     }
 
