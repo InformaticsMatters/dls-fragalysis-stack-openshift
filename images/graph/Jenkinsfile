@@ -46,6 +46,9 @@ pipeline {
         expression { DATA_ORIGIN.length() > 0 }
       }
       steps {
+        script {
+          TOKEN = sh(script: 'oc whoami -t', returnStdout: true).trim()
+        }
         dir('images/graph') {
           echo "Building ${DATA_ORIGIN}..."
           sh "cp ${SOURCE_DATA_ROOT}/${DATA_ORIGIN}/* data-loader"
