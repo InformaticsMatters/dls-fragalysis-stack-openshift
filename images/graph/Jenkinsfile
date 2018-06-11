@@ -8,7 +8,7 @@ pipeline {
 
   environment {
     // Registry details
-    USER = 'jenkins'
+    REGISTRIY_USER = 'jenkins'
     REGISTRY = 'docker-registry.default:5000'
     STREAM_IMAGE = "${REGISTRY}/fragalysis-cicd/graph-stream:latest"
 
@@ -34,9 +34,7 @@ pipeline {
           // - Logout of the registry
           // - Print the script log.
           script {
-            env.USER_TOKEN = sh(script: 'oc whoami -t', returnStdout: true).trim()
-          }
-          script {
+            env.REGISTRY_USER_TOKEN = sh(script: 'oc whoami -t', returnStdout: true).trim()
             DATA_ORIGIN = sh(script: './get_unbuilt_data_directory.py', returnStdout: true).trim()
           }
           sh 'env'
@@ -66,7 +64,7 @@ pipeline {
         script {
           TOKEN = sh(script: 'oc whoami -t', returnStdout: true).trim()
         }
-        sh "podman login --tls-verify=false --username ${env.USER} --password ${TOKEN} ${env.REGISTRY}"
+        sh "podman login --tls-verify=false --username ${env.REGISTRY_USER} --password ${TOKEN} ${env.REGISTRY}"
         sh "buildah push --tls-verify=false ${env.STREAM_IMAGE} docker://${env.STREAM_IMAGE}"
         sh "podman logout ${env.REGISTRY}"
         sh "buildah images"

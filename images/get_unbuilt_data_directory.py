@@ -64,6 +64,9 @@ HOURLY_DATA = os.environ.get('HOURLY_DATA', 'No').lower() in ['y', 'yes']
 INSIST_ON_READY = os.environ.get('INSIST_ON_READY', 'No').lower() in ['y', 'yes']
 READY_FILE = os.environ.get('READY_FILE', 'READY')
 
+REGISTRY_USER = os.environ.get('REGISTRY_USER', 'jenkins')
+REGISTRY_USER_TOKEN = os.environ.get('REGISTRY_USER_TOKEN', 'jenkins')
+
 # The image we'll be manufacturing...
 REGISTRY = 'docker-registry.default:5000'
 TAG = 'latest'
@@ -104,6 +107,7 @@ LOGGER.info('FORCE_BUILD=%s', FORCE_BUILD)
 LOGGER.info('HOURLY_DATA=%s', HOURLY_DATA)
 LOGGER.info('INSIST_ON_READY=%s', INSIST_ON_READY)
 LOGGER.info('READY_FILE=%s', READY_FILE)
+LOGGER.info('REGISTRY_USER=%s', REGISTRY_USER)
 
 # Does the root data directory exist?
 if not os.path.isdir(SOURCE_DATA_ROOT):
@@ -161,7 +165,10 @@ else:
     # or the label may be for an older data directory.
     # We need to build a new image for all these conditions.
     image_spec = '%s/%s:%s' % (REGISTRY, TARGET_IMAGE, TAG)
-    cmd = 'buildah inspect --type image %s' % image_spec
+    cmd = 'skopeo inspect --tls-verify=false'
+    cmd += ' --creds=%s:%s docker://%s' % (REGISTRY_USER,
+                                           REGISTRY_USER_TOKEN,
+                                           image_spec)
     image_str_info = None
     image_data_origin = None
     # Protect from failure...
@@ -175,7 +182,7 @@ else:
         # If there are some labels
         # does one look like a data source label?
         # Labels should appear as a dictionary.
-        labels = image_json_info['OCIv1']['config']['Labels']
+        labels = image_json_info['Labels']
         if labels and DATA_ORIGIN_KEY in labels:
             image_data_origin = labels[DATA_ORIGIN_KEY]
         else:
