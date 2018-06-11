@@ -29,7 +29,6 @@ pipeline {
     stage('Inspect') {
       steps {
         dir('images') {
-          sh 'env'
           // - Login to the registry (to allow image inspections)
           // - Run the get_unbuilt_data_directory script
           // - Logout of the registry
@@ -40,6 +39,7 @@ pipeline {
           script {
             DATA_ORIGIN = sh(script: './get_unbuilt_data_directory.py', returnStdout: true).trim()
           }
+          sh 'env'
           sh 'cat get_unbuilt_data_directory.log'
         }
       }
