@@ -152,7 +152,7 @@ if INSIST_ON_READY and not os.path.exists(os.path.join(most_recent_data_path,
 
 if FORCE_BUILD:
 
-    LOGGER.warning('Forcing build')
+    LOGGER.warning('Forcing build (image inspection will not take place)')
 
 else:
 
