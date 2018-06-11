@@ -193,10 +193,10 @@ else:
     # the latest image is build from the latest data directory.
     if image_str_info and image_data_origin == most_recent_data_dir:
         LOGGER.info('The latest image is already built from'
-                    ' the most recent data (%s)', image_data_origin)
+                    ' the most recent data ("%s")', image_data_origin)
         sys.exit(0)
     elif image_str_info:
-        LOGGER.info('Latest image (%s) is built from %s, not %s',
+        LOGGER.info('Latest image (%s) is built from "%s", not "%s"',
                     image_spec, image_data_origin, most_recent_data_dir)
     else:
         LOGGER.info('There does not appear to be a latest image')
@@ -205,5 +205,5 @@ else:
 # There is no image, or its label does not match the
 # most recent data directory and so we print the
 # data directory, which can be used to trigger a build...
-LOGGER.info('A new image needs building (%s)', most_recent_data_dir)
+LOGGER.info('A new image needs building for "%s"', most_recent_data_dir)
 print(most_recent_data_dir)
