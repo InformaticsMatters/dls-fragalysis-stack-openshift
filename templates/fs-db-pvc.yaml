@@ -17,10 +17,12 @@ labels:
 
 parameters:
 
-- name: PG_PV_SIZE
-  value: 20Gi
 - name: PG_NAMESPACE
   value: fragalysis-cicd
+- name: PG_PV_SIZE
+  value: 20Gi
+- name: PG_PV_BACKUP_SIZE
+  value: 100Gi
 
 objects:
 
@@ -35,3 +37,15 @@ objects:
     resources:
       requests:
         storage: ${PG_PV_SIZE}
+
+- apiVersion: v1
+  kind: PersistentVolumeClaim
+  metadata:
+    name: fs-pg-data-backup-claim
+    namespace: ${PG_NAMESPACE}
+  spec:
+    accessModes:
+    - ReadWriteMany
+    resources:
+      requests:
+        storage: ${PG_PV_BACKUP_SIZE}
