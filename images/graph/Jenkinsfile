@@ -35,13 +35,11 @@ pipeline {
           // - Logout of the registry
           // - Print the script log.
           script {
-            TOKEN = sh(script: 'oc whoami -t', returnStdout: true).trim()
+            env.USER_TOKEN = sh(script: 'oc whoami -t', returnStdout: true).trim()
           }
-          sh "podman login --tls-verify=false --username ${env.USER} --password ${TOKEN} ${env.REGISTRY}"
           script {
             DATA_ORIGIN = sh(script: './get_unbuilt_data_directory.py', returnStdout: true).trim()
           }
-          sh "podman logout ${env.REGISTRY}"
           sh 'cat get_unbuilt_data_directory.log'
         }
       }
