@@ -65,7 +65,7 @@ INSIST_ON_READY = os.environ.get('INSIST_ON_READY', 'No').lower() in ['y', 'yes'
 READY_FILE = os.environ.get('READY_FILE', 'READY')
 
 REGISTRY_USER = os.environ.get('REGISTRY_USER', 'jenkins')
-REGISTRY_USER_TOKEN = os.environ.get('REGISTRY_USER_TOKEN', 'jenkins')
+REGISTRY_USER_TOKEN = os.environ.get('REGISTRY_USER_TOKEN', 'jenkins123')
 
 # The image we'll be manufacturing...
 REGISTRY = 'docker-registry.default:5000'

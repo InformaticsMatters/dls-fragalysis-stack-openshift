@@ -8,7 +8,7 @@ pipeline {
 
   environment {
     // Registry details
-    USER = 'jenkins'
+    REGISTRY_USER = 'jenkins'
     REGISTRY = 'docker-registry.default:5000'
     REGISTRY_PRJ = "${REGISTRY}/fragalysis-cicd"
     STREAM_IMAGE = "${REGISTRY_PRJ}/web-stream:latest"
@@ -30,8 +30,11 @@ pipeline {
     stage('Inspect') {
       steps {
         dir('images') {
-          sh 'env'
+          // - Get the registry user API token (used in the Python module)
+          // - Run the get_unbuilt_data_directory  module
+          // - Print the script log.
           script {
+            env.REGISTRY_USER_TOKEN = sh(script: 'oc whoami -t', returnStdout: true).trim()
             DATA_ORIGIN = sh(script: './get_unbuilt_data_directory.py', returnStdout: true).trim()
           }
           sh 'cat get_unbuilt_data_directory.log'
@@ -60,7 +63,7 @@ pipeline {
         script {
           TOKEN = sh(script: 'oc whoami -t', returnStdout: true).trim()
         }
-        sh "podman login --tls-verify=false --username ${env.USER} --password ${TOKEN} ${env.REGISTRY}"
+        sh "podman login --tls-verify=false --username ${env.REGISTRY_USER} --password ${TOKEN} ${env.REGISTRY}"
         sh "buildah push --tls-verify=false ${env.STREAM_IMAGE} docker://${env.STREAM_IMAGE}"
         sh "podman logout ${env.REGISTRY}"
         sh "buildah images"

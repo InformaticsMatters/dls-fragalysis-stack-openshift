@@ -29,9 +29,8 @@ pipeline {
     stage('Inspect') {
       steps {
         dir('images') {
-          // - Login to the registry (to allow image inspections)
-          // - Run the get_unbuilt_data_directory script
-          // - Logout of the registry
+          // - Get the registry user API token (used in the Python module)
+          // - Run the get_unbuilt_data_directory  module
           // - Print the script log.
           script {
             env.REGISTRY_USER_TOKEN = sh(script: 'oc whoami -t', returnStdout: true).trim()
