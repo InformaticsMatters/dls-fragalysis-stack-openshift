@@ -74,16 +74,18 @@ pipeline {
       }
     }
 
-    // Post-job actions.
-    // Actions can relaste to 'always', 'unstable', 'success', 'failure',
-    // and 'changed' job states.
-    post {
-      success {
-        slackSend channel: '#graph-builds', color: 'good', message: 'Successful Graph build'
-      }
-      failure {
-        slackSend channel: '#graph-builds', color: 'danger', message: 'Failed Graph build'
-      }
+  }
+
+  // Post-job actions.
+  // See https://jenkins.io/doc/book/pipeline/syntax/#post
+  post {
+
+    success {
+      slackSend channel: '#graph-builds', color: 'good', message: 'Successful Graph build'
+    }
+
+    failure {
+      slackSend channel: '#graph-builds', color: 'danger', message: 'Failed Graph build'
     }
 
   }
