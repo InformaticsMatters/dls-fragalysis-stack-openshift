@@ -29,13 +29,13 @@ parameters:
 - name: BACKUP_NODE_SIZE_SELECTOR
   value: 'small'
 - name: BACKUP_COUNT
-  value: '2'
+  value: '6'
 - name: BACKUP_PGHOST
   value: 'db.fragalysis-cicd.svc'
 - name: BACKUP_PGUSER
   value: 'postgres'
 - name: BACKUP_SCHEDULE
-  value: '45 * * * *'
+  value: '5 * * * *'
 
 objects:
 
