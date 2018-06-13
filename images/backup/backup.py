@@ -31,9 +31,6 @@ print('# BACKUP_COUNT = %s' % BACKUP_COUNT)
 print('# PGHOST = %s' % PGHOST)
 print('# PGUSER = %s' % PGUSER)
 
-BACKUP_START_TIME = datetime.now().isoformat()
-print('--] Starting backup [%s]' % BACKUP_START_TIME)
-
 # Backup...
 #
 # 1. Check that the backup directory exists
@@ -61,10 +58,14 @@ if os.path.exists(BACKUP):
 #####
 # 3 #
 #####
-print('--] Running backup command...')
+BACKUP_START_TIME = datetime.now()
+print('--] Starting backup... [%s]' % BACKUP_START_TIME)
 print("$", BACKUP_CMD)
 COMPLETED_PROCESS = subprocess.run(BACKUP_CMD, shell=True)
-print('--] Backup finished [%s]' % datetime.now().isoformat())
+BACKUP_END_TIME = datetime.now()
+print('--] Backup finished [%s]' % BACKUP_END_TIME)
+ELAPSED_TIME = BACKUP_END_TIME - BACKUP_START_TIME
+print('--] Elapsed time %s' % ELAPSED_TIME)
 
 # Check subprocess exit code
 if COMPLETED_PROCESS.returncode != 0:
@@ -85,7 +86,7 @@ print('--] Backup size {:,} bytes'.format(os.path.getsize(BACKUP)))
 # 4 #
 #####
 COPY_BACKUP_FILE = '%s-%s-%s' % (BACKUP_FILE_PREFIX,
-                                 BACKUP_START_TIME,
+                                 BACKUP_START_TIME.isoformat(),
                                  BACKUP_LIVE_FILE)
 print('--] Copying %s to %s...' % (BACKUP_LIVE_FILE, COPY_BACKUP_FILE))
 BACKUP_TO = os.path.join(BACKUP_DIR, COPY_BACKUP_FILE)
