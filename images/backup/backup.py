@@ -79,6 +79,8 @@ if not os.path.isfile(BACKUP):
     print('--] No backup file was generated. Leaving.')
     sys.exit(0)
 
+print('--] Backup size {:,} bytes'.format(os.path.getsize(BACKUP)))
+
 #####
 # 4 #
 #####
