@@ -33,6 +33,8 @@ pipeline {
           // - Get the registry user API token (used in the Python module)
           // - Run the get_unbuilt_data_directory  module
           // - Print the script log.
+          slackSend channel: '#web-builds',
+                    message: 'Web image job kicking off...'
           script {
             env.REGISTRY_USER_TOKEN = sh(script: 'oc whoami -t', returnStdout: true).trim()
             DATA_ORIGIN = sh(script: './get_unbuilt_data_directory.py', returnStdout: true).trim()
@@ -72,6 +74,24 @@ pipeline {
         sh "podman logout ${env.REGISTRY}"
         sh "buildah images"
       }
+    }
+
+  }
+
+  // Post-job actions.
+  // See https://jenkins.io/doc/book/pipeline/syntax/#post
+  post {
+
+    success {
+      slackSend channel: '#web-builds',
+                color: 'good',
+                message: 'Successful'
+    }
+
+    failure {
+      slackSend channel: '#web-builds',
+                color: 'danger',
+                message: 'The build has failed!'
     }
 
   }
