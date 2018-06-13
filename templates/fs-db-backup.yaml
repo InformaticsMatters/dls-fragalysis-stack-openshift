@@ -29,7 +29,7 @@ parameters:
 - name: BACKUP_PGHOST
   value: 'db.fragalysis-cicd'
 - name: BACKUP_SCHEDULE
-  value: '8,18,28,38,48,58 * * * *'
+  value: '*/4 * * * *'
 
 objects:
 
