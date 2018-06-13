@@ -20,6 +20,10 @@ parameters:
 - name: BACKUP_NAMESPACE
   value: fragalysis-cicd
 
+- name: BACKUP_REGISTRY
+  value: 'docker-registry-default.apps.xchem.diamond.ac.uk'
+- name: BACKUP_IMAGE
+  value: 'fragalysis-cicd/backup-stream'
 - name: BACKUP_TAG
   value: 'latest'
 - name: BACKUP_NODE_SIZE_SELECTOR
@@ -66,7 +70,7 @@ objects:
 
             # Application containers
             containers:
-            - image: docker-registry.default:5000/fragalysis-cicd/backup-stream:${BACKUP_TAG}
+            - image: ${BACKUP_REGISTRY}/${BACKUP_IMAGE}:${BACKUP_TAG}
               name: backup
               volumeMounts:
               - name: fs-pg-data-backup
