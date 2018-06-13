@@ -67,7 +67,7 @@ objects:
             # Application containers
             containers:
             - name: backup
-              image: xchem/backup:${BACKUP_TAG}
+              image: fragalysis-cicd/backup-stream:${BACKUP_TAG}
               volumeMounts:
               - name: fs-pg-data-backup
                 mountPath: /backup
