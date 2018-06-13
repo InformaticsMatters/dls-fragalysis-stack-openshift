@@ -63,7 +63,7 @@ print('--] Backup complete [%s]' % datetime.now().isoformat())
 COPY_BACKUP_FILE = '%s-%s-%s' % (BACKUP_FILE_PREFIX,
                                  BACKUP_START_TIME,
                                  BACKUP_LIVE_FILE)
-print('--] Copying to %s...' % COPY_BACKUP_FILE)
+print('--] Copying %s to %s...' % (BACKUP_LIVE_FILE, COPY_BACKUP_FILE))
 BACKUP_TO = os.path.join(BACKUP_DIR, COPY_BACKUP_FILE)
 shutil.copyfile(BACKUP, BACKUP_TO)
 os.remove(BACKUP)

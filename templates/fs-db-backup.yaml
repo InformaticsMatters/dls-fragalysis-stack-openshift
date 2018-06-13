@@ -21,7 +21,7 @@ parameters:
   value: fragalysis-cicd
 
 - name: BACKUP_REGISTRY
-  value: 'docker-registry.default:5000'
+  value: 'docker-registry.default.svc:5000'
 - name: BACKUP_IMAGE
   value: 'fragalysis-cicd/backup-stream'
 - name: BACKUP_TAG
