@@ -81,11 +81,6 @@ if not os.path.isfile(BACKUP):
 
 print('--] Backup size {:,} bytes'.format(os.path.getsize(BACKUP)))
 
-fp = open(BACKUP, 'r')
-content = fp.read()
-fp.close()
-print(content)
-
 #####
 # 4 #
 #####
