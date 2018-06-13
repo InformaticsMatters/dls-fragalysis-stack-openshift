@@ -32,7 +32,7 @@ pipeline {
           // - Get the registry user API token (used in the Python module)
           // - Run the get_unbuilt_data_directory  module
           // - Print the script log.
-          slackSend "Inspecting Graph"
+          slackSend channel: '#graph-builds', message: 'Graph job kicking off...'
           script {
             env.REGISTRY_USER_TOKEN = sh(script: 'oc whoami -t', returnStdout: true).trim()
             DATA_ORIGIN = sh(script: './get_unbuilt_data_directory.py', returnStdout: true).trim()
@@ -52,7 +52,7 @@ pipeline {
         }
         dir('images/graph') {
           echo "Building Graph ${DATA_ORIGIN}..."
-          slackSend "Building ${DATA_ORIGIN}"
+          slackSend channel: '#graph-builds', message: "Building graph for ${DATA_ORIGIN} data..."
           sh "cp ${SOURCE_DATA_ROOT}/${DATA_ORIGIN}/* data-loader"
           sh "buildah bud --tls-verify=false --creds=${env.REGISTRY_USER}:${TOKEN} --format docker --build-arg DATA_ORIGIN=${DATA_ORIGIN} -f Dockerfile -t ${env.STREAM_IMAGE} ."
         }
@@ -71,6 +71,18 @@ pipeline {
         sh "buildah push --tls-verify=false ${env.STREAM_IMAGE} docker://${env.STREAM_IMAGE}"
         sh "podman logout ${env.REGISTRY}"
         sh "buildah images"
+      }
+    }
+
+    // Post-job actions.
+    // Actions can relaste to 'always', 'unstable', 'success', 'failure',
+    // and 'changed' job states.
+    post {
+      success {
+        slackSend channel: '#graph-builds', color: 'good', message: 'Successful Graph build'
+      }
+      failure {
+        slackSend channel: '#graph-builds', color: 'danger', message: 'Failed Graph build'
       }
     }
 
