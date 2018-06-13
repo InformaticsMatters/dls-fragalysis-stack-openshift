@@ -51,7 +51,7 @@ objects:
     namespace: ${BACKUP_NAMESPACE}
   spec:
     schedule: ${BACKUP_SCHEDULE}
-    startingDeadlineSeconds: 1200
+    startingDeadlineSeconds: 600
     concurrencyPolicy: Forbid
     jobTemplate:
       spec:
@@ -66,8 +66,8 @@ objects:
 
             # Application containers
             containers:
-            - name: backup
-              image: fragalysis-cicd/backup-stream:${BACKUP_TAG}
+            - image: fragalysis-cicd/backup-stream:${BACKUP_TAG}
+              name: backup
               volumeMounts:
               - name: fs-pg-data-backup
                 mountPath: /backup
@@ -81,14 +81,3 @@ objects:
               persistentVolumeClaim:
                 claimName: fs-pg-data-backup-claim
             restartPolicy: Never
-
-        triggers:
-         - type: ConfigChange
-         - type: ImageChange
-           imageChangeParams:
-             automatic: true
-             containerNames:
-             - backup
-             from:
-               kind: ImageStreamTag
-               name: backup-stream:latest
