@@ -1,0 +1,84 @@
+---
+
+# The Fragalysis Stack's database backup deployment.
+#
+# oc process -f fs-db-backup.yaml | oc create -f -
+# oc delete all --selector template=fs-db-backup
+
+kind: Template
+apiVersion: v1
+metadata:
+  name: fs-db-backup
+  annotations:
+    description: Fragalysis Stack's Postgres Backup and Restore
+    tags: fragalysis,db,postgres
+labels:
+  template: fs-db-backup
+
+parameters:
+
+- name: BACKUP_NAMESPACE
+  value: fragalysis-cicd
+
+- name: BACKUP_TAG
+  value: 'latest'
+- name: BACKUP_NODE_SIZE_SELECTOR
+  value: 'small'
+- name: BACKUP_SCHEDULE
+  value: '8,18,28,38,48,58 * * * *'
+
+objects:
+
+- kind: ImageStream
+  apiVersion: v1
+  metadata:
+    name: backup-stream
+  spec:
+    tags:
+    - from:
+        kind: DockerImage
+        name: xchem/backup:${BACKUP_TAG}
+      name: latest
+
+- kind: CronJob
+  apiVersion: batch/v1beta1
+  metadata:
+    name: backup
+    namespace: ${BACKUP_NAMESPACE}
+  spec:
+    schedule: ${BACKUP_SCHEDULE}
+    startingDeadlineSeconds: 1200
+    concurrencyPolicy: Forbid
+    jobTemplate:
+      spec:
+        template:
+          metadata:
+            labels:
+              name: backup
+          spec:
+            nodeSelector:
+              size: ${BACKUP_NODE_SIZE_SELECTOR}
+            serviceAccountName: diamond
+
+            # Application containers
+            containers:
+            - name: backup
+              volumeMounts:
+              - name: fs-pg-data-backup
+                mountPath: /backup
+            volumes:
+            - name: fs-pg-data-backup
+              persistentVolumeClaim:
+                claimName: fs-pg-data-backup-claim
+            restartPolicy: Never
+
+        triggers:
+         - type: ConfigChange
+         - type: ImageChange
+           imageChangeParams:
+             automatic: true
+             containerNames:
+             - backup
+             from:
+               kind: ImageStreamTag
+               name: backup-stream:latest
