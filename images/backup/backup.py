@@ -23,13 +23,11 @@ BACKUP_LIVE_FILE = 'dumpall.sql'    # The new file
 BACKUP_FILE_PREFIX = 'backup'       # Prefix for older files
 
 BACKUP = os.path.join(BACKUP_DIR, BACKUP_LIVE_FILE)
-BACKUP_CMD = 'touch %s' % BACKUP
-#BACKUP_CMD = 'pg_dumpall --clean --file=%s' % BACKUP
+BACKUP_CMD = 'pg_dumpall --clean --file=%s' % BACKUP
 
 # Echo configuration...
-print('# PGHOST = %s' % PGHOST)
-print('# BACKUP_CMD = "%s"' % BACKUP_CMD)
 print('# BACKUP_COUNT = %s' % BACKUP_COUNT)
+print('# PGHOST = %s' % PGHOST)
 
 BACKUP_START_TIME = datetime.now().isoformat()
 print('--] Starting backup [%s]' % BACKUP_START_TIME)
