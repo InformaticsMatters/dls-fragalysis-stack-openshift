@@ -56,6 +56,7 @@ if os.path.exists(BACKUP):
 
 # 3.
 print('--] Running backup (stdout follows)...')
+print("$", BACKUP_CMD)
 subprocess.run(BACKUP_CMD, shell=True)
 print('--] Backup complete [%s]' % datetime.now().isoformat())
 

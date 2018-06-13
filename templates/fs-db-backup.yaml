@@ -31,7 +31,7 @@ parameters:
 - name: BACKUP_COUNT
   value: '2'
 - name: BACKUP_PGHOST
-  value: 'db.fragalysis-cicd'
+  value: 'db.fragalysis-cicd.svc'
 - name: BACKUP_SCHEDULE
   value: '*/4 * * * *'
 
