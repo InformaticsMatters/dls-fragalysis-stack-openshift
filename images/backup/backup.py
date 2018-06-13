@@ -36,30 +36,30 @@ print('--] Starting backup [%s]' % BACKUP_START_TIME)
 
 # Backup...
 #
-# 0. Check that the backup directory exists
-# 1. If the backup file exists then do nothing
+# 1. Check that the backup directory exists
+# 2. If the backup file exists then do nothing
 #    (the previous backup must be running)
-# 2. Run the backup
-# 3. Copy the live backup to a new prefixed date/time named file
+# 3. Run the backup
+# 4. Copy the live backup to a new prefixed date/time named file
 #    and then remove the original file.
-# 4. Remove any files that are now too old
+# 5. Remove any files that are now too old
 
-# 0.
+# 1.
 if not os.path.isdir(BACKUP_DIR):
     print('--] Bxkup directory does not exist (%s). Leaving.' % BACKUP_DIR)
     sys.exit(1)
 
-# 1.
+# 2.
 if os.path.exists(BACKUP):
     print('--] Live backup file exists (%s). Leaving.' % BACKUP)
     sys.exit(2)
 
-# 2.
+# 3.
 print('--] Running backup (stdout follows)...')
 subprocess.run(BACKUP_CMD, shell=True)
 print('--] Backup complete [%s]' % datetime.now().isoformat())
 
-# 3.
+# 4.
 COPY_BACKUP_FILE = '%s-%s-%s' % (BACKUP_FILE_PREFIX,
                                  BACKUP_START_TIME,
                                  BACKUP_LIVE_FILE)
@@ -68,7 +68,7 @@ BACKUP_TO = os.path.join(BACKUP_DIR, COPY_BACKUP_FILE)
 shutil.copyfile(BACKUP, BACKUP_TO)
 os.remove(BACKUP)
 
-# 4.
+# 5.
 FILE_SEARCH = os.path.join(BACKUP_DIR, BACKUP_FILE_PREFIX + '*')
 EXISTING_BACKUPS = glob.glob(FILE_SEARCH)
 NUM_TO_DELETE = len(EXISTING_BACKUPS) - BACKUP_COUNT

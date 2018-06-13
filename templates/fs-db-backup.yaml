@@ -51,7 +51,7 @@ objects:
     namespace: ${BACKUP_NAMESPACE}
   spec:
     schedule: ${BACKUP_SCHEDULE}
-    startingDeadlineSeconds: 600
+    startingDeadlineSeconds: 300
     concurrencyPolicy: Forbid
     jobTemplate:
       spec:
@@ -66,7 +66,7 @@ objects:
 
             # Application containers
             containers:
-            - image: fragalysis-cicd/backup-stream:${BACKUP_TAG}
+            - image: docker-registry.default:5000/fragalysis-cicd/backup-stream:${BACKUP_TAG}
               name: backup
               volumeMounts:
               - name: fs-pg-data-backup
