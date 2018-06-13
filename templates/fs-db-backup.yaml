@@ -32,6 +32,8 @@ parameters:
   value: '2'
 - name: BACKUP_PGHOST
   value: 'db.fragalysis-cicd.svc'
+- name: BACKUP_PGUSER
+  value: 'postgres'
 - name: BACKUP_SCHEDULE
   value: '*/4 * * * *'
 
@@ -69,6 +71,8 @@ objects:
                 value: ${BACKUP_COUNT}
               - name: PGHOST
                 value: ${BACKUP_PGHOST}
+              - name: PGUSER
+                value: ${BACKUP_PGUSER}
             volumes:
             - name: fs-pg-data-backup
               persistentVolumeClaim:

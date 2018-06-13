@@ -15,7 +15,8 @@ from datetime import datetime
 
 # Extract configuration from the environment...
 BACKUP_COUNT = int(os.environ.get('BACKUP_COUNT', '1'))
-PGHOST = os.environ.get('PGHOST', 'localhost')
+PGHOST = os.environ['PGHOST']
+PGUSER = os.environ['PGUSER']
 
 # The backup config...
 BACKUP_DIR = '/backup'
@@ -28,6 +29,7 @@ BACKUP_CMD = 'pg_dumpall --clean --file=%s' % BACKUP
 # Echo configuration...
 print('# BACKUP_COUNT = %s' % BACKUP_COUNT)
 print('# PGHOST = %s' % PGHOST)
+print('# PGUSER = %s' % PGUSER)
 
 BACKUP_START_TIME = datetime.now().isoformat()
 print('--] Starting backup [%s]' % BACKUP_START_TIME)
