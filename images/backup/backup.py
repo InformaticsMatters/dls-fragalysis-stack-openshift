@@ -49,12 +49,16 @@ if not os.path.isdir(BACKUP_DIR):
     print('--] Backup directory does not exist (%s). Leaving.' % BACKUP_DIR)
     sys.exit(1)
 
-# 2.
+#####
+# 2 #
+#####
 if os.path.exists(BACKUP):
     print('--] Live backup file exists (%s). Leaving.' % BACKUP)
     sys.exit(0)
 
-# 3.
+#####
+# 3 #
+#####
 print('--] Running backup (stdout follows)...')
 print("$", BACKUP_CMD)
 COMPLETED_PROCESS = subprocess.run(BACKUP_CMD, shell=True)
@@ -74,7 +78,9 @@ if not os.path.isfile(BACKUP):
     print('--] No backup file was generated. Leaving.')
     sys.exit(0)
 
-# 4.
+#####
+# 4 #
+#####
 COPY_BACKUP_FILE = '%s-%s-%s' % (BACKUP_FILE_PREFIX,
                                  BACKUP_START_TIME,
                                  BACKUP_LIVE_FILE)
@@ -83,7 +89,9 @@ BACKUP_TO = os.path.join(BACKUP_DIR, COPY_BACKUP_FILE)
 shutil.copyfile(BACKUP, BACKUP_TO)
 os.remove(BACKUP)
 
-# 5.
+#####
+# 5 #
+#####
 FILE_SEARCH = os.path.join(BACKUP_DIR, BACKUP_FILE_PREFIX + '*')
 EXISTING_BACKUPS = glob.glob(FILE_SEARCH)
 NUM_TO_DELETE = len(EXISTING_BACKUPS) - BACKUP_COUNT
