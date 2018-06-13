@@ -14,7 +14,7 @@ import shutil
 from datetime import datetime
 
 # Extract configuration from the environment...
-BACKUP_COUNT = int(os.environ.get('BACKUP_COUNT', '1'))
+BACKUP_COUNT = int(os.environ.get('BACKUP_COUNT', '4'))
 PGHOST = os.environ['PGHOST']
 PGUSER = os.environ['PGUSER']
 
@@ -105,5 +105,10 @@ if NUM_TO_DELETE > 0:
         os.remove(EXISTING_BACKUP)
 else:
     print('--] No old backups to delete')
+
+print('--] Remaining backups...')
+REMAINING_BACKUPS = glob.glob(FILE_SEARCH)
+for REMAINING_BACKUP in REMAINING_BACKUPS:
+    print('    %s' % REMAINING_BACKUP)
 
 print('--] Done')
