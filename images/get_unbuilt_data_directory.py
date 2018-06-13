@@ -110,11 +110,14 @@ LOGGER.info('READY_FILE=%s', READY_FILE)
 LOGGER.info('REGISTRY_USER=%s', REGISTRY_USER)
 
 # Does the root data directory exist?
+# If it does not maybe the Agent volume mounts are missing - so it's bad!
 if not os.path.isdir(SOURCE_DATA_ROOT):
-    LOGGER.warning('The data root directory does not exist'
-                   ' (%s)', SOURCE_DATA_ROOT)
-    sys.exit(0)
+    LOGGER.error('The data root directory does not exist.'
+                 ' Is anything mounted at %s?', SOURCE_DATA_ROOT)
+    sys.exit(1)
 
+# More serious problems...
+#
 # Search the root data directory for sub-directories.
 # We'll assume the last one holds the most recent data.
 # There may not be any data directories.
@@ -124,20 +127,23 @@ if DATA_DIRS:
     most_recent_data_dir = DATA_DIRS[-1]
 else:
     # No data directories.
-    LOGGER.warning('No data directories in the root (%s)', SOURCE_DATA_ROOT)
-    sys.exit(0)
+    LOGGER.error('No data directories in the root (%s)', SOURCE_DATA_ROOT)
+    sys.exit(2)
 # Is the directory name correct?
 if not re.match(DATA_DIR_RE, most_recent_data_dir):
     # Doesn't look right
     LOGGER.error('Most recent data directory name'
                  ' is not correct (%s)', most_recent_data_dir)
-    sys.exit(0)
+    sys.exit(3)
 most_recent_data_path = os.path.join(SOURCE_DATA_ROOT, most_recent_data_dir)
 if not os.path.isdir(most_recent_data_path):
     # Most recent does not look like a directory.
     LOGGER.error('Most recent data directory is not a directory'
                  ' (%s)', most_recent_data_dir)
-    sys.exit(0)
+    sys.exit(4)
+
+# OK - fit to continue if we get here...
+
 # Check data is READY?
 if INSIST_ON_READY and not os.path.exists(os.path.join(most_recent_data_path,
                                                        READY_FILE)):
