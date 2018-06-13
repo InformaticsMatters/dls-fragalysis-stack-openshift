@@ -37,26 +37,42 @@ print('--] Starting backup [%s]' % BACKUP_START_TIME)
 # 1. Check that the backup directory exists
 # 2. If the backup file exists then do nothing
 #    (the previous backup must be running)
-# 3. Run the backup
+# 3. Run the backup (leaving if no backup was created)
 # 4. Copy the live backup to a new prefixed date/time named file
 #    and then remove the original file.
 # 5. Remove any files that are now too old
 
-# 1.
+#####
+# 1 #
+#####
 if not os.path.isdir(BACKUP_DIR):
-    print('--] Bxkup directory does not exist (%s). Leaving.' % BACKUP_DIR)
+    print('--] Backup directory does not exist (%s). Leaving.' % BACKUP_DIR)
     sys.exit(1)
 
 # 2.
 if os.path.exists(BACKUP):
     print('--] Live backup file exists (%s). Leaving.' % BACKUP)
-    sys.exit(2)
+    sys.exit(0)
 
 # 3.
 print('--] Running backup (stdout follows)...')
 print("$", BACKUP_CMD)
-subprocess.run(BACKUP_CMD, shell=True)
-print('--] Backup complete [%s]' % datetime.now().isoformat())
+COMPLETED_PROCESS = subprocess.run(BACKUP_CMD, shell=True)
+print('--] Backup finished [%s]' % datetime.now().isoformat())
+
+# Check subprocess exit code
+if COMPLETED_PROCESS.returncode != 0:
+    print('--] Backup failed (returncode=%s)' % COMPLETED_PROCESS.returncode)
+    print('--] stdout follows...')
+    COMPLETED_PROCESS.stdout.decode("utf-8")
+    print('--] stderr follows...')
+    COMPLETED_PROCESS.stderr.decode("utf-8")
+    sys.exit(0)
+
+# Now, leave if there is no backup file.
+if not os.path.isfile(BACKUP):
+    print('--] No backup file was generated. Leaving.')
+    sys.exit(0)
 
 # 4.
 COPY_BACKUP_FILE = '%s-%s-%s' % (BACKUP_FILE_PREFIX,
