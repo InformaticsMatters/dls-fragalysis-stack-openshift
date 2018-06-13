@@ -1,0 +1,44 @@
+#!groovy​
+
+// The Fragalysis Database Backup image.
+
+pipeline {
+
+  agent { label 'buildah-slave' }
+
+  environment {
+    // Registry details
+    REGISTRIY_USER = 'jenkins'
+    REGISTRY = 'docker-registry.default:5000'
+    STREAM_IMAGE = "${REGISTRY}/fragalysis-cicd/backup-stream:latest"
+  }
+
+  stages {
+
+    stage('Build Image') {
+      steps {
+        script {
+          TOKEN = sh(script: 'oc whoami -t', returnStdout: true).trim()
+        }
+        dir('images/graph') {
+          echo "Building backup image..."
+          sh "buildah bud --tls-verify=false --creds=${env.REGISTRY_USER}:${TOKEN} --format docker -f Dockerfile -t ${env.STREAM_IMAGE}"
+        }
+      }
+    }
+
+    stage('Push Image') {
+      steps {
+        script {
+          TOKEN = sh(script: 'oc whoami -t', returnStdout: true).trim()
+        }
+        sh "podman login --tls-verify=false --username ${env.REGISTRY_USER} --password ${TOKEN} ${env.REGISTRY}"
+        sh "buildah push --tls-verify=false ${env.STREAM_IMAGE} docker://${env.STREAM_IMAGE}"
+        sh "podman logout ${env.REGISTRY}"
+        sh "buildah images"
+      }
+    }
+
+  }
+
+}
