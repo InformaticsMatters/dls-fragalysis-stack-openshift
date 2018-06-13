@@ -22,7 +22,7 @@ pipeline {
         }
         dir('images/backup') {
           echo "Building backup image..."
-          sh "buildah bud --format docker -f Dockerfile -t ${env.STREAM_IMAGE}"
+          sh "buildah bud --format docker -f Dockerfile -t ${env.STREAM_IMAGE} ."
         }
       }
     }

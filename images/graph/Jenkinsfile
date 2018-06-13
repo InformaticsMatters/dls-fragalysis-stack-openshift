@@ -52,7 +52,7 @@ pipeline {
         dir('images/graph') {
           echo "Building ${DATA_ORIGIN}..."
           sh "cp ${SOURCE_DATA_ROOT}/${DATA_ORIGIN}/* data-loader"
-          sh "buildah bud --tls-verify=false --creds=${env.REGISTRY_USER}:${TOKEN} --format docker --build-arg DATA_ORIGIN=${DATA_ORIGIN} -f Dockerfile -t ${env.STREAM_IMAGE}"
+          sh "buildah bud --tls-verify=false --creds=${env.REGISTRY_USER}:${TOKEN} --format docker --build-arg DATA_ORIGIN=${DATA_ORIGIN} -f Dockerfile -t ${env.STREAM_IMAGE} ."
         }
       }
     }
