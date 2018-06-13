@@ -98,7 +98,7 @@ class JenkinsServer:
 
         LOGGER.info('Getting job configurations...')
 
-        sub_dir = '%s-%s2' % (JOB_DIR, server)
+        sub_dir = '%s-%s' % (JOB_DIR, server)
         if not os.path.exists(sub_dir):
             os.mkdir(sub_dir)
 
