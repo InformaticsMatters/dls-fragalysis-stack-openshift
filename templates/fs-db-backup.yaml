@@ -35,7 +35,7 @@ parameters:
 - name: BACKUP_PGUSER
   value: 'postgres'
 - name: BACKUP_SCHEDULE
-  value: '7 * * * *'
+  value: '45 * * * *'
 
 objects:
 
