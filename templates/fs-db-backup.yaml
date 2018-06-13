@@ -42,7 +42,7 @@ objects:
 - kind: CronJob
   apiVersion: batch/v1beta1
   metadata:
-    name: backup
+    name: db-backup
     namespace: ${BACKUP_NAMESPACE}
   spec:
     schedule: ${BACKUP_SCHEDULE}
