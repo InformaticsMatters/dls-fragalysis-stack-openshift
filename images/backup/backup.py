@@ -107,9 +107,11 @@ if NUM_TO_DELETE > 0:
 else:
     print('--] No old backups to delete')
 
-print('--] Remaining backups...')
 REMAINING_BACKUPS = glob.glob(FILE_SEARCH)
-for REMAINING_BACKUP in REMAINING_BACKUPS:
-    print('    %s' % REMAINING_BACKUP)
+if REMAINING_BACKUPS:
+    print('--] Remaining backups...')
+    REMAINING_BACKUPS.sort(reverse=True)
+    for REMAINING_BACKUP in REMAINING_BACKUPS:
+        print('    %s' % REMAINING_BACKUP)
 
 print('--] Done')
