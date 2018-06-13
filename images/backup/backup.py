@@ -61,7 +61,7 @@ if os.path.exists(BACKUP):
 #####
 # 3 #
 #####
-print('--] Running backup (stdout follows)...')
+print('--] Running backup command...')
 print("$", BACKUP_CMD)
 COMPLETED_PROCESS = subprocess.run(BACKUP_CMD, shell=True)
 print('--] Backup finished [%s]' % datetime.now().isoformat())
@@ -69,9 +69,6 @@ print('--] Backup finished [%s]' % datetime.now().isoformat())
 # Check subprocess exit code
 if COMPLETED_PROCESS.returncode != 0:
     print('--] Backup failed (returncode=%s)' % COMPLETED_PROCESS.returncode)
-    if COMPLETED_PROCESS.stdout:
-        print('--] stdout follows...')
-        COMPLETED_PROCESS.stdout.decode("utf-8")
     if COMPLETED_PROCESS.stderr:
         print('--] stderr follows...')
         COMPLETED_PROCESS.stderr.decode("utf-8")
