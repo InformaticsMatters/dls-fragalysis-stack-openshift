@@ -20,7 +20,7 @@ echo "+ Creating PVCs..."
 oc project fragalysis-cicd > /dev/null
 
 oc process -f ../templates/fs-db-pvc.yaml | oc create -f -
-oc process -f ../templates/fs-db-bandr-pvc.yaml | oc create -f -
+oc process -f ../templates/fs-db-backup-pvc.yaml | oc create -f -
 oc process -f ../templates/fs-cartridge-pvc.yaml | oc create -f -
 
 echo
@@ -35,4 +35,4 @@ oc process -f ../templates/fs-graph.yaml | oc create -f -
 oc process -f ../templates/fs-db.yaml | oc create -f -
 oc process -f ../templates/fs-cartridge.yaml | oc create -f -
 oc process -f ../templates/fs-web.yaml | oc create -f -
-oc process -f ../templates/fs-db-bandr.yaml | oc create -f -
+oc process -f ../templates/fs-db-backup.yaml | oc create -f -

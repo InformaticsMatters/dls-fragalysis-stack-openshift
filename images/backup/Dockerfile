@@ -1,6 +1,6 @@
 FROM python:3.6.5-alpine3.7
 
-ENV APP_ROOT /bandr
+ENV APP_ROOT /code
 WORKDIR ${APP_ROOT}
 
 # Install the postgres client
