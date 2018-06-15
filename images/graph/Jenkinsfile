@@ -50,10 +50,20 @@ pipeline {
           TOKEN = sh(script: 'oc whoami -t', returnStdout: true).trim()
         }
         dir('images/graph') {
-          echo "Building Graph ${DATA_ORIGIN}..."
           sh "cp ${SOURCE_DATA_ROOT}/${DATA_ORIGIN}/* data-loader"
           sh "buildah bud --tls-verify=false --creds=${env.REGISTRY_USER}:${TOKEN} --format docker --build-arg DATA_ORIGIN=${DATA_ORIGIN} -f Dockerfile -t ${env.STREAM_IMAGE} ."
         }
+      }
+    }
+
+    stage('Skip Image') {
+      when {
+        expression { DATA_ORIGIN.length() == 0 && ALWAYS_PUSH == 'No' }
+      }
+      steps {
+        slackSend channel: '#graph-builds',
+                  color: 'warning',
+                  message: "Build ${env.BUILD_NUMBER} - no new data"
       }
     }
 
@@ -71,7 +81,7 @@ pipeline {
         sh "buildah images"
         slackSend channel: '#graph-builds',
                   color: 'good',
-                  message: "A new Graph image has been pushed (${DATA_ORIGIN})"
+                  message: "Build ${env.BUILD_NUMBER} - New Graph image (${DATA_ORIGIN}) has been pushed"
       }
     }
 
@@ -84,7 +94,7 @@ pipeline {
     failure {
       slackSend channel: '#graph-builds',
                 color: 'danger',
-                message: 'A Graph image build has failed!'
+                message: 'Build ${env.BUILD_NUMBER} - The Graph image build has failed'
     }
 
   }

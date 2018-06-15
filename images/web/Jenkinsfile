@@ -34,7 +34,7 @@ pipeline {
           // - Run the get_unbuilt_data_directory  module
           // - Print the script log.
           slackSend channel: '#web-builds',
-                    message: 'Web image job kicking off...'
+                    message: "Web image build ${env.BUILD_NUMBER} has started..."
           script {
             env.REGISTRY_USER_TOKEN = sh(script: 'oc whoami -t', returnStdout: true).trim()
             DATA_ORIGIN = sh(script: './get_unbuilt_data_directory.py', returnStdout: true).trim()
@@ -81,13 +81,13 @@ pipeline {
     success {
       slackSend channel: '#web-builds',
                 color: 'good',
-                message: 'Successful'
+                message: 'Build ${env.BUILD_NUMBER} is complete'
     }
 
     failure {
       slackSend channel: '#web-builds',
                 color: 'danger',
-                message: 'The build has failed!'
+                message: "Build ${env.BUILD_NUMBER} has failed!"
     }
 
   }
