@@ -94,7 +94,7 @@ pipeline {
     failure {
       slackSend channel: '#graph-builds',
                 color: 'danger',
-                message: 'Build ${env.BUILD_NUMBER} - The Graph image build has failed'
+                message: 'The last Graph image build failed'
     }
 
   }
