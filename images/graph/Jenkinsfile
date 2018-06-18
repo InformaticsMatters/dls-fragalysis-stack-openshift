@@ -96,7 +96,7 @@ pipeline {
     failure {
       slackSend channel: "#${env.SLACK_CHANNEL}",
                 color: 'danger',
-                message: "Graph image build ${env.BUILD_NUMBER} has failed"
+                message: "Graph image build ${env.BUILD_NUMBER} has failed (${env.BUILD_URL})"
     }
 
   }
