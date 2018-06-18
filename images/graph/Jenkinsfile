@@ -22,6 +22,8 @@ pipeline {
 
     // Always push the image (whether it's new or not)
     ALWAYS_PUSH = 'No'
+
+    SLACK_CHANNEL = 'cicd-dls-graphimage'
   }
 
   stages {
@@ -61,9 +63,9 @@ pipeline {
         expression { DATA_ORIGIN.length() == 0 && ALWAYS_PUSH == 'No' }
       }
       steps {
-        slackSend channel: '#graph-builds',
+        slackSend channel: "#${env.SLACK_CHANNEL}",
                   color: 'warning',
-                  message: "Build ${env.BUILD_NUMBER} - no new data"
+                  message: "Build ${env.BUILD_NUMBER} - no new data, skipping image build"
       }
     }
 
@@ -79,9 +81,9 @@ pipeline {
         sh "buildah push --tls-verify=false ${env.STREAM_IMAGE} docker://${env.STREAM_IMAGE}"
         sh "podman logout ${env.REGISTRY}"
         sh "buildah images"
-        slackSend channel: '#graph-builds',
+        slackSend channel: "#${env.SLACK_CHANNEL}",
                   color: 'good',
-                  message: "Build ${env.BUILD_NUMBER} - New Graph image (${DATA_ORIGIN}) has been pushed"
+                  message: "Graph image build ${env.BUILD_NUMBER} - A new image (${DATA_ORIGIN}) has been pushed"
       }
     }
 
@@ -92,9 +94,9 @@ pipeline {
   post {
 
     failure {
-      slackSend channel: '#graph-builds',
+      slackSend channel: "#${env.SLACK_CHANNEL}",
                 color: 'danger',
-                message: 'The last Graph image build failed'
+                message: "Graph image build ${env.BUILD_NUMBER} has failed"
     }
 
   }

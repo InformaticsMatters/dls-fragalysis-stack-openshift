@@ -11,12 +11,16 @@ pipeline {
     REGISTRIY_USER = 'jenkins'
     REGISTRY = 'docker-registry.default:5000'
     STREAM_IMAGE = "${REGISTRY}/fragalysis-cicd/backup-stream:latest"
+
+    SLACK_CHANNEL = 'cicd-dls-backupimage'
   }
 
   stages {
 
     stage('Build Image') {
       steps {
+        slackSend channel: "#${env.SLACK_CHANNEL}",
+                  message: "Backup image build ${env.BUILD_NUMBER} has started..."
         script {
           TOKEN = sh(script: 'oc whoami -t', returnStdout: true).trim()
         }
@@ -36,6 +40,24 @@ pipeline {
         sh "podman logout ${env.REGISTRY}"
         sh "buildah images"
       }
+    }
+
+  }
+
+  // Post-job actions.
+  // See https://jenkins.io/doc/book/pipeline/syntax/#post
+  post {
+
+    success {
+      slackSend channel: "#${env.SLACK_CHANNEL}",
+                color: 'good',
+                message: "Backup image build ${env.BUILD_NUMBER} is complete"
+    }
+
+    failure {
+      slackSend channel: "#${env.SLACK_CHANNEL}",
+                color: 'danger',
+                message: "Backup image build ${env.BUILD_NUMBER} has failed"
     }
 
   }

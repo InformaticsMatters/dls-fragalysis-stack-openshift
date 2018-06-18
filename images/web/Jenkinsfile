@@ -23,6 +23,8 @@ pipeline {
 
     // Always push the image (whether it's new or not)
     ALWAYS_PUSH = 'No'
+
+    SLACK_CHANNEL = 'cicd-dls-webimage'
   }
 
   stages {
@@ -31,9 +33,9 @@ pipeline {
       steps {
         dir('images') {
           // - Get the registry user API token (used in the Python module)
-          // - Run the get_unbuilt_data_directory  module
-          // - Print the script log.
-          slackSend channel: '#web-builds',
+          // - Run the get_unbuilt_data_directory module to find the latest data
+          // - Dump the script log.
+          slackSend channel: "#${env.SLACK_CHANNEL}",
                     message: "Web image build ${env.BUILD_NUMBER} has started..."
           script {
             env.REGISTRY_USER_TOKEN = sh(script: 'oc whoami -t', returnStdout: true).trim()
@@ -50,6 +52,8 @@ pipeline {
       }
       steps {
         dir('images/web') {
+          slackSend channel: "#${env.SLACK_CHANNEL}",
+                    message: "Using '${DATA_ORIGIN}' data for Web image ${env.BUILD_NUMBER}"
           sh "cp -r ${SOURCE_DATA_ROOT}/${DATA_ORIGIN}/* media"
           sh "buildah bud --format docker --build-arg DATA_ORIGIN=${DATA_ORIGIN} -f Dockerfile -t ${STREAM_IMAGE} ."
         }
@@ -79,15 +83,15 @@ pipeline {
   post {
 
     success {
-      slackSend channel: '#web-builds',
+      slackSend channel: "#${env.SLACK_CHANNEL}",
                 color: 'good',
-                message: 'The build is complete'
+                message: "Web image build ${env.BUILD_NUMBER} is complete"
     }
 
     failure {
-      slackSend channel: '#web-builds',
+      slackSend channel: "#${env.SLACK_CHANNEL}",
                 color: 'danger',
-                message: "Ooops - the build failed!"
+                message: "Web image build ${env.BUILD_NUMBER} has failed"
     }
 
   }
