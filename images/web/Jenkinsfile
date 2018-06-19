@@ -36,7 +36,7 @@ pipeline {
           // - Run the get_unbuilt_data_directory module to find the latest data
           // - Dump the script log.
           slackSend channel: "#${env.SLACK_CHANNEL}",
-                    message: "Web image build ${env.BUILD_NUMBER} has started..."
+                    message: "Web image build ${env.BUILD_NUMBER} - starting..."
           script {
             env.REGISTRY_USER_TOKEN = sh(script: 'oc whoami -t', returnStdout: true).trim()
             DATA_ORIGIN = sh(script: './get_unbuilt_data_directory.py', returnStdout: true).trim()
@@ -53,7 +53,7 @@ pipeline {
       steps {
         dir('images/web') {
           slackSend channel: "#${env.SLACK_CHANNEL}",
-                    message: "Using '${DATA_ORIGIN}' data for Web image ${env.BUILD_NUMBER}"
+                    message: "Web image build ${env.BUILD_NUMBER} - using '${DATA_ORIGIN}' data"
           sh "cp -r ${SOURCE_DATA_ROOT}/${DATA_ORIGIN}/* media"
           sh "buildah bud --format docker --build-arg DATA_ORIGIN=${DATA_ORIGIN} -f Dockerfile -t ${STREAM_IMAGE} ."
         }
@@ -85,13 +85,13 @@ pipeline {
     success {
       slackSend channel: "#${env.SLACK_CHANNEL}",
                 color: 'good',
-                message: "Web image build ${env.BUILD_NUMBER} is complete"
+                message: "Web image build ${env.BUILD_NUMBER} - complete"
     }
 
     failure {
       slackSend channel: "#${env.SLACK_CHANNEL}",
                 color: 'danger',
-                message: "Web image build ${env.BUILD_NUMBER} has failed (${env.BUILD_URL})"
+                message: "Web image build ${env.BUILD_NUMBER} - failed (${env.BUILD_URL})"
     }
 
   }

@@ -20,7 +20,7 @@ pipeline {
     stage('Build Image') {
       steps {
         slackSend channel: "#${env.SLACK_CHANNEL}",
-                  message: "Backup image build ${env.BUILD_NUMBER} has started..."
+                  message: "Backup image build ${env.BUILD_NUMBER} - starting..."
         script {
           TOKEN = sh(script: 'oc whoami -t', returnStdout: true).trim()
         }
@@ -51,13 +51,13 @@ pipeline {
     success {
       slackSend channel: "#${env.SLACK_CHANNEL}",
                 color: 'good',
-                message: "Backup image build ${env.BUILD_NUMBER} is complete"
+                message: "Backup image build ${env.BUILD_NUMBER} - complete"
     }
 
     failure {
       slackSend channel: "#${env.SLACK_CHANNEL}",
                 color: 'danger',
-                message: "Backup image build ${env.BUILD_NUMBER} has failed (${env.BUILD_URL})"
+                message: "Backup image build ${env.BUILD_NUMBER} - failed (${env.BUILD_URL})"
     }
 
   }

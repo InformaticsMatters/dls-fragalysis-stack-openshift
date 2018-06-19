@@ -65,7 +65,7 @@ pipeline {
       steps {
         slackSend channel: "#${env.SLACK_CHANNEL}",
                   color: 'warning',
-                  message: "Build ${env.BUILD_NUMBER} - no new data, skipping image build"
+                  message: "Graph image build ${env.BUILD_NUMBER} - no new data, skipping"
       }
     }
 
@@ -83,7 +83,7 @@ pipeline {
         sh "buildah images"
         slackSend channel: "#${env.SLACK_CHANNEL}",
                   color: 'good',
-                  message: "Graph image build ${env.BUILD_NUMBER} - A new image (${DATA_ORIGIN}) has been pushed"
+                  message: "Graph image build ${env.BUILD_NUMBER} - new image for '${DATA_ORIGIN}' data has been pushed"
       }
     }
 
@@ -96,7 +96,7 @@ pipeline {
     failure {
       slackSend channel: "#${env.SLACK_CHANNEL}",
                 color: 'danger',
-                message: "Graph image build ${env.BUILD_NUMBER} has failed (${env.BUILD_URL})"
+                message: "Graph image build ${env.BUILD_NUMBER} - failed (${env.BUILD_URL})"
     }
 
   }
