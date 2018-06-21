@@ -29,7 +29,9 @@ parameters:
 - name: BACKUP_NODE_SIZE_SELECTOR
   value: 'small'
 - name: BACKUP_COUNT
-  value: '6'
+  value: '24'
+- name: BACKUP_TYPE
+  value: 'hourly'
 - name: BACKUP_PGHOST
   value: 'db.fragalysis-cicd.svc'
 - name: BACKUP_PGUSER
@@ -67,6 +69,8 @@ objects:
               - name: fs-pg-data-backup
                 mountPath: /backup
               env:
+              - name: BACKUP_TYPE
+                value: ${BACKUP_TYPE}
               - name: BACKUP_COUNT
                 value: ${BACKUP_COUNT}
               - name: PGHOST

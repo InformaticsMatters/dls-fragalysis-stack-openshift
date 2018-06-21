@@ -4,6 +4,39 @@
 
 The backup directory (BACKUP_DIR) is expected to have
 been mounted as some form of volume in the container image.
+
+There are four values for BACKUP_TYPE: -
+
+- hourly    Typically the BACKUP_COUNT is 24.
+            This type always starts by creating a new backup.
+            It is the shortest backup period and writes to the 'hourly'
+            directory. This backup is expected to be invoked hourly.
+            BACKUP_PRIOR_COUNT is ignored.
+
+- daily     This backup is configured to run once a day (at a time
+            defined by the user). It copies the oldest backup from the
+            'hourly' directory into the 'daily' directory but only when the
+            hourly directory contains BACKUP_PRIOR_COUNT backup files
+            (normally 24). It makes sure that no more than BACKUP_COUNT
+            files exist in the daily directory.
+
+- weekly    This backup is configured to run once a week (at a time
+            defined by the user). It copies the oldest backup from the
+            'daily' directory into the 'weekly' directory but only when the
+            daily directory contains BACKUP_PRIOR_COUNT backup files
+            (normally 7). It makes sure that no more than BACKUP_COUNT
+            files exist in the weekly directory.
+
+- monthly   This backup is configured to run once a month (at a time
+            defined by the user). It copies the oldest backup from the
+            'weekly' directory into the 'monthly' directory but only when the
+            weekly directory contains BACKUP_PRIOR_COUNT backup files
+            (normally 4). It makes sure that no more than BACKUP_COUNT
+            files exist in the monthly directory.
+
+Alan Christie
+Informatics Matters
+June 2018
 """
 
 import glob
@@ -13,89 +46,158 @@ import subprocess
 import shutil
 from datetime import datetime
 
-# Extract configuration from the environment...
-BACKUP_COUNT = int(os.environ.get('BACKUP_COUNT', '4'))
+# Backup types...
+B_HOURLY = 'hourly'
+B_DAILY = 'daily'
+B_WEEKLY = 'weekly'
+B_MONTHLY = 'monthly'
+
+# Extract configuration from the environment.
 PGHOST = os.environ['PGHOST']
 PGUSER = os.environ['PGUSER']
+# The backup type is HOURLY by default.
+# Hourly backups always create a new backup and limit
+# the count to 24 (by default).
+BACKUP_COUNT = int(os.environ.get('BACKUP_COUNT', '24'))
+BACKUP_PRIOR_COUNT = int(os.environ.get('BACKUP_PRIOR_COUNT', '24'))
+BACKUP_TYPE = os.environ.get('BACKUP_TYPE', B_HOURLY).lower()
+BACKUP_PRIOR_TYPE = os.environ.get('BACKUP_PRIOR_COUNT', B_HOURLY).lower()
 
-# The backup config...
-BACKUP_DIR = '/backup'
+# The backup config.
+# The root dir, below which you're likely to find
+# hourly, daily, weekly and monthly backup directories.
+BACKUP_ROOT_DIR = '/backup'
 BACKUP_LIVE_FILE = 'dumpall.sql'    # The new file
 BACKUP_FILE_PREFIX = 'backup'       # Prefix for older files
 
+BACKUP_PRIOR_DIR = os.path.join(BACKUP_ROOT_DIR, BACKUP_PRIOR_TYPE)
+BACKUP_DIR = os.path.join(BACKUP_ROOT_DIR, BACKUP_TYPE)
+
 BACKUP = os.path.join(BACKUP_DIR, BACKUP_LIVE_FILE)
-BACKUP_CMD = 'pg_dumpall --clean --file=%s' % BACKUP
+#BACKUP_CMD = 'pg_dumpall --clean --file=%s' % BACKUP
+BACKUP_CMD = 'touch %s' % BACKUP
 
 # Echo configuration...
-print('# BACKUP_COUNT = %s' % BACKUP_COUNT)
 print('# PGHOST = %s' % PGHOST)
 print('# PGUSER = %s' % PGUSER)
+print('# BACKUP_DIR = %s' % BACKUP_DIR)
+print('# BACKUP_COUNT = %s' % BACKUP_COUNT)
+print('# BACKUP_TYPE = %s' % BACKUP_TYPE)
+print('# BACKUP_PRIOR_COUNT = %s' % BACKUP_PRIOR_COUNT)
+print('# BACKUP_PRIOR_TYPE = %s' % BACKUP_PRIOR_TYPE)
 
 # Backup...
 #
-# 1. Check that the backup directory exists
+# 0. Check environment
+# 1. Check that the root backup directory exists
+#    and create a sub-directory if required
+#
+# For hourly backup types...
+#
 # 2. If the backup file exists then do nothing
 #    (the previous backup must be running)
 # 3. Run the backup (leaving if no backup was created)
 # 4. Copy the live backup to a new prefixed date/time named file
 #    and then remove the original file.
-# 5. Remove any files that are now too old
+#
+# For all all but hourly types...
+#
+# 5. Copy the oldest file from the prior backup.
+#    Daily copies from Hourly, weekly copies form daily,
+#    Monthly copies from weekly. This only happens if the prior count
+#    is satisfied.
+#
+# For all backup types...
+#
+# 6. Limit the files in the current backup directory
+
+#####
+# 0 #
+#####
+# Check backup types...
+if BACKUP_TYPE not in [B_HOURLY, B_DAILY, B_WEEKLY, B_MONTHLY]:
+    print('--] Unexpected BACKUP_TYPE (%s)' % BACKUP_TYPE)
+    sys.exit(1)
+if BACKUP_PRIOR_TYPE not in [B_HOURLY, B_DAILY, B_WEEKLY, B_MONTHLY]:
+    print('--] Unexpected BACKUP_PRIOR_TYPE (%s)' % BACKUP_PRIOR_TYPE)
+    sys.exit(1)
 
 #####
 # 1 #
 #####
-if not os.path.isdir(BACKUP_DIR):
-    print('--] Backup directory does not exist (%s). Leaving.' % BACKUP_DIR)
+if not os.path.isdir(BACKUP_ROOT_DIR):
+    print('--] Backup root directory does not exist (%s). Leaving.' % BACKUP_ROOT_DIR)
     sys.exit(1)
+if not os.path.isdir(BACKUP_DIR):
+    os.makedirs(BACKUP_DIR)
+
+if BACKUP_TYPE == B_HOURLY:
+
+    # Hourly backups always create new backup files...
+
+    #####
+    # 2 #
+    #####
+    if os.path.exists(BACKUP):
+        print('--] Live backup file exists (%s). Leaving.' % BACKUP)
+        sys.exit(0)
+
+    #####
+    # 3 #
+    #####
+    BACKUP_START_TIME = datetime.now()
+    print('--] Starting backup... [%s]' % BACKUP_START_TIME)
+    print("$", BACKUP_CMD)
+    COMPLETED_PROCESS = subprocess.run(BACKUP_CMD, shell=True)
+    BACKUP_END_TIME = datetime.now()
+    print('--] Backup finished [%s]' % BACKUP_END_TIME)
+    ELAPSED_TIME = BACKUP_END_TIME - BACKUP_START_TIME
+    print('--] Elapsed time %s' % ELAPSED_TIME)
+
+    # Check subprocess exit code
+    if COMPLETED_PROCESS.returncode != 0:
+        print('--] Backup failed (returncode=%s)' % COMPLETED_PROCESS.returncode)
+        if COMPLETED_PROCESS.stderr:
+            print('--] stderr follows...')
+            COMPLETED_PROCESS.stderr.decode("utf-8")
+        sys.exit(0)
+
+    # Now, leave if there is no backup file.
+    if not os.path.isfile(BACKUP):
+        print('--] No backup file was generated. Leaving.')
+        sys.exit(0)
+
+    print('--] Backup size {:,} bytes'.format(os.path.getsize(BACKUP)))
+
+    #####
+    # 4 #
+    #####
+    COPY_BACKUP_FILE = '%s-%s-%s' % (BACKUP_FILE_PREFIX,
+                                     BACKUP_START_TIME.isoformat(),
+                                     BACKUP_LIVE_FILE)
+    print('--] Copying %s to %s...' % (BACKUP_LIVE_FILE, COPY_BACKUP_FILE))
+    BACKUP_TO = os.path.join(BACKUP_DIR, COPY_BACKUP_FILE)
+    shutil.copyfile(BACKUP, BACKUP_TO)
+    os.remove(BACKUP)
+
+else:
+
+    #####
+    # 5 #
+    #####
+    # Daily, weekly or monthly backup...
+    FILE_SEARCH = os.path.join(BACKUP_PRIOR_DIR, BACKUP_FILE_PREFIX + '*')
+    EXISTING_BACKUPS = glob.glob(FILE_SEARCH)
+    if len(EXISTING_BACKUPS) == BACKUP_PRIOR_COUNT:
+        # Prior backup has sufficient files.
+        # Copy the oldest
+        EXISTING_BACKUPS.sort()
+        shutil.copy2(EXISTING_BACKUPS[0], BACKUP_DIR)
 
 #####
-# 2 #
+# 6 #
 #####
-if os.path.exists(BACKUP):
-    print('--] Live backup file exists (%s). Leaving.' % BACKUP)
-    sys.exit(0)
-
-#####
-# 3 #
-#####
-BACKUP_START_TIME = datetime.now()
-print('--] Starting backup... [%s]' % BACKUP_START_TIME)
-print("$", BACKUP_CMD)
-COMPLETED_PROCESS = subprocess.run(BACKUP_CMD, shell=True)
-BACKUP_END_TIME = datetime.now()
-print('--] Backup finished [%s]' % BACKUP_END_TIME)
-ELAPSED_TIME = BACKUP_END_TIME - BACKUP_START_TIME
-print('--] Elapsed time %s' % ELAPSED_TIME)
-
-# Check subprocess exit code
-if COMPLETED_PROCESS.returncode != 0:
-    print('--] Backup failed (returncode=%s)' % COMPLETED_PROCESS.returncode)
-    if COMPLETED_PROCESS.stderr:
-        print('--] stderr follows...')
-        COMPLETED_PROCESS.stderr.decode("utf-8")
-    sys.exit(0)
-
-# Now, leave if there is no backup file.
-if not os.path.isfile(BACKUP):
-    print('--] No backup file was generated. Leaving.')
-    sys.exit(0)
-
-print('--] Backup size {:,} bytes'.format(os.path.getsize(BACKUP)))
-
-#####
-# 4 #
-#####
-COPY_BACKUP_FILE = '%s-%s-%s' % (BACKUP_FILE_PREFIX,
-                                 BACKUP_START_TIME.isoformat(),
-                                 BACKUP_LIVE_FILE)
-print('--] Copying %s to %s...' % (BACKUP_LIVE_FILE, COPY_BACKUP_FILE))
-BACKUP_TO = os.path.join(BACKUP_DIR, COPY_BACKUP_FILE)
-shutil.copyfile(BACKUP, BACKUP_TO)
-os.remove(BACKUP)
-
-#####
-# 5 #
-#####
+# Prune files in the current backup directory...
 FILE_SEARCH = os.path.join(BACKUP_DIR, BACKUP_FILE_PREFIX + '*')
 EXISTING_BACKUPS = glob.glob(FILE_SEARCH)
 NUM_TO_DELETE = len(EXISTING_BACKUPS) - BACKUP_COUNT
