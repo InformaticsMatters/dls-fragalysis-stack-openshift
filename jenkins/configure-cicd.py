@@ -1,17 +1,8 @@
 #!/usr/bin/env python
 
-"""A Python (3.5) module to automate the configuration and backup of the
-Fragalysis CI/CD deployment. We can get (for archioving) and create jobs
-(from an archive)
-
-The following environment variables are required: -
-
-    FRAG_CICD_USER  The Jenkins username
-    FRAG_CICD_TOKEN The Jenkins user API token
-
->   Your user ID and API token can be obtained from your Jenkins login.
-    Click your name (upper-right corner), click Configure (left-side menu)
-    and then click 'Show API Token'.
+"""A Python 3 module to automate the configuration and backup of the
+Fragalysis CI/CD deployment. Remember to copy the `setenv-template'sh` script,
+enter suitable values for the environment variables and `source` it.
 
 If SSL certificates are not properly installed you may need to defeat the
 built-in SSL validation that takes place. You can do this with the following
@@ -22,15 +13,18 @@ environment variable: -
 
 import argparse
 import os
-import glob
 import logging
 from logging.config import dictConfig
 import sys
 import yaml
-import jenkins
 
+from im_jenkins_server import ImJenkinsServer
+
+# Essential environment variables...
 J_USER = os.environ['FRAG_CICD_USER']
 J_TOKEN = os.environ['FRAG_CICD_TOKEN']
+J_DOCKER_PASS = os.environ['FRAG_DOCKER_PASSWORD']
+J_SLACK_TOKEN = os.environ['FRAG_SLACK_TOKEN']
 
 # URLs for the test and production servers.
 SERVERS = {'test': 'jenkins-fragalysis-cicd.apps.xchem.diamond.ac.uk',
@@ -52,138 +46,54 @@ if os.path.isfile(LOGGING_CONFIG_FILE):
 # Our logger...
 LOGGER = logging.getLogger(os.path.basename(sys.argv[0])[:-3])
 
-# pylint: disable=too-few-public-methods
-class JenkinsServer:
-    """Class providing Jenkins configuration services.
-    """
+PARSER = argparse.ArgumentParser(description='Jenkins Configuration')
+PARSER.add_argument('action',
+                    choices=['get', 'set'],
+                    help='The action to perform. This is typically one'
+                         ' of "get" in order to get the configuration or'
+                         ' "set" to set the job configuration for a server.')
+PARSER.add_argument('server',
+                    choices=['test', 'prod'],
+                    help='The Jenkins server, typically one of "test" for'
+                         ' the test server or "prod" for the production'
+                         ' server.')
+PARSER.add_argument('-f','--force',
+                    action='store_true',
+                    help='Force the action (useful during set).')
+ARGS = PARSER.parse_args()
 
-    def __init__(self, url):
-        """Initialise the Jenkins server. URL and credentials are expected
-        to be defined in global variables.
+# Lookup the server URL and then connect and perform the action...
+J_URL = SERVERS[ARGS.server]
+J_URL = 'https://%s:%s@%s' % (J_USER, J_TOKEN, J_URL)
+JS = ImJenkinsServer(J_URL)
 
-        :param url: The server URL
-        :type url: ``String``
-        """
+# Set or get?
+if ARGS.action == 'get':
 
-        # Connect (and then try and get the server version)...
-        LOGGER.info('Connecting to Jenkins...')
-        self.server = None
-        self.server_version = None
-        try:
-            self.server = jenkins.Jenkins(url)
-        except BaseException as error:
-            LOGGER.error('Failed to connect (exception follows)')
-            LOGGER.info(error)
+    print('Reading server configuration...')
+    # You can't get the credentials!
+    # Read Jobs into 'jobs-test' or 'jobs-prod'...
+    JS.get_jobs('jobs-' + ARGS.server)
 
-        if self.server:
-            try:
-                self.server_version = self.server.get_version()
-            except BaseException as error:
-                LOGGER.error('Failed to get server version (exception follows)')
-                LOGGER.info(error)
-            if self.server_version:
-                LOGGER.info('Connected (Jenkins v%s)', self.server_version)
+elif ARGS.action == 'set':
 
-    def get_jobs(self, server):
-        """Gets all the job configurations from the 'known' views.
+    # This is potentially destructive.
+    # Double-check with the user...
+    print("WARNING: Setting the server value sis dfestructive.")
+    response = input("         If you're sure you want to continue enter 'YES': ")
+    if response not in ['YES']:
+        print('Phew! That was close!')
+        sys.exit(0)
 
-        :param server: The server (test or prod)
-        :type server: ``String``
-        :return: Number of jobs retrieved
-        :rtype: ``int``
-        """
-        # Do nothing if we do not appear to be connected.
-        if not self.server_version:
-            return 0
+    print('Writing server configuration...')
+    # Set credentials
+    JS.set_secret_text('abcDockerPassword',
+                       J_DOCKER_PASS,
+                       "Docker Password")
+    JS.set_secret_text('slackJenkinsIntegrationToken',
+                       J_SLACK_TOKEN,
+                       "Slack channel Jenkins Integration token")
+    # Write Jobs from 'jobs-test' or 'jobs-prod'...
+    JS.set_jobs('jobs-' + ARGS.server, force=ARGS.force)
 
-        LOGGER.info('Getting job configurations...')
-
-        sub_dir = '%s-%s' % (JOB_DIR, server)
-        if not os.path.exists(sub_dir):
-            os.mkdir(sub_dir)
-
-        num_got = 0
-        jobs = self.server.get_jobs()
-        for job in jobs:
-            job_name = job['name']
-            LOGGER.info('Getting "%s"...', job_name)
-            job_config = self.server.get_job_config(job_name)
-            job_config_filename = os.path.join(sub_dir, job_name + '.xml')
-            job_file = open(job_config_filename, 'w')
-            job_file.write(job_config)
-            job_file.close()
-            num_got += 1
-
-        LOGGER.info('Got (%s)', num_got)
-
-        return num_got
-
-    def set_jobs(self, server, force=False):
-        """Sets up the fragalysis CI/CD Jobs.
-
-        :param server: The server (test or prod)
-        :type server: ``String``
-        :param force: True to force the action
-        :type force: ``Boolean``
-        :return: True on success
-        :rtype: ``Boolean``
-        """
-        # Do nothing if we do not appear to be connected.
-        if not self.server_version:
-            return False
-
-        LOGGER.info('Setting job configurations...')
-
-        # Iterate through all the jobs...
-        num_set = 0
-        job_files = glob.glob('%s-%s/*.xml' % (JOB_DIR, server))
-        for job_file in job_files:
-            # The name of the job is the basename of the file.
-            # and we simply load the file contents (into a string)
-            # to create the job (if the job does not exist)
-            job_name = os.path.basename(job_file)[:-4]
-            job_exists = self.server.job_exists(job_name)
-            if job_exists and not force:
-                LOGGER.info('Skipping "%s" (Already Present)', job_name)
-            else:
-                job_definition = open(job_file, 'r').read()
-                if job_exists:
-                    LOGGER.info('Reconfiguring "%s"...', job_name)
-                    self.server.reconfig_job(job_name, job_definition)
-                else:
-                    LOGGER.info('Creating "%s"...', job_name)
-                    self.server.create_job(job_name, job_definition)
-                num_set += 1
-
-        LOGGER.info('Set (%s)', num_set)
-
-        # Success if we get here...
-        return True
-
-
-if __name__ == '__main__':
-
-    PARSER = argparse.ArgumentParser(description='Jenkins Configuration')
-    PARSER.add_argument('action',
-                        choices=['get', 'set'],
-                        help='The action to perform. This is typically one'
-                             ' of "get" in order to get the configuration or'
-                             ' "set" to set the job configuration for a server.')
-    PARSER.add_argument('server',
-                        choices=['test', 'prod'],
-                        help='The Jenkins server, typically one of "test" for'
-                             ' the test server or "prod" for the production'
-                             ' server.')
-    PARSER.add_argument('-f','--force',
-                        action='store_true',
-                        help='Force the action (useful during set).')
-    ARGS = PARSER.parse_args()
-
-    # Lookup the server URL and then connect and perform the action...
-    J_URL = SERVERS[ARGS.server]
-    J_URL = 'https://%s:%s@%s' % (J_USER, J_TOKEN, J_URL)
-    JS = JenkinsServer(J_URL)
-    if ARGS.action == 'get':
-        JS.get_jobs(ARGS.server)
-    elif ARGS.action == 'set':
-        JS.set_jobs(ARGS.server, force=ARGS.force)
+print('Done')
