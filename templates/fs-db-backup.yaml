@@ -69,7 +69,7 @@ objects:
               - name: BACKUP_TYPE
                 value: hourly
               - name: BACKUP_COUNT
-                value: 24
+                value: '24'
               - name: PGHOST
                 value: ${BACKUP_PGHOST}
               - name: PGUSER
@@ -114,11 +114,11 @@ objects:
               - name: BACKUP_TYPE
                 value: daily
               - name: BACKUP_COUNT
-                value: 6
+                value: '6'
               - name: BACKUP_PRIOR_TYPE
                 value: hourly
               - name: BACKUP_PRIOR_COUNT
-                value: 24
+                value: '24'
             volumes:
             - name: fs-pg-data-backup
               persistentVolumeClaim:
@@ -159,11 +159,11 @@ objects:
               - name: BACKUP_TYPE
                 value: weekly
               - name: BACKUP_COUNT
-                value: 3
+                value: '3'
               - name: BACKUP_PRIOR_TYPE
                 value: daily
               - name: BACKUP_PRIOR_COUNT
-                value: 6
+                value: '6'
             volumes:
             - name: fs-pg-data-backup
               persistentVolumeClaim:
@@ -204,11 +204,11 @@ objects:
               - name: BACKUP_TYPE
                 value: monthly
               - name: BACKUP_COUNT
-                value: 11
+                value: '11'
               - name: BACKUP_PRIOR_TYPE
                 value: weekly
               - name: BACKUP_PRIOR_COUNT
-                value: 3
+                value: '3'
             volumes:
             - name: fs-pg-data-backup
               persistentVolumeClaim:
