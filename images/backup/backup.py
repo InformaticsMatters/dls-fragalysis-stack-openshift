@@ -53,8 +53,8 @@ B_WEEKLY = 'weekly'
 B_MONTHLY = 'monthly'
 
 # Extract configuration from the environment.
-PGHOST = os.environ['PGHOST']
-PGUSER = os.environ['PGUSER']
+PGHOST = os.environ.get('PGHOST', 'postgres')
+PGUSER = os.environ.get('PGUSER', 'postgres')
 # The backup type is HOURLY by default.
 # Hourly backups always create a new backup and limit
 # the count to 24 (by default).
