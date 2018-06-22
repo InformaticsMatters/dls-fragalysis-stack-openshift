@@ -74,8 +74,7 @@ BACKUP_PRIOR_DIR = os.path.join(BACKUP_ROOT_DIR, BACKUP_PRIOR_TYPE)
 BACKUP_DIR = os.path.join(BACKUP_ROOT_DIR, BACKUP_TYPE)
 
 BACKUP = os.path.join(BACKUP_DIR, BACKUP_LIVE_FILE)
-#BACKUP_CMD = 'pg_dumpall --clean --file=%s' % BACKUP
-BACKUP_CMD = 'touch %s' % BACKUP
+BACKUP_CMD = 'pg_dumpall --clean --file=%s' % BACKUP
 
 # Echo configuration...
 print('# PGHOST = %s' % PGHOST)
