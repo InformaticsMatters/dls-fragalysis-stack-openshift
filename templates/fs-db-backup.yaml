@@ -28,34 +28,31 @@ parameters:
   value: 'latest'
 - name: BACKUP_NODE_SIZE_SELECTOR
   value: 'small'
-- name: BACKUP_COUNT
-  value: '24'
-- name: BACKUP_TYPE
-  value: 'hourly'
 - name: BACKUP_PGHOST
   value: 'db.fragalysis-cicd.svc'
 - name: BACKUP_PGUSER
   value: 'postgres'
-- name: BACKUP_SCHEDULE
-  value: '5 * * * *'
 
 objects:
 
+# The HOURLY CronJob (at HH:05)
+# This job will create new postgres backups every hour
+# Keeping the last 24 backups in the directory /backup/hourly
 - kind: CronJob
   apiVersion: batch/v1beta1
   metadata:
-    name: db-backup
+    name: db-backup-hourly
     namespace: ${BACKUP_NAMESPACE}
   spec:
-    schedule: ${BACKUP_SCHEDULE}
-    startingDeadlineSeconds: 300
+    schedule: '5 * * * *'
+    startingDeadlineSeconds: 180
     concurrencyPolicy: Forbid
     jobTemplate:
       spec:
         template:
           metadata:
             labels:
-              name: backup
+              name: backup-hourly
           spec:
             nodeSelector:
               size: ${BACKUP_NODE_SIZE_SELECTOR}
@@ -70,13 +67,148 @@ objects:
                 mountPath: /backup
               env:
               - name: BACKUP_TYPE
-                value: ${BACKUP_TYPE}
+                value: hourly
               - name: BACKUP_COUNT
-                value: ${BACKUP_COUNT}
+                value: 24
               - name: PGHOST
                 value: ${BACKUP_PGHOST}
               - name: PGUSER
                 value: ${BACKUP_PGUSER}
+            volumes:
+            - name: fs-pg-data-backup
+              persistentVolumeClaim:
+                claimName: fs-pg-data-backup-claim
+            restartPolicy: Never
+
+# The DAILY CronJob (at 00:45)
+# This job will copy the oldest hourly backup (when there are 24)
+# Keeping the last 6 backups in the directory /backup/daily
+- kind: CronJob
+  apiVersion: batch/v1beta1
+  metadata:
+    name: db-backup-daily
+    namespace: ${BACKUP_NAMESPACE}
+  spec:
+    schedule: '45 0 * * *'
+    startingDeadlineSeconds: 180
+    concurrencyPolicy: Forbid
+    jobTemplate:
+      spec:
+        template:
+          metadata:
+            labels:
+              name: backup-daily
+          spec:
+            nodeSelector:
+              size: ${BACKUP_NODE_SIZE_SELECTOR}
+            serviceAccountName: diamond
+
+            # Application containers
+            containers:
+            - image: ${BACKUP_REGISTRY}/${BACKUP_IMAGE}:${BACKUP_TAG}
+              name: backup
+              volumeMounts:
+              - name: fs-pg-data-backup
+                mountPath: /backup
+              env:
+              - name: BACKUP_TYPE
+                value: daily
+              - name: BACKUP_COUNT
+                value: 6
+              - name: BACKUP_PRIOR_TYPE
+                value: hourly
+              - name: BACKUP_PRIOR_COUNT
+                value: 24
+            volumes:
+            - name: fs-pg-data-backup
+              persistentVolumeClaim:
+                claimName: fs-pg-data-backup-claim
+            restartPolicy: Never
+
+# The WEEKLY CronJob (at 00:50 on Sunday)
+# This job will copy the oldest daily backup (when there are 6)
+# Keeping the last 3 backups in the directory /backup/weekly
+- kind: CronJob
+  apiVersion: batch/v1beta1
+  metadata:
+    name: db-backup-weekly
+    namespace: ${BACKUP_NAMESPACE}
+  spec:
+    schedule: '50 0 * * 0'
+    startingDeadlineSeconds: 180
+    concurrencyPolicy: Forbid
+    jobTemplate:
+      spec:
+        template:
+          metadata:
+            labels:
+              name: backup-weekly
+          spec:
+            nodeSelector:
+              size: ${BACKUP_NODE_SIZE_SELECTOR}
+            serviceAccountName: diamond
+
+            # Application containers
+            containers:
+            - image: ${BACKUP_REGISTRY}/${BACKUP_IMAGE}:${BACKUP_TAG}
+              name: backup
+              volumeMounts:
+              - name: fs-pg-data-backup
+                mountPath: /backup
+              env:
+              - name: BACKUP_TYPE
+                value: weekly
+              - name: BACKUP_COUNT
+                value: 3
+              - name: BACKUP_PRIOR_TYPE
+                value: daily
+              - name: BACKUP_PRIOR_COUNT
+                value: 6
+            volumes:
+            - name: fs-pg-data-backup
+              persistentVolumeClaim:
+                claimName: fs-pg-data-backup-claim
+            restartPolicy: Never
+
+# The MONTHLY CronJob (at 00:55 on the 1st of each month)
+# This job will copy the oldest weekly backup (when there are 3)
+# Keeping the last 11 backups in the directory /backup/monthly
+- kind: CronJob
+  apiVersion: batch/v1beta1
+  metadata:
+    name: db-backup-monthly
+    namespace: ${BACKUP_NAMESPACE}
+  spec:
+    schedule: '55 0 1 * *'
+    startingDeadlineSeconds: 180
+    concurrencyPolicy: Forbid
+    jobTemplate:
+      spec:
+        template:
+          metadata:
+            labels:
+              name: backup-monthly
+          spec:
+            nodeSelector:
+              size: ${BACKUP_NODE_SIZE_SELECTOR}
+            serviceAccountName: diamond
+
+            # Application containers
+            containers:
+            - image: ${BACKUP_REGISTRY}/${BACKUP_IMAGE}:${BACKUP_TAG}
+              name: backup
+              volumeMounts:
+              - name: fs-pg-data-backup
+                mountPath: /backup
+              env:
+              - name: BACKUP_TYPE
+                value: monthly
+              - name: BACKUP_COUNT
+                value: 11
+              - name: BACKUP_PRIOR_TYPE
+                value: weekly
+              - name: BACKUP_PRIOR_COUNT
+                value: 3
             volumes:
             - name: fs-pg-data-backup
               persistentVolumeClaim:
