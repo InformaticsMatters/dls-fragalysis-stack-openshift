@@ -61,7 +61,7 @@ PGUSER = os.environ.get('PGUSER', 'postgres')
 BACKUP_COUNT = int(os.environ.get('BACKUP_COUNT', '24'))
 BACKUP_PRIOR_COUNT = int(os.environ.get('BACKUP_PRIOR_COUNT', '24'))
 BACKUP_TYPE = os.environ.get('BACKUP_TYPE', B_HOURLY).lower()
-BACKUP_PRIOR_TYPE = os.environ.get('BACKUP_PRIOR_COUNT', B_HOURLY).lower()
+BACKUP_PRIOR_TYPE = os.environ.get('BACKUP_PRIOR_TYPE', B_HOURLY).lower()
 
 # The backup config.
 # The root dir, below which you're likely to find
