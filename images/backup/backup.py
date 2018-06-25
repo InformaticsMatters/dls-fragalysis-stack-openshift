@@ -46,6 +46,14 @@ import subprocess
 import shutil
 from datetime import datetime
 
+# The module version.
+# Please adjust on every change
+# following Semantic Versioning principles.
+__version__ = '1.0.0'
+
+# Expose our version...
+print('# backup.__version__ = %s', __version__)
+
 # Backup types...
 B_HOURLY = 'hourly'
 B_DAILY = 'daily'
