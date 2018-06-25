@@ -12,14 +12,18 @@ pipeline {
     REGISTRY = 'docker-registry.default:5000'
     STREAM_IMAGE = "${REGISTRY}/fragalysis-cicd/backup-stream:latest"
 
-    SLACK_CHANNEL = 'cicd-dls-backupimage'
+    // Slack channel for all notifictions
+    SLACK_CICD_CHANNEL = 'dls-cicd-backupimage'
+    // Slack channel to be used for errors/failures
+    // (which also go to the CI/CD channel)
+    SLACK_ALERT_CHANNEL = 'dls-alerts'
   }
 
   stages {
 
     stage('Build Image') {
       steps {
-        slackSend channel: "#${env.SLACK_CHANNEL}",
+        slackSend channel: "#${env.SLACK_CICD_CHANNEL}",
                   message: "Backup image build ${env.BUILD_NUMBER} - starting..."
         script {
           TOKEN = sh(script: 'oc whoami -t', returnStdout: true).trim()
@@ -49,15 +53,21 @@ pipeline {
   post {
 
     success {
-      slackSend channel: "#${env.SLACK_CHANNEL}",
+      slackSend channel: "#${env.SLACK_CICD_CHANNEL}",
                 color: 'good',
                 message: "Backup image build ${env.BUILD_NUMBER} - complete"
     }
 
     failure {
-      slackSend channel: "#${env.SLACK_CHANNEL}",
+
+      ERR_MSG = "Backup image build ${env.BUILD_NUMBER} - failed (${env.BUILD_URL})"
+      slackSend channel: "#${env.SLACK_CICD_CHANNEL}",
                 color: 'danger',
-                message: "Backup image build ${env.BUILD_NUMBER} - failed (${env.BUILD_URL})"
+                message: $ERR_MSG
+      slackSend channel: "#${env.SLACK_ALERT_CHANNEL}",
+                color: 'danger',
+                message: $ERR_MSG
+
     }
 
   }
