@@ -52,7 +52,7 @@ from datetime import datetime
 __version__ = '1.0.0'
 
 # Expose our version...
-print('# backup.__version__ = %s', __version__)
+print('# backup.__version__ = %s' % __version__)
 
 # Backup types...
 B_HOURLY = 'hourly'
@@ -218,7 +218,7 @@ else:
 
 REMAINING_BACKUPS = glob.glob(FILE_SEARCH)
 if REMAINING_BACKUPS:
-    print('--] Remaining backups...')
+    print('--] Remaining backups (%s)...' % len(REMAINING_BACKUPS))
     REMAINING_BACKUPS.sort(reverse=True)
     for REMAINING_BACKUP in REMAINING_BACKUPS:
         print('    %s' % REMAINING_BACKUP)
