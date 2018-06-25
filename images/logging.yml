@@ -16,4 +16,4 @@ handlers:
     stream: ext://sys.stdout
 root:
   level: INFO
-  handlers: [console]
+  handlers: [file]

@@ -42,6 +42,7 @@ pipeline {
             env.REGISTRY_USER_TOKEN = sh(script: 'oc whoami -t', returnStdout: true).trim()
             DATA_ORIGIN = sh(script: './get_unbuilt_data_directory.py', returnStdout: true).trim()
           }
+          sh 'cat get_unbuilt_data_directory.log'
         }
       }
     }
