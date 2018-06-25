@@ -62,6 +62,7 @@ objects:
             containers:
             - image: ${BACKUP_REGISTRY}/${BACKUP_IMAGE}:${BACKUP_TAG}
               name: backup
+              imagePullPolicy: Always
               volumeMounts:
               - name: fs-pg-data-backup
                 mountPath: /backup
@@ -107,6 +108,7 @@ objects:
             containers:
             - image: ${BACKUP_REGISTRY}/${BACKUP_IMAGE}:${BACKUP_TAG}
               name: backup
+              imagePullPolicy: Always
               volumeMounts:
               - name: fs-pg-data-backup
                 mountPath: /backup
@@ -152,6 +154,7 @@ objects:
             containers:
             - image: ${BACKUP_REGISTRY}/${BACKUP_IMAGE}:${BACKUP_TAG}
               name: backup
+              imagePullPolicy: Always
               volumeMounts:
               - name: fs-pg-data-backup
                 mountPath: /backup
@@ -197,6 +200,7 @@ objects:
             containers:
             - image: ${BACKUP_REGISTRY}/${BACKUP_IMAGE}:${BACKUP_TAG}
               name: backup
+              imagePullPolicy: Always
               volumeMounts:
               - name: fs-pg-data-backup
                 mountPath: /backup
