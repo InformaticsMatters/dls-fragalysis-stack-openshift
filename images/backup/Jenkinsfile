@@ -59,19 +59,18 @@ pipeline {
     }
 
     failure {
+      slackSend channel: "#${env.SLACK_CICD_CHANNEL}",
+                color: 'danger',
+                message: "Backup image build ${env.BUILD_NUMBER} - failed (${env.BUILD_URL})"
+      slackSend channel: "#${env.SLACK_ALERT_CHANNEL}",
+                color: 'danger',
+                message: "Backup image build ${env.BUILD_NUMBER} - failed (${env.BUILD_URL})"
+    }
 
-      steps {
-        script {
-          ERR_MSG = "Backup image build ${env.BUILD_NUMBER} - failed (${env.BUILD_URL})"
-        }
-        slackSend channel: "#${env.SLACK_CICD_CHANNEL}",
-                  color: 'danger',
-                  message: $ERR_MSG
-        slackSend channel: "#${env.SLACK_ALERT_CHANNEL}",
-                  color: 'danger',
-                  message: $ERR_MSG
-      }
-
+    fixed {
+      slackSend channel: "#${env.SLACK_ALERT_CHANNEL}",
+                color: 'good',
+                message: "Backup image build - fixed"
     }
 
   }
