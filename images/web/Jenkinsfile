@@ -35,6 +35,7 @@ pipeline {
           // - Get the registry user API token (used in the Python module)
           // - Run the get_unbuilt_data_directory module to find the latest data
           // - Dump the script log.
+          sh "ls ${env.SOURCE_DATA_ROOT}"
           slackSend channel: "#${env.SLACK_CHANNEL}",
                     message: "Web image build ${env.BUILD_NUMBER} - starting..."
           script {
