@@ -100,13 +100,17 @@ pipeline {
 
     failure {
 
-      ERR_MSG = "Graph image build ${env.BUILD_NUMBER} - failed (${env.BUILD_URL})"
-      slackSend channel: "#${SLACK_CICD_CHANNEL}",
-                color: 'danger',
-                message: $ERR_MSG
-      slackSend channel: "#${SLACK_ALERT_CHANNEL}",
-                color: 'danger',
-                message: $ERR_MSG
+      steps {
+        script {
+          ERR_MSG = "Graph image build ${env.BUILD_NUMBER} - failed (${env.BUILD_URL})"
+        }
+        slackSend channel: "#${SLACK_CICD_CHANNEL}",
+                  color: 'danger',
+                  message: $ERR_MSG
+        slackSend channel: "#${SLACK_ALERT_CHANNEL}",
+                  color: 'danger',
+                  message: $ERR_MSG
+      }
 
     }
 
