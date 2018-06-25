@@ -10,6 +10,10 @@ handlers:
     formatter: simple
     filename: get_unbuilt_data_directory.log
     mode: w
+  console:
+    class: logging.StreamHandler
+    formatter: simple
+    stream: ext://sys.stdout
 root:
   level: INFO
-  handlers: [file]
+  handlers: [console]

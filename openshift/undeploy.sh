@@ -10,7 +10,7 @@ echo "- Undeploying Application..."
 
 oc delete all --selector template=fs-db-backup
 oc delete all,route --selector template=fs-web
-oc delete all,secrets --selector template=fs-cartridge
+#oc delete all,secrets --selector template=fs-cartridge
 oc delete all --selector template=fs-db
 oc delete all --selector template=fs-graph
 
@@ -22,7 +22,7 @@ oc delete secrets --selector template=fs-secrets
 echo
 echo "- Deleting PVCs..."
 
-oc delete pvc --selector template=fs-cartridge-pvc
+#oc delete pvc --selector template=fs-cartridge-pvc
 oc delete pvc --selector template=fs-db-backup-pvc
 oc delete pvc --selector template=fs-db-pvc
 
