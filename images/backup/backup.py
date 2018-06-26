@@ -5,6 +5,55 @@
 The backup directory (BACKUP_DIR) is expected to have
 been mounted as some form of volume in the container image.
 
+The backup files are named according to the following format: -
+
+    <BACKUP_FILE_PREFIX>-<YYYY-MM-DDTHH:MM:SSZ>-<BACKUP_LIVE_FILE>
+
+For example: -
+
+    backup-2018-06-25T21:05:07-dumpall.sql
+
+The time of the backup is the approximate time this utility is executed,
+i.e. the start time of the backup.
+
+A number of environment variables control this utility: -
+
+-   BACKUP_TYPE         The type of backup. There are a number of pre-defined
+                        types: - 'hourly', 'daily', 'weekly' and 'monthly'.
+                        The 'hourly' is special in that it is the only backup
+                        that generates new files, the other types simply
+                        copy files to daily, weekly or monthly directories.
+                        Backup files are written to directories that match
+                        the type, i.e. /backup/daily. A description
+                        of each type can be found below.
+
+-   BACKUP_COUNT        The number of backup files to maintain for the given
+                        backup type.
+
+-   BACKUP_PRIOR_TYPE   The prior backup type (i.e. the type to copy from).
+                        It can be one of 'daily', 'weekly', 'monthly'.
+                        A 'weekly' BACKUP_TYPE would normally have a
+                        'daily' BACKUP_PRIOR_TYPE. It is used to decide
+                        where to get this backup's backup files from.
+
+-   BACKUP_PRIOR_COUNT  For types other than 'hourly' this is the number of
+                        backup files in the prior backup type that
+                        represent a 'full' set. When the prior backup directory
+                        contains this number of files the oldest is copied to
+                        this backup directory. i.e. if this is a 'weekly'
+                        backup and the prior type is 'daily' and you are
+                        collecting '6' daily files a weekly file will be
+                        created form the oldest daily directory when there are
+                        '24' files in the hourly directory. This is designed
+                        to prevent a backup form, copying a prior file until
+                        there are sufficient prior files.
+
+-   PGHOST              The Postgres database Hostname.
+                        Used only for 'hourly' backup types
+
+-   PGUSER              The Postgres database User.
+                        Used only for 'hourly' backup types
+
 There are four values for BACKUP_TYPE: -
 
 - hourly    Typically the BACKUP_COUNT is 24.
@@ -49,7 +98,7 @@ from datetime import datetime
 # The module version.
 # Please adjust on every change
 # following Semantic Versioning principles.
-__version__ = '1.0.0'
+__version__ = '2.0.0'
 
 # Expose our version...
 print('# backup.__version__ = %s' % __version__)
@@ -179,8 +228,12 @@ if BACKUP_TYPE == B_HOURLY:
     #####
     # 4 #
     #####
+    # The backup time is the start time of this job
+    # (but ignore any fractions of a second and then add 'Z'
+    # to be very clear that it's UTC.
+    BACKUP_TIME = BACKUP_START_TIME.isoformat().split('.')[0] + 'Z'
     COPY_BACKUP_FILE = '%s-%s-%s' % (BACKUP_FILE_PREFIX,
-                                     BACKUP_START_TIME.isoformat(),
+                                     BACKUP_TIME,
                                      BACKUP_LIVE_FILE)
     print('--] Copying %s to %s...' % (BACKUP_LIVE_FILE, COPY_BACKUP_FILE))
     BACKUP_TO = os.path.join(BACKUP_DIR, COPY_BACKUP_FILE)
@@ -194,12 +247,17 @@ else:
     #####
     # Daily, weekly or monthly backup...
     FILE_SEARCH = os.path.join(BACKUP_PRIOR_DIR, BACKUP_FILE_PREFIX + '*')
-    EXISTING_BACKUPS = glob.glob(FILE_SEARCH)
-    if len(EXISTING_BACKUPS) == BACKUP_PRIOR_COUNT:
+    EXISTING_PRIOR_BACKUPS = glob.glob(FILE_SEARCH)
+    NUM_PRIOR_BACKUPS = len(EXISTING_PRIOR_BACKUPS)
+    if NUM_PRIOR_BACKUPS == BACKUP_PRIOR_COUNT:
         # Prior backup has sufficient files.
         # Copy the oldest
-        EXISTING_BACKUPS.sort()
-        shutil.copy2(EXISTING_BACKUPS[0], BACKUP_DIR)
+        EXISTING_PRIOR_BACKUPS.sort()
+        OLDEST_PRIOR = EXISTING_PRIOR_BACKUPS[0]
+        print('--] Copying %s to %s...' % (OLDEST_PRIOR, BACKUP_DIR))
+        shutil.copy2(OLDEST_PRIOR, BACKUP_DIR)
+    else:
+        print('--] Nothing to do, too few prior backups (%s). ...' % NUM_PRIOR_BACKUPS)
 
 #####
 # 6 #
