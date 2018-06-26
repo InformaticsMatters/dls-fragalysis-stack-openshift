@@ -7,11 +7,11 @@ been mounted as some form of volume in the container image.
 
 The backup files are named according to the following format: -
 
-    <BACKUP_FILE_PREFIX>-<YYYY-MM-DDTHH:MM:SSZ>-<BACKUP_LIVE_FILE>
+    <BACKUP_FILE_PREFIX>-<YYYY-MM-DDTHH:MM:SSZ>-<BACKUP_LIVE_FILE>.gz
 
 For example: -
 
-    backup-2018-06-25T21:05:07-dumpall.sql
+    backup-2018-06-25T21:05:07Z-dumpall.sql.gz
 
 The time of the backup is the approximate time this utility is executed,
 i.e. the start time of the backup.
@@ -98,7 +98,7 @@ from datetime import datetime
 # The module version.
 # Please adjust on every change
 # following Semantic Versioning principles.
-__version__ = '2.0.1'
+__version__ = '2.0.2'
 
 # Expose our version...
 print('# backup.__version__ = %s' % __version__)
@@ -131,7 +131,7 @@ BACKUP_PRIOR_DIR = os.path.join(BACKUP_ROOT_DIR, BACKUP_PRIOR_TYPE)
 BACKUP_DIR = os.path.join(BACKUP_ROOT_DIR, BACKUP_TYPE)
 
 BACKUP = os.path.join(BACKUP_DIR, BACKUP_LIVE_FILE)
-BACKUP_CMD = 'pg_dumpall --clean --file=%s' % BACKUP
+BACKUP_CMD = 'pg_dumpall --clean | gzip > %s.gz' % BACKUP
 
 # Echo configuration...
 print('# BACKUP_TYPE = %s' % BACKUP_TYPE)
