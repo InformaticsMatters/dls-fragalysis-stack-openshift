@@ -98,7 +98,7 @@ from datetime import datetime
 # The module version.
 # Please adjust on every change
 # following Semantic Versioning principles.
-__version__ = '2.0.0'
+__version__ = '2.0.1'
 
 # Expose our version...
 print('# backup.__version__ = %s' % __version__)
@@ -134,13 +134,13 @@ BACKUP = os.path.join(BACKUP_DIR, BACKUP_LIVE_FILE)
 BACKUP_CMD = 'pg_dumpall --clean --file=%s' % BACKUP
 
 # Echo configuration...
+print('# BACKUP_TYPE = %s' % BACKUP_TYPE)
+print('# BACKUP_COUNT = %s' % BACKUP_COUNT)
+print('# BACKUP_DIR = %s' % BACKUP_DIR)
+print('# BACKUP_PRIOR_TYPE = %s' % BACKUP_PRIOR_TYPE)
+print('# BACKUP_PRIOR_COUNT = %s' % BACKUP_PRIOR_COUNT)
 print('# PGHOST = %s' % PGHOST)
 print('# PGUSER = %s' % PGUSER)
-print('# BACKUP_DIR = %s' % BACKUP_DIR)
-print('# BACKUP_COUNT = %s' % BACKUP_COUNT)
-print('# BACKUP_TYPE = %s' % BACKUP_TYPE)
-print('# BACKUP_PRIOR_COUNT = %s' % BACKUP_PRIOR_COUNT)
-print('# BACKUP_PRIOR_TYPE = %s' % BACKUP_PRIOR_TYPE)
 
 # Backup...
 #
@@ -174,16 +174,16 @@ print('# BACKUP_PRIOR_TYPE = %s' % BACKUP_PRIOR_TYPE)
 if BACKUP_TYPE not in [B_HOURLY, B_DAILY, B_WEEKLY, B_MONTHLY]:
     print('--] Unexpected BACKUP_TYPE (%s)' % BACKUP_TYPE)
     sys.exit(1)
-if BACKUP_PRIOR_TYPE not in [B_HOURLY, B_DAILY, B_WEEKLY, B_MONTHLY]:
+if BACKUP_PRIOR_TYPE not in [B_HOURLY, B_DAILY, B_WEEKLY]:
     print('--] Unexpected BACKUP_PRIOR_TYPE (%s)' % BACKUP_PRIOR_TYPE)
-    sys.exit(1)
+    sys.exit(2)
 
 #####
 # 1 #
 #####
 if not os.path.isdir(BACKUP_ROOT_DIR):
     print('--] Backup root directory does not exist (%s). Leaving.' % BACKUP_ROOT_DIR)
-    sys.exit(1)
+    sys.exit(3)
 if not os.path.isdir(BACKUP_DIR):
     os.makedirs(BACKUP_DIR)
 
@@ -202,8 +202,8 @@ if BACKUP_TYPE == B_HOURLY:
     # 3 #
     #####
     BACKUP_START_TIME = datetime.now()
-    print('--] Starting backup... [%s]' % BACKUP_START_TIME)
-    print("$", BACKUP_CMD)
+    print('--] Starting backup [%s]' % BACKUP_START_TIME)
+    print("    $", BACKUP_CMD)
     COMPLETED_PROCESS = subprocess.run(BACKUP_CMD, shell=True)
     BACKUP_END_TIME = datetime.now()
     print('--] Backup finished [%s]' % BACKUP_END_TIME)
@@ -254,10 +254,11 @@ else:
         # Copy the oldest
         EXISTING_PRIOR_BACKUPS.sort()
         OLDEST_PRIOR = EXISTING_PRIOR_BACKUPS[0]
-        print('--] Copying %s to %s...' % (OLDEST_PRIOR, BACKUP_DIR))
+        print('--] Copying oldest %s to %s' % (BACKUP_PRIOR_TYPE, BACKUP_DIR))
+        print('    %s' % OLDEST_PRIOR)
         shutil.copy2(OLDEST_PRIOR, BACKUP_DIR)
     else:
-        print('--] Nothing to do, too few prior backups (%s). ...' % NUM_PRIOR_BACKUPS)
+        print('--] Nothing to do. Too few prior backups (%s). ...' % NUM_PRIOR_BACKUPS)
 
 #####
 # 6 #
@@ -267,12 +268,13 @@ FILE_SEARCH = os.path.join(BACKUP_DIR, BACKUP_FILE_PREFIX + '*')
 EXISTING_BACKUPS = glob.glob(FILE_SEARCH)
 NUM_TO_DELETE = len(EXISTING_BACKUPS) - BACKUP_COUNT
 if NUM_TO_DELETE > 0:
+    print('--] Removing expired backups...')
     EXISTING_BACKUPS.sort()
     for EXISTING_BACKUP in EXISTING_BACKUPS[:NUM_TO_DELETE]:
-        print('--] Removing old backup %s...' % EXISTING_BACKUP)
+        print('    %s' % EXISTING_BACKUP)
         os.remove(EXISTING_BACKUP)
 else:
-    print('--] No old backups to delete')
+    print('--] No expired backups to delete')
 
 REMAINING_BACKUPS = glob.glob(FILE_SEARCH)
 if REMAINING_BACKUPS:
