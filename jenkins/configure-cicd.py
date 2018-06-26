@@ -62,30 +62,33 @@ PARSER.add_argument('-f','--force',
                     help='Force the action (useful during set).')
 ARGS = PARSER.parse_args()
 
-# Lookup the server URL and then connect and perform the action...
+# Connect to the server
 J_URL = SERVERS[ARGS.server]
-J_URL = 'https://%s:%s@%s' % (J_USER, J_TOKEN, J_URL)
-JS = ImJenkinsServer(J_URL)
+J_URL_WITH_USER = 'https://%s:%s@%s' % (J_USER, J_TOKEN, J_URL)
+JS = ImJenkinsServer(J_URL_WITH_USER)
+if not JS.is_connected():
+    LOGGER.error('Failed to connect to jenkins')
+    sys.exit(1)
 
 # Set or get?
 if ARGS.action == 'get':
 
-    print('Reading server configuration...')
+    LOGGER.info('Reading server configuration...')
     # You can't get the credentials!
     # Read Jobs into 'jobs-test' or 'jobs-prod'...
     JS.get_jobs('jobs-' + ARGS.server)
 
 elif ARGS.action == 'set':
 
-    # This is potentially destructive.
+    # Destructive
     # Double-check with the user...
-    print("WARNING: Setting the server value sis dfestructive.")
+    print("WARNING: Setting the server value is destructive.")
     response = input("         If you're sure you want to continue enter 'YES': ")
     if response not in ['YES']:
         print('Phew! That was close!')
         sys.exit(0)
 
-    print('Writing server configuration...')
+    LOGGER.info('Writing server configuration...')
     # Set credentials
     JS.set_secret_text('abcDockerPassword',
                        J_DOCKER_PASS,
@@ -96,4 +99,4 @@ elif ARGS.action == 'set':
     # Write Jobs from 'jobs-test' or 'jobs-prod'...
     JS.set_jobs('jobs-' + ARGS.server, force=ARGS.force)
 
-print('Done')
+LOGGER.info('Done')

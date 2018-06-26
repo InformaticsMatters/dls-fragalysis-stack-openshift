@@ -14,7 +14,8 @@
     <org.jenkinsci.plugins.workflow.job.properties.PipelineTriggersJobProperty>
       <triggers>
         <hudson.triggers.SCMTrigger>
-          <spec>H/10 * * * *</spec>
+          <spec># Every 10 minutes
+1,11,21,32,41,51 * * * *</spec>
           <ignorePostCommitHooks>false</ignorePostCommitHooks>
         </hudson.triggers.SCMTrigger>
       </triggers>
@@ -50,12 +51,7 @@
       </branches>
       <doGenerateSubmoduleConfigurations>false</doGenerateSubmoduleConfigurations>
       <submoduleCfg class="list"/>
-      <extensions>
-        <hudson.plugins.git.extensions.impl.PathRestriction>
-          <includedRegions>images/backup/.+</includedRegions>
-          <excludedRegions></excludedRegions>
-        </hudson.plugins.git.extensions.impl.PathRestriction>
-      </extensions>
+      <extensions/>
     </scm>
     <scriptPath>images/backup/Jenkinsfile</scriptPath>
     <lightweight>true</lightweight>

@@ -2,7 +2,7 @@ version: 1
 disable_existing_loggers: false
 formatters:
   simple:
-    format: '%(asctime)s.%(msecs)03dZ %(levelname)s # %(message)s'
+    format: '%(asctime)s.%(msecs)03dZ %(levelname)-7s # %(message)s'
     datefmt: '%Y-%m-%dT%H:%M:%S'
 handlers:
   file:
@@ -14,6 +14,10 @@ handlers:
     class: logging.StreamHandler
     formatter: simple
     stream: ext://sys.stdout
+loggers:
+  ImJenkinsServer:
+    level: DEBUG
+    propagate: yes
 root:
   level: INFO
   handlers: [console]
