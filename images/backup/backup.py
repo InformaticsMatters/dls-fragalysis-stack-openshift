@@ -106,7 +106,7 @@ from datetime import datetime
 # The module version.
 # Please adjust on every change
 # following Semantic Versioning principles.
-__version__ = '2.0.5'
+__version__ = '2.0.6'
 
 # Expose our version...
 print('# backup.__version__ = %s' % __version__)
@@ -145,10 +145,12 @@ BACKUP_CMD = 'pg_dumpall --clean | gzip > %s' % BACKUP
 print('# BACKUP_TYPE = %s' % BACKUP_TYPE)
 print('# BACKUP_COUNT = %s' % BACKUP_COUNT)
 print('# BACKUP_DIR = %s' % BACKUP_DIR)
-print('# BACKUP_PRIOR_TYPE = %s' % BACKUP_PRIOR_TYPE)
-print('# BACKUP_PRIOR_COUNT = %s' % BACKUP_PRIOR_COUNT)
-print('# PGHOST = %s' % PGHOST)
-print('# PGUSER = %s' % PGUSER)
+if BACKUP_TYPE not in [B_HOURLY]:
+    print('# BACKUP_PRIOR_TYPE = %s' % BACKUP_PRIOR_TYPE)
+    print('# BACKUP_PRIOR_COUNT = %s' % BACKUP_PRIOR_COUNT)
+if BACKUP_TYPE in [B_HOURLY]:
+    print('# PGHOST = %s' % PGHOST)
+    print('# PGUSER = %s' % PGUSER)
 
 # Backup...
 #
@@ -291,7 +293,7 @@ else:
 
 UNEXPIRED_BACKUPS = glob.glob(FILE_SEARCH)
 if UNEXPIRED_BACKUPS:
-    print('--] Unexpired backups (%s)...' % len(UNEXPIRED_BACKUPS))
+    print('--] Unexpired backups, most recent first (%s)...' % len(UNEXPIRED_BACKUPS))
     UNEXPIRED_BACKUPS.sort(reverse=True)
     for UNEXPIRED_BACKUP in UNEXPIRED_BACKUPS:
         print('    %s' % UNEXPIRED_BACKUP)
