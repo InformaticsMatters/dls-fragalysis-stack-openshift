@@ -204,8 +204,13 @@ if BACKUP_TYPE == B_HOURLY:
     #####
     # 2 #
     #####
+    # The corresponding CronJob template should have
+    # "concurrencyPolicy: Forbid" so no two backup jobs can be of the same type.
+    # Therefore, if the 'live' backup file exists then we know it's here
+    # because of some catastrophic failure. We warn the user but then
+    # have to continue by replacing it (or removing it).
     if os.path.exists(BACKUP):
-        print('--] Warning. Live backup file exists (%s). Replacing.' % BACKUP)
+        print('--] Warning. Live backup file exists (%s). It will be replaced.' % BACKUP)
 
     #####
     # 3 #
@@ -284,13 +289,13 @@ if NUM_TO_DELETE > 0:
 else:
     print('--] No expired backups to delete')
 
-REMAINING_BACKUPS = glob.glob(FILE_SEARCH)
-if REMAINING_BACKUPS:
-    print('--] Remaining backups (%s)...' % len(REMAINING_BACKUPS))
-    REMAINING_BACKUPS.sort(reverse=True)
-    for REMAINING_BACKUP in REMAINING_BACKUPS:
-        print('    %s' % REMAINING_BACKUP)
+UNEXPIRED_BACKUPS = glob.glob(FILE_SEARCH)
+if UNEXPIRED_BACKUPS:
+    print('--] Unexpired backups (%s)...' % len(UNEXPIRED_BACKUPS))
+    UNEXPIRED_BACKUPS.sort(reverse=True)
+    for UNEXPIRED_BACKUP in UNEXPIRED_BACKUPS:
+        print('    %s' % UNEXPIRED_BACKUP)
 else:
-    print('--] No remaining backups to list')
+    print('--] No unexpired backups to list')
 
 print('--] Goodbye')
