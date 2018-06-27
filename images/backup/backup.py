@@ -174,6 +174,9 @@ print('# PGUSER = %s' % PGUSER)
 #
 # 6. Limit the files in the current backup directory
 
+BACKUP_START_TIME = datetime.now()
+print('--] Hello [%s]' % BACKUP_START_TIME)
+
 #####
 # 0 #
 #####
@@ -189,7 +192,7 @@ if BACKUP_PRIOR_TYPE not in [B_HOURLY, B_DAILY, B_WEEKLY]:
 # 1 #
 #####
 if not os.path.isdir(BACKUP_ROOT_DIR):
-    print('--] Backup root directory does not exist (%s). Leaving.' % BACKUP_ROOT_DIR)
+    print('--] Backup root directory does not exist (%s)' % BACKUP_ROOT_DIR)
     sys.exit(3)
 if not os.path.isdir(BACKUP_DIR):
     os.makedirs(BACKUP_DIR)
@@ -207,7 +210,6 @@ if BACKUP_TYPE == B_HOURLY:
     #####
     # 3 #
     #####
-    BACKUP_START_TIME = datetime.now()
     print('--] Starting backup [%s]' % BACKUP_START_TIME)
     print("    $", BACKUP_CMD)
     COMPLETED_PROCESS = subprocess.run(BACKUP_CMD, shell=True)
@@ -226,7 +228,7 @@ if BACKUP_TYPE == B_HOURLY:
 
     # Now, leave if there is no backup file.
     if not os.path.isfile(BACKUP):
-        print('--] No backup file was generated. Leaving.')
+        print('--] No backup file was generated. Leaving')
         sys.exit(0)
 
     print('--] Backup size {:,} bytes'.format(os.path.getsize(BACKUP)))
@@ -264,7 +266,7 @@ else:
         print('    %s' % OLDEST_PRIOR)
         shutil.copy2(OLDEST_PRIOR, BACKUP_DIR)
     else:
-        print('--] Nothing to do. Too few prior backups (%s). ...' % NUM_PRIOR_BACKUPS)
+        print('--] Nothing to do. Too few prior backups (%s)' % NUM_PRIOR_BACKUPS)
 
 #####
 # 6 #
@@ -288,5 +290,7 @@ if REMAINING_BACKUPS:
     REMAINING_BACKUPS.sort(reverse=True)
     for REMAINING_BACKUP in REMAINING_BACKUPS:
         print('    %s' % REMAINING_BACKUP)
+else:
+    print('--] No remaining backups to list')
 
-print('--] Done')
+print('--] Goodbye')
