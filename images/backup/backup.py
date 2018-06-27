@@ -7,7 +7,7 @@ been mounted as some form of volume in the container image.
 
 The backup files are named according to the following format: -
 
-    <BACKUP_FILE_PREFIX>-<YYYY-MM-DDTHH:MM:SSZ>-<BACKUP_LIVE_FILE>.gz
+    <BACKUP_FILE_PREFIX>-<ISO-8601-DATETIME>-<BACKUP_LIVE_FILE>
 
 For example: -
 
@@ -26,15 +26,19 @@ A number of environment variables control this utility: -
                         Backup files are written to directories that match
                         the type, i.e. /backup/daily. A description
                         of each type can be found below.
+                        (default 'hourly')
 
 -   BACKUP_COUNT        The number of backup files to maintain for the given
                         backup type.
+                        (default '24')
 
 -   BACKUP_PRIOR_TYPE   The prior backup type (i.e. the type to copy from).
                         It can be one of 'daily', 'weekly', 'monthly'.
                         A 'weekly' BACKUP_TYPE would normally have a
                         'daily' BACKUP_PRIOR_TYPE. It is used to decide
                         where to get this backup's backup files from.
+                        Used only if BACKUP_TYPE is not 'hourly'.
+                        (default 'hourly')
 
 -   BACKUP_PRIOR_COUNT  For types other than 'hourly' this is the number of
                         backup files in the prior backup type that
@@ -47,12 +51,16 @@ A number of environment variables control this utility: -
                         '24' files in the hourly directory. This is designed
                         to prevent a backup form, copying a prior file until
                         there are sufficient prior files.
+                        Used only if BACKUP_TYPE is not 'hourly'.
+                        (default '24')
 
 -   PGHOST              The Postgres database Hostname.
                         Used only for 'hourly' backup types
+                        (default 'postgres')
 
 -   PGUSER              The Postgres database User.
                         Used only for 'hourly' backup types
+                        (default 'postgres')
 
 There are four values for BACKUP_TYPE: -
 
@@ -98,7 +106,7 @@ from datetime import datetime
 # The module version.
 # Please adjust on every change
 # following Semantic Versioning principles.
-__version__ = '2.0.3'
+__version__ = '2.0.4'
 
 # Expose our version...
 print('# backup.__version__ = %s' % __version__)
@@ -109,16 +117,16 @@ B_DAILY = 'daily'
 B_WEEKLY = 'weekly'
 B_MONTHLY = 'monthly'
 
-# Extract configuration from the environment.
-PGHOST = os.environ.get('PGHOST', 'postgres')
-PGUSER = os.environ.get('PGUSER', 'postgres')
 # The backup type is HOURLY by default.
 # Hourly backups always create a new backup and limit
 # the count to 24 (by default).
-BACKUP_COUNT = int(os.environ.get('BACKUP_COUNT', '24'))
-BACKUP_PRIOR_COUNT = int(os.environ.get('BACKUP_PRIOR_COUNT', '24'))
 BACKUP_TYPE = os.environ.get('BACKUP_TYPE', B_HOURLY).lower()
+BACKUP_COUNT = int(os.environ.get('BACKUP_COUNT', '24'))
 BACKUP_PRIOR_TYPE = os.environ.get('BACKUP_PRIOR_TYPE', B_HOURLY).lower()
+BACKUP_PRIOR_COUNT = int(os.environ.get('BACKUP_PRIOR_COUNT', '24'))
+# Extract configuration from the environment.
+PGHOST = os.environ.get('PGHOST', 'postgres')
+PGUSER = os.environ.get('PGUSER', 'postgres')
 
 # The backup config.
 # The root dir, below which you're likely to find
