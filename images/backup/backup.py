@@ -150,8 +150,7 @@ print('# PGUSER = %s' % PGUSER)
 #
 # For hourly backup types...
 #
-# 2. If the backup file exists then do nothing
-#    (the previous backup must be running)
+# 2. If the backup file exists then generate a warning
 # 3. Run the backup (leaving if no backup was created)
 # 4. Copy the live backup to a new prefixed date/time named file
 #    and then remove the original file.
@@ -195,8 +194,7 @@ if BACKUP_TYPE == B_HOURLY:
     # 2 #
     #####
     if os.path.exists(BACKUP):
-        print('--] Live backup file exists (%s). Leaving.' % BACKUP)
-        sys.exit(0)
+        print('--] Warning. Live backup file exists (%s). Replacing.' % BACKUP)
 
     #####
     # 3 #
