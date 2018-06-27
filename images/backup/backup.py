@@ -124,14 +124,14 @@ BACKUP_PRIOR_TYPE = os.environ.get('BACKUP_PRIOR_TYPE', B_HOURLY).lower()
 # The root dir, below which you're likely to find
 # hourly, daily, weekly and monthly backup directories.
 BACKUP_ROOT_DIR = '/backup'
-BACKUP_LIVE_FILE = 'dumpall.sql'    # The new file
+BACKUP_LIVE_FILE = 'dumpall.sql.gz' # The new file
 BACKUP_FILE_PREFIX = 'backup'       # Prefix for older files
 
 BACKUP_PRIOR_DIR = os.path.join(BACKUP_ROOT_DIR, BACKUP_PRIOR_TYPE)
 BACKUP_DIR = os.path.join(BACKUP_ROOT_DIR, BACKUP_TYPE)
 
 BACKUP = os.path.join(BACKUP_DIR, BACKUP_LIVE_FILE)
-BACKUP_CMD = 'pg_dumpall --clean | gzip > %s.gz' % BACKUP
+BACKUP_CMD = 'pg_dumpall --clean | gzip > %s' % BACKUP
 
 # Echo configuration...
 print('# BACKUP_TYPE = %s' % BACKUP_TYPE)
