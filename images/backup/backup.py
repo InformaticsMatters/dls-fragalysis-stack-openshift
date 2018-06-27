@@ -98,7 +98,7 @@ from datetime import datetime
 # The module version.
 # Please adjust on every change
 # following Semantic Versioning principles.
-__version__ = '2.0.2'
+__version__ = '2.0.3'
 
 # Expose our version...
 print('# backup.__version__ = %s' % __version__)
