@@ -1,6 +1,6 @@
 #!groovy​
 
-// The Fragalysis Database Backup image.
+// The Fragalysis Database Recovery image.
 
 pipeline {
 
@@ -10,10 +10,10 @@ pipeline {
     // Registry details
     REGISTRIY_USER = 'jenkins'
     REGISTRY = 'docker-registry.default:5000'
-    STREAM_IMAGE = "${REGISTRY}/fragalysis-cicd/backup-stream:latest"
+    STREAM_IMAGE = "${REGISTRY}/fragalysis-cicd/recovery-stream:latest"
 
     // Slack channel for all notifications
-    SLACK_CICD_CHANNEL = 'dls-cicd-backupimage'
+    SLACK_CICD_CHANNEL = 'dls-cicd-recovryimage'
     // Slack channel to be used for errors/failures
     // (which also go to the CI/CD channel)
     SLACK_ALERT_CHANNEL = 'dls-alerts'
@@ -24,11 +24,11 @@ pipeline {
     stage('Build Image') {
       steps {
         slackSend channel: "#${env.SLACK_CICD_CHANNEL}",
-                  message: "Backup image build ${env.BUILD_NUMBER} - starting..."
+                  message: "Recovery image build ${env.BUILD_NUMBER} - starting..."
         script {
           TOKEN = sh(script: 'oc whoami -t', returnStdout: true).trim()
         }
-        dir('images/backup') {
+        dir('images/recovery') {
           sh "buildah bud --format docker -f Dockerfile -t ${env.STREAM_IMAGE} ."
         }
       }
@@ -55,22 +55,22 @@ pipeline {
     success {
       slackSend channel: "#${env.SLACK_CICD_CHANNEL}",
                 color: 'good',
-                message: "Backup image build ${env.BUILD_NUMBER} - complete"
+                message: "Recovery image build ${env.BUILD_NUMBER} - complete"
     }
 
     failure {
       slackSend channel: "#${env.SLACK_CICD_CHANNEL}",
                 color: 'danger',
-                message: "Backup image build ${env.BUILD_NUMBER} - failed (${env.BUILD_URL})"
+                message: "Recovery image build ${env.BUILD_NUMBER} - failed (${env.BUILD_URL})"
       slackSend channel: "#${env.SLACK_ALERT_CHANNEL}",
                 color: 'danger',
-                message: "Backup image build ${env.BUILD_NUMBER} - failed (${env.BUILD_URL})"
+                message: "Recovery image build ${env.BUILD_NUMBER} - failed (${env.BUILD_URL})"
     }
 
     fixed {
       slackSend channel: "#${env.SLACK_ALERT_CHANNEL}",
                 color: 'good',
-                message: "Backup image build - fixed"
+                message: "Recovery image build - fixed"
     }
 
   }

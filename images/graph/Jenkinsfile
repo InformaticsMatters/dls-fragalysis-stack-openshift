@@ -12,7 +12,7 @@ pipeline {
     REGISTRY = 'docker-registry.default:5000'
     STREAM_IMAGE = "${REGISTRY}/fragalysis-cicd/graph-stream:latest"
 
-    // get_unbuilt_data_dirtectory environment...
+    // get_unbuilt_data_directory environment...
     SOURCE_DATA_ROOT = '/fragalysis/graph_data'
     TARGET_IMAGE = 'fragalysis-cicd/graph-stream'
     INSIST_ON_READY = 'Yes'
@@ -23,7 +23,7 @@ pipeline {
     // Always push the image (whether it's new or not)
     ALWAYS_PUSH = 'No'
 
-    // Slack channel for all notifictions
+    // Slack channel for all notifications
     SLACK_CICD_CHANNEL = 'dls-cicd-graphimage'
     // Slack channel to be used for errors/failures
     // (which also go to the CI/CD channel)
