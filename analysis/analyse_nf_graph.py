@@ -21,6 +21,12 @@ from datetime import datetime, timedelta
 # RegEx for the Graoh's ID in a long-line.
 RE_GRAPH_ID = '.* graph \((\d+)\).*'
 
+if len(sys.argv) != 2:
+    print("ERROR: Expected log filensme")
+    print("Usage: analyse_nf_graph.py <log filename>")
+    sys.exit(1)
+log_file_name = sys.argv[1]
+
 
 def get_time(nf_line):
     """Get the date/time from the log.
@@ -53,7 +59,6 @@ def get_graph_id(nf_line):
     return 0
 
 
-log_file_name = sys.argv[1]
 sdsplit_start = None
 sdsplit_stop = None
 sdsplit_duration = None
@@ -93,8 +98,14 @@ with open(log_file_name) as log_file:
 
 log_file.close()
 
+if not sdsplit_duration:
+    print("Couldn't determine SD Split duration (has it finished?)")
+    sys.exit(0)
+
 # Summarise the results...
 print("SD Split Duration = %s" % sdsplit_duration)
+# Collect graph results
+# Keeping longest, shortest and total.
 total_duration = timedelta(0)
 shortest_duration = None
 longest_duration = None
