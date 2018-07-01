@@ -1,0 +1,80 @@
+---
+
+# The Fragalysis Stack's database recovery deployment.
+#
+# oc process -f fs-db-recovery.yaml | oc create -f -
+# oc delete all --selector template=fs-db-recovery
+
+kind: Template
+apiVersion: v1
+metadata:
+  name: fs-db-recovery
+  annotations:
+    description: Fragalysis Stack's Postgres Backup and Restore
+    tags: fragalysis,db,postgres
+labels:
+  template: fs-db-recovery
+
+parameters:
+
+- name: RECOVERY_NAMESPACE
+  value: fragalysis-cicd
+
+- name: RECOVERY_REGISTRY
+  value: 'docker-registry.default.svc:5000'
+- name: RECOVERY_IMAGE
+  value: 'fragalysis-cicd/recovery-stream'
+- name: RECOVERY_TAG
+  value: 'latest'
+- name: RECOVERY_NODE_SIZE_SELECTOR
+  value: 'small'
+- name: RECOVERY_FROM
+  value: 'none'
+- name: RECOVERY_PGHOST
+  value: 'db.fragalysis-cicd.svc'
+- name: RECOVERY_PGUSER
+  value: 'postgres'
+
+objects:
+
+# The Recovery auto-test CronJob (at 04:30)
+- kind: CronJob
+  apiVersion: batch/v1beta1
+  metadata:
+    name: db-recovery-test
+    namespace: ${RECOVERY_NAMESPACE}
+  spec:
+    schedule: '30 4 * * *'
+    startingDeadlineSeconds: 180
+    concurrencyPolicy: Forbid
+    jobTemplate:
+      spec:
+        template:
+          metadata:
+            labels:
+              name: recovery-test
+          spec:
+            nodeSelector:
+              size: ${RECOVERY_NODE_SIZE_SELECTOR}
+            serviceAccountName: diamond
+
+            # Application containers
+            containers:
+            - image: ${RECOVERY_REGISTRY}/${RECOVERY_IMAGE}:${RECOVERY_TAG}
+              name: recovery
+              imagePullPolicy: Always
+              volumeMounts:
+              - name: fs-pg-data-backup
+                mountPath: /backup
+              env:
+              - name: FROM_BACKUP
+                value: ${RECOVERY_FROM}
+              - name: PGHOST
+                value: ${RECOVERY_PGHOST}
+              - name: PGUSER
+                value: ${RECOVERY_PGUSER}
+            volumes:
+            - name: fs-pg-data-backup
+              persistentVolumeClaim:
+                claimName: fs-pg-data-backup-claim
+            restartPolicy: Never

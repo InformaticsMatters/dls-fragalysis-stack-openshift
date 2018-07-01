@@ -65,7 +65,7 @@ with open(log_file_name) as log_file:
 
     line = log_file.readline()
 
-    # Find sdplit duration
+    # Find sdsplit duration
     while line and not sdsplit_stop:
 
         if 'Creating operator > sdsplit' in line:
