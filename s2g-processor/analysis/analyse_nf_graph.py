@@ -2,16 +2,15 @@
 
 """A simple utility to analyse Nextflow log files in order to determine the
 duration of the `split` and `graph` execution times of the `nf_ena`
-code. Run your chosen configuration and then run this utility in order
-to get the execution time fo the `split` operation and the shortest,
-longest amd average length of the graph executions.
+code. Run Nextflow and then run this utility (which expects the `.nextflow.log`
+file to be in the current working directory) in order to get the execution
+time of the `split` operation and the shortest, longest amd average length of
+the graph executions.
 
-Use this to profile the split _chunk size_ for a given system.
-
-Usage:  analyse_nf_graph.py <log filename>
+Usage:  analyse_nf_graph.py [log filename]
 
 Alan Christie
-June 2018
+July 2018
 """
 
 import sys
@@ -21,11 +20,16 @@ from datetime import datetime, timedelta
 # RegEx for the Graoh's ID in a long-line.
 RE_GRAPH_ID = '.* graph \((\d+)\).*'
 
-if len(sys.argv) != 2:
-    print("ERROR: Expected log filensme")
-    print("Usage: analyse_nf_graph.py <log filename>")
+if len(sys.argv) > 2:
+    print('ERROR: Expected log filensme')
+    print('Usage: analyse_nf_graph.py [log filename]')
     sys.exit(1)
-log_file_name = sys.argv[1]
+
+# Default Nextflow logfile or user-provided?
+if len(sys.argv) == 2:
+    log_file_name = sys.argv[1]
+else:
+    log_file_name = '.nextflow.log'
 
 
 def get_time(nf_line):
@@ -59,6 +63,8 @@ def get_graph_id(nf_line):
     return 0
 
 
+total_start = None
+total_stop = None
 sdsplit_start = None
 sdsplit_stop = None
 sdsplit_duration = None
@@ -69,6 +75,9 @@ graph_durations = {}
 with open(log_file_name) as log_file:
 
     line = log_file.readline()
+
+    if not total_start and line and 'nextflow.cli.Launcher' in line:
+        total_start = get_time(line)
 
     # Find sdsplit duration
     while line and not sdsplit_stop:
@@ -93,6 +102,8 @@ with open(log_file_name) as log_file:
             g_id = get_graph_id(line)
             if g_id in graph_start_durations:
                 graph_durations[g_id] = get_time(line) - graph_start_durations[g_id]
+        elif not total_stop and 'Goodbye' in line:
+            total_stop = get_time(line)
 
         line = log_file.readline()
 
@@ -103,7 +114,7 @@ if not sdsplit_duration:
     sys.exit(0)
 
 # Summarise the results...
-print("SD Split Duration = %s" % sdsplit_duration)
+print("SD Split Duration  = %s" % sdsplit_duration)
 # Collect graph results
 # Keeping longest, shortest and total.
 total_duration = timedelta(0)
@@ -118,6 +129,13 @@ for g_id in graph_durations:
     total_duration += g_duration
 print("Number of graphs  = %d" % len(graph_durations))
 if total_duration:
-    print("Longest  duration = %s" % longest_duration)
-    print("Shortest duration = %s" % shortest_duration)
-    print("Average duration  = %s" % str((total_duration / len(graph_durations))).split('.')[0])
+    print("Longest  duration  = %s" % longest_duration)
+    print("Shortest duration  = %s" % shortest_duration)
+    print("Average duration   = %s" % str((total_duration / len(graph_durations))).split('.')[0])
+# And the total execution time?
+if total_start and total_stop:
+    print("End-2-end duration = %s" % str(total_stop - total_start))
+elif not total_start:
+    print("End-2-end duration = It's not started")
+elif not total_stop:
+    print("End-2-end duration = It's not stopped")
