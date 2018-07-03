@@ -134,7 +134,7 @@ for G_ID in GRAPH_DURATIONS:
     if LONGEST_DURATION is None or G_DURATION > LONGEST_DURATION:
         LONGEST_DURATION = G_DURATION
     TOTAL_DURATION += G_DURATION
-print("Number of graphs  = %d" % len(GRAPH_DURATIONS))
+print("Number of graphs   = %d" % len(GRAPH_DURATIONS))
 if TOTAL_DURATION:
     print("Longest  duration  = %s" % LONGEST_DURATION)
     print("Shortest duration  = %s" % SHORTEST_DURATION)
