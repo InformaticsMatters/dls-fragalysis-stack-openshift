@@ -121,7 +121,9 @@ if not SPLIT_DURATION:
     sys.exit(0)
 
 # Summarise the results...
-print("SD Split Duration  = %s" % SPLIT_DURATION)
+if TOTAL_START:
+    print("Process start time = %s" % TOTAL_START)
+    print("SD Split Duration  = %s" % SPLIT_DURATION)
 # Collect graph results
 # Keeping longest, shortest and total.
 TOTAL_DURATION = timedelta(0)
