@@ -57,7 +57,14 @@ To destroy any cluster run: -
 
 ## Execution and analysis
 With your cluster running you now need to provide it with the SMILES file
-to process and run Nextflow. If you pull back the Nextflow logfile
-(`.nextflow.log`) you can analyse the execution times of the individual chunks
-with the `analyse_nf_graph.py` module (in the `analysis` directory).
+to process and run Nextflow.
+
+A typical execution, if the SMILES file has the default name (`test.smi`),
+would be: -
+
+    $ nextflow run graph.nf --graphMaxForks 2 -with-docker busybox
+
+If you pull back the Nextflow logfile (`.nextflow.log`) you can analyse
+the execution times of the individual chunks with the `analyse_nf_graph.py`
+module (in the `analysis` directory).
     
