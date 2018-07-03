@@ -62,7 +62,7 @@ print("# random.seed(%s)" % seed_value)
 random.seed(seed_value)
 
 input_size_minus_header = args.input_size - 1
-line_selection = sorted(set(random.sample(xrange(1, input_size_minus_header + 1),
+line_selection = sorted(set(random.sample(range(1, input_size_minus_header + 1),
                                           args.output_size)))
 print('Generated')
 
