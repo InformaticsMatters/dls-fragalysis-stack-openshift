@@ -35,7 +35,7 @@ ARGS = PARSER.parse_args()
 
 print(ARGS)
 
-log_file_name = ARGS.logfile
+LOG_FILE_NAME = ARGS.logfile
 
 
 def get_time(nf_line):
@@ -69,82 +69,80 @@ def get_graph_id(nf_line):
     return 0
 
 
-total_start = None
-total_stop = None
-sdsplit_start = None
-sdsplit_stop = None
-sdsplit_duration = None
-graph_start_times = {}
-graph_durations = {}
+TOTAL_START = None
+TOTAL_STOP = None
+SPLIT_START = None
+SPLIT_STOP = None
+SPLIT_DURATION = None
+GRAPH_START_TIMES = {}
+GRAPH_DURATIONS = {}
 
 # Process the log (line by line)...
-with open(log_file_name) as log_file:
+with open(LOG_FILE_NAME) as log_file:
 
-    line = log_file.readline()
+    LINE = log_file.readline()
 
-    if not total_start and line and 'nextflow.cli.Launcher' in line:
-        total_start = get_time(line)
+    if not TOTAL_START and LINE and 'nextflow.cli.Launcher' in LINE:
+        TOTAL_START = get_time(LINE)
 
     # Find sdsplit duration
-    while line and not sdsplit_stop:
+    while LINE and not SPLIT_STOP:
 
-        if 'Creating operator > sdsplit' in line:
-            sdsplit_start = get_time(line)
-        elif 'sdsplit' in line and 'COMPLETED' in line:
-            sdsplit_stop = get_time(line)
+        if 'Creating operator > sdsplit' in LINE:
+            SPLIT_START = get_time(LINE)
+        elif 'sdsplit' in LINE and 'COMPLETED' in LINE:
+            SPLIT_STOP = get_time(LINE)
 
-        line = log_file.readline()
+        LINE = log_file.readline()
 
-    if sdsplit_stop and sdsplit_start:
-        sdsplit_duration = sdsplit_stop - sdsplit_start
+    if SPLIT_STOP and SPLIT_START:
+        SPLIT_DURATION = SPLIT_STOP - SPLIT_START
 
     # Find graph container durations
-    while line:
+    while LINE:
 
-        if 'Submitted' in line and 'graph' in line:
-            g_id = get_graph_id(line)
-            graph_start_times[g_id] = get_time(line)
-        elif 'COMPLETED' in line and 'graph' in line:
-            g_id = get_graph_id(line)
-            if g_id in graph_start_times:
-                graph_duration = get_time(line) - graph_start_times[g_id]
-                graph_durations[g_id] = graph_duration
+        if 'Submitted' in LINE and 'graph' in LINE:
+            G_ID = get_graph_id(LINE)
+            GRAPH_START_TIMES[G_ID] = get_time(LINE)
+        elif 'COMPLETED' in LINE and 'graph' in LINE:
+            G_ID = get_graph_id(LINE)
+            if G_ID in GRAPH_START_TIMES:
+                GRAPH_DURATION = get_time(LINE) - GRAPH_START_TIMES[G_ID]
+                GRAPH_DURATIONS[G_ID] = GRAPH_DURATION
                 if ARGS.detail:
-                    print('%d,%s' % (g_id, graph_duration))
-        elif not total_stop and 'Goodbye' in line:
-            total_stop = get_time(line)
+                    print('%d,%s' % (G_ID, GRAPH_DURATION))
+        elif not TOTAL_STOP and 'Goodbye' in LINE:
+            TOTAL_STOP = get_time(LINE)
 
-        line = log_file.readline()
+        LINE = log_file.readline()
 
-log_file.close()
-
-if not sdsplit_duration:
+if not SPLIT_DURATION:
     print("Couldn't determine SD Split duration (has it finished?)")
     sys.exit(0)
 
 # Summarise the results...
-print("SD Split Duration  = %s" % sdsplit_duration)
+print("SD Split Duration  = %s" % SPLIT_DURATION)
 # Collect graph results
 # Keeping longest, shortest and total.
-total_duration = timedelta(0)
-shortest_duration = None
-longest_duration = None
-for g_id in graph_durations:
-    g_duration = graph_durations[g_id]
-    if shortest_duration is None or g_duration < shortest_duration:
-        shortest_duration = g_duration
-    if longest_duration is None or g_duration > longest_duration:
-        longest_duration = g_duration
-    total_duration += g_duration
-print("Number of graphs  = %d" % len(graph_durations))
-if total_duration:
-    print("Longest  duration  = %s" % longest_duration)
-    print("Shortest duration  = %s" % shortest_duration)
-    print("Average duration   = %s" % str((total_duration / len(graph_durations))).split('.')[0])
+TOTAL_DURATION = timedelta(0)
+SHORTEST_DURATION = None
+LONGEST_DURATION = None
+for G_ID in GRAPH_DURATIONS:
+    G_DURATION = GRAPH_DURATIONS[G_ID]
+    if SHORTEST_DURATION is None or G_DURATION < SHORTEST_DURATION:
+        SHORTEST_DURATION = G_DURATION
+    if LONGEST_DURATION is None or G_DURATION > LONGEST_DURATION:
+        LONGEST_DURATION = G_DURATION
+    TOTAL_DURATION += G_DURATION
+print("Number of graphs  = %d" % len(GRAPH_DURATIONS))
+if TOTAL_DURATION:
+    print("Longest  duration  = %s" % LONGEST_DURATION)
+    print("Shortest duration  = %s" % SHORTEST_DURATION)
+    print("Average duration   = %s" % str((TOTAL_DURATION / len(GRAPH_DURATIONS))).split('.')[0])
 # And the total execution time?
-if total_start and total_stop:
-    print("End-2-end duration = %s" % str(total_stop - total_start))
-elif not total_start:
+if TOTAL_START and TOTAL_STOP:
+    print("End-2-end duration = %s" % str(TOTAL_STOP - TOTAL_START))
+elif not TOTAL_START:
     print("End-2-end duration = It's not started")
-elif not total_stop:
+elif not TOTAL_STOP:
     print("End-2-end duration = It's not stopped")
