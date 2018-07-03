@@ -5,6 +5,8 @@ Given a SMILES file, the number of SMILES in it
 and the number of SMILES required this module writes
 a random selection of SMILES from the original file
 to the original file with ".random-M-N" appended to the name.
+Where M is the number of SMILES written and N is the random seed
+used to select them.
 
 The input file is expected to have a header, which is copied
 to the output.

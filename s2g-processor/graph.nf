@@ -2,8 +2,8 @@
 */
 
 params.ligands = 'test.smi'
-params.chunk = 500
-params.graphMaxForks = 8
+params.chunk = 25
+params.graphMaxForks = 4
 
 ligands = file(params.ligands)
 
