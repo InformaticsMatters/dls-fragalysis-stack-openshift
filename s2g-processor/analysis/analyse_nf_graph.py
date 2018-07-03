@@ -13,6 +13,7 @@ Alan Christie
 July 2018
 """
 
+import argparse
 import sys
 import re
 from datetime import datetime, timedelta
@@ -20,16 +21,21 @@ from datetime import datetime, timedelta
 # RegEx for the Graoh's ID in a long-line.
 RE_GRAPH_ID = '.* graph \((\d+)\).*'
 
-if len(sys.argv) > 2:
-    print('ERROR: Expected log filensme')
-    print('Usage: analyse_nf_graph.py [log filename]')
-    sys.exit(1)
+PARSER = argparse.ArgumentParser(description='Graph construction analyser.'
+                                 ' Analyses Nextflow logfile that was used'
+                                 ' for Graph processing.')
+PARSER.add_argument('-l', '--logfile',
+                    nargs='?', default='.nextflow.log',
+                    help='The file to analyse')
+PARSER.add_argument('-d', '--detail',
+                    action='store_true',
+                    help='Include detailed job timings using a CSV-style'
+                         ' of output')
+ARGS = PARSER.parse_args()
 
-# Default Nextflow logfile or user-provided?
-if len(sys.argv) == 2:
-    log_file_name = sys.argv[1]
-else:
-    log_file_name = '.nextflow.log'
+print(ARGS)
+
+log_file_name = ARGS.logfile
 
 
 def get_time(nf_line):
@@ -68,7 +74,7 @@ total_stop = None
 sdsplit_start = None
 sdsplit_stop = None
 sdsplit_duration = None
-graph_start_durations = {}
+graph_start_times = {}
 graph_durations = {}
 
 # Process the log (line by line)...
@@ -97,11 +103,14 @@ with open(log_file_name) as log_file:
 
         if 'Submitted' in line and 'graph' in line:
             g_id = get_graph_id(line)
-            graph_start_durations[g_id] = get_time(line)
+            graph_start_times[g_id] = get_time(line)
         elif 'COMPLETED' in line and 'graph' in line:
             g_id = get_graph_id(line)
-            if g_id in graph_start_durations:
-                graph_durations[g_id] = get_time(line) - graph_start_durations[g_id]
+            if g_id in graph_start_times:
+                graph_duration = get_time(line) - graph_start_times[g_id]
+                graph_durations[g_id] = graph_duration
+                if ARGS.detail:
+                    print('%d,%s' % (g_id, graph_duration))
         elif not total_stop and 'Goodbye' in line:
             total_stop = get_time(line)
 
