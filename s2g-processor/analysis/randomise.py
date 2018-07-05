@@ -11,6 +11,13 @@ used to select them.
 The input file is expected to have a header, which is copied
 to the output.
 
+A typical execution, selecting a million random samples from
+a file of 39,765,321 molecules, would be: -
+
+./randomise.py \
+  ~/Downloads/Jun2018_REAL_analogs_DSI_library_39M_MW_HA_smiles_clean.smiles \
+  39765321 1000000
+
 Alan Christie
 July 2018
 """

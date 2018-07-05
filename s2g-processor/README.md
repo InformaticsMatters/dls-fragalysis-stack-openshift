@@ -51,6 +51,12 @@ run: -
         -var 'aws_key_name=abc' \
         -var 'node_family=c5d.xlarge'
 
+A 72-core SSD system can be started with: -
+
+    $ terraform apply -auto-approve \
+        -var 'aws_key_name=abc' \
+        -var 'node_family=c5d.18xlarge'
+
 To destroy any cluster run: -
 
     $ terraform destory --force
@@ -62,7 +68,7 @@ to process and run Nextflow.
 A typical execution, if the SMILES file has the default name (`test.smi`),
 would be: -
 
-    $ sudo ./nextflow run graph.nf --graphMaxForks 4 -with-docker busybox
+    $ sudo ./nextflow run graph.nf --graphMaxForks 4 --chunk 50 -with-docker busybox
 
 If you pull back the Nextflow logfile (`.nextflow.log`) you can analyse
 the execution times of the individual chunks with the `analyse_nf_graph.py`
