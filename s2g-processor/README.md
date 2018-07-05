@@ -4,7 +4,7 @@ the Fragalysis `graph.nf` process on an AWS cluster. These files
 fall generally into: -
 
 -   AWS AMI creation (using Packer)
--   AWS CLuster creation (using Terraform)
+-   AWS Cluster creation (using Terraform)
 -   Uploading of test data and process execution
 
 ## Install Python
@@ -51,7 +51,7 @@ run: -
         -var 'aws_key_name=abc' \
         -var 'node_family=c5d.xlarge'
 
-A 72-core SSD system can be started with: -
+A 72-core **c5d.18xlarge** system can be started with: -
 
     $ terraform apply -auto-approve \
         -var 'aws_key_name=abc' \
@@ -68,7 +68,8 @@ to process and run Nextflow.
 A typical execution, if the SMILES file has the default name (`test.smi`),
 would be: -
 
-    $ sudo ./nextflow run graph.nf --graphMaxForks 4 --chunk 50 -with-docker busybox
+    $ nohup sudo ./nextflow run graph.nf \
+        --graphMaxForks 72 --chunk 10 -with-docker busybox &
 
 If you pull back the Nextflow logfile (`.nextflow.log`) you can analyse
 the execution times of the individual chunks with the `analyse_nf_graph.py`

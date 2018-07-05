@@ -19,12 +19,12 @@ variables:
 
   aws_access_key: "{{env `TF_VAR_aws_access_key`}}"
   aws_secret_key: "{{env `TF_VAR_aws_secret_key`}}"
-  aws_user: centos
+  aws_user: ec2-user
   aws_i_type: t2.micro
   our_name: Nextflow Base Image
-  base_ami_name: im-nf-1
+  base_ami_name: im-nf-2
   base_description: |-
-    CentOS Linux 7 x86_64 HVM EBS 1708_11.01 for Nextflow with Docker 1.12.6
+    Amazon Linux 2018.03.0 HVM EBS with Nextflow & Docker
 
 builders:
 
@@ -34,7 +34,8 @@ builders:
   secret_key: "{{user `aws_secret_key`}}"
   type: amazon-ebs
   region: eu-west-1
-  source_ami: ami-192a9460
+  # Amazon Linux AMI 2018.03.0 (HVM), SSD Volume Type
+  source_ami: ami-e4515e0e
   # xchem VPC identification and a
   # a valid subnet for it...
   vpc_id: vpc-fcf29e9a
@@ -53,19 +54,16 @@ provisioners:
 
 - type: shell
   inline:
-  # Basic Centos, Docker and stuff....
-  - sudo yum -y install wget git net-tools bind-utils iptables-services
-  - sudo yum -y install bridge-utils bash-completion kexec-tools sos psacct
-  - sudo curl -fsSL https://get.docker.com/ | sh
-  - sudo systemctl enable docker
-  - sudo systemctl start docker
-  - sudo yum -y install NetworkManager
-  - sudo systemctl enable NetworkManager
-  - sudo systemctl start NetworkManager
-  # Now Java and Nextflow...
-  - sudo yum -y install java-1.8.0-openjdk-devel
+  # Docker....
+  - sudo yum update -y
+  - sudo yum install -y docker
+  - sudo service docker start
+  - sudo usermod -a -G docker ec2-user
+  # Now move to Java 8 and Nextflow...
+  - sudo yum install -y java-1.8.0
+  - sudo yum remove -y java-1.7.0-openjdk
   - sudo wget -qO- https://get.nextflow.io | bash
 
 - type: file
   source: ../../graph.nf
-  destination: /home/centos/graph.nf
+  destination: "/home/{{user `aws_user`}}/graph.nf"

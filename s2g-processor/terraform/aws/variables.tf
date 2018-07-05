@@ -39,7 +39,7 @@ variable "amis" {
   description = "AMIs by Region"
   type = "map"
   default = {
-    eu-west-1 = "ami-9d081d77" # Ireland
+    eu-west-1 = "ami-122a3df8" # Ireland
   }
 }
 
