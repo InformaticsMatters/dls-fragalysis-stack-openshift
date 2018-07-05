@@ -61,6 +61,40 @@ To destroy any cluster run: -
 
     $ terraform destory --force
 
+### Using the ephemeral drive(s)
+It's not obvious bus is described on the AWS [article]. In summary...
+use the `lsblk` command to view your available disk devices and their mount
+points (if applicable) to help you determine the correct device name to use.
+
+    $ lsblk
+    NAME          MAJ:MIN RM   SIZE RO TYPE MOUNTPOINT
+    nvme0n1       259:2    0     8G  0 disk 
+    ├─nvme0n1p1   259:3    0     8G  0 part /
+    └─nvme0n1p128 259:4    0     1M  0 part 
+    nvme2n1       259:1    0 838.2G  0 disk 
+    nvme1n1       259:0    0 838.2G  0 disk 
+
+Create a filesystem on the devices: -
+
+    $ sudo mkfs -t ext4 /dev/nvme1n1
+    $ sudo mkfs -t ext4 /dev/nvme2n1
+
+Create some suitable mount points and mount the drives:
+
+    $ sudo mkdir /data1
+    $ sudo mkdir /data2
+    $ sudo mount /dev/nvme1n1 /data1
+    $ sudo mount /dev/nvme2n1 /data2
+    
+Then change ownership: -
+
+    $ sudo chown ec2-user.ec2-user /data1
+    $ sudo chown ec2-user.ec2-user /data2
+
+>   These are ephemeral drives and they wil be lost between reboots
+    so use them with care. Any important data should be put on an EBS
+    volume.
+
 ## Execution and analysis
 With your cluster running you now need to provide it with the SMILES file
 to process and run Nextflow.
@@ -74,4 +108,7 @@ would be: -
 If you pull back the Nextflow logfile (`.nextflow.log`) you can analyse
 the execution times of the individual chunks with the `analyse_nf_graph.py`
 module (in the `analysis` directory).
-    
+
+---
+
+[article]: https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ebs-using-volumes.html
