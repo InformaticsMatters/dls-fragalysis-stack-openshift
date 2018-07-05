@@ -8,11 +8,14 @@ resource "aws_instance" "nextflow-node" {
   associate_public_ip_address = true
   source_dest_check = false
 
-  ebs_block_device {
+  ephemeral_block_device {
     device_name = "/dev/sda1"
-    volume_size = 100
-    volume_type = "gp2"
-    delete_on_termination = true
+    virtual_name = "ephemeral0"
+  }
+
+  ephemeral_block_device {
+    device_name = "/dev/sda2"
+    virtual_name = "ephemeral1"
   }
 
   tags {

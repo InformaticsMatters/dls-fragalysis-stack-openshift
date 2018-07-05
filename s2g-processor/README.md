@@ -68,8 +68,8 @@ to process and run Nextflow.
 A typical execution, if the SMILES file has the default name (`test.smi`),
 would be: -
 
-    $ nohup sudo ./nextflow run graph.nf \
-        --graphMaxForks 72 --chunk 10 -with-docker busybox &
+    $ nohup ./nextflow run graph.nf \
+        --graphMaxForks 72 --chunk 25 -with-docker busybox &
 
 If you pull back the Nextflow logfile (`.nextflow.log`) you can analyse
 the execution times of the individual chunks with the `analyse_nf_graph.py`
