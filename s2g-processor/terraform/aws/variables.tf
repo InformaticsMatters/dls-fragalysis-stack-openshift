@@ -43,23 +43,28 @@ variable "amis" {
   }
 }
 
+variable "ansible_dir" {
+  description = "Our ansible directory (relative to this directory)."
+  default = "../../ansible"
+}
+
 # -----------------------------------------------------------------------------
 # EBS node configuration
 # -----------------------------------------------------------------------------
 
 variable "num_ebs_nodes" {
   description = "The number of Nextflow EBS-based nodes, at least 1"
-  default = 0
+  default = 1
 }
 
 variable "node_ebs_family" {
   description = "The machine family (i.e. t2.large)"
-  default = "c5.xlarge"
+  default = "c5.18xlarge"
 }
 
 variable "node_ebs_size" {
   description = "The size (Gi) of the EBS root volume"
-  default = "1000"
+  default = "200"
 }
 
 # -----------------------------------------------------------------------------
@@ -68,10 +73,10 @@ variable "node_ebs_size" {
 
 variable "num_ephemeral_nodes" {
   description = "The number of Nextflow ephemeral nodes, at least 1"
-  default = 1
+  default = 0
 }
 
 variable "node_ephemeral_family" {
   description = "The machine family (i.e. t2.large)"
-  default = "c5d.xlarge"
+  default = "c5d.18xlarge"
 }

@@ -44,18 +44,18 @@ If you make changes to the terraform files run: -
     $ terraform validate
     
 If you're in the `aws` directory, to automatically deploy you cluster
-(using a key-pair you've created) for a **c5d.xlarge** (4-core) machine,
+(using a key-pair you've created) for a **c5.xlarge** (4-core) machine,
 run: -
 
     $ terraform apply -auto-approve \
         -var 'aws_key_name=abc' \
-        -var 'node_family=c5d.xlarge'
+        -var 'node_ebs_family=c5.xlarge'
 
-A 72-core **c5d.18xlarge** system can be started with: -
+A 72-core **c5.18xlarge** system can be started with: -
 
     $ terraform apply -auto-approve \
         -var 'aws_key_name=abc' \
-        -var 'node_family=c5d.18xlarge'
+        -var 'node_ebs_family=c5.18xlarge'
 
 To destroy any cluster run: -
 
