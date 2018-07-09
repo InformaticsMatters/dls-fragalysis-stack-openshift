@@ -22,7 +22,7 @@ variables:
   aws_user: ec2-user
   aws_i_type: t2.micro
   our_name: Nextflow Base Image
-  base_ami_name: im-nf-2
+  base_ami_name: im-nf-3
   base_description: |-
     Amazon Linux 2018.03.0 HVM EBS with Nextflow & Docker
 
@@ -54,12 +54,13 @@ provisioners:
 
 - type: shell
   inline:
-  # Docker....
   - sudo yum update -y
-  - sudo yum install -y docker
+  # Cloud-Init and Docker for Nextflow
+  # and nfs-utils for EFS mounting....
+  - sudo yum install -y cloud-init docker nfs-utils
   - sudo service docker start
   - sudo usermod -a -G docker ec2-user
-  # Now move to Java 8 and Nextflow...
+  # Now move to Java 8 and install Nextflow...
   - sudo yum install -y java-1.8.0
   - sudo yum remove -y java-1.7.0-openjdk
   - sudo wget -qO- https://get.nextflow.io | bash

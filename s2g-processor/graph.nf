@@ -1,9 +1,9 @@
 /* Example Nextflow pipline that runs Docking using rDock
 */
 
-params.ligands = 'test.smi'
+params.ligands = 'origin.smi'
 params.chunk = 10
-params.graphMaxForks = 4
+params.graphMaxForks = 72
 
 ligands = file(params.ligands)
 
@@ -13,7 +13,7 @@ ligands = file(params.ligands)
 process sdsplit {
 
     maxForks 1
-	container 'xchem/fragalysis'
+	container 'xchem/fragalysis:0.0.3'
 
 	input:
     file ligands
@@ -35,7 +35,7 @@ process graph {
 
 	maxForks params.graphMaxForks
 	errorStrategy 'retry'
-	container 'xchem/fragalysis'
+	container 'xchem/fragalysis:0.0.3'
 
 	input:
     file part from ligand_parts

@@ -2,3 +2,4 @@ im-jenkins-utils == 1.0.2
 
 pylint == 1.9.1
 PyYAML == 3.12
+tqdm == 4.23.4
