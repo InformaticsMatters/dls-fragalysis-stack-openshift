@@ -2,8 +2,7 @@
 */
 
 params.ligands = 'origin.smi'
-params.chunk = 10
-params.graphMaxForks = 72
+params.chunk = 25
 
 ligands = file(params.ligands)
 
@@ -13,16 +12,16 @@ ligands = file(params.ligands)
 process sdsplit {
 
     maxForks 1
-	container 'xchem/fragalysis:0.0.3'
+    container 'xchem/fragalysis:0.0.3'
 
-	input:
+    input:
     file ligands
 
     output:
     file 'ligands_part*' into ligand_parts mode flatten
     
     """
-	python /usr/local/fragalysis/frag/network/scripts/split_input.py --input $ligands --chunk_size $params.chunk --output ligands_part
+    python /usr/local/fragalysis/frag/network/scripts/split_input.py --input $ligands --chunk_size $params.chunk --output ligands_part
     """
 }
 
@@ -33,19 +32,16 @@ process sdsplit {
 */
 process graph {
 
-	maxForks params.graphMaxForks
-	errorStrategy 'retry'
-	container 'xchem/fragalysis:0.0.3'
+    errorStrategy 'retry'
+    container 'xchem/fragalysis:0.0.3'
 
-	input:
+    input:
     file part from ligand_parts
 	
     output:
     file 'output_part*/edges.txt' into docked_parts
     
     """
-     python /usr/local/fragalysis/frag/network/scripts/build_db.py --input  $part --base_dir ${part.name.replace('ligands', 'output')[0..-5]} 
+    python /usr/local/fragalysis/frag/network/scripts/build_db.py --input  $part --base_dir ${part.name.replace('ligands', 'output')[0..-5]}
     """
 }
-
-

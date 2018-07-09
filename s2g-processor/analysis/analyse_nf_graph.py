@@ -1,13 +1,11 @@
 #!/usr/bin/env python
 
 """A simple utility to analyse Nextflow log files in order to determine the
-duration of the `split` and `graph` execution times of the `nf_ena`
-code. Run Nextflow and then run this utility (which expects the `.nextflow.log`
-file to be in the current working directory) in order to get the execution
-time of the `split` operation and the shortest, longest amd average length of
-the graph executions.
+duration of the `split` and `graph` execution times of the job.
+Run Nextflow and then run this utility, which expects (by default)
+to find a `.nextflow.log` file in the cirrent directory.
 
-Usage:  analyse_nf_graph.py [log filename]
+Usage:  analyse_nf_graph.py -h
 
 Alan Christie
 July 2018
@@ -18,7 +16,7 @@ import sys
 import re
 from datetime import datetime, timedelta
 
-# RegEx for the Graoh's ID in a long-line.
+# RegEx for the Graph's Job ID in a Nextflow log-line.
 RE_GRAPH_ID = '.* graph \((\d+)\).*'
 
 PARSER = argparse.ArgumentParser(description='Graph construction analyser.'
@@ -32,8 +30,6 @@ PARSER.add_argument('-d', '--detail',
                     help='Include detailed job timings using a CSV-style'
                          ' of output')
 ARGS = PARSER.parse_args()
-
-print(ARGS)
 
 LOG_FILE_NAME = ARGS.logfile
 

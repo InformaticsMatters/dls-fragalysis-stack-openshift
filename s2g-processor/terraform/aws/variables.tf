@@ -26,7 +26,7 @@ variable "aws_secret_key" {}
 
 variable "aws_key_name" {
   description = "The name of the Key Pair, as known by AWS"
-  default = "abc"
+  default = "abc-im"
 }
 
 variable "aws_region" {
@@ -39,13 +39,28 @@ variable "amis" {
   description = "AMIs by Region"
   type = "map"
   default = {
-    eu-west-1 = "ami-122a3df8" # Ireland
+    eu-west-1 = "ami-347262de" # Ireland
   }
+}
+
+variable "aws_vpc" {
+  description = "The Cluster VPC (xchem-vpc)"
+  default = "vpc-fcf29e9a"
+}
+
+variable "aws_subnet" {
+  description = "The Cluster Subnet"
+  default = "subnet-a1bc02e9"
 }
 
 variable "ansible_dir" {
   description = "Our ansible directory (relative to this directory)."
   default = "../../ansible"
+}
+
+variable "nextflow_dir" {
+  description = "Our nextflow directory (relative to this directory)."
+  default = "../../nextflow"
 }
 
 # -----------------------------------------------------------------------------
@@ -59,7 +74,7 @@ variable "num_ebs_nodes" {
 
 variable "node_ebs_family" {
   description = "The machine family (i.e. t2.large)"
-  default = "c5.18xlarge"
+  default = "t2.large"
 }
 
 variable "node_ebs_size" {
@@ -78,5 +93,5 @@ variable "num_ephemeral_nodes" {
 
 variable "node_ephemeral_family" {
   description = "The machine family (i.e. t2.large)"
-  default = "c5d.18xlarge"
+  default = "t2.large"
 }

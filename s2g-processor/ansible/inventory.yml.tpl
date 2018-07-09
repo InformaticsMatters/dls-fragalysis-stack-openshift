@@ -4,5 +4,7 @@
 
 all:
   hosts:
-    nextflow:
-        ${nf_host}:
+    ${nf_host}:
+
+  vars:
+    efs_dns_name: ${efs_dns_name}

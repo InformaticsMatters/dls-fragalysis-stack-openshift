@@ -48,13 +48,11 @@ If you're in the `aws` directory, to automatically deploy you cluster
 run: -
 
     $ terraform apply -auto-approve \
-        -var 'aws_key_name=abc' \
         -var 'node_ebs_family=c5.xlarge'
 
 A 72-core **c5.18xlarge** system can be started with: -
 
     $ terraform apply -auto-approve \
-        -var 'aws_key_name=abc' \
         -var 'node_ebs_family=c5.18xlarge'
 
 To destroy any cluster run: -
@@ -95,19 +93,45 @@ Then change ownership: -
     so use them with care. Any important data should be put on an EBS
     volume.
 
-## Execution and analysis
-With your cluster running you now need to provide it with the SMILES file
-to process and run Nextflow.
+## Preparing the EFS volumes
+With Terraform complete you should be able to run the Ansible playbook
+that mounts the EFS volume onto the host ECS instance and then
+uploads and unpacks any data files you've put in the `smiles` directory.
 
-A typical execution, if the SMILES file has the default name (`test.smi`),
+To prepare the EFS volume, run the following from the `ansible` directory...
+
+    $ ansible-playbook -i inventory.yml site.yml
+
+## Nextflow cluster
+To create hthe cmpute cluster to analyser your data use Nextflow.
+From the `nextflow` directory you can create you a cluster (named **frag**)
+that has 2 nodes with the command: -
+
+    $ nextflow cloud create frag -c 2 -y
+
+## Execution and analysis
+With your cluster running you now just need to get to the Nextflow master
+ans run your analysis.
+
+A typical execution, if the SMILES file has the default name (`origin.smi`),
 would be: -
 
     $ nohup ./nextflow run graph.nf \
-        --graphMaxForks 72 --chunk 25 -with-docker busybox &
+        --graphMaxForks 144 --chunk 25 -with-docker busybox &
 
 If you pull back the Nextflow logfile (`.nextflow.log`) you can analyse
 the execution times of the individual chunks with the `analyse_nf_graph.py`
 module (in the `analysis` directory).
+
+To collect and de-duplicate the calculated results: -
+
+    $ find ./work -name edges.txt -print | xargs awk '!x[$0]++' > edges.txt
+    $ find ./work -name nodes.txt -print | xargs awk '!x[$0]++' > nodes.txt
+    $ find ./work -name attributes.txt -print | xargs awk '!x[$0]++' > attributes.txt
+
+And compress them: -
+    
+    $ gzip edges.txt nodes.txt attributes.txt
 
 ---
 

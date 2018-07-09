@@ -1,0 +1,15 @@
+---
+
+# Copy .zip files form the smiles directory to the target.
+# Remember to zip the file using -j to avoid storing the full path.
+- name: Copy and unzip SMILES to EFS
+  unarchive:
+    src: "{{ item }}"
+    dest: "efs-mount-point"
+  with_fileglob: ../smiles/*.zip
+
+# Copy graph.nf
+- name: Copy Nextflow Job
+  copy:
+    src: ../nextflow/graph.nf
+    dest: efs-mount-point/graph.nf
