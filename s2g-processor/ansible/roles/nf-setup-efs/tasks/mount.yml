@@ -3,23 +3,31 @@
 # Check the mount, which controls which oif the following tasks is run.
 # We have to handle the command failure when the mount does not exist.
 - name: Check EFS mount point
-  shell: mountpoint efs-mount-point
+  shell: "mountpoint {{ efs_mount }}"
   register: mount_stat
   failed_when: mount_stat.rc == 2
 
 - name: Create EFS mount point
   file:
-    path: efs-mount-point
+    path: "{{ efs_mount }}"
     state: directory
+  become: yes
+  when: '"is a mountpoint" not in mount_stat.stdout'
+
+# We appear to need to wait for the EFS volume,
+# The pause time is very much _wet finger in the air_ at the moment.
+- name: Pre mount pause
+  pause:
+    seconds: 10
   when: '"is a mountpoint" not in mount_stat.stdout'
 
 - name: Mount EFS
-  shell: "mount -t nfs -o nfsvers=4.1,rsize=1048576,wsize=1048576,hard,timeo=600,retrans=2,noresvport {{ efs_dns_name }}:/ efs-mount-point"
+  shell: "mount -t nfs -o nfsvers=4.1,rsize=1048576,wsize=1048576,hard,timeo=600,retrans=2,noresvport {{ efs_dns_name }}:/ {{ efs_mount }}"
   become: yes
   when: '"is a mountpoint" not in mount_stat.stdout'
 
 - name: Change EFS ownership
   file:
-    path: efs-mount-point
+    path: "{{ efs_mount }}"
     mode: "go+rw"
   become: yes

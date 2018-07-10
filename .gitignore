@@ -14,8 +14,10 @@ s2g-processor/**/terraform.tfstate.backup
 s2g-processor/**/.terraform/
 **/.nextflow.log
 **/.nextflow.log.*
-.pytest_cache/
 **/*.gz
+**/*.zip
+**/*.retry
+.pytest_cache/
 
 # Following created by .ignore support plugin (hsz.mobi)
 

@@ -13,6 +13,7 @@ data "template_file" "ansible-inventory" {
   vars {
     nf_host = "${aws_instance.nextflow-ebs-node.public_ip}"
     efs_dns_name = "${aws_efs_file_system.fragalysis.dns_name}"
+    keypair_name = "${var.aws_key_name}"
   }
 }
 
@@ -30,7 +31,7 @@ data "template_file" "nextflow-config" {
   vars {
     efs_id = "${aws_efs_file_system.fragalysis.id}"
     subnet = "${var.aws_subnet}"
-    security_group = "${aws_security_group.efs-ec2-sg.id}"
+    security_group = "${aws_security_group.nextflow-cloud.id}"
     key_name = "${var.aws_key_name}"
   }
 }

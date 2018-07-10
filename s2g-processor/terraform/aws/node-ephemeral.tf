@@ -9,6 +9,6 @@ resource "aws_instance" "nextflow-ephemeral-node" {
   source_dest_check = false
 
   tags {
-    Name = "nextflow-node"
+    Name = "nf-bastion"
   }
 }

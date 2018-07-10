@@ -1,0 +1,13 @@
+---
+
+# Install Python requirements.
+
+- name: Copy requirements
+  copy:
+    src: files/requirements.txt
+    dest: .
+
+- name:
+  pip:
+    requirements: requirements.txt
+  become: yes

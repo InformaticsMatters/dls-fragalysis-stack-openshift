@@ -1,0 +1,18 @@
+---
+
+# Copy Nextflow files
+- name: Copy Nextflow job files
+  copy:
+    src: "{{ item }}"
+    dest: "{{ efs_mount }}/"
+  loop:
+  - ../nextflow/graph.nf
+  - ../nextflow/nextflow.config
+
+- name: Ensure private key is present
+  copy:
+    src: "{{ item }}"
+    dest: .ssh/
+    mode: 0600
+  loop:
+  - "~/.ssh/{{ keypair_name }}.pem"

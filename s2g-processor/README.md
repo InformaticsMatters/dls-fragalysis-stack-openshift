@@ -100,7 +100,7 @@ uploads and unpacks any data files you've put in the `smiles` directory.
 
 To prepare the EFS volume, run the following from the `ansible` directory...
 
-    $ ansible-playbook -i inventory.yml site.yml
+    $ ansible-playbook site.yml
 
 ## Nextflow cluster
 To create hthe cmpute cluster to analyser your data use Nextflow.

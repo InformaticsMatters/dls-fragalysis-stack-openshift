@@ -5,11 +5,6 @@
 - name: Copy and unzip SMILES to EFS
   unarchive:
     src: "{{ item }}"
-    dest: "efs-mount-point"
+    dest: "{{ efs_mount }}"
+    creates: "{{ efs_mount }}/{{ item | regex_replace('^.*\/(.+)[.]zip.*$', '\\1') }}"
   with_fileglob: ../smiles/*.zip
-
-# Copy graph.nf
-- name: Copy Nextflow Job
-  copy:
-    src: ../nextflow/graph.nf
-    dest: efs-mount-point/graph.nf
