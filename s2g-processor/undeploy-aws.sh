@@ -8,7 +8,7 @@ START_DIR=$(pwd)
 # (Shutdown the cloud-created cluster)
 echo ">>> Ansible (teardown)..."
 cd ansible
-ansible nf-teardown.yml
+ansible site-teardown.yml
 cd ${START_DIR}
 
 # Terraform
