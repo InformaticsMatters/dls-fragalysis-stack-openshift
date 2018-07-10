@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 
 set -e
-
 START_DIR=$(pwd)
 
 # Ansible
