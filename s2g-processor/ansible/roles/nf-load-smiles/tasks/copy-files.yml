@@ -6,5 +6,5 @@
   unarchive:
     src: "{{ item }}"
     dest: "{{ efs_mount }}"
-    creates: "{{ efs_mount }}/{{ item | regex_replace('^.*\/(.+)[.]zip.*$', '\\1') }}"
+    creates: "{{ efs_mount }}/{{ item | regex_replace('^.*/(.+)[.]zip.*$', '\\1') }}"
   with_fileglob: ../smiles/*.zip

@@ -1,5 +1,4 @@
 ---
 
-- import_tasks: requirements.yml
 - import_tasks: copy-files.yml
 - import_tasks: create-cluster.yml
