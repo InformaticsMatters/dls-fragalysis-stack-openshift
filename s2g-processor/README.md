@@ -4,14 +4,20 @@ the Fragalysis `graph.nf` process on an AWS cluster. These files
 fall generally into: -
 
 -   AWS AMI creation (using Packer)
--   AWS Cluster creation (using Terraform)
--   Uploading of test data and process execution
+-   AWS bastion & EFS provisioning and Nextflow cluster creation
+    (using Terraform and Ansible) and uploading of test data
 
-## Install Python
+## Requirements
+-   Python 3
+-   Packer
+-   Terraform
+
 You will need Python 3 and the requirements in the project's
-`requirements.txt` file.
+`requirements.txt` file (which will install ansible).
 
-## Packer
+>   You might want start from a suitable conda or virtualenv environment.
+
+## Packer (AMI creation)
 You can build the base AMI, which includes Docker, Nextflow (and Java),
 from the `packer/<provider>` directory. The Packer files might be in
 my preferred format of YAML. For example, to build an AMS image (form the
@@ -28,38 +34,46 @@ Remember the AMI it creates and re-place the value in the terraform
 
 >   You need only run Packer once per region. 
 
-## Terraform
-Terraform creates, and destroys, your cluster.
+## Starting the cluster
+A shell-script wraps the combined execution of `Terraform` (used )to
+instantiate the bastion node and EFS storage etc. and `Ansible` to provision
+the EFS mounts, copy data and create the Nextflow cluster: -
 
->   Note: - if you have created a new AMI then you need to update the `amis`
-    variable vin the `variables.tf` file.
+    $ ./deploy-aws.sh
+
+## Stopping the cluster
+You can use the convenient shell-script which calls `Ansible` to delete the
+nextflow cluster before using `terrafform` to destroy the remaining cluster: -
+
+    $ ./undeploy-aws.sh
+
+## Execution and analysis
+This step is currently not automated.
+
+With your cluster running you now just need to get to the Nextflow `master`
+and run your analysis.
+
+A typical execution, if the SMILES file has the default name (`origin.smi`),
+would be: -
+
+    $ nohup ./nextflow run graph.nf \
+        --graphMaxForks 144 --chunk 25 -with-docker busybox &
+
+If you pull back the Nextflow logfile (`.nextflow.log`) you can analyse
+the execution times of the individual chunks with the `analyse_nf_graph.py`
+module (in the `analysis` directory).
+
+To collect and de-duplicate the calculated results: -
+
+    $ find ./work -name edges.txt -print | xargs awk '!x[$0]++' > edges.txt
+    $ find ./work -name nodes.txt -print | xargs awk '!x[$0]++' > nodes.txt
+    $ find ./work -name attributes.txt -print | xargs awk '!x[$0]++' > attributes.txt
+
+And compress them: -
     
-To begin, only required once, you need to run, from the `terraforn/<proivider>`
-directory: -
+    $ gzip edges.txt nodes.txt attributes.txt
 
-    $ terraform init
-
-If you make changes to the terraform files run: -
-
-    $ terraform validate
-    
-If you're in the `aws` directory, to automatically deploy you cluster
-(using a key-pair you've created) for a **c5.xlarge** (4-core) machine,
-run: -
-
-    $ terraform apply -auto-approve \
-        -var 'node_ebs_family=c5.xlarge'
-
-A 72-core **c5.18xlarge** system can be started with: -
-
-    $ terraform apply -auto-approve \
-        -var 'node_ebs_family=c5.18xlarge'
-
-To destroy any cluster run: -
-
-    $ terraform destory --force
-
-### Using the ephemeral drive(s)
+## Using the ephemeral drive(s)
 It's not obvious bus is described on the AWS [article]. In summary...
 use the `lsblk` command to view your available disk devices and their mount
 points (if applicable) to help you determine the correct device name to use.
@@ -92,46 +106,6 @@ Then change ownership: -
 >   These are ephemeral drives and they wil be lost between reboots
     so use them with care. Any important data should be put on an EBS
     volume.
-
-## Preparing the EFS volumes
-With Terraform complete you should be able to run the Ansible playbook
-that mounts the EFS volume onto the host ECS instance and then
-uploads and unpacks any data files you've put in the `smiles` directory.
-
-To prepare the EFS volume, run the following from the `ansible` directory...
-
-    $ ansible-playbook site.yml
-
-## Nextflow cluster
-To create hthe cmpute cluster to analyser your data use Nextflow.
-From the `nextflow` directory you can create you a cluster (named **frag**)
-that has 2 nodes with the command: -
-
-    $ nextflow cloud create frag -c 2 -y
-
-## Execution and analysis
-With your cluster running you now just need to get to the Nextflow master
-ans run your analysis.
-
-A typical execution, if the SMILES file has the default name (`origin.smi`),
-would be: -
-
-    $ nohup ./nextflow run graph.nf \
-        --graphMaxForks 144 --chunk 25 -with-docker busybox &
-
-If you pull back the Nextflow logfile (`.nextflow.log`) you can analyse
-the execution times of the individual chunks with the `analyse_nf_graph.py`
-module (in the `analysis` directory).
-
-To collect and de-duplicate the calculated results: -
-
-    $ find ./work -name edges.txt -print | xargs awk '!x[$0]++' > edges.txt
-    $ find ./work -name nodes.txt -print | xargs awk '!x[$0]++' > nodes.txt
-    $ find ./work -name attributes.txt -print | xargs awk '!x[$0]++' > attributes.txt
-
-And compress them: -
-    
-    $ gzip edges.txt nodes.txt attributes.txt
 
 ---
 
