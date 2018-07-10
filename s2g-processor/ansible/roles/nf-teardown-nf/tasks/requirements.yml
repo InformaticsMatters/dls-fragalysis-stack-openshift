@@ -4,10 +4,9 @@
 
 - name: Copy requirements
   copy:
-    src: files/requirements.txt
+    src: requirements.txt
     dest: .
 
 - name:
   pip:
-    requirements: requirements.txt
-  become: yes
+    requirements: $HOME/requirements.txt
