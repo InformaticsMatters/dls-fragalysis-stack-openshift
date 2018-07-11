@@ -9,4 +9,5 @@
 
 - name:
   pip:
-    requirements: $HOME/requirements.txt
+    requirements: "/home/{{ ansible_user }}/requirements.txt"
+  become: yes

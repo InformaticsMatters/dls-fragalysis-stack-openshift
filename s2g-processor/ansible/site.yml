@@ -4,5 +4,5 @@
 
   roles:
   - nf-setup-efs
-  - nf-load-smiles
   - nf-setup-nf
+  - nf-load-smiles

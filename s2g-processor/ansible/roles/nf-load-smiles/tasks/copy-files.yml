@@ -1,6 +1,7 @@
 ---
 
-# Copy .zip files form the smiles directory to the target.
+# Copy .zip files form the smiles directory to the target,
+# unless the expected file is already present.
 # Remember to zip the file using -j to avoid storing the full path.
 - name: Copy and unzip SMILES to EFS
   unarchive:

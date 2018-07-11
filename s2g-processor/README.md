@@ -35,6 +35,12 @@ Remember the AMI it creates and re-place the value in the terraform
 >   You need only run Packer once per region. 
 
 ## Starting the cluster
+Before starting the deployment ensure you've installed the SSH agent
+and added your key.
+
+    $ eval $(ssh-agent)
+    $ ssh-add ~/.ssh/abc-im.pem
+ 
 A shell-script wraps the combined execution of `Terraform` (used )to
 instantiate the bastion node and EFS storage etc. and `Ansible` to provision
 the EFS mounts, copy data and create the Nextflow cluster: -

@@ -13,7 +13,7 @@
 #
 #   packer build nextflow.json
 #
-# Your AMI will be seen and available at the ends fo the Packer run.
+# Your AMI will be seen and available at the end of the Packer run.
 
 variables:
 
@@ -37,7 +37,7 @@ builders:
   region: eu-west-1
   # Amazon Linux AMI 2018.03.0 (HVM), SSD Volume Type
   source_ami: ami-e4515e0e
-  # xchem VPC identification and a
+  # A VPC identification and a
   # a valid subnet for it...
   vpc_id: vpc-fcf29e9a
   subnet_id: subnet-a1bc02e9

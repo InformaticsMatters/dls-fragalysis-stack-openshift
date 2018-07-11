@@ -1,7 +1,7 @@
 cloud {
-    imageId = 'ami-02ffefe8'
+    imageId = 'ami-4b7daa32'
     userName = 'ec2-user'
-    instanceType = 'c5.18xlarge'
+    instanceType = 't2.large'
     subnetId = '${subnet}'
     securityGroup = '${security_group}'
     bootStorageSize = '8GB'
