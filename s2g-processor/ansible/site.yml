@@ -3,6 +3,13 @@
 - hosts: all
 
   roles:
-  - nf-setup-efs
+#  - nf-mount-efs
+
+- hosts:
+
+- hosts: 34.254.178.30
+
+  roles:
+  - nf-mount-efs
   - nf-setup-nf
   - nf-load-smiles

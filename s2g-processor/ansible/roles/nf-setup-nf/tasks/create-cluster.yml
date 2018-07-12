@@ -2,6 +2,36 @@
 
 # Create the Nextflow cluster.
 # This can be deleted with `nextflow cloud shutdown`
+#
+# stdout of successful Nextflow is: -
+#
+# -STDOUT BEGIN-
+# Fetching EC2 prices (it can take a few seconds depending your internet connection) ..
+# > cluster name: frag
+# > instances count: 2
+# > Launch configuration:
+#  - bootStorageSize: '8GB'
+#  - driver: 'aws'
+#  - imageId: 'ami-4b7daa32'
+#  - instanceType: 'c5.18xlarge'
+#  - keyName: 'abc-im'
+#  - securityGroup: 'sg-c66ba6ba'
+#  - spotPrice: '1.5'
+#  - subnetId: 'subnet-a1bc02e9'
+#  - userName: 'ec2-user'
+#
+# Launching worker node -- Waiting for `running` status.. ready.
+#   i-016bef0eb08dc7041	  ec2-52-212-3-60.eu-west-1.compute.amazonaws.com
+#
+# Launching master node -- Waiting for `running` status..
+# Login in the master node using the following command:
+#   ssh -i <path to `abc-im` key file> ec2-user@ec2-54-171-233-153.eu-west-1.compute.amazonaws.com
+# -STDOUT END-
+#
+# The created instances will have the following tags:
+# "cluster-name" = "frag"
+# "Name" = "master" or "worker"
+
 - name: Create cluster
   shell: "~/nextflow cloud create {{ nf_cloud_name }} -c {{ nf_cloud_size }} -y"
   args:

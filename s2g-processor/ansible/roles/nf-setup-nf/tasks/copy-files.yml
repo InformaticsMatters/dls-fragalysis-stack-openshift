@@ -7,7 +7,6 @@
     dest: "{{ efs_mount }}/"
   loop:
   - ../nextflow/graph.nf
-  - ../nextflow/nextflow.config
 
 - name: Ensure private key is present
   copy:

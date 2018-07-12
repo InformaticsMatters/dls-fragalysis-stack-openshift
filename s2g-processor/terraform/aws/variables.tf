@@ -69,7 +69,7 @@ variable "nextflow_dir" {
 
 variable "num_spot_nodes" {
   description = "The number of Nextflow Spot nodes, at least 1"
-  default = 2
+  default = 7
 }
 
 variable "node_spot_family" {

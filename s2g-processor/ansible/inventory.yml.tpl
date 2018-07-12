@@ -3,11 +3,15 @@
 # The Graph compiler Ansible inventory file.
 
 all:
-  hosts:
-    ${nf_host}:
+  nodes:
+    hosts:
+        ${nf_host}:
+  master:
+    hosts:
 
   vars:
     keypair_name: ${keypair_name}
+    efs_id: ${efs_id}
     efs_dns_name: ${efs_dns_name}
     efs_mount: /mnt/efs
 

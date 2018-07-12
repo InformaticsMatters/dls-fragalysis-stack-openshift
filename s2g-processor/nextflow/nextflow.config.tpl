@@ -1,7 +1,10 @@
+// A Terraform template file for
+// out Nextflow cloud configuration.
+
 cloud {
-    imageId = 'ami-4b7daa32'
+    imageId = '${image_id}'
     userName = 'ec2-user'
-    instanceType = 't2.large'
+    instanceType = 'c5.18xlarge'
     subnetId = '${subnet}'
     securityGroup = '${security_group}'
     bootStorageSize = '8GB'

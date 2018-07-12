@@ -1,47 +1,63 @@
-/* Example Nextflow pipline that runs Docking using rDock
-*/
+// Fragalysis Graph Processing
 
-params.ligands = 'origin.smi'
-params.chunk = 25
+params.origin = 'origin.smi'
+// A shred of 70,000 creates just enough files for 8 72-core machines
+// to run the smilesSplit in one shot on each core.
+params.shredSize = 70000
+params.chunkSize = 25
 
-ligands = file(params.ligands)
+origin = file(params.origin)
 
-/* Splits the input SD file into multiple files of ${params.chunk} records.
-* Each file is sent individually to the ligand_parts channel
-*/
-process sdsplit {
+// Shreds a file into smaller parts (keeping the header)
+process headShred {
 
-    maxForks 1
-    container 'xchem/fragalysis:0.0.3'
+    container 'xchem/fragalysis:0.0.5'
 
     input:
-    file ligands
+    file origin
+
+    output:
+    file 'origin_part_*.smi' into origin_parts mode flatten
+
+    """
+    python /usr/local/fragalysis/frag/network/scripts/header_shred.py \
+        -i $origin -o origin_part -s $params.shredSize
+    """
+
+}
+
+// Splits and canonicalises the input SMILES file into 'chunks'
+process smilesSplit {
+
+    container 'xchem/fragalysis:0.0.5'
+
+    input:
+    file part from origin_parts
 
     output:
     file 'ligands_part*' into ligand_parts mode flatten
     
     """
-    python /usr/local/fragalysis/frag/network/scripts/split_input.py --input $ligands --chunk_size $params.chunk --output ligands_part
+    python /usr/local/fragalysis/frag/network/scripts/split_input.py \
+        --input $part --chunk_size $params.chunkSize --output ligands_part
     """
+
 }
 
-
-/* Builds the graph for each part
- * On a MacBook Pro (15-inch, 2016) 2.7GHz i7 with 2133MHz LPDDR3 Memory
- * the average time to process 500 molecules is 6'45" (1.23 molecules/S)
-*/
+// Builds the graph for each canonicalised split part.
+// The output of each process is a node, edge and attributes text file.
 process graph {
 
+    container 'xchem/fragalysis:0.0.5'
+
     errorStrategy 'retry'
-    container 'xchem/fragalysis:0.0.3'
 
     input:
     file part from ligand_parts
 	
-    output:
-    file 'output_part*/edges.txt' into docked_parts
-    
     """
-    python /usr/local/fragalysis/frag/network/scripts/build_db.py --input  $part --base_dir ${part.name.replace('ligands', 'output')[0..-5]}
+    python /usr/local/fragalysis/frag/network/scripts/build_db.py \
+        --input $part --base_dir ${part.name.replace('ligands', 'output')[0..-5]}
     """
+
 }

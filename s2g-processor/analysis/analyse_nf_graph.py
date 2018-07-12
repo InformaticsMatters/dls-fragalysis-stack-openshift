@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 """A simple utility to analyse Nextflow log files in order to determine the
-duration of the `split` and `graph` execution times of the job.
+duration of the `graph` execution times of the job.
 Run Nextflow and then run this utility, which expects (by default)
 to find a `.nextflow.log` file in the current directory.
 
@@ -12,7 +12,6 @@ July 2018
 """
 
 import argparse
-import sys
 import re
 from datetime import datetime, timedelta
 
@@ -67,10 +66,7 @@ def get_graph_id(nf_line):
 
 TOTAL_START = None
 TOTAL_STOP = None
-SPLIT_START = None
-SPLIT_STOP = None
 MOST_RECENT_COMPLETED_TIME = None
-SPLIT_DURATION = None
 GRAPH_START_TIMES = {}
 GRAPH_DURATIONS = {}
 NUM_RUNNING = 0
@@ -82,19 +78,6 @@ with open(LOG_FILE_NAME) as log_file:
 
     if not TOTAL_START and LINE and 'nextflow.cli.Launcher' in LINE:
         TOTAL_START = get_time(LINE)
-
-    # Find smilesSplit duration
-    while LINE and not SPLIT_STOP:
-
-        if 'Creating operator > smilesSplit' in LINE:
-            SPLIT_START = get_time(LINE)
-        elif 'smilesSplit' in LINE and 'COMPLETED' in LINE:
-            SPLIT_STOP = get_time(LINE)
-
-        LINE = log_file.readline()
-
-    if SPLIT_STOP and SPLIT_START:
-        SPLIT_DURATION = SPLIT_STOP - SPLIT_START
 
     # Find graph container durations
     while LINE:
@@ -117,17 +100,12 @@ with open(LOG_FILE_NAME) as log_file:
 
         LINE = log_file.readline()
 
-if not SPLIT_DURATION:
-    print("Couldn't determine SD Split duration (has it finished?)")
-    sys.exit(0)
-
 # Summarise the results...
 if TOTAL_START:
     print("Process start time = %s" % TOTAL_START)
     if MOST_RECENT_COMPLETED_TIME:
         print("Most recent        = %s" % MOST_RECENT_COMPLETED_TIME)
         print("Duration so far    = %s" % (MOST_RECENT_COMPLETED_TIME - TOTAL_START))
-    print("SD Split Duration  = %s" % SPLIT_DURATION)
 # Collect graph results
 # Keeping longest, shortest and total.
 TOTAL_DURATION = timedelta(0)

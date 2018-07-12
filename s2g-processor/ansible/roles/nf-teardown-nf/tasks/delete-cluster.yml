@@ -7,7 +7,7 @@
 # destruction is interactive.
 - name: Delete cluster
   expect:
-    command: "./nextflow cloud shutdown {{ nf_cloud_name }}"
+    command: "~/nextflow cloud shutdown {{ nf_cloud_name }}"
     responses:
       cluster: "y"
   environment:
