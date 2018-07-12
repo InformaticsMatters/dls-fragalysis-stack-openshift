@@ -23,8 +23,7 @@ from the `packer/<provider>` directory. The Packer files might be in
 my preferred format of YAML. For example, to build an AMS image (form the
 `packer/aws` directory) run: -
 
-    $ ../../../yaml2json.py < nextflow.yml > nextflow.json
-    $ packer build nextflow.json
+    $ packer-build.sh
 
 >   For AWS you will need to have defined a number of environment variables,
     namely `TF_VAR_aws_access_key` and `TF_VAR_aws_secret_key`.

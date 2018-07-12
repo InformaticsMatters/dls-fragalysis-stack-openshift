@@ -11,34 +11,12 @@ resource "aws_security_group" "efs-ec2-sg" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
-  # Any outbound traffic
-  egress {
-    protocol = "-1"
+  # Open to receive anything from anyone (internally)...
+  ingress {
     from_port = 0
     to_port = 0
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-}
-
-resource "aws_security_group" "nextflow-cloud" {
-  name = "NF Cloud"
-  description = "SG for Nextfow cloud instances"
-  vpc_id = "${var.aws_vpc}"
-
-  # SSH in
-  ingress {
-    protocol = "tcp"
-    from_port = 22
-    to_port = 22
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  # Any inboud traffic
-  ingress {
     protocol = "-1"
-    from_port = 0
-    to_port = 0
-    cidr_blocks = ["0.0.0.0/0"]
+    self = true
   }
 
   # Any outbound traffic

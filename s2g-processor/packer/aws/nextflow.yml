@@ -4,16 +4,14 @@
 #
 # To use this file (Packer expects a JSON file) you need to
 # use the project's yaml2json module to convert it to JSON.
-# From this directory and a Suitable Python (see root's requirements.txt)
+# From this directory and a suitable Python (see root's requirements.txt)
 # you can run...
 #
-#   ../../../yaml2json.py < nextflow.yml > nextflow.json
+#   ./packer-build.sh
 #
-# Then, to create the AMI for later use, run Packer...
-#
-#   packer build nextflow.json
-#
-# Your AMI will be seen and available at the end of the Packer run.
+# Your AMI ID will be displayed and available for use
+# at the end of the Packer build. Simply replace the appropriate `amis`
+# map variable with the the new AMI in Terraform's `variables.tf` file.
 
 variables:
 
@@ -23,7 +21,7 @@ variables:
   aws_i_type: t2.micro
   our_name: Nextflow Base Image
   nextflow_dir: ../../nextflow
-  base_ami_name: im-nf-5
+  base_ami_name: im-nf-6
   base_description: |-
     Amazon Linux 2018.03.0 HVM EBS with Nextflow & Docker
 
@@ -58,7 +56,7 @@ provisioners:
   - sudo yum update -y
   # Cloud-Init and Docker
   # and nfs-utils for EFS mounting and git...
-  - sudo yum install -y cloud-init docker nfs-utils git
+  - sudo yum install -y cloud-init docker amazon-efs-utils nfs-utils git
   - sudo service docker start
   - sudo usermod -a -G docker ec2-user
   # Now move to Java 8...

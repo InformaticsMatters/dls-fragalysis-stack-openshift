@@ -2,7 +2,7 @@
 # An EFS instance.
 # -----------------------------------------------------------------------------
 
-# For instructions omn settign it up see the guide
+# For instructions on settign it up see the guide
 # "Walkthrough 1: Create Amazon EFS File System
 #                 and Mount It on an EC2 Instance Using the AWS CLI"
 #
@@ -10,6 +10,10 @@
 
 resource "aws_efs_file_system" "fragalysis" {
   creation_token = "diamond-fragalysis-efs"
+
+  tags {
+    Name = "fragalysis"
+  }
 }
 
 resource "aws_efs_mount_target" "fragalysis" {

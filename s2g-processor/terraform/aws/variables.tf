@@ -39,7 +39,7 @@ variable "amis" {
   description = "AMIs by Region"
   type = "map"
   default = {
-    eu-west-1 = "ami-02ffefe8" # Ireland (im-nf-5)
+    eu-west-1 = "ami-7c322196" # Ireland (im-nf-6)
   }
 }
 
@@ -64,22 +64,41 @@ variable "nextflow_dir" {
 }
 
 # -----------------------------------------------------------------------------
+# Spot instance node configuration
+# -----------------------------------------------------------------------------
+
+variable "num_spot_nodes" {
+  description = "The number of Nextflow Spot nodes, at least 1"
+  default = 2
+}
+
+variable "node_spot_family" {
+  description = "The machine family (i.e. t2.large)"
+  default = "c5.18xlarge"
+}
+
+variable "node_spot_price" {
+  description = "The spot bid price"
+  default = "1.5"
+}
+
+# -----------------------------------------------------------------------------
 # EBS node configuration
 # -----------------------------------------------------------------------------
 
 variable "num_ebs_nodes" {
   description = "The number of Nextflow EBS-based nodes, at least 1"
-  default = 1
+  default = 0
 }
 
 variable "node_ebs_family" {
   description = "The machine family (i.e. t2.large)"
-  default = "t2.large"
+  default = "c5.18xlarge"
 }
 
 variable "node_ebs_size" {
   description = "The size (Gi) of the EBS root volume"
-  default = "200"
+  default = "8"
 }
 
 # -----------------------------------------------------------------------------

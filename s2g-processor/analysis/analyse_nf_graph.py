@@ -3,7 +3,7 @@
 """A simple utility to analyse Nextflow log files in order to determine the
 duration of the `split` and `graph` execution times of the job.
 Run Nextflow and then run this utility, which expects (by default)
-to find a `.nextflow.log` file in the cirrent directory.
+to find a `.nextflow.log` file in the current directory.
 
 Usage:  analyse_nf_graph.py -h
 
@@ -83,12 +83,12 @@ with open(LOG_FILE_NAME) as log_file:
     if not TOTAL_START and LINE and 'nextflow.cli.Launcher' in LINE:
         TOTAL_START = get_time(LINE)
 
-    # Find sdsplit duration
+    # Find smilesSplit duration
     while LINE and not SPLIT_STOP:
 
-        if 'Creating operator > sdsplit' in LINE:
+        if 'Creating operator > smilesSplit' in LINE:
             SPLIT_START = get_time(LINE)
-        elif 'sdsplit' in LINE and 'COMPLETED' in LINE:
+        elif 'smilesSplit' in LINE and 'COMPLETED' in LINE:
             SPLIT_STOP = get_time(LINE)
 
         LINE = log_file.readline()
@@ -126,6 +126,7 @@ if TOTAL_START:
     print("Process start time = %s" % TOTAL_START)
     if MOST_RECENT_COMPLETED_TIME:
         print("Most recent        = %s" % MOST_RECENT_COMPLETED_TIME)
+        print("Duration so far    = %s" % (MOST_RECENT_COMPLETED_TIME - TOTAL_START))
     print("SD Split Duration  = %s" % SPLIT_DURATION)
 # Collect graph results
 # Keeping longest, shortest and total.
@@ -139,8 +140,8 @@ for G_ID in GRAPH_DURATIONS:
     if LONGEST_DURATION is None or G_DURATION > LONGEST_DURATION:
         LONGEST_DURATION = G_DURATION
     TOTAL_DURATION += G_DURATION
-print("Number of graphs   = %d" % len(GRAPH_DURATIONS))
-print("Number running now = %d" % NUM_RUNNING)
+print("Graphs complete    = %d" % len(GRAPH_DURATIONS))
+print("Graphs running now = %d" % NUM_RUNNING)
 if TOTAL_DURATION:
     print("Longest  duration  = %s" % LONGEST_DURATION)
     print("Shortest duration  = %s" % SHORTEST_DURATION)

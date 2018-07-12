@@ -11,7 +11,8 @@ data "template_file" "ansible-inventory" {
   template = "${file("${var.ansible_dir}/inventory.yml.tpl")}"
 
   vars {
-    nf_host = "${aws_instance.nextflow-ebs-node.public_ip}"
+    nf_host = "${aws_spot_instance_request.nextflow-spot-node.0.public_ip}"
+    efs_id = "${aws_efs_file_system.fragalysis.id}"
     efs_dns_name = "${aws_efs_file_system.fragalysis.dns_name}"
     keypair_name = "${var.aws_key_name}"
   }
@@ -29,9 +30,10 @@ data "template_file" "nextflow-config" {
   template = "${file("${var.nextflow_dir}/nextflow.config.tpl")}"
 
   vars {
-    efs_id = "${aws_efs_file_system.fragalysis.id}"
+    image_id = "${lookup(var.amis, var.aws_region)}"
     subnet = "${var.aws_subnet}"
-    security_group = "${aws_security_group.nextflow-cloud.id}"
+    security_group = "${aws_security_group.efs-ec2-sg.id}"
+    efs_id = "${aws_efs_file_system.fragalysis.id}"
     key_name = "${var.aws_key_name}"
   }
 }
