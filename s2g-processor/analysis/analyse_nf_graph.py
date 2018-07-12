@@ -69,9 +69,11 @@ TOTAL_START = None
 TOTAL_STOP = None
 SPLIT_START = None
 SPLIT_STOP = None
+MOST_RECENT_COMPLETED_TIME = None
 SPLIT_DURATION = None
 GRAPH_START_TIMES = {}
 GRAPH_DURATIONS = {}
+NUM_RUNNING = 0
 
 # Process the log (line by line)...
 with open(LOG_FILE_NAME) as log_file:
@@ -100,10 +102,13 @@ with open(LOG_FILE_NAME) as log_file:
         if 'Submitted' in LINE and 'graph' in LINE:
             G_ID = get_graph_id(LINE)
             GRAPH_START_TIMES[G_ID] = get_time(LINE)
+            NUM_RUNNING += 1
         elif 'COMPLETED' in LINE and 'graph' in LINE:
+            NUM_RUNNING -= 1
             G_ID = get_graph_id(LINE)
             if G_ID in GRAPH_START_TIMES:
-                GRAPH_DURATION = get_time(LINE) - GRAPH_START_TIMES[G_ID]
+                MOST_RECENT_COMPLETED_TIME = get_time(LINE)
+                GRAPH_DURATION = MOST_RECENT_COMPLETED_TIME - GRAPH_START_TIMES[G_ID]
                 GRAPH_DURATIONS[G_ID] = GRAPH_DURATION
                 if ARGS.detail:
                     print('%d,%s' % (G_ID, GRAPH_DURATION))
@@ -119,6 +124,8 @@ if not SPLIT_DURATION:
 # Summarise the results...
 if TOTAL_START:
     print("Process start time = %s" % TOTAL_START)
+    if MOST_RECENT_COMPLETED_TIME:
+        print("Most recent        = %s" % MOST_RECENT_COMPLETED_TIME)
     print("SD Split Duration  = %s" % SPLIT_DURATION)
 # Collect graph results
 # Keeping longest, shortest and total.
@@ -133,6 +140,7 @@ for G_ID in GRAPH_DURATIONS:
         LONGEST_DURATION = G_DURATION
     TOTAL_DURATION += G_DURATION
 print("Number of graphs   = %d" % len(GRAPH_DURATIONS))
+print("Number running now = %d" % NUM_RUNNING)
 if TOTAL_DURATION:
     print("Longest  duration  = %s" % LONGEST_DURATION)
     print("Shortest duration  = %s" % SHORTEST_DURATION)
