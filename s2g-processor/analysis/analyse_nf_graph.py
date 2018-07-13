@@ -15,8 +15,10 @@ import argparse
 import re
 from datetime import datetime, timedelta
 
+# Name of the graph task in the Nextflow log...
+GRAPH_TASK_NAME = 'cgd'
 # RegEx for the Graph's Job ID in a Nextflow log-line.
-RE_GRAPH_ID = '.* graph \((\d+)\).*'
+RE_GRAPH_ID = '.* %s \((\d+)\).*' % GRAPH_TASK_NAME
 
 PARSER = argparse.ArgumentParser(description='Graph construction analyser.'
                                  ' Analyses Nextflow logfile that was used'
@@ -82,11 +84,11 @@ with open(LOG_FILE_NAME) as log_file:
     # Find graph container durations
     while LINE:
 
-        if 'Submitted' in LINE and 'graph' in LINE:
+        if 'Submitted' in LINE and GRAPH_TASK_NAME in LINE:
             G_ID = get_graph_id(LINE)
             GRAPH_START_TIMES[G_ID] = get_time(LINE)
             NUM_RUNNING += 1
-        elif 'COMPLETED' in LINE and 'graph' in LINE:
+        elif 'COMPLETED' in LINE and GRAPH_TASK_NAME in LINE:
             NUM_RUNNING -= 1
             G_ID = get_graph_id(LINE)
             if G_ID in GRAPH_START_TIMES:
