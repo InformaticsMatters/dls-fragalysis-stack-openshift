@@ -21,9 +21,9 @@ parameters:
   value: fragalysis-cicd
 
 - name: BACKUP_REGISTRY
-  value: 'docker-registry.default.svc:5000'
+  value: 'docker.io'
 - name: BACKUP_IMAGE
-  value: 'fragalysis-cicd/backup-stream'
+  value: 'informaticsmatters/postgresql-backup'
 - name: BACKUP_TAG
   value: 'latest'
 - name: BACKUP_NODE_SIZE_SELECTOR
