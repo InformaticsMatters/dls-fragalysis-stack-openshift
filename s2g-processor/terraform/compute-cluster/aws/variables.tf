@@ -24,12 +24,12 @@ variable "aws_secret_key" {}
 # Default Parameters (can be changed via command-line or ENV)
 # -----------------------------------------------------------------------------
 
-variable "aws_key_name" {
+variable "key_name" {
   description = "The name of the Key Pair, as known by AWS"
   default = "abc-im"
 }
 
-variable "aws_region" {
+variable "region" {
   description = "EC2 Region for the Cluster"
   default = "eu-west-1" # Ireland
 }
@@ -43,36 +43,60 @@ variable "amis" {
   }
 }
 
-variable "aws_vpc" {
+variable "vpc" {
   description = "The Cluster VPC (xchem-vpc)"
   default = "vpc-fcf29e9a"
 }
 
-variable "aws_subnet" {
+variable "subnet" {
   description = "The Cluster Subnet"
   default = "subnet-a1bc02e9"
 }
 
-variable "aws_efs_ec2_sgid" {
+variable "efs_ec2_sgid" {
   description = "The EFS EC2 Security Group ID"
   default = "sg-6406cd18"
 }
 
-# -----------------------------------------------------------------------------
-# Spot instance node configuration
-# -----------------------------------------------------------------------------
-
-variable "num_spot_nodes" {
-  description = "The number of Nextflow Spot nodes, at least 1"
-  default = 3
+variable "spot_root_size" {
+  description = "The size (GiB) of spot imnstance root volumes"
+  default = 32
 }
 
-variable "node_spot_family" {
+# -----------------------------------------------------------------------------
+# Spot instance node configuration (type A)
+# -----------------------------------------------------------------------------
+
+variable "num_spot_a_nodes" {
+  description = "The number of Nextflow Spot nodes for our A-types"
+  default = 0
+}
+
+variable "a_node_spot_family" {
   description = "The machine family (i.e. t2.large)"
   default = "c5.18xlarge"
 }
 
-variable "node_spot_price" {
+variable "a_node_spot_price" {
   description = "The spot bid price"
   default = "1.5"
+}
+
+# -----------------------------------------------------------------------------
+# Spot instance node configuration (type B)
+# -----------------------------------------------------------------------------
+
+variable "num_spot_b_nodes" {
+  description = "The number of Nextflow Spot nodes for our B-types"
+  default = 0
+}
+
+variable "b_node_spot_family" {
+  description = "The machine family (i.e. t2.large)"
+  default = "c5.9xlarge"
+}
+
+variable "b_node_spot_price" {
+  description = "The spot bid price"
+  default = "1.0"
 }
