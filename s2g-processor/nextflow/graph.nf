@@ -42,6 +42,10 @@ process headShred {
 // to optimise the CPU. So here we do 200 10-molecule chunks in succession
 // so it looks like a very efficient 2000-chunk process which should
 // take around 30 minutes (on average) to process.
+//
+// We generate a timing.log file to record the start time of each step in
+// the following process - the time to split, process each chunk, deduplicate
+// and clean-up.
 process cgd {
 
     container 'xchem/fragalysis:0.0.5'
@@ -49,18 +53,30 @@ process cgd {
     input:
     file part from origin_parts
 
+    output:
+    file 'nodes' into node_parts
+    file 'edges' into edge_parts
+    file 'attributes' into attribute_parts
+    file 'timing.log' into timing_parts
+
     shell:
     '''
+    echo !{part},$(date) > timing.log
     python /usr/local/fragalysis/frag/network/scripts/split_input.py \
         --input !{part} --chunk_size !{params.chunkSize} --output ligands_part
     for chunk in ligands_part*.smi; do
+        echo ${chunk},$(date) >> timing.log
         python /usr/local/fragalysis/frag/network/scripts/build_db.py \
             --input ${chunk} --base_dir output_${chunk%.*}
     done
+    echo deduplicating,$(date) >> timing.log
     find . -name nodes.txt -print | xargs awk '!x[$0]++' > nodes
     find . -name edges.txt -print | xargs awk '!x[$0]++' > edges
     find . -name attributes.txt -print | xargs awk '!x[$0]++' > attributes
+    echo cleaning,$(date) >> timing.log
+    rm ligands_part*.smi
     rm -rf output_*
+    echo done,$(date) >> timing.log
     '''
 
 }
