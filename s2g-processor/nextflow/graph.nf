@@ -61,22 +61,21 @@ process cgd {
 
     shell:
     '''
-    echo !{part},$(date) > timing.log
+    echo doing-!{part},$(date +"%d/%m/%Y %H:%M:%S") > timing.log
     python /usr/local/fragalysis/frag/network/scripts/split_input.py \
         --input !{part} --chunk_size !{params.chunkSize} --output ligands_part
     for chunk in ligands_part*.smi; do
-        echo ${chunk},$(date) >> timing.log
+        echo ${chunk},$(date +"%d/%m/%Y %H:%M:%S") >> timing.log
         python /usr/local/fragalysis/frag/network/scripts/build_db.py \
             --input ${chunk} --base_dir output_${chunk%.*}
     done
-    echo deduplicating,$(date) >> timing.log
+    echo deduplicating,$(date +"%d/%m/%Y %H:%M:%S") >> timing.log
     find . -name nodes.txt -print | xargs awk '!x[$0]++' > nodes
     find . -name edges.txt -print | xargs awk '!x[$0]++' > edges
     find . -name attributes.txt -print | xargs awk '!x[$0]++' > attributes
-    echo cleaning,$(date) >> timing.log
-    rm ligands_part*.smi
+    echo removing-output,$(date +"%d/%m/%Y %H:%M:%S") >> timing.log
     rm -rf output_*
-    echo done,$(date) >> timing.log
+    echo done-!{part},$(date +"%d/%m/%Y %H:%M:%S") >> timing.log
     '''
 
 }
