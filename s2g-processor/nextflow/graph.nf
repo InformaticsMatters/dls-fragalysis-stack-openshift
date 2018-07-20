@@ -49,33 +49,36 @@ process headShred {
 process cgd {
 
     container 'xchem/fragalysis:0.0.5'
+    publishDir 'results/', mode: 'move'
 
     input:
     file part from origin_parts
 
     output:
-    file 'nodes' into node_parts
-    file 'edges' into edge_parts
-    file 'attributes' into attribute_parts
-    file 'timing.log' into timing_parts
+    file '*.nodes' into node_parts
+    file '*.edges' into edge_parts
+    file '*.attributes' into attribute_parts
+    file '*.timing' into timing_parts
 
     shell:
     '''
-    echo doing-!{part},$(date +"%d/%m/%Y %H:%M:%S") > timing.log
+    echo doing-!{part},$(date +"%d/%m/%Y %H:%M:%S") > timing
     python /usr/local/fragalysis/frag/network/scripts/split_input.py \
         --input !{part} --chunk_size !{params.chunkSize} --output ligands_part
     for chunk in ligands_part*.smi; do
-        echo ${chunk},$(date +"%d/%m/%Y %H:%M:%S") >> timing.log
+        echo ${chunk},$(date +"%d/%m/%Y %H:%M:%S") >> timing
         python /usr/local/fragalysis/frag/network/scripts/build_db.py \
             --input ${chunk} --base_dir output_${chunk%.*}
     done
-    echo deduplicating,$(date +"%d/%m/%Y %H:%M:%S") >> timing.log
-    find . -name nodes.txt -print | xargs awk '!x[$0]++' > nodes
-    find . -name edges.txt -print | xargs awk '!x[$0]++' > edges
-    find . -name attributes.txt -print | xargs awk '!x[$0]++' > attributes
-    echo removing-output,$(date +"%d/%m/%Y %H:%M:%S") >> timing.log
+    echo deduplicating,$(date +"%d/%m/%Y %H:%M:%S") >> timing
+    find . -name nodes.txt -print | xargs awk '!x[$0]++' > !{part}.nodes
+    find . -name edges.txt -print | xargs awk '!x[$0]++' > !{part}.edges
+    find . -name attributes.txt -print | xargs awk '!x[$0]++' > !{part}.attributes
+    echo removing-output,$(date +"%d/%m/%Y %H:%M:%S") >> timing
     rm -rf output_*
-    echo done-!{part},$(date +"%d/%m/%Y %H:%M:%S") >> timing.log
+    rm !{part}
+    echo done-!{part},$(date +"%d/%m/%Y %H:%M:%S") >> timing
+    mv timing > !{part}.timing
     '''
 
 }
