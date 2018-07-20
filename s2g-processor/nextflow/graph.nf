@@ -77,6 +77,7 @@ process cgd {
     echo removing-output,$(date +"%d/%m/%Y %H:%M:%S") >> timing
     rm -rf output_*
     rm !{part}
+    rm ligands_part*.smi
     echo done-!{part},$(date +"%d/%m/%Y %H:%M:%S") >> timing
     mv timing !{part}.timing
     '''
