@@ -55,31 +55,12 @@ variable "aws_subnet" {
 
 variable "ansible_dir" {
   description = "Our ansible directory (relative to this directory)."
-  default = "../../ansible"
+  default = "../../../ansible"
 }
 
 variable "nextflow_dir" {
   description = "Our nextflow directory (relative to this directory)."
-  default = "../../nextflow"
-}
-
-# -----------------------------------------------------------------------------
-# Spot instance node configuration
-# -----------------------------------------------------------------------------
-
-variable "num_spot_nodes" {
-  description = "The number of Nextflow Spot nodes, at least 1"
-  default = 7
-}
-
-variable "node_spot_family" {
-  description = "The machine family (i.e. t2.large)"
-  default = "c5.18xlarge"
-}
-
-variable "node_spot_price" {
-  description = "The spot bid price"
-  default = "1.5"
+  default = "../../../nextflow"
 }
 
 # -----------------------------------------------------------------------------
@@ -87,13 +68,13 @@ variable "node_spot_price" {
 # -----------------------------------------------------------------------------
 
 variable "num_ebs_nodes" {
-  description = "The number of Nextflow EBS-based nodes, at least 1"
-  default = 0
+  description = "The number of Nextflow EBS-based nodes"
+  default = 1
 }
 
 variable "node_ebs_family" {
   description = "The machine family (i.e. t2.large)"
-  default = "c5.18xlarge"
+  default = "t2.large"
 }
 
 variable "node_ebs_size" {
@@ -102,11 +83,11 @@ variable "node_ebs_size" {
 }
 
 # -----------------------------------------------------------------------------
-# EBS node configuration
+# Ephemeral node configuration
 # -----------------------------------------------------------------------------
 
 variable "num_ephemeral_nodes" {
-  description = "The number of Nextflow ephemeral nodes, at least 1"
+  description = "The number of Nextflow ephemeral nodes"
   default = 0
 }
 

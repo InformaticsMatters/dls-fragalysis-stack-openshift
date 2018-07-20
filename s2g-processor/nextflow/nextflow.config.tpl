@@ -1,6 +1,8 @@
 // A Terraform template file for
 // out Nextflow cloud configuration.
 
+// THIS FILE IS CURRENTLY NOT USED
+
 cloud {
     imageId = '${image_id}'
     userName = 'ec2-user'

@@ -5,7 +5,5 @@
     nohup ~/nextflow run graph.nf
     -process.executor ignite
     -executor.queueSize 600
-    -executor.pollInterval 1000
     -with-docker busybox
-    -cluster.join path:{{ efs_dir }}/cluster
-    -process.scratch &
+    -cluster.join path:{{ efs_dir }}/cluster &

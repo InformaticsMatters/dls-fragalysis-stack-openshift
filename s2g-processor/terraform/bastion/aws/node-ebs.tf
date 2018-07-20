@@ -14,6 +14,6 @@ resource "aws_instance" "nextflow-ebs-node" {
   }
 
   tags {
-    Name = "nf-bastion"
+    Name = "nf-bastion-ebs"
   }
 }
