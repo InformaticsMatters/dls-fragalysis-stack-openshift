@@ -78,7 +78,7 @@ process cgd {
     rm -rf output_*
     rm !{part}
     echo done-!{part},$(date +"%d/%m/%Y %H:%M:%S") >> timing
-    mv timing > !{part}.timing
+    mv timing !{part}.timing
     '''
 
 }
