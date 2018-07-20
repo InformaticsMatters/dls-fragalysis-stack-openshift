@@ -43,9 +43,9 @@ process headShred {
 // so it looks like a very efficient 2000-chunk process which should
 // take around 30 minutes (on average) to process.
 //
-// We generate a timing.log file to record the start time of each step in
+// We generate a timing file to record the start time of each step in
 // the following process - the time to split, process each chunk, deduplicate
-// and clean-up.
+// and then clean-up.
 process cgd {
 
     container 'xchem/fragalysis:0.0.5'
