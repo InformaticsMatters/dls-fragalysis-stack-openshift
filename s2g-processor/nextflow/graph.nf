@@ -43,6 +43,11 @@ process headShred {
 // so it looks like a very efficient 2000-chunk process which should
 // take around 30 minutes (on average) to process.
 //
+// We could remove the individual 10-sample 'fragment' files at the end of the
+// process by running 'rm -rf output_*' along wiht the other clean-up operations
+// keeping them will be valuable for any further analysis on 'interesting'
+// (especially fast or especially slow) steps.
+//
 // We generate a timing file to record the start time of each step in
 // the following process - the time to split, process each chunk, deduplicate
 // and then clean-up.
@@ -75,7 +80,6 @@ process cgd {
     find . -name edges.txt -print | xargs awk '!x[$0]++' > !{part}.edges
     find . -name attributes.txt -print | xargs awk '!x[$0]++' > !{part}.attributes
     echo removing-output,$(date +"%d/%m/%Y %H:%M:%S") >> timing
-    rm -rf output_*
     rm !{part}
     rm ligands_part*.smi
     echo done-!{part},$(date +"%d/%m/%Y %H:%M:%S") >> timing
