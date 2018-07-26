@@ -25,7 +25,7 @@ pipeline {
     ALWAYS_PUSH = 'No'
 
     // Slack channel for all notifications
-    SLACK_CICD_CHANNEL = 'dls-cicd-webimage'
+    SLACK_BUILD_CHANNEL = 'dls-builds'
     // Slack channel to be used for errors/failures
     // (which also go to the CI/CD channel)
     SLACK_ALERT_CHANNEL = 'dls-alerts'
@@ -40,7 +40,7 @@ pipeline {
           // - Run the get_unbuilt_data_directory module to find the latest data
           // - Dump the script log.
           sh "ls ${env.SOURCE_DATA_ROOT}"
-          slackSend channel: "#${env.SLACK_CICD_CHANNEL}",
+          slackSend channel: "#${env.SLACK_BUILD_CHANNEL}",
                     message: "Web image build ${env.BUILD_NUMBER} - starting..."
           script {
             env.REGISTRY_USER_TOKEN = sh(script: 'oc whoami -t', returnStdout: true).trim()
@@ -57,7 +57,7 @@ pipeline {
       }
       steps {
         dir('images/web') {
-          slackSend channel: "#${env.SLACK_CICD_CHANNEL}",
+          slackSend channel: "#${env.SLACK_BUILD_CHANNEL}",
                     message: "Web image build ${env.BUILD_NUMBER} - using '${DATA_ORIGIN}' data"
           sh "cp -r ${SOURCE_DATA_ROOT}/${DATA_ORIGIN}/* media"
           sh "buildah bud --format docker --build-arg DATA_ORIGIN=${DATA_ORIGIN} -f Dockerfile -t ${STREAM_IMAGE} ."
@@ -88,13 +88,13 @@ pipeline {
   post {
 
     success {
-      slackSend channel: "#${env.SLACK_CICD_CHANNEL}",
+      slackSend channel: "#${env.SLACK_BUILD_CHANNEL}",
                 color: 'good',
                 message: "Web image build ${env.BUILD_NUMBER} - complete"
     }
 
     failure {
-      slackSend channel: "#${env.SLACK_CICD_CHANNEL}",
+      slackSend channel: "#${env.SLACK_BUILD_CHANNEL}",
                 color: 'danger',
                 message: "Web image build ${env.BUILD_NUMBER} - failed (${env.BUILD_URL})"
       slackSend channel: "#${env.SLACK_ALERT_CHANNEL}",

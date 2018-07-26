@@ -24,7 +24,7 @@ pipeline {
     ALWAYS_PUSH = 'No'
 
     // Slack channel for all notifications
-    SLACK_CICD_CHANNEL = 'dls-cicd-graphimage'
+    SLACK_BUILD_CHANNEL = 'dls-builds'
     // Slack channel to be used for errors/failures
     // (which also go to the CI/CD channel)
     SLACK_ALERT_CHANNEL = 'dls-alerts'
@@ -68,7 +68,7 @@ pipeline {
         expression { DATA_ORIGIN.length() == 0 && ALWAYS_PUSH == 'No' }
       }
       steps {
-        slackSend channel: "#${env.SLACK_CICD_CHANNEL}",
+        slackSend channel: "#${env.SLACK_BUILD_CHANNEL}",
                   color: 'warning',
                   message: "Graph image build ${env.BUILD_NUMBER} - no new data, skipping"
       }
@@ -86,7 +86,7 @@ pipeline {
         sh "buildah push --tls-verify=false ${env.STREAM_IMAGE} docker://${env.STREAM_IMAGE}"
         sh "podman logout ${env.REGISTRY}"
         sh "buildah images"
-        slackSend channel: "#${env.SLACK_CICD_CHANNEL}",
+        slackSend channel: "#${env.SLACK_BUILD_CHANNEL}",
                   color: 'good',
                   message: "Graph image build ${env.BUILD_NUMBER} - new image for '${DATA_ORIGIN}' data has been pushed"
       }
@@ -99,7 +99,7 @@ pipeline {
   post {
 
     failure {
-      slackSend channel: "#${SLACK_CICD_CHANNEL}",
+      slackSend channel: "#${SLACK_BUILD_CHANNEL}",
                 color: 'danger',
                 message: "Graph image build ${env.BUILD_NUMBER} - failed (${env.BUILD_URL})"
       slackSend channel: "#${SLACK_ALERT_CHANNEL}",
