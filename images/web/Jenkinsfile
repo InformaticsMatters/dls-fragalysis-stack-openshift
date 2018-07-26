@@ -42,7 +42,6 @@ pipeline {
           sh "ls ${env.SOURCE_DATA_ROOT}"
           slackSend channel: "#${SLACK_BUILD_CHANNEL}",
                     message: "${JOB_NAME} build ${BUILD_NUMBER} - starting..."
-          sh "false"
           script {
             env.REGISTRY_USER_TOKEN = sh(script: 'oc whoami -t', returnStdout: true).trim()
             DATA_ORIGIN = sh(script: './get_unbuilt_data_directory.py', returnStdout: true).trim()

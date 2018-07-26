@@ -40,7 +40,6 @@ pipeline {
           // - Get the registry user API token (used in the Python module)
           // - Run the get_unbuilt_data_directory  module
           // - Print the script log.
-          sh "false"
           sh "ls ${SOURCE_DATA_ROOT}"
           script {
             env.REGISTRY_USER_TOKEN = sh(script: 'oc whoami -t', returnStdout: true).trim()
