@@ -35,10 +35,12 @@ pipeline {
     stage('Inspect') {
       steps {
         dir('images') {
+          slackSend channel: "#${SLACK_BUILD_CHANNEL}",
+                    message: "${JOB_NAME} build ${BUILD_NUMBER} - starting..."
           // - Get the registry user API token (used in the Python module)
           // - Run the get_unbuilt_data_directory  module
           // - Print the script log.
-          sh "ls ${env.SOURCE_DATA_ROOT}"
+          sh "ls ${SOURCE_DATA_ROOT}"
           script {
             env.REGISTRY_USER_TOKEN = sh(script: 'oc whoami -t', returnStdout: true).trim()
             DATA_ORIGIN = sh(script: './get_unbuilt_data_directory.py', returnStdout: true).trim()
@@ -58,7 +60,7 @@ pipeline {
         }
         dir('images/graph') {
           sh "cp ${SOURCE_DATA_ROOT}/${DATA_ORIGIN}/* data-loader"
-          sh "buildah bud --tls-verify=false --creds=${env.REGISTRY_USER}:${TOKEN} --format docker --build-arg DATA_ORIGIN=${DATA_ORIGIN} -f Dockerfile -t ${env.STREAM_IMAGE} ."
+          sh "buildah bud --tls-verify=false --creds=${REGISTRY_USER}:${TOKEN} --format docker --build-arg DATA_ORIGIN=${DATA_ORIGIN} -f Dockerfile -t ${env.STREAM_IMAGE} ."
         }
       }
     }
@@ -68,9 +70,9 @@ pipeline {
         expression { DATA_ORIGIN.length() == 0 && ALWAYS_PUSH == 'No' }
       }
       steps {
-        slackSend channel: "#${env.SLACK_BUILD_CHANNEL}",
+        slackSend channel: "#${SLACK_BUILD_CHANNEL}",
                   color: 'warning',
-                  message: "Graph image build ${env.BUILD_NUMBER} - no new data, skipping"
+                  message: "${JOB_NAME} build ${BUILD_NUMBER} - no new data, skipping"
       }
     }
 
@@ -82,13 +84,13 @@ pipeline {
         script {
           TOKEN = sh(script: 'oc whoami -t', returnStdout: true).trim()
         }
-        sh "podman login --tls-verify=false --username ${env.REGISTRY_USER} --password ${TOKEN} ${env.REGISTRY}"
-        sh "buildah push --tls-verify=false ${env.STREAM_IMAGE} docker://${env.STREAM_IMAGE}"
+        sh "podman login --tls-verify=false --username ${env.REGISTRY_USER} --password ${TOKEN} ${REGISTRY}"
+        sh "buildah push --tls-verify=false ${STREAM_IMAGE} docker://${env.STREAM_IMAGE}"
         sh "podman logout ${env.REGISTRY}"
         sh "buildah images"
-        slackSend channel: "#${env.SLACK_BUILD_CHANNEL}",
+        slackSend channel: "#${SLACK_BUILD_CHANNEL}",
                   color: 'good',
-                  message: "Graph image build ${env.BUILD_NUMBER} - new image for '${DATA_ORIGIN}' data has been pushed"
+                  message: "${JOB_NAME} build ${BUILD_NUMBER} - new image for '${DATA_ORIGIN}' data has been pushed"
       }
     }
 
@@ -101,16 +103,16 @@ pipeline {
     failure {
       slackSend channel: "#${SLACK_BUILD_CHANNEL}",
                 color: 'danger',
-                message: "Graph image build ${env.BUILD_NUMBER} - failed (${env.BUILD_URL})"
+                message: "${JOB_NAME} build ${BUILD_NUMBER} - failed (${BUILD_URL})"
       slackSend channel: "#${SLACK_ALERT_CHANNEL}",
                 color: 'danger',
-                message: "Graph image build ${env.BUILD_NUMBER} - failed (${env.BUILD_URL})"
+                message: "${JOB_NAME} build ${BUILD_NUMBER} - failed (${BUILD_URL})"
     }
 
     fixed {
-      slackSend channel: "#${env.SLACK_ALERT_CHANNEL}",
+      slackSend channel: "#${SLACK_ALERT_CHANNEL}",
                 color: 'good',
-                message: "Graph image build - fixed"
+                message: "${JOB_NAME} build - fixed"
     }
 
   }
