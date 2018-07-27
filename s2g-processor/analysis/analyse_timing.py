@@ -11,10 +11,16 @@ July 2018
 import glob
 from datetime import datetime, timedelta
 
+# Number of slices the analysis is processing.
+# With 5,000,000 molecules cut into 2,000 molecule slices
+# the number of slices is 2,500.
 expected_slices = 2500
 
+# The name of the slice
 origin_part = None
+# The timestamp of the previous line
 prior_line_timestamp = None
+# The name of the prior chunk
 prior_chunk = None
 
 # Earliest and latest times
