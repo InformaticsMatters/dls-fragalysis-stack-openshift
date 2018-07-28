@@ -71,7 +71,7 @@ def add_chunk_duration(chunk_name, chunk_duration):
     global histogram_max_bin
     global total_graph_time
 
-    bin_index = chunk_duration.seconds / histogram_bin_duration.seconds
+    bin_index = int(chunk_duration.seconds / histogram_bin_duration.seconds)
 
     bin_count = histogram.get(bin_index, 0)
     bin_count += 1
@@ -179,7 +179,9 @@ if longest_chunks:
     print('')
     print('Chunks longer than %s (longest first)...' % longest_threshold)
     index = 1
-    for chunk, duration in sorted(longest_chunks.iteritems(), reverse=True, key=lambda (k, v): (v, k)):
+    for chunk, duration in sorted(longest_chunks.items(),
+                                  reverse=True,
+                                  key=lambda x: x[1]):
         print(' %5d %s %s' % (index, duration, chunk))
         index += 1
 
