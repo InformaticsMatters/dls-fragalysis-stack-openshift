@@ -21,12 +21,9 @@
 #     https://github.com/nextflow-io/nextflow/blob/81e8d49f014a990cce1d1be4afb84e1fdd93840c/src/main/groovy/
 #         nextflow/cloud/aws/AmazonCloudDriver.groovy#L329-L335
 - name: Mount EFS
-#  shell: "mount -t efs {{ efs_id }}:/ {{ efs_mount }}"
-  mount:
-    path: "{{ efs_mount }}"
-    src: "{{ efs_id }}:/"
-    fstype: efs
-    state: present
+  shell: "mount -t efs {{ efs_id }}:/ {{ efs_mount }}"
+  args:
+    warn: false
   become: yes
 
 - name: Change EFS ownership

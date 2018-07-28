@@ -1,5 +1,13 @@
 ---
 
+# Copy Nextflow files
+- name: Copy Nextflow job files
+  copy:
+    src: "{{ item }}"
+    dest: "{{ efs_mount }}/"
+  loop:
+  - ../nextflow/graph.nf
+
 # Copy .zip files form the smiles directory to the target,
 # unless the expected file is already present.
 # Remember to zip the file using -j to avoid storing the full path.

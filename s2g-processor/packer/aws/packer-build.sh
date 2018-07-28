@@ -7,4 +7,5 @@
 set -e
 
 ../../../yaml2json.py < nextflow.yml > nextflow.json
+packer validate nextflow.json
 packer build nextflow.json

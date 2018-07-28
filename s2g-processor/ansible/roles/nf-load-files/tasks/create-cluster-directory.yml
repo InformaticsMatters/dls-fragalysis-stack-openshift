@@ -1,0 +1,8 @@
+---
+
+- name: Create cluster directory
+  file:
+    path: "{{ efs_mount }}/cluster"
+    state: directory
+    mode: "go+rw"
+  become: yes

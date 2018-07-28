@@ -1,0 +1,17 @@
+---
+
+- name: Copy origin file
+  shell: "cp {{ efs_mount }}/{{ graph_origin }} {{ efs_mount }}/origin.smi"
+
+- name: Start Nextflow Master
+  shell: >-
+    nohup ~/nextflow run graph.nf
+    -process.executor ignite
+    -process.scratch
+    -with-docker busybox
+    -with-report
+    -with-trace
+    -with-timeline
+    -cluster.join path:{{ efs_mount }}/cluster &
+  args:
+    chdir: "{{ efs_mount }}"

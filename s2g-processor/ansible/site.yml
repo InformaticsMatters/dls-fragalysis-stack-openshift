@@ -1,15 +1,18 @@
 ---
 
-- hosts: all
-
-  roles:
-#  - nf-mount-efs
-
-- hosts:
-
-- hosts: 34.254.178.30
+- hosts: master
 
   roles:
   - nf-mount-efs
-  - nf-setup-nf
-  - nf-load-smiles
+  - nf-load-files
+
+- hosts: worker
+
+  roles:
+  - nf-mount-efs
+  - nf-start-worker
+
+- hosts: master
+
+  roles:
+#  - nf-start-master

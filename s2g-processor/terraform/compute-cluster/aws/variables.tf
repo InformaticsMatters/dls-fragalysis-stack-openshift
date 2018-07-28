@@ -1,11 +1,8 @@
-# Terraform variables for tbhe nextflow cluster.
+# Terraform variables for the nextflow cluster.
 #
-# The default basic node type is t2.mirco.
-# to change this from the command line,
-# for example to one of an 8 vCPU family like c5.2xlarge,
-# run: -
+# You can change variables from the command line: -
 #
-#   $ terraform apply -auto-approve -var 'node_family=c5d.xlarge'
+#   $ terraform apply -auto-approve -var 'a_node_spot_family=c5d.xlarge'
 
 # -----------------------------------------------------------------------------
 # Mandatory Parameters (must be defined externally)
@@ -59,7 +56,7 @@ variable "efs_ec2_sgid" {
 }
 
 variable "spot_root_size" {
-  description = "The size (GiB) of spot imnstance root volumes"
+  description = "The size (GiB) of spot instance root volumes"
   default = 32
 }
 
@@ -69,17 +66,17 @@ variable "spot_root_size" {
 
 variable "num_spot_a_nodes" {
   description = "The number of Nextflow Spot nodes for our A-types"
-  default = 0
+  default = 7
 }
 
 variable "a_node_spot_family" {
   description = "The machine family (i.e. t2.large)"
-  default = "c5.18xlarge"
+  default = "c5.2xlarge"
 }
 
 variable "a_node_spot_price" {
   description = "The spot bid price"
-  default = "1.5"
+  default = "0.19"
 }
 
 # -----------------------------------------------------------------------------

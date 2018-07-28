@@ -1,0 +1,4 @@
+---
+
+- import_tasks: create-cluster-directory.yml
+- import_tasks: copy-files.yml
