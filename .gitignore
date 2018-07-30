@@ -4,7 +4,6 @@ images/get_unbuilt_data_directory.log
 jenkins/configure-cicd.log
 jenkins/setenv.sh
 s2g-processor/ansible/ansible.log
-s2g-processor/ansible/inventory.yml
 s2g-processor/ansible/site.retry
 s2g-processor/nextflow/nextflow.config
 s2g-processor/packer/**/nextflow.json

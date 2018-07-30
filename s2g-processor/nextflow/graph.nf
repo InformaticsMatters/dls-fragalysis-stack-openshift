@@ -55,6 +55,8 @@ process cgd {
 
     container 'xchem/fragalysis:0.0.5'
     publishDir 'results/', mode: 'move'
+    errorStrategy 'retry'
+    maxRetries 3
 
     input:
     file part from origin_parts

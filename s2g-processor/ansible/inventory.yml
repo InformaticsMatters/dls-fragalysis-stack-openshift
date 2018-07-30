@@ -1,0 +1,30 @@
+---
+
+# The Graph compiler Ansible inventory file.
+
+# Provide details of the EFS volume
+# The efs_mount point is probably OK...
+all:
+  vars:
+    keypair_name: abc-im
+    efs_id: fs-1b3146d2
+    efs_dns_name: fs-1b3146d2.efs.eu-west-1.amazonaws.com
+    efs_mount: /mnt/efs
+    graph_origin: Jun2018_1.smi
+
+# provide details of all of your worker nodes...
+worker:
+  hosts:
+    52.18.148.188:
+    52.213.152.34:
+    52.215.86.201:
+    34.244.189.212:
+    34.243.199.174:
+    34.244.197.77:
+
+# Provide details of one of the compute cluster nodes
+# to act as the 'master'. Ansible will use this to
+# deploy the nextflow files...
+master:
+  hosts:
+    34.244.122.179:

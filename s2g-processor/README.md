@@ -29,28 +29,37 @@ my preferred format of YAML. For example, to build an AMS image (form the
     namely `TF_VAR_aws_access_key` and `TF_VAR_aws_secret_key`.
 
 Remember the AMI it creates and re-place the value in the terraform
-`variables.tf` file (see below).
+`variables.tf`.
 
 >   You need only run Packer once per region. 
 
-## Starting the cluster
+## Starting the compute cluster
 Before starting the deployment ensure you've installed the SSH agent
 and added your key.
 
     $ eval $(ssh-agent)
     $ ssh-add ~/.ssh/abc-im.pem
  
-A shell-script wraps the combined execution of `Terraform` (used )to
-instantiate the bastion node and EFS storage etc. and `Ansible` to provision
-the EFS mounts, copy data and create the Nextflow cluster: -
+Crete the compute cluster with terraform (you can adjust the size
+and details from within the `variables.tf` file): -
 
-    $ ./deploy-aws.sh
+    $ cd terraform/compute-cluster/aws
+    $ terraform init
+    $ terraform apply -auto-approve
 
-## Stopping the cluster
-You can use the convenient shell-script which calls `Ansible` to delete the
-nextflow cluster before using `terrafform` to destroy the remaining cluster: -
+## Configuring the compute cluster
+Here we use ansible to deploy the files, count the EFS volume onto the
+compute nodes and start the workers. But first you need to copy the
+IP addresses seen when creating the cluster into the `inventory.yml` file.
 
-    $ ./undeploy-aws.sh
+    $ cd ansible
+    $ ansible-playbook site.yml
+    
+## Destroying the compute cluster
+Use terraform from the compute cluster directory: -
+
+    $ cd terraform/compute-cluster/aws
+    $ terraform destory -force
 
 ## Execution and analysis
 This step is currently not automated.
@@ -61,13 +70,35 @@ and run your analysis.
 A typical execution, if the SMILES file has the default name (`origin.smi`),
 would be: -
 
-    $ nohup ./nextflow run graph.nf \
-        --graphMaxForks 144 --chunk 25 -with-docker busybox &
+    nohup ~/nextflow run graph.nf \
+        -process.executor ignite \
+        -process.scratch \
+        -with-docker busybox \
+        -with-report \
+        -with-trace \
+        -with-timeline \
+        -cluster.join path:/mnt/efs/cluster &
 
-If you pull back the Nextflow logfile (`.nextflow.log`) you can analyse
-the execution times of the individual chunks with the `analyse_nf_graph.py`
-module (in the `analysis` directory).
+If you pull back the graph workflow's timing logfiles you can analyse
+the execution times of the individual chunks with the `analyse_timing.py`
+module (in the `analysis` directory). It expects to find the timing files in
+a results directory in the execution directory.
 
+Collect and archive the timing files from the running results directory
+and put them in your home directory: -
+
+    $ cd /mnt/efs
+    $ find results -name "*.timing" | xargs tar czf ~/timing.tar.gz
+
+Then pull them back to the `analysis` directory, de-compress and analyse them
+with something like the following (replacing the IP address with that of the
+machine the archived timings files are on): -
+
+    $ scp -i ~/.ssh/abc-im ec2-user@34.244.122.179:timing.tar.gz timing.tar.gz
+    $ gunzip -c timing.tar.gz | tar xopf -
+    $ ./analyse_timing.py
+
+### De-duplication
 To collect and de-duplicate the calculated results: -
 
     $ find ./work -name edges.txt -print | xargs awk '!x[$0]++' > edges.txt
@@ -78,7 +109,7 @@ And compress them: -
     
     $ gzip edges.txt nodes.txt attributes.txt
 
-## Using the ephemeral drive(s)
+### Using the ephemeral drive(s)
 It's not obvious bus is described on the AWS [article]. In summary...
 use the `lsblk` command to view your available disk devices and their mount
 points (if applicable) to help you determine the correct device name to use.

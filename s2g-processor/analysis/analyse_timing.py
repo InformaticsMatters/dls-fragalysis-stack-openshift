@@ -42,7 +42,7 @@ histogram_bin_duration = timedelta(seconds=5)
 histogram_max_bin = 0
 
 # A map of interesting chunks and execution time
-longest_threshold = timedelta(minutes=2)
+longest_threshold = timedelta(minutes=1, seconds=30)
 longest_chunks = {}
 
 
