@@ -11,8 +11,16 @@ s2g-processor/**/.terraform.tfstate.lock.info
 s2g-processor/**/terraform.tfstate
 s2g-processor/**/terraform.tfstate.backup
 s2g-processor/**/.terraform/
+s2g-processor/.nextflow/
+s2g-processor/work/
+s2g-processor/results/
+s2g-processor/facts/
+s2g-processor/timeline.*
+s2g-processor/trace.*
+s2g-processor/report.*
 **/.nextflow.log
 **/.nextflow.log.*
+**/*.log
 **/*.gz
 **/*.zip
 **/*.retry
