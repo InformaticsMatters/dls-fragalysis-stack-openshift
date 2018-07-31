@@ -84,6 +84,9 @@ process cgd {
     echo removing-output,$(date +"%d/%m/%Y %H:%M:%S") >> timing
     rm !{part}
     rm ligands_part*.smi
+    gzip !{part}.nodes
+    gzip !{part}.edges
+    gzip !{part}.attributes
     echo done-!{part},$(date +"%d/%m/%Y %H:%M:%S") >> timing
     mv timing !{part}.timing
     '''
