@@ -62,9 +62,9 @@ process cgd {
     file part from origin_parts
 
     output:
-    file '*.nodes' into node_parts
-    file '*.edges' into edge_parts
-    file '*.attributes' into attribute_parts
+    file '*.nodes.gz' into node_parts
+    file '*.edges.gz' into edge_parts
+    file '*.attributes.gz' into attribute_parts
     file '*.timing' into timing_parts
 
     shell:
