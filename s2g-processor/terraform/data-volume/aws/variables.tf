@@ -1,8 +1,11 @@
-# Terraform variables for the nextflow cluster.
+# Terraform variables for tbhe nextflow cluster.
 #
-# You can change variables from the command line: -
+# The default basic node type is t2.mirco.
+# to change this from the command line,
+# for example to one of an 8 vCPU family like c5.2xlarge,
+# run: -
 #
-#   $ terraform apply -auto-approve -var 'a_node_spot_family=c5d.xlarge'
+#   $ terraform apply -auto-approve -var 'node_family=c5d.xlarge'
 
 # -----------------------------------------------------------------------------
 # Mandatory Parameters (must be defined externally)
@@ -21,12 +24,12 @@ variable "aws_secret_key" {}
 # Default Parameters (can be changed via command-line or ENV)
 # -----------------------------------------------------------------------------
 
-variable "key_name" {
+variable "aws_key_name" {
   description = "The name of the Key Pair, as known by AWS"
   default = "abc-im"
 }
 
-variable "region" {
+variable "aws_region" {
   description = "EC2 Region for the Cluster"
   default = "eu-west-1" # Ireland
 }
@@ -40,17 +43,12 @@ variable "amis" {
   }
 }
 
-variable "vpc" {
+variable "aws_vpc" {
   description = "The Cluster VPC (xchem-vpc)"
   default = "vpc-fcf29e9a"
 }
 
-variable "subnet" {
+variable "aws_subnet" {
   description = "The Cluster Subnet"
   default = "subnet-a1bc02e9"
-}
-
-variable "efs_ec2_sgid" {
-  description = "The EFS EC2 Security Group ID"
-  default = "sg-b6b02fca"
 }

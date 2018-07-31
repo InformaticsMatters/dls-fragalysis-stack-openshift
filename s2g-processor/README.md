@@ -38,7 +38,7 @@ Before starting the deployment ensure you've installed the SSH agent
 and added your key.
 
     $ eval $(ssh-agent)
-    $ ssh-add ~/.ssh/abc-im.pem
+    $ ssh-add ~/.ssh/abc-im
  
 Crete the compute cluster with terraform (you can adjust the size
 and details from within the `variables.tf` file): -
@@ -53,6 +53,7 @@ compute nodes and start the workers. But first you need to copy the
 IP addresses seen when creating the cluster into the `inventory.yml` file.
 
     $ cd ansible
+    $ ansible -m ping all
     $ ansible-playbook site.yml
     
 ## Destroying the compute cluster
@@ -69,9 +70,10 @@ ready (tasks managed by teh ansible playbook) you now just need to get to the
 Nextflow `master` and run your analysis.
 
 A typical execution, if the SMILES file has the default name (`origin.smi`),
-would be: -
+would be, for a cluster with up to 128 cores: -
 
     nohup ~/nextflow run graph.nf \
+        -executor.queueSize 128 \
         -process.executor ignite \
         -process.scratch \
         -with-docker busybox \

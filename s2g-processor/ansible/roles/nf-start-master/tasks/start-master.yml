@@ -6,12 +6,13 @@
 - name: Start Nextflow Master
   shell: >-
     nohup ~/nextflow run graph.nf
-    -process.executor ignite
-    -process.scratch
-    -with-docker busybox
-    -with-report
-    -with-trace
-    -with-timeline
-    -cluster.join path:{{ efs_mount }}/cluster &
+        -executor.queueSize 128
+        -process.executor ignite
+        -process.scratch
+        -with-docker busybox
+        -with-report
+        -with-trace
+        -with-timeline
+        -cluster.join path:/mnt/efs/cluster &
   args:
     chdir: "{{ efs_mount }}"

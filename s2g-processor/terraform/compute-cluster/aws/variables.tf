@@ -52,7 +52,7 @@ variable "subnet" {
 
 variable "efs_ec2_sgid" {
   description = "The EFS EC2 Security Group ID"
-  default = "sg-6406cd18"
+  default = "sg-b6b02fca"
 }
 
 variable "spot_root_size" {
@@ -66,17 +66,17 @@ variable "spot_root_size" {
 
 variable "num_spot_a_nodes" {
   description = "The number of Nextflow Spot nodes for our A-types"
-  default = 7
+  default = 8
 }
 
 variable "a_node_spot_family" {
   description = "The machine family (i.e. t2.large)"
-  default = "c5.2xlarge"
+  default = "c5.4xlarge"
 }
 
 variable "a_node_spot_price" {
   description = "The spot bid price"
-  default = "0.19"
+  default = "0.4"
 }
 
 # -----------------------------------------------------------------------------

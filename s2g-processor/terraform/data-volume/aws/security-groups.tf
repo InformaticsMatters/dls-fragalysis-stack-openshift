@@ -1,3 +1,7 @@
+# -----------------------------------------------------------------------------
+# Essential EFS/EC2 security groups
+# -----------------------------------------------------------------------------
+
 resource "aws_security_group" "efs-ec2-sg" {
   name = "EFS EC2 SG"
   description = "SG for EC2 instance"
