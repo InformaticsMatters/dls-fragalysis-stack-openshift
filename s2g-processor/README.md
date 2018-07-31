@@ -64,8 +64,9 @@ Use terraform from the compute cluster directory: -
 ## Execution and analysis
 This step is currently not automated.
 
-With your cluster running you now just need to get to the Nextflow `master`
-and run your analysis.
+With your cluster running and the EFS mounted on each worker, and each worker
+ready (tasks managed by teh ansible playbook) you now just need to get to the
+Nextflow `master` and run your analysis.
 
 A typical execution, if the SMILES file has the default name (`origin.smi`),
 would be: -
@@ -78,6 +79,9 @@ would be: -
         -with-trace \
         -with-timeline \
         -cluster.join path:/mnt/efs/cluster &
+
+>   The above is executed on the designated master node from the EFS mount
+    directory (i.e. `/mnt/efs`).
 
 If you pull back the graph workflow's timing logfiles you can analyse
 the execution times of the individual chunks with the `analyse_timing.py`
@@ -101,16 +105,16 @@ machine the archived timings files are on): -
 ### De-duplication
 To collect and de-duplicate the calculated results: -
 
-    $ find ./work -name edges.txt -print | xargs awk '!x[$0]++' > edges.txt
-    $ find ./work -name nodes.txt -print | xargs awk '!x[$0]++' > nodes.txt
-    $ find ./work -name attributes.txt -print | xargs awk '!x[$0]++' > attributes.txt
+    $ find ./results -name edges.gz -print | xargs gunzip | awk '!x[$0]++' > edges.txt
+    $ find ./results -name nodes.gz -print | xargs gunzip | awk '!x[$0]++' > nodes.txt
+    $ find ./results -name attributes.gz -print | xargs gunzip | awk '!x[$0]++' > attributes.txt
 
 And compress them: -
     
     $ gzip edges.txt nodes.txt attributes.txt
 
 ### Using the ephemeral drive(s)
-It's not obvious bus is described on the AWS [article]. In summary...
+It's not obvious but is described on the AWS [article]. In summary...
 use the `lsblk` command to view your available disk devices and their mount
 points (if applicable) to help you determine the correct device name to use.
 

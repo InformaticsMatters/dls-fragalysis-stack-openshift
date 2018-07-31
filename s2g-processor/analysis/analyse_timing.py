@@ -4,6 +4,9 @@
 
 Usage:  analyse_timing.py
 
+Place or unpack the timing files into a `results` directory
+and then run this utility.
+
 Alan Christie
 July 2018
 """
@@ -71,7 +74,7 @@ def add_chunk_duration(chunk_name, chunk_duration):
     global histogram_max_bin
     global total_graph_time
 
-    bin_index = int(chunk_duration.seconds / histogram_bin_duration.seconds)
+    bin_index = int(elapsed_to_seconds(chunk_duration) / histogram_bin_duration.seconds)
 
     bin_count = histogram.get(bin_index, 0)
     bin_count += 1
@@ -82,6 +85,10 @@ def add_chunk_duration(chunk_name, chunk_duration):
     total_graph_time += chunk_duration
     if duration > longest_threshold:
         longest_chunks[chunk_name] = chunk_duration
+
+
+def elapsed_to_seconds(td):
+    return (td.microseconds + (td.seconds + td.days * 24 * 3600) * 10**6) / 10**6
 
 
 def dump_histogram():
@@ -165,13 +172,13 @@ print('Total graph time: %s' % total_graph_time)
 print('')
 print('Number of de-duplications:   %s' % num_deduplications)
 print('Total de-duplication time:   %s' % total_deduplication_time)
-print('Average de-duplication time: %s' % timedelta(seconds=total_deduplication_time.seconds / num_deduplications))
+print('Average de-duplication time: %s' % timedelta(seconds=elapsed_to_seconds(total_deduplication_time) / num_deduplications))
 
 # Summarise the split time...
 print('')
 print('Number of splits:   %s' % num_splits)
 print('Total split time:   %s' % total_split_time)
-print('Average split time: %s' % timedelta(seconds=total_split_time.seconds / num_splits))
+print('Average split time: %s' % timedelta(seconds=elapsed_to_seconds(total_split_time) / num_splits))
 
 # Dump any interesting chunk results,
 # in order of execution time (duration)
@@ -187,7 +194,7 @@ if longest_chunks:
 
 print('')
 elapsed = latest_time - earliest_time
-slice_rate = (float(60) * num_splits / elapsed.seconds)
+slice_rate = (float(60) * num_splits / elapsed_to_seconds(elapsed))
 remaining_time = timedelta(minutes=(expected_slices - num_splits) / slice_rate)
 print('Earliest time:  %s (UTC)' % earliest_time)
 print('Latest time:    %s (UTC)' % latest_time)
@@ -195,4 +202,3 @@ print('Elapsed:        %s' % elapsed)
 print('Slice rate:     %s/min' % slice_rate)
 print('Remaining time: %s' % remaining_time)
 print('ETA:            %s (UTC)' % (latest_time + remaining_time))
-
