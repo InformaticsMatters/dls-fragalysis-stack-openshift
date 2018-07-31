@@ -15,6 +15,7 @@ s2g-processor/.nextflow/
 s2g-processor/work/
 s2g-processor/results/
 s2g-processor/facts/
+s2g-processor/smiles/
 s2g-processor/timeline.*
 s2g-processor/trace.*
 s2g-processor/report.*
