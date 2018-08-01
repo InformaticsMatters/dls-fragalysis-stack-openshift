@@ -104,6 +104,35 @@ machine the archived timings files are on): -
     $ gunzip -c timing.tar.gz | tar xopf -
     $ ./analyse_timing.py
 
+### Preserving Jun2018 run data
+Archiving to S3 from one of the compute nodes,
+given a run (i.e. run number 7): -
+
+-   Create a `dls-fragalysis/analysis/Jun2018_${RUN}` S3 directory
+-   Create a `dls-fragalysis/analysis/Jun2018_${RUN}/results` S3 directory
+
+    aws configure
+    
+    RUN=7
+    
+    mv results Jun2018_${RUN}.results
+    mv .nextflow.log Jun2018_${RUN}.nextflow.log
+    mv nohup.out Jun2018_${RUN}.nohup.out
+    mv report.html Jun2018_${RUN}.report.html
+    mv timeline.html Jun2018_${RUN}.timeline.html
+    mv trace.txt Jun2018_${RUN}.trace.txt
+    gzip origin.smi
+    
+    aws s3 cp Jun2018_${RUN}.nextflow.log s3://dls-fragalysis/analysis/Jun2018_${RUN}/
+    aws s3 cp Jun2018_${RUN}.nohup.out s3://dls-fragalysis/analysis/Jun2018_${RUN}/
+    aws s3 cp Jun2018_${RUN}.report.html s3://dls-fragalysis/analysis/Jun2018_${RUN}/
+    aws s3 cp Jun2018_${RUN}.timeline.html s3://dls-fragalysis/analysis/Jun2018_${RUN}/
+    aws s3 cp Jun2018_${RUN}.trace.txt s3://dls-fragalysis/analysis/Jun2018_${RUN}/
+    aws s3 cp graph.nf s3://dls-fragalysis/analysis/Jun2018_${RUN}/
+    aws s3 cp origin.smi.gz s3://dls-fragalysis/analysis/Jun2018_${RUN}/
+    
+    aws s3 sync Jun2018_${RUN}.results s3://dls-fragalysis/analysis/Jun2818_${RUN}/results
+
 ### De-duplication
 To collect and de-duplicate the calculated results: -
 

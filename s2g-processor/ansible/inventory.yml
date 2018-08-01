@@ -15,17 +15,17 @@ all:
 # provide details of all of your worker nodes...
 worker:
   hosts:
-    34.252.221.101:
-    34.255.121.174:
-    52.213.208.33:
-    54.72.189.4:
-    34.243.173.244:
-    34.246.171.123:
-    54.229.95.89:
+    54.154.165.130:
+    54.194.186.136:
+    34.244.51.254:
+    34.253.216.81:
+    34.244.51.233:
+    34.241.182.114:
+    54.72.6.187:
 
 # Provide details of one of the compute cluster nodes
 # to act as the 'master'. Ansible will use this to
 # deploy the nextflow files...
 master:
   hosts:
-    54.154.32.66:
+    34.241.67.101:
