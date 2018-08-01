@@ -9,7 +9,7 @@ origin = file(params.origin)
 // Shreds a file into smaller parts (keeping the header)
 process headShred {
 
-    container 'xchem/fragalysis:0.0.5'
+    container 'xchem/fragalysis:0.0.7'
 
     input:
     file origin
@@ -53,7 +53,7 @@ process headShred {
 // and then clean-up.
 process cgd {
 
-    container 'xchem/fragalysis:0.0.5'
+    container 'xchem/fragalysis:0.0.7'
     publishDir 'results/', mode: 'move'
     errorStrategy 'retry'
     maxRetries 3
