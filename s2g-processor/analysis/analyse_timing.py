@@ -172,13 +172,21 @@ print('Total graph time: %s' % total_graph_time)
 print('')
 print('Number of de-duplications:   %s' % num_deduplications)
 print('Total de-duplication time:   %s' % total_deduplication_time)
-print('Average de-duplication time: %s' % timedelta(seconds=elapsed_to_seconds(total_deduplication_time) / num_deduplications))
+if num_deduplications:
+    print('Average de-duplication time: %s' %
+          timedelta(seconds=elapsed_to_seconds(total_deduplication_time) / num_deduplications))
+else:
+    print('Average de-duplication time: n/a')
 
 # Summarise the split time...
 print('')
 print('Number of splits:   %s' % num_splits)
 print('Total split time:   %s' % total_split_time)
-print('Average split time: %s' % timedelta(seconds=elapsed_to_seconds(total_split_time) / num_splits))
+if num_splits:
+    print('Average split time: %s' %
+          timedelta(seconds=elapsed_to_seconds(total_split_time) / num_splits))
+else:
+    print('Average split time: n/a')
 
 # Dump any interesting chunk results,
 # in order of execution time (duration)
@@ -193,12 +201,18 @@ if longest_chunks:
         index += 1
 
 print('')
-elapsed = latest_time - earliest_time
-slice_rate = (float(60) * num_splits / elapsed_to_seconds(elapsed))
-remaining_time = timedelta(minutes=(expected_slices - num_splits) / slice_rate)
+slice_rate = 0
+elapsed = timedelta(0)
+remaining_time = 'Unknown'
+if earliest_time:
+    elapsed = latest_time - earliest_time
+    slice_rate = (float(60) * num_splits / elapsed_to_seconds(elapsed))
+    if slice_rate:
+        remaining_time = timedelta(minutes=(expected_slices - num_splits) / slice_rate)
 print('Earliest time:  %s (UTC)' % earliest_time)
 print('Latest time:    %s (UTC)' % latest_time)
 print('Elapsed:        %s' % elapsed)
 print('Slice rate:     %s/min' % slice_rate)
 print('Remaining time: %s' % remaining_time)
-print('ETA:            %s (UTC)' % (latest_time + remaining_time))
+if earliest_time:
+    print('ETA:            %s (UTC)' % (latest_time + remaining_time))
