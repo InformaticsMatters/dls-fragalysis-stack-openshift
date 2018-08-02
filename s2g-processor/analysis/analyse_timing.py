@@ -29,12 +29,15 @@ prior_chunk = None
 # Earliest and latest times
 earliest_time = None
 latest_time = None
+# Accumulated slice time
+total_slice_time = timedelta(0)
+num_slices = 0
 # Accumulated de-duplication time
 total_deduplication_time = timedelta(0)
 num_deduplications = 0
-# Accumulated graph time
-total_graph_time = timedelta(0)
-num_graphs = 0
+# Accumulated chunk processing time
+total_chunk_time = timedelta(0)
+num_chunks = 0
 # Accumulated split time
 total_split_time = timedelta(0)
 num_splits = 0
@@ -45,7 +48,7 @@ histogram_bin_duration = timedelta(seconds=5)
 histogram_max_bin = 0
 
 # A map of interesting chunks and execution time
-longest_threshold = timedelta(minutes=1, seconds=30)
+longest_threshold = timedelta(minutes=4, seconds=0)
 longest_chunks = {}
 
 
@@ -72,7 +75,7 @@ def get_time(line):
 def add_chunk_duration(chunk_name, chunk_duration):
     global histogram
     global histogram_max_bin
-    global total_graph_time
+    global total_chunk_time
 
     bin_index = int(elapsed_to_seconds(chunk_duration) / histogram_bin_duration.seconds)
 
@@ -82,7 +85,7 @@ def add_chunk_duration(chunk_name, chunk_duration):
     if bin_index > histogram_max_bin:
         histogram_max_bin = bin_index
 
-    total_graph_time += chunk_duration
+    total_chunk_time += chunk_duration
     if duration > longest_threshold:
         longest_chunks[chunk_name] = chunk_duration
 
@@ -112,7 +115,7 @@ def dump_histogram():
 results_files = glob.glob('results/*.timing')
 for results_file in results_files:
 
-    num_graphs += 1
+    num_slices += 1
 
     # Process the log (line by line)...
     with open(results_file) as timing_file:
@@ -125,15 +128,18 @@ for results_file in results_files:
             if line.startswith('doing'):
                 # Starting a new smi fragment
                 # Reset the prior timestamp.
+                slice_start_timestamp = line_timestamp
                 prior_line_timestamp = None
                 prior_chunk = None
                 origin_part = line.split(',')[0].split('-')[1]
             elif line.startswith('done'):
                 # completed an smi fragment
                 origin_part = None
+                total_slice_time += line_timestamp - slice_start_timestamp
             elif line.startswith('ligands_part'):
                 # Start of a 'chunk'
                 # We should have a prior line timestamp
+                num_chunks += 1
                 this_chunk = line.split(',')[0]
                 duration = line_timestamp - prior_line_timestamp
                 # If no prior chunk then we have a time for
@@ -163,20 +169,15 @@ for results_file in results_files:
 
 dump_histogram()
 
-# Summarise the graph processing time...
+# Summarise the slice processing time...
 print('')
-print('Number of graphs: %s' % num_graphs)
-print('Total graph time: %s' % total_graph_time)
-
-# Summarise the de-duplication time...
-print('')
-print('Number of de-duplications:   %s' % num_deduplications)
-print('Total de-duplication time:   %s' % total_deduplication_time)
-if num_deduplications:
-    print('Average de-duplication time: %s' %
-          timedelta(seconds=elapsed_to_seconds(total_deduplication_time) / num_deduplications))
+print('Number of slices:   %s' % num_slices)
+print('Total slice time:   %s' % total_slice_time)
+if num_slices:
+    print('Average slice time: %s' %
+          timedelta(seconds=elapsed_to_seconds(total_slice_time) / num_slices))
 else:
-    print('Average de-duplication time: n/a')
+    print('Average slice time: n/a')
 
 # Summarise the split time...
 print('')
@@ -187,6 +188,26 @@ if num_splits:
           timedelta(seconds=elapsed_to_seconds(total_split_time) / num_splits))
 else:
     print('Average split time: n/a')
+
+# Summarise the graph processing time...
+print('')
+print('Number of chunks:   %s' % num_chunks)
+print('Total chunk time:   %s' % total_chunk_time)
+if num_chunks:
+    print('Average chunk time: %s' %
+          timedelta(seconds=elapsed_to_seconds(total_chunk_time) / num_chunks))
+else:
+    print('Average chunk time: n/a')
+
+# Summarise the de-duplication time...
+print('')
+print('Number of de-duplications:   %s' % num_deduplications)
+print('Total de-duplication time:   %s' % total_deduplication_time)
+if num_deduplications:
+    print('Average de-duplication time: %s' %
+          timedelta(seconds=elapsed_to_seconds(total_deduplication_time) / num_deduplications))
+else:
+    print('Average de-duplication time: n/a')
 
 # Dump any interesting chunk results,
 # in order of execution time (duration)

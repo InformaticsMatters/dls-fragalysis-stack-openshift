@@ -93,16 +93,17 @@ a results directory in the execution directory.
 Collect and archive the timing files from the running results directory
 and put them in your home directory: -
 
-    $ cd /mnt/efs
-    $ find results -name "*.timing" | xargs tar czf ~/timing.tar.gz
+    cd /mnt/efs
+    find results -name "*.timing" | xargs tar czf ~/timing.tar.gz
 
 Then pull them back to the `analysis` directory, de-compress and analyse them
 with something like the following (replacing the IP address with that of the
 machine the archived timings files are on): -
 
-    $ scp -i ~/.ssh/abc-im ec2-user@34.244.122.179:timing.tar.gz timing.tar.gz
-    $ gunzip -c timing.tar.gz | tar xopf -
-    $ ./analyse_timing.py
+    MASTER=54.72.6.187
+    scp -i ~/.ssh/abc-im ec2-user@${MASTER}:timing.tar.gz timing.tar.gz
+    gunzip -c timing.tar.gz | tar xopf -
+    ./analyse_timing.py
 
 ### Preserving Jun2018 run data
 Archiving to S3 from one of the compute nodes,
@@ -111,17 +112,21 @@ given a run (i.e. run number 7): -
 -   Create a `dls-fragalysis/analysis/Jun2018_${RUN}` S3 directory
 -   Create a `dls-fragalysis/analysis/Jun2018_${RUN}/results` S3 directory
 
+A typical workflow would be (from the master instance): -
+
     aws configure
     
     RUN=7
     
-    mv results Jun2018_${RUN}.results
+    cd /mnt/efs
     mv .nextflow.log Jun2018_${RUN}.nextflow.log
     mv nohup.out Jun2018_${RUN}.nohup.out
     mv report.html Jun2018_${RUN}.report.html
     mv timeline.html Jun2018_${RUN}.timeline.html
     mv trace.txt Jun2018_${RUN}.trace.txt
     gzip origin.smi
+
+    mv results Jun2018_${RUN}.results
     
     aws s3 cp Jun2018_${RUN}.nextflow.log s3://dls-fragalysis/analysis/Jun2018_${RUN}/
     aws s3 cp Jun2018_${RUN}.nohup.out s3://dls-fragalysis/analysis/Jun2018_${RUN}/
@@ -131,20 +136,64 @@ given a run (i.e. run number 7): -
     aws s3 cp graph.nf s3://dls-fragalysis/analysis/Jun2018_${RUN}/
     aws s3 cp origin.smi.gz s3://dls-fragalysis/analysis/Jun2018_${RUN}/
     
-    aws s3 sync Jun2018_${RUN}.results s3://dls-fragalysis/analysis/Jun2818_${RUN}/results
+    aws s3 sync Jun2018_${RUN}.results s3://dls-fragalysis/analysis/Jun2018_${RUN}/results
 
 ### De-duplication
 To collect and de-duplicate the calculated results: -
 
-    $ find ./results -name edges.gz -print | xargs gunzip | awk '!x[$0]++' > edges.txt
-    $ find ./results -name nodes.gz -print | xargs gunzip | awk '!x[$0]++' > nodes.txt
-    $ find ./results -name attributes.gz -print | xargs gunzip | awk '!x[$0]++' > attributes.txt
+    RUN=7
+    find results-${RUN} -name "*.attributes.gz" -print | xargs gzip -dc | awk '!x[$0]++' > attributes.${RUN}.txt
+    find results-${RUN} -name "*.nodes.gz" -print | xargs gzip -dc | awk '!x[$0]++' > nodes.${RUN}.txt
 
+Deduplicating the files in 10 attempts, the following typically takes about 3-4 minutes per item...
+
+    find results-${RUN} -name "*0.smi.edges.gz" -print | xargs gzip -dc | awk '!x[$0]++' > edges.0.txt
+    find results-${RUN} -name "*1.smi.edges.gz" -print | xargs gzip -dc | awk '!x[$0]++' > edges.1.txt
+    find results-${RUN} -name "*2.smi.edges.gz" -print | xargs gzip -dc | awk '!x[$0]++' > edges.2.txt
+    find results-${RUN} -name "*3.smi.edges.gz" -print | xargs gzip -dc | awk '!x[$0]++' > edges.3.txt
+    find results-${RUN} -name "*4.smi.edges.gz" -print | xargs gzip -dc | awk '!x[$0]++' > edges.4.txt
+    find results-${RUN} -name "*5.smi.edges.gz" -print | xargs gzip -dc | awk '!x[$0]++' > edges.5.txt
+    find results-${RUN} -name "*6.smi.edges.gz" -print | xargs gzip -dc | awk '!x[$0]++' > edges.6.txt
+    find results-${RUN} -name "*7.smi.edges.gz" -print | xargs gzip -dc | awk '!x[$0]++' > edges.7.txt
+    find results-${RUN} -name "*8.smi.edges.gz" -print | xargs gzip -dc | awk '!x[$0]++' > edges.8.txt
+    find results-${RUN} -name "*9.smi.edges.gz" -print | xargs gzip -dc | awk '!x[$0]++' > edges.9.txt
+
+>   The `awk` approach above takes about 3 minutes whereas the `gsort` (OSX)
+    or more general sort takes about 24 seconds (`-S8G --parallel=4`),
+    6-times faster. Using the 8-cores on a Mac has little effect.
+
+`awk` is fast for small files, the following typically takes about 5 minutes per item...
+
+    cat edges.0.txt edges.1.txt | awk '!x[$0]++' > edges.01.txt
+    cat edges.2.txt edges.3.txt | awk '!x[$0]++' > edges.23.txt
+    cat edges.4.txt edges.5.txt | awk '!x[$0]++' > edges.45.txt
+    cat edges.6.txt edges.7.txt | awk '!x[$0]++' > edges.67.txt
+    cat edges.8.txt edges.9.txt | awk '!x[$0]++' > edges.89.txt
+
+Experimenting with `gsort`, these take about 2 minutes,
+with the final one taking 2m41s: -
+
+    (export LC_ALL=C; cat edges.01.txt edges.23.txt | gsort -S8G --parallel=4 -u > edges.0123.txt)
+    (export LC_ALL=C; cat edges.45.txt edges.67.txt | gsort -S8G --parallel=4 -u > edges.4567.txt)
+    (export LC_ALL=C; cat edges.4567.txt edges.89.txt | gsort -S8G --parallel=4 -u > edges.456789.txt)
+    (export LC_ALL=C; cat edges.0123.txt edges.456789.txt | gsort -S8G --parallel=4 -u > edges.0123456789.txt)
+    
+On Set no. 7 the de-duplication results are: -
+
+    Edges      147,080,409 lines > 75,422,302
+    Nodes       57,895,779 lines > 15,781,290
+    Attributes   5,000,000 lines > (No gain)
+
+Preparing for CSV. With a `nodes.txt`, `edges.txt` and `attributes.txt` file
+in a `directory` you can generate the final DB files with: -
+
+    colate_all.py --input_dir directory
+    
 And compress them: -
     
-    $ gzip edges.txt nodes.txt attributes.txt
+    gzip edges.${RUN}.txt nodes.${RUN}.txt attributes.${RUN}.txt
 
-### Using the ephemeral drive(s)
+### Using EC2 ephemeral drive(s)
 It's not obvious but is described on the AWS [article]. In summary...
 use the `lsblk` command to view your available disk devices and their mount
 points (if applicable) to help you determine the correct device name to use.
