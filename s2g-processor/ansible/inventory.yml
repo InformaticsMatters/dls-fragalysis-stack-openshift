@@ -8,24 +8,24 @@ all:
   vars:
     keypair_name: abc-im
     efs_id: fs-3bd592f2
-    efs_dns_name: fs-3bd592f2.efs.eu-west-1.amazonaws.com
     efs_mount: /mnt/efs
-    graph_origin: Jun2018_3.smi
+    graph_origin: Jun2018_6.smi
+    nf_q_size: 256
 
 # provide details of all of your worker nodes...
 worker:
   hosts:
-    54.154.165.130:
-    54.194.186.136:
-    34.244.51.254:
-    34.253.216.81:
-    34.244.51.233:
-    34.241.182.114:
-    54.72.6.187:
+    52.211.250.240:
+    54.194.117.47:
+    34.242.15.182:
+    34.244.5.113:
+    34.241.10.196:
+    34.244.205.146:
+    54.246.165.31:
 
 # Provide details of one of the compute cluster nodes
 # to act as the 'master'. Ansible will use this to
 # deploy the nextflow files...
 master:
   hosts:
-    34.241.67.101:
+    54.229.201.73:

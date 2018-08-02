@@ -15,4 +15,4 @@
 - hosts: master
 
   roles:
-#  - nf-start-master
+  - nf-start-master

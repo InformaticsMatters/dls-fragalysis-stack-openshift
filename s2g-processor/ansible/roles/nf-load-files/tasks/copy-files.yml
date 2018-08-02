@@ -8,12 +8,10 @@
   loop:
   - ../nextflow/graph.nf
 
-# Copy .zip files form the smiles directory to the target,
+# Copy the defined .zip file from the smiles directory to the target,
 # unless the expected file is already present.
 # Remember to zip the file using -j to avoid storing the full path.
 - name: Copy and unzip SMILES to EFS
   unarchive:
-    src: "{{ item }}"
+    src: "../smiles/{{ graph_origin }}.zip"
     dest: "{{ efs_mount }}"
-    creates: "{{ efs_mount }}/{{ item | regex_replace('^.*/(.+)[.]zip.*$', '\\1') }}"
-  with_fileglob: ../smiles/*.zip

@@ -73,7 +73,7 @@ A typical execution, if the SMILES file has the default name (`origin.smi`),
 would be, for a cluster with up to 128 cores: -
 
     nohup ~/nextflow run graph.nf \
-        -executor.queueSize 128 \
+        -executor.queueSize 256 \
         -process.executor ignite \
         -process.scratch \
         -with-docker busybox \
