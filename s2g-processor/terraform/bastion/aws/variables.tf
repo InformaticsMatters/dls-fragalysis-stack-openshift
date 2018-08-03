@@ -49,8 +49,3 @@ variable "subnet" {
   description = "The Cluster Subnet"
   default = "subnet-a1bc02e9"
 }
-
-variable "efs_ec2_sgid" {
-  description = "The EFS EC2 Security Group ID"
-  default = "sg-b6b02fca"
-}

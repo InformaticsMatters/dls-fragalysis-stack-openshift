@@ -1,8 +1,8 @@
 resource "aws_instance" "nextflow-bastion-node" {
   ami = "${lookup(var.amis, var.region)}"
-  instance_type = "t2.small"
+  instance_type = "c5d.2xlarge"
   key_name = "${var.key_name}"
-  vpc_security_group_ids = ["${var.efs_ec2_sgid}"]
+  vpc_security_group_ids = ["${aws_security_group.ec2-sg.id}"]
   subnet_id = "${var.subnet}"
   associate_public_ip_address = true
   source_dest_check = false
