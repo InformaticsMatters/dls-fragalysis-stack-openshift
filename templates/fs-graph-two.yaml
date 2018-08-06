@@ -1,0 +1,91 @@
+---
+
+# An experimental Neo4J Graph database deployment.
+#
+# oc process -f fs-graph-two.yaml | oc create -f -
+# oc delete all --selector template=fs-graph-two
+
+kind: Template
+apiVersion: v1
+metadata:
+  name: fs-graph-two
+  annotations:
+    description: Fragalysis Stack's Neo4J Definition
+    tags: fragalysis,graph,neo4j
+labels:
+  template: fs-graph-two
+
+parameters:
+
+- name: GRAPH_NAMESPACE
+  value: fragalysis-cicd
+
+- name: GRAPH_TAG
+  value: 'jun2018-7'
+- name: NEO4J_AUTH
+  value: none
+- name: NEO4J_PAGECACHE
+  value: 4G
+- name: NEO4J_REPLICAS
+  value: '1'
+- name: NEO4J_NODE_SIZE_SELECTOR
+  value: 'big'
+
+objects:
+
+- kind: DeploymentConfig
+  apiVersion: v1
+  metadata:
+    name: graph-two
+    namespace: ${GRAPH_NAMESPACE}
+  spec:
+    replicas: ${NEO4J_REPLICAS}
+    selector:
+      name: graph-two
+    template:
+      metadata:
+        labels:
+          name: graph-two
+      spec:
+        nodeSelector:
+          size: ${NEO4J_NODE_SIZE_SELECTOR}
+        serviceAccountName: diamond
+
+        # Application containers
+        containers:
+        - image: informaticsmatters/graph:${GRAPH_TAG}
+          name: graph-two
+          env:
+          - name: NEO4J_AUTH
+            value: ${NEO4J_AUTH}
+          - name: NEO4J_dbms_memory_pagecache_size
+            value: 6000M
+          - name: NEO4J_dbms_memory_heap_initial__size
+            value: 5000M
+          - name: NEO4J_dbms_memory_heap_max__size
+            value: 5000M
+          - name: EXTENSION_SCRIPT
+            value: /data-loader/load_neo4j.sh
+          ports:
+          - containerPort: 7474
+          - containerPort: 7687
+        restartPolicy: Always
+
+    triggers:
+     - type: ConfigChange
+
+- kind: Service
+  apiVersion: v1
+  metadata:
+    name: neo4j-two
+    namespace: ${GRAPH_NAMESPACE}
+  spec:
+    ports:
+    - name: http
+      port: 7474
+      targetPort: 7474
+    - name: bolt
+      port: 7687
+      targetPort: 7687
+    selector:
+      name: graph-two
