@@ -1,4 +1,6 @@
 origin.smi
+!origin.smi.gz
 .nextflow*
 trace.txt
 work/
+results/
