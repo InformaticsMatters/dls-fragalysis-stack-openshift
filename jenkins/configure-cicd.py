@@ -20,12 +20,6 @@ import yaml
 
 from im_jenkins_server import ImJenkinsServer
 
-# Essential environment variables...
-J_USER = os.environ['FRAG_CICD_USER']
-J_TOKEN = os.environ['FRAG_CICD_TOKEN']
-J_DOCKER_PASS = os.environ['FRAG_DOCKER_PASSWORD']
-J_SLACK_TOKEN = os.environ['FRAG_SLACK_TOKEN']
-
 # URLs for the test and production servers.
 SERVERS = {'test': 'jenkins-fragalysis-cicd.apps.xchem.diamond.ac.uk',
            'prod': 'jenkins-fragalysis-cicd-prod.apps.xchem.diamond.ac.uk'}
@@ -45,6 +39,18 @@ if os.path.isfile(LOGGING_CONFIG_FILE):
     dictConfig(LOGGING_CONFIG)
 # Our logger...
 LOGGER = logging.getLogger(os.path.basename(sys.argv[0])[:-3])
+
+# Check essential environment variables
+J_USER = os.environ.get('FRAG_CICD_USER')
+if not J_USER:
+    LOGGER.error('You must define the environment variable J_USER'
+                 ' and set it to the name of the Jenkins user.')
+    sys.exit(1)
+J_TOKEN = os.environ.get('FRAG_CICD_TOKEN')
+if not J_TOKEN:
+    LOGGER.error('You must define the environment variable J_TOKEN'
+                 ' and set it to the Jenkins PI token.')
+    sys.exit(1)
 
 PARSER = argparse.ArgumentParser(description='Jenkins Configuration')
 PARSER.add_argument('action',
@@ -79,6 +85,17 @@ if ARGS.action == 'get':
     JS.get_jobs('jobs-' + ARGS.server)
 
 elif ARGS.action == 'set':
+
+    J_DOCKER_PASS = os.environ.get('FRAG_DOCKER_PASSWORD')
+    if not J_DOCKER_PASS:
+        LOGGER.error('To set the configuration you must define'
+                     ' the environment variable J_DOCKER_PASS')
+        sys.exit(1)
+    J_SLACK_TOKEN = os.environ.get('FRAG_SLACK_TOKEN')
+    if not J_SLACK_TOKEN:
+        LOGGER.error('To set the configuration you must define'
+                     ' the environment variable J_SLACK_TOKEN')
+        sys.exit(1)
 
     # Destructive
     # Double-check with the user...
