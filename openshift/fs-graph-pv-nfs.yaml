@@ -1,0 +1,81 @@
+---
+
+# The Graph Database's Persistent Volumes (NFS).
+#
+# This expects these volumes:
+#
+#   ${NFS_PATH}/pv-fs-graph-data
+#   ${NFS_PATH}/pv-fs-graph-data-loader
+#
+# oc process -f fs-graph-pv-nfs.yaml | oc create -f -
+# oc delete pv --selector template=fs-graph-pv-nfs
+
+kind: Template
+apiVersion: v1
+metadata:
+  name: fs-graph-pv-nfs
+  annotations:
+    description: Fragalysis Stack's Graph Volumes (using NFS)
+    tags: fragalysis,graph
+labels:
+  template: fs-graph-pv-nfs
+
+parameters:
+
+- name: NFS_SERVER
+  value: bastion.novalocal
+- name: NFS_PATH
+  value: /data
+
+- name: GRAPH_NAMESPACE
+  value: fragalysis-cicd
+
+- name: DATA_PV_DIR
+  value: pv-fs-graph-data
+- name: DATA_PV_SIZE
+  value: 500Gi
+
+- name: DATA_LOADER_PV_DIR
+  value: pv-fs-graph-data-loader
+- name: DATA_LOADER_PV_SIZE
+  value: 300Gi
+
+objects:
+
+# ------------------------
+# Fragalysis Graph Volumes
+# ------------------------
+
+- kind: PersistentVolume
+  apiVersion: v1
+  metadata:
+    name: fs-graph-data
+  spec:
+    capacity:
+      storage: ${DATA_PV_SIZE}
+    accessModes:
+    - ReadWriteMany
+    persistentVolumeReclaimPolicy: Retain
+    nfs:
+      server: ${NFS_SERVER}
+      path: ${NFS_PATH}/${DATA_PV_DIR}
+    claimRef:
+      name: fs-graph-data-claim
+      namespace: ${GRAPH_NAMESPACE}
+
+- kind: PersistentVolume
+  apiVersion: v1
+  metadata:
+    name: fs-graph-data-loader
+  spec:
+    capacity:
+      storage: ${DATA_LOADER_PV_SIZE}
+    accessModes:
+    - ReadOnlyMany
+    persistentVolumeReclaimPolicy: Retain
+    nfs:
+      server: ${NFS_SERVER}
+      path: ${NFS_PATH}/${DATA_LOADER_PV_DIR}
+    claimRef:
+      name: fs-graph-data-loader-claim
+      namespace: ${GRAPH_NAMESPACE}

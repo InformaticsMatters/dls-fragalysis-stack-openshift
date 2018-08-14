@@ -1,19 +1,19 @@
 ---
 
-# An experimental Neo4J Graph database deployment.
+# The FINAL(plus) Jun2018 Neo4J Graph database deployment.
 #
-# oc process -f fs-graph-two.yaml | oc create -f -
-# oc delete all --selector template=fs-graph-two
+# oc process -f fs-graph-jun2018.yaml | oc create -f -
+# oc delete all --selector template=fs-graph-jun2018
 
 kind: Template
 apiVersion: v1
 metadata:
-  name: fs-graph-two
+  name: fs-graph-jun2018
   annotations:
     description: Fragalysis Stack's Neo4J Definition
-    tags: fragalysis,graph,neo4j
+    tags: fragalysis,graph,neo4j,jun2018
 labels:
-  template: fs-graph-two
+  template: fs-graph-jun2018
 
 parameters:
 
@@ -21,11 +21,13 @@ parameters:
   value: fragalysis-cicd
 
 - name: GRAPH_TAG
-  value: 'jun2018-7'
+  value: 'latest'
 - name: NEO4J_AUTH
   value: none
 - name: NEO4J_PAGECACHE
-  value: 4G
+  value: 12G
+- name: NEO4J_HEAP
+  value: 8G
 - name: NEO4J_REPLICAS
   value: '1'
 - name: NEO4J_NODE_SIZE_SELECTOR
@@ -36,16 +38,16 @@ objects:
 - kind: DeploymentConfig
   apiVersion: v1
   metadata:
-    name: graph-two
+    name: graph-jun2018
     namespace: ${GRAPH_NAMESPACE}
   spec:
     replicas: ${NEO4J_REPLICAS}
     selector:
-      name: graph-two
+      name: graph-jun2018
     template:
       metadata:
         labels:
-          name: graph-two
+          name: graph-jun2018
       spec:
         nodeSelector:
           size: ${NEO4J_NODE_SIZE_SELECTOR}
@@ -54,21 +56,35 @@ objects:
         # Application containers
         containers:
         - image: informaticsmatters/graph:${GRAPH_TAG}
-          name: graph-two
+          name: graph-jun2018
           env:
           - name: NEO4J_AUTH
             value: ${NEO4J_AUTH}
           - name: NEO4J_dbms_memory_pagecache_size
-            value: 9G
+            value: ${NEO4J_PAGECACHE}
           - name: NEO4J_dbms_memory_heap_initial__size
-            value: 8G
+            value: ${NEO4J_HEAP}
           - name: NEO4J_dbms_memory_heap_max__size
-            value: 8G
+            value: ${NEO4J_HEAP}
           - name: EXTENSION_SCRIPT
             value: /data-loader/load_neo4j.sh
           ports:
           - containerPort: 7474
           - containerPort: 7687
+          volumeMounts:
+          - name: fs-graph-data-loader
+            mountPath: /data-loader
+          volumeMounts:
+          - name: fs-graph-data
+            mountPath: /data
+        volumes:
+        - name: fs-graph-data-loader
+          persistentVolumeClaim:
+            claimName: fs-graph-data-loader-claim
+        volumes:
+        - name: fs-graph-data
+          persistentVolumeClaim:
+            claimName: fs-graph-data-claim
         restartPolicy: Always
 
     triggers:
@@ -77,7 +93,7 @@ objects:
 - kind: Service
   apiVersion: v1
   metadata:
-    name: neo4j-two
+    name: neo4j-jun2018
     namespace: ${GRAPH_NAMESPACE}
   spec:
     ports:
@@ -88,4 +104,4 @@ objects:
       port: 7687
       targetPort: 7687
     selector:
-      name: graph-two
+      name: graph-jun2018
