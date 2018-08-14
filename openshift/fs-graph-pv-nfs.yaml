@@ -71,7 +71,7 @@ objects:
     capacity:
       storage: ${DATA_LOADER_PV_SIZE}
     accessModes:
-    - ReadOnlyMany
+    - ReadWriteMany
     persistentVolumeReclaimPolicy: Retain
     nfs:
       server: ${NFS_SERVER}
