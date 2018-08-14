@@ -13,6 +13,7 @@ oc delete all,route --selector template=fs-web
 #oc delete all,secrets --selector template=fs-cartridge
 oc delete all --selector template=fs-db
 oc delete all --selector template=fs-graph
+oc delete all --selector template=fs-graph-jun2018
 
 echo
 echo "- Removing Secrets..."
@@ -23,10 +24,12 @@ echo
 echo "- Deleting PVCs..."
 
 #oc delete pvc --selector template=fs-cartridge-pvc
+oc delete pvc --selector template=fs-graph-pvc
 oc delete pvc --selector template=fs-db-backup-pvc
 oc delete pvc --selector template=fs-db-pvc
 
 echo
 echo "- Deleting PVs..."
 
+oc delete pv --selector template=fs-graph-pv-nfs
 oc delete pv --selector template=fs-pv-nfs

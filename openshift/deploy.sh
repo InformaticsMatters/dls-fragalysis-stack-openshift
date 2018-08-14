@@ -13,6 +13,7 @@ echo "+ Creating PVs..."
 
 #oc login -u admin > /dev/null
 oc process -f fs-pv-nfs.yaml | oc create -f -
+oc process -f fs-graph-pv-nfs.yaml | oc create -f -
 
 echo
 echo "+ Creating PVCs..."
@@ -21,6 +22,7 @@ oc project fragalysis-cicd > /dev/null
 
 oc process -f ../templates/fs-db-pvc.yaml | oc create -f -
 oc process -f ../templates/fs-db-backup-pvc.yaml | oc create -f -
+oc process -f ../templates/fs-graph-pvc.yaml | oc create -f -
 #oc process -f ../templates/fs-cartridge-pvc.yaml | oc create -f -
 
 echo
@@ -31,6 +33,7 @@ oc process -f ../templates/fs-secrets.yaml | oc create -f -
 echo
 echo "+ Deploying Application..."
 
+oc process -f ../templates/fs-graph-jun2018.yaml | oc create -f -
 oc process -f ../templates/fs-graph.yaml | oc create -f -
 oc process -f ../templates/fs-db.yaml | oc create -f -
 #oc process -f ../templates/fs-cartridge.yaml | oc create -f -

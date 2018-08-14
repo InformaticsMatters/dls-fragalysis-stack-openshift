@@ -74,17 +74,17 @@ objects:
           volumeMounts:
           - name: fs-graph-data-loader
             mountPath: /data-loader
-          volumeMounts:
           - name: fs-graph-data
             mountPath: /data
+
         volumes:
         - name: fs-graph-data-loader
           persistentVolumeClaim:
             claimName: fs-graph-data-loader-claim
-        volumes:
         - name: fs-graph-data
           persistentVolumeClaim:
             claimName: fs-graph-data-claim
+
         restartPolicy: Always
 
     triggers:
