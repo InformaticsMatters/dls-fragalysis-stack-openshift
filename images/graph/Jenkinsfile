@@ -8,7 +8,7 @@ pipeline {
 
   environment {
     // Registry details
-    REGISTRIY_USER = 'jenkins'
+    REGISTRY_USER = 'jenkins'
     REGISTRY = 'docker-registry.default:5000'
     STREAM_IMAGE = "${REGISTRY}/fragalysis-cicd/graph-stream:latest"
 
@@ -60,7 +60,7 @@ pipeline {
         }
         dir('images/graph') {
           sh "cp ${SOURCE_DATA_ROOT}/${DATA_ORIGIN}/* data-loader"
-          sh "buildah bud --tls-verify=false --creds=${REGISTRY_USER}:${TOKEN} --format docker --build-arg DATA_ORIGIN=${DATA_ORIGIN} -f Dockerfile -t ${env.STREAM_IMAGE} ."
+          sh "buildah bud --tls-verify=false --creds=${REGISTRY_USER}:${TOKEN} --format docker --build-arg DATA_ORIGIN=${DATA_ORIGIN} -f Dockerfile -t ${STREAM_IMAGE} ."
         }
       }
     }
@@ -84,9 +84,9 @@ pipeline {
         script {
           TOKEN = sh(script: 'oc whoami -t', returnStdout: true).trim()
         }
-        sh "podman login --tls-verify=false --username ${env.REGISTRY_USER} --password ${TOKEN} ${REGISTRY}"
-        sh "buildah push --tls-verify=false ${STREAM_IMAGE} docker://${env.STREAM_IMAGE}"
-        sh "podman logout ${env.REGISTRY}"
+        sh "podman login --tls-verify=false --username ${REGISTRY_USER} --password ${TOKEN} ${REGISTRY}"
+        sh "buildah push --tls-verify=false ${STREAM_IMAGE} docker://${STREAM_IMAGE}"
+        sh "podman logout ${REGISTRY}"
         sh "buildah images"
         slackSend channel: "#${SLACK_BUILD_CHANNEL}",
                   color: 'good',
