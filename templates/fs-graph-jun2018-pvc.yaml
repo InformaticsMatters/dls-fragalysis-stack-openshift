@@ -2,7 +2,7 @@
 
 # The Graph Database Persistent Volume Claims.
 #
-# oc process -f fs-graph-pvc.yaml | oc create -f -
+# oc process -f fs-graph-jun2018-pvc.yaml | oc create -f -
 # oc delete pvc --selector template=fs-graph-pvc
 
 kind: Template
