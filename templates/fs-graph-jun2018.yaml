@@ -41,7 +41,7 @@ parameters:
 - name: NEO4J_LOGFILE_SIZE
   value: 20m
 - name: NEO4J_LOGFILE_KEEP
-  value: 8
+  value: '8'
 
 objects:
 
