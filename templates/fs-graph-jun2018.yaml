@@ -21,17 +21,23 @@ parameters:
   value: fragalysis-cicd
 
 - name: GRAPH_TAG
-  value: 'latest'
+  value: '3.4.5'
 - name: NEO4J_AUTH
   value: none
 - name: NEO4J_PAGECACHE
-  value: 12G
+  value: 24g
 - name: NEO4J_HEAP
-  value: 8G
+  value: 8g
 - name: NEO4J_REPLICAS
   value: '1'
 - name: NEO4J_NODE_SIZE_SELECTOR
   value: 'big'
+- name: NEO4J_LOG_DIR
+  value: '/logs'
+- name: NEO4J_LOGFILE_SIZE
+  value: 20m
+- name: NEO4J_LOGFILE_KEEP
+  value: 8
 
 objects:
 
@@ -55,7 +61,7 @@ objects:
 
         # Application containers
         containers:
-        - image: informaticsmatters/graph:${GRAPH_TAG}
+        - image: neo4j:${GRAPH_TAG}
           name: graph-jun2018
           env:
           - name: NEO4J_AUTH
@@ -66,6 +72,14 @@ objects:
             value: ${NEO4J_HEAP}
           - name: NEO4J_dbms_memory_heap_max__size
             value: ${NEO4J_HEAP}
+          - name: NEO4J_dbms_directories_logs
+            value: ${NEO4J_LOG_DIR}
+          - name: NEO4J_dbms_logs_debug_rotation_size
+            value: ${NEO4J_LOGFILE_SIZE}
+          - name: NEO4J_dbms_logs_debug_rotation_keep__number
+            value: ${NEO4J_LOGFILE_KEEP}
+          - name: NEO4J_EDITION
+            value: community
           - name: EXTENSION_SCRIPT
             value: /data-loader/load_neo4j.sh
           ports:
@@ -76,6 +90,8 @@ objects:
             mountPath: /data-loader
           - name: fs-graph-data
             mountPath: /data
+          - name: fs-graph-logs
+            mountPath: ${NEO4J_LOG_DIR}
 
         volumes:
         - name: fs-graph-data-loader
@@ -84,6 +100,9 @@ objects:
         - name: fs-graph-data
           persistentVolumeClaim:
             claimName: fs-graph-data-claim
+        - name: fs-graph-logs
+          persistentVolumeClaim:
+            claimName: fs-graph-logs-claim
 
         restartPolicy: Always
 

@@ -24,6 +24,8 @@ parameters:
   value: 300Gi
 - name: GRAPH_DATA_SIZE
   value: 500Gi
+- name: GRAPH_LOGS_SIZE
+  value: 2Gi
 
 objects:
 
@@ -50,3 +52,15 @@ objects:
     resources:
       requests:
         storage: ${GRAPH_DATA_LOADER_SIZE}
+
+- apiVersion: v1
+  kind: PersistentVolumeClaim
+  metadata:
+    name: fs-graph-logs-claim
+    namespace: ${GRAPH_NAMESPACE}
+  spec:
+    accessModes:
+    - ReadWriteMany
+    resources:
+      requests:
+        storage: ${GRAPH_LOGS_SIZE}

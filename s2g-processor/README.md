@@ -142,21 +142,19 @@ A typical workflow would be (from the master instance): -
 To collect and de-duplicate the calculated results: -
 
     RUN=7
-    find results-${RUN} -name "*.attributes.gz" -print | xargs gzip -dc | awk '!x[$0]++' > attributes.${RUN}.txt
-    find results-${RUN} -name "*.nodes.gz" -print | xargs gzip -dc | awk '!x[$0]++' > nodes.${RUN}.txt
+    SORT=gsort
+    time (export LC_ALL=C; zcat *.attributes.gz | ${SORT} -S16G --parallel=16 --temporary-directory=/data1/tmp -u  > ../attributes.${RUN}.txt)
+    time (export LC_ALL=C; zcat *.nodes.gz | ${SORT} -S16G --parallel=16 --temporary-directory=/data1/tmp -u  > ../nodes.${RUN}.txt)
 
-Deduplicating the files in 10 attempts, the following typically takes about 3-4 minutes per item...
+Deduplicating the files in 5 attempts, the following typically takes about 3-4 minutes per item...
 
-    find results-${RUN} -name "*0.smi.edges.gz" -print | xargs gzip -dc | awk '!x[$0]++' > edges.0.txt
-    find results-${RUN} -name "*1.smi.edges.gz" -print | xargs gzip -dc | awk '!x[$0]++' > edges.1.txt
-    find results-${RUN} -name "*2.smi.edges.gz" -print | xargs gzip -dc | awk '!x[$0]++' > edges.2.txt
-    find results-${RUN} -name "*3.smi.edges.gz" -print | xargs gzip -dc | awk '!x[$0]++' > edges.3.txt
-    find results-${RUN} -name "*4.smi.edges.gz" -print | xargs gzip -dc | awk '!x[$0]++' > edges.4.txt
-    find results-${RUN} -name "*5.smi.edges.gz" -print | xargs gzip -dc | awk '!x[$0]++' > edges.5.txt
-    find results-${RUN} -name "*6.smi.edges.gz" -print | xargs gzip -dc | awk '!x[$0]++' > edges.6.txt
-    find results-${RUN} -name "*7.smi.edges.gz" -print | xargs gzip -dc | awk '!x[$0]++' > edges.7.txt
-    find results-${RUN} -name "*8.smi.edges.gz" -print | xargs gzip -dc | awk '!x[$0]++' > edges.8.txt
-    find results-${RUN} -name "*9.smi.edges.gz" -print | xargs gzip -dc | awk '!x[$0]++' > edges.9.txt
+    time (export LC_ALL=C; zcat *.edges.gz | ${SORT} -S16G --parallel=16 --temporary-directory=/data1/tmp -u > ../edges.${RUN}.txt)
+
+    (export LC_ALL=C; find results-${RUN} -name "*[01].smi.edges.gz" -print | xargs gzip -dc | ${SORT} -S16G --parallel=16 -u > edges.01.txt)
+    (export LC_ALL=C; find results-${RUN} -name "*[23].smi.edges.gz" -print | xargs gzip -dc | ${SORT} -S16G --parallel=16 -u > edges.23.txt)
+    (export LC_ALL=C; find results-${RUN} -name "*[45].smi.edges.gz" -print | xargs gzip -dc | ${SORT} -S16G --parallel=16 -u > edges.45.txt)
+    (export LC_ALL=C; find results-${RUN} -name "*[67].smi.edges.gz" -print | xargs gzip -dc | ${SORT} -S16G --parallel=16 -u > edges.67.txt)
+    (export LC_ALL=C; find results-${RUN} -name "*[89].smi.edges.gz" -print | xargs gzip -dc | ${SORT} -S16G --parallel=16 -u > edges.89.txt)
 
 >   The `awk` approach above takes about 3 minutes whereas the `gsort` (OSX)
     or more general sort takes about 24 seconds (`-S8G --parallel=4`),
@@ -184,6 +182,9 @@ On Set no. 7 the de-duplication results are: -
     Nodes       57,895,779 lines > 15,781,290
     Attributes   5,000,000 lines > (No gain)
 
+Grand script: -
+
+    time (export LC_ALL=C; zcat *.nodes.gz
 Preparing for CSV. With a `nodes.txt`, `edges.txt` and `attributes.txt` file
 in a `directory` you can generate the final DB files with: -
 
@@ -192,6 +193,12 @@ in a `directory` you can generate the final DB files with: -
 And compress them: -
     
     gzip edges.${RUN}.txt nodes.${RUN}.txt attributes.${RUN}.txt
+
+Combining original (5.3Million) with new output...
+The original set has 5,377,750 nodes and 24,416,356 edges
+
+    (export LC_ALL=C; cat 2018-06-05/nodes.csv results-7-out/nodes.csv | gsort -S8G --parallel=4 -u > combined/nodes.csv)
+    (export LC_ALL=C; cat 2018-06-05/edges.csv results-7-out/edges.csv | gsort -S8G --parallel=4 -u > combined/edges.csv)
 
 ### Using EC2 ephemeral drive(s)
 It's not obvious but is described on the AWS [article]. In summary...

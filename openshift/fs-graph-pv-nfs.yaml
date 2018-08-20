@@ -40,6 +40,11 @@ parameters:
 - name: DATA_LOADER_PV_SIZE
   value: 300Gi
 
+- name: LOGS_PV_DIR
+  value: pv-fs-graph-logs
+- name: LOGS_PV_SIZE
+  value: 2Gi
+
 objects:
 
 # ------------------------
@@ -78,4 +83,21 @@ objects:
       path: ${NFS_PATH}/${DATA_LOADER_PV_DIR}
     claimRef:
       name: fs-graph-data-loader-claim
+      namespace: ${GRAPH_NAMESPACE}
+
+- kind: PersistentVolume
+  apiVersion: v1
+  metadata:
+    name: fs-graph-logs
+  spec:
+    capacity:
+      storage: ${LOGS_PV_SIZE}
+    accessModes:
+    - ReadWriteMany
+    persistentVolumeReclaimPolicy: Retain
+    nfs:
+      server: ${NFS_SERVER}
+      path: ${NFS_PATH}/${LOGS_PV_DIR}
+    claimRef:
+      name: fs-graph-logs-claim
       namespace: ${GRAPH_NAMESPACE}
