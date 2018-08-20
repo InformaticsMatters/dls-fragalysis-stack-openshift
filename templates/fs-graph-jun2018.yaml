@@ -32,8 +32,10 @@ parameters:
   value: '1'
 - name: NEO4J_NODE_SIZE_SELECTOR
   value: 'big'
-- name: NEO4J_DATA_DIR
+- name: NEO4J_DATA_MOUNT
   value: '/data'
+- name: NEO4J_DATA_DIR
+  value: '/data/jun2018'
 - name: NEO4J_DATA_LOADER_DIR
   value: '/data-loader'
 - name: NEO4J_LOG_DIR
@@ -95,7 +97,7 @@ objects:
           - name: fs-graph-data-loader
             mountPath: ${NEO4J_DATA_LOADER_DIR}
           - name: fs-graph-data
-            mountPath: ${NEO4J_DATA_DIR}
+            mountPath: ${NEO4J_DATA_MOUNT}
           - name: fs-graph-logs
             mountPath: ${NEO4J_LOG_DIR}
 
