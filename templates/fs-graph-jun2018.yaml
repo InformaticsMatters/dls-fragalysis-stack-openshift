@@ -41,12 +41,6 @@ parameters:
 
 - name: NEO4J_DATA_LOADER_DIR
   value: '/data-loader'
-- name: NEO4J_LOG_DIR
-  value: '/logs'
-- name: NEO4J_LOGFILE_SIZE
-  value: 20m
-- name: NEO4J_LOGFILE_KEEP
-  value: '8'
 
 objects:
 
@@ -83,12 +77,6 @@ objects:
             value: ${NEO4J_HEAP}
           - name: NEO4J_dbms_directories_data
             value: ${NEO4J_DATA_DIR}
-          - name: NEO4J_dbms_directories_logs
-            value: ${NEO4J_LOG_DIR}
-          - name: NEO4J_dbms_logs_debug_rotation_size
-            value: ${NEO4J_LOGFILE_SIZE}
-          - name: NEO4J_dbms_logs_debug_rotation_keep__number
-            value: ${NEO4J_LOGFILE_KEEP}
           - name: NEO4J_EDITION
             value: community
           - name: EXTENSION_SCRIPT
