@@ -33,9 +33,9 @@ parameters:
 - name: NEO4J_NODE_SIZE_SELECTOR
   value: 'big'
 
-  # Do not mount '/data'.
-  # Neo4J treats '/data' as belonging to it and
-  # changes the permissions of this directory.
+  # Do not mount '/data' in v3.4.x.
+  # Neo4J expects to own '/data' changing the permissions of this directory.
+  # See https://github.com/neo4j/docker-neo4j/blob/master/src/3.4/docker-entrypoint.sh
 - name: NEO4J_DATA_DIR
   value: '/loaded-data'
 
