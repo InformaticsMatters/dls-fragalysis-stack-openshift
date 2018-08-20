@@ -32,6 +32,10 @@ parameters:
   value: '1'
 - name: NEO4J_NODE_SIZE_SELECTOR
   value: 'big'
+- name: NEO4J_DATA_DIR
+  value: '/data'
+- name: NEO4J_DATA_LOADER_DIR
+  value: '/data-loader'
 - name: NEO4J_LOG_DIR
   value: '/logs'
 - name: NEO4J_LOGFILE_SIZE
@@ -72,6 +76,8 @@ objects:
             value: ${NEO4J_HEAP}
           - name: NEO4J_dbms_memory_heap_max__size
             value: ${NEO4J_HEAP}
+          - name: NEO4J_dbms_directories_data
+            value: ${NEO4J_DATA_DIR}
           - name: NEO4J_dbms_directories_logs
             value: ${NEO4J_LOG_DIR}
           - name: NEO4J_dbms_logs_debug_rotation_size
@@ -81,15 +87,15 @@ objects:
           - name: NEO4J_EDITION
             value: community
           - name: EXTENSION_SCRIPT
-            value: /data-loader/load_neo4j.sh
+            value: "${NEO4J_DATA_LOADER_DIR}/load_neo4j.sh"
           ports:
           - containerPort: 7474
           - containerPort: 7687
           volumeMounts:
           - name: fs-graph-data-loader
-            mountPath: /data-loader
+            mountPath: ${NEO4J_DATA_LOADER_DIR}
           - name: fs-graph-data
-            mountPath: /data
+            mountPath: ${NEO4J_DATA_DIR}
           - name: fs-graph-logs
             mountPath: ${NEO4J_LOG_DIR}
 
