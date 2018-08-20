@@ -25,7 +25,7 @@ parameters:
 - name: NEO4J_AUTH
   value: none
 - name: NEO4J_PAGECACHE
-  value: 24g
+  value: 12g
 - name: NEO4J_HEAP
   value: 8g
 - name: NEO4J_REPLICAS
