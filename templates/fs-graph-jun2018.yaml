@@ -32,8 +32,13 @@ parameters:
   value: '1'
 - name: NEO4J_NODE_SIZE_SELECTOR
   value: 'big'
+
+  # Do not mount '/data'.
+  # Neo4J treats '/data' as belonging to it and
+  # changes the permissions of this directory.
 - name: NEO4J_DATA_DIR
   value: '/loaded-data'
+
 - name: NEO4J_DATA_LOADER_DIR
   value: '/data-loader'
 - name: NEO4J_LOG_DIR
