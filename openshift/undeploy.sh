@@ -11,6 +11,7 @@ echo "- Undeploying Application..."
 oc delete all --selector template=fs-db-backup
 oc delete all,route --selector template=fs-web
 oc delete all --selector template=fs-db
+oc delete all --selector template=fs-mysql
 oc delete all --selector template=fs-graph
 oc delete all --selector template=fs-graph-jun2018
 

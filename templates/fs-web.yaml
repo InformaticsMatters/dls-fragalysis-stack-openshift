@@ -135,6 +135,21 @@ objects:
               secretKeyRef:
                 name: fs-web-secrets
                 key: django-superuser-email
+          - name: MYSQL_USER
+            valueFrom:
+              secretKeyRef:
+                name: fs-mysql-secrets
+                key: database-user
+          - name: MYSQL_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: fs-mysql-secrets
+                key: database-password
+          - name: MYSQL_ROOT_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: fs-mysql-secrets
+                key: database-root-password
           - name: ISPYB_USER
             value: ispyb_api_fragalysis
           - name: ISPYB_PASSWORD

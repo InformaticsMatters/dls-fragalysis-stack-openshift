@@ -80,21 +80,21 @@ objects:
           - name: MYSQL_USER
             valueFrom:
               secretKeyRef:
-                key: database-user
                 name: fs-mysql-secrets
+                key: database-user
           - name: MYSQL_PASSWORD
             valueFrom:
               secretKeyRef:
-                key: database-password
                 name: fs-mysql-secrets
+                key: database-password
           - name: MYSQL_ROOT_PASSWORD
             valueFrom:
               secretKeyRef:
-                key: database-root-password
                 name: fs-mysql-secrets
+                key: database-root-password
           volumeMounts:
           - name: fs-mysql-data
-            mountPath: /var/lib/mysql/data
+            mountPath: /var/lib/mysql
         volumes:
         - name: fs-mysql-data
           persistentVolumeClaim:

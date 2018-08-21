@@ -29,7 +29,7 @@ chown -R nfsnobody.nfsnobody pv-*
 # See https://github.com/kubernetes/kubernetes/issues/54601
 
 cd /etc/exports.d/
-echo ${EXPORT_DIR}/pv-fs-mysql-data *(rw,root_squash) >> frag.exports
+echo ${EXPORT_DIR}/pv-fs-mysql-data *(rw,no_subtree_check,no_root_squash) >> frag.exports
 echo ${EXPORT_DIR}/pv-fs-pg-data *(rw,sync,no_subtree_check,no_root_squash) >> frag.exports
 echo ${EXPORT_DIR}/pv-fs-pg-data-backup *(rw,root_squash) >> frag.exports
 echo ${EXPORT_DIR}/pv-fs-cartridge-data *(rw,sync,no_subtree_check,no_root_squash) >> frag.exports
