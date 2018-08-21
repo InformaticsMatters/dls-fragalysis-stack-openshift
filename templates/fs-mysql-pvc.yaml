@@ -1,19 +1,19 @@
 ---
 
-# The Application's Persistent Volume Claims.
+# The Application's MySQL Persistent Volume Claims.
 #
-# oc process -f fs-db-pvc.yaml | oc create -f -
-# oc delete pvc --selector template=fs-db-pvc
+# oc process -f fs-mysql-pvc.yaml | oc create -f -
+# oc delete pvc --selector template=fs-mysql-pvc
 
 kind: Template
 apiVersion: v1
 metadata:
-  name: fs-db-pvc
+  name: fs-mysql-pvc
   annotations:
     description: Fragalysis Stack's Persistent Volume Claims
     tags: fragalysis,db,postgres
 labels:
-  template: fs-db-pvc
+  template: fs-mysql-pvc
 
 parameters:
 
