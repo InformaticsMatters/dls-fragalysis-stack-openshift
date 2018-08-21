@@ -45,6 +45,13 @@ parameters:
 - name: PG_PV_BACKUP_SIZE
   value: 100Gi
 
+- name: MYSQL_NAMESPACE
+  value: fragalysis-cicd
+- name: MYSQL_PV_DIR
+  value: pv-fs-MYSQL-data
+- name: MYSQL_PV_SIZE
+  value: 20Gi
+
 objects:
 
 # ---------------------------
@@ -84,6 +91,27 @@ objects:
     claimRef:
       name: fs-pg-data-backup-claim
       namespace: ${PG_NAMESPACE}
+
+# ------------------------
+# Database (MySQL) Volumes
+# ------------------------
+
+- kind: PersistentVolume
+  apiVersion: v1
+  metadata:
+    name: fs-mysql-data
+  spec:
+    capacity:
+      storage: ${MYSQL_PV_SIZE}
+    accessModes:
+    - ReadWriteMany
+    persistentVolumeReclaimPolicy: Retain
+    nfs:
+      server: ${NFS_SERVER}
+      path: ${NFS_PATH}/${MYSQL_PV_DIR}
+    claimRef:
+      name: fs-mysql-data-claim
+      namespace: ${MYSQL_NAMESPACE}
 
 # -------------------------
 # Cartridge (RDKit) Volumes

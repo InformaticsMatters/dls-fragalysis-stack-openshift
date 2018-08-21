@@ -31,6 +31,15 @@ parameters:
 - name: WEB_NODE_SIZE_SELECTOR
   value: 'small'
 
+- name: ISPYB_USER
+  value: ispyb_api_fragalysis
+- name: ISPYB_PASSWORD
+  required: true
+- name: ISPYB_HOST
+  value: ispybdbproxy
+- name: ISPYB_PORT
+  value: 4306
+
 objects:
 
 - kind: ImageStream
@@ -126,6 +135,14 @@ objects:
               secretKeyRef:
                 name: fs-web-secrets
                 key: django-superuser-email
+          - name: ISPYB_USER
+            value: ispyb_api_fragalysis
+          - name: ISPYB_PASSWORD
+            value: ${ISPYB_PASSWORD}
+          - name: ISPYB_HOST
+            value: ispybdbproxy
+          - name: ISPYB_PORT
+            value: 4306
           ports:
           - containerPort: 80
         restartPolicy: Always
