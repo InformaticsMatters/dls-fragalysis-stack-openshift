@@ -38,7 +38,7 @@ parameters:
 - name: ISPYB_HOST
   value: ispybdbproxy
 - name: ISPYB_PORT
-  value: 4306
+  value: '4306'
 
 objects:
 
@@ -151,13 +151,13 @@ objects:
                 name: fs-mysql-secrets
                 key: database-root-password
           - name: ISPYB_USER
-            value: ispyb_api_fragalysis
+            value: ${ISPYB_USER}
           - name: ISPYB_PASSWORD
             value: ${ISPYB_PASSWORD}
           - name: ISPYB_HOST
-            value: ispybdbproxy
+            value: ${ISPYB_HOST}
           - name: ISPYB_PORT
-            value: 4306
+            value: ${ISPYB_PORT}
           ports:
           - containerPort: 80
         restartPolicy: Always
