@@ -48,7 +48,7 @@ parameters:
 - name: MYSQL_NAMESPACE
   value: fragalysis-cicd
 - name: MYSQL_PV_DIR
-  value: pv-fs-MYSQL-data
+  value: pv-fs-mysql-data
 - name: MYSQL_PV_SIZE
   value: 20Gi
 

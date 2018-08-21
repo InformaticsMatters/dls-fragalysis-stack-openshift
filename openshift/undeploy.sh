@@ -24,6 +24,7 @@ echo "- Deleting PVCs..."
 
 oc delete pvc --selector template=fs-graph-pvc
 oc delete pvc --selector template=fs-db-backup-pvc
+oc delete pvc --selector template=fs-mysql-pvc
 oc delete pvc --selector template=fs-db-pvc
 
 echo

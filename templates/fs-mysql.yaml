@@ -1,0 +1,115 @@
+---
+
+# The Fragalysis Stack's MySQL database deployment.
+#
+# oc process -f fs-mysql.yaml | oc create -f -
+# oc delete all --selector template=fs-mysql
+
+kind: Template
+apiVersion: v1
+metadata:
+  name: fs-mysql
+  annotations:
+    description: Fragalysis Stack's MySQL Definition
+    tags: fragalysis,mysql,postgres
+labels:
+  template: fs-mysql
+
+parameters:
+
+- name: MYSQL_NAMESPACE
+  value: fragalysis-cicd
+
+- name: MYSQL_TAG
+  value: '8.0.12'
+- name: MYSQL_REPLICAS
+  value: '1'
+- name: MYSQL_NODE_SIZE_SELECTOR
+  value: 'small'
+
+objects:
+
+- kind: DeploymentConfig
+  apiVersion: v1
+  metadata:
+    name: mysql
+    namespace: ${MYSQL_NAMESPACE}
+  spec:
+    replicas: ${MYSQL_REPLICAS}
+    selector:
+      name: mysql
+    template:
+      metadata:
+        labels:
+          name: mysql
+      spec:
+        nodeSelector:
+          size: ${MYSQL_NODE_SIZE_SELECTOR}
+        serviceAccountName: diamond
+
+        # Application containers
+        containers:
+        - image: mysql:${MYSQL_TAG}
+          name: mysql
+          ports:
+          - containerPort: 3306
+            protocol: TCP
+#          readinessProbe:
+#            exec:
+#              command:
+#              - /bin/sh
+#              - '-i'
+#              - '-c'
+#              - >-
+#                MYSQL_PWD="$MYSQL_PASSWORD" mysql -h 127.0.0.1 -u $MYSQL_USER
+#                -D $MYSQL_DATABASE -e 'SELECT 1'
+#            failureThreshold: 3
+#            initialDelaySeconds: 5
+#            periodSeconds: 10
+#            successThreshold: 1
+#            timeoutSeconds: 1
+          livenessProbe:
+            failureThreshold: 3
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            successThreshold: 1
+            tcpSocket:
+              port: 3306
+            timeoutSeconds: 1
+          env:
+          - name: MYSQL_USER
+            valueFrom:
+              secretKeyRef:
+                key: database-user
+                name: fs-mysql-secrets
+          - name: MYSQL_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                key: database-password
+                name: fs-mysql-secrets
+          - name: MYSQL_ROOT_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                key: database-root-password
+                name: fs-mysql-secrets
+          volumeMounts:
+          - name: fs-mysql-data
+            mountPath: /var/lib/mysql/data
+        volumes:
+        - name: fs-mysql-data
+          persistentVolumeClaim:
+            claimName: fs-mysql-data-claim
+        restartPolicy: Always
+
+- kind: Service
+  apiVersion: v1
+  metadata:
+    name: mysql
+    namespace: ${MYSQL_NAMESPACE}
+  spec:
+    ports:
+    - name: api
+      port: 3306
+      targetPort: 3306
+    selector:
+      name: mysql
