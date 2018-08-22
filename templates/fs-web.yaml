@@ -31,15 +31,6 @@ parameters:
 - name: WEB_NODE_SIZE_SELECTOR
   value: 'small'
 
-- name: ISPYB_USER
-  value: ispyb_api_fragalysis
-- name: ISPYB_PASSWORD
-  required: true
-- name: ISPYB_HOST
-  value: ispybdbproxy
-- name: ISPYB_PORT
-  value: '4306'
-
 objects:
 
 - kind: ImageStream
@@ -135,6 +126,16 @@ objects:
               secretKeyRef:
                 name: fs-web-secrets
                 key: django-superuser-email
+          - name: MYSQL_HOST
+            valueFrom:
+              secretKeyRef:
+                name: fs-mysql-secrets
+                key: database-host
+          - name: MYSQL_PORT
+            valueFrom:
+              secretKeyRef:
+                name: fs-mysql-secrets
+                key: database-port
           - name: MYSQL_USER
             valueFrom:
               secretKeyRef:
@@ -151,13 +152,25 @@ objects:
                 name: fs-mysql-secrets
                 key: database-root-password
           - name: ISPYB_USER
-            value: ${ISPYB_USER}
+            valueFrom:
+              secretKeyRef:
+                name: fs-ispyb-secrets
+                key: ispyb-user
           - name: ISPYB_PASSWORD
-            value: ${ISPYB_PASSWORD}
+            valueFrom:
+              secretKeyRef:
+                name: fs-ispyb-secrets
+                key: ispyb-password
           - name: ISPYB_HOST
-            value: ${ISPYB_HOST}
+            valueFrom:
+              secretKeyRef:
+                name: fs-ispyb-secrets
+                key: ispyb-host
           - name: ISPYB_PORT
-            value: ${ISPYB_PORT}
+            valueFrom:
+              secretKeyRef:
+                name: fs-ispyb-secrets
+                key: ispyb-port
           ports:
           - containerPort: 80
         restartPolicy: Always
