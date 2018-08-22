@@ -21,7 +21,7 @@ parameters:
   value: fragalysis-cicd
 
 - name: MYSQL_TAG
-  value: '8.0.12'
+  value: '5.7.23'
 - name: MYSQL_REPLICAS
   value: '1'
 - name: MYSQL_NODE_SIZE_SELECTOR
