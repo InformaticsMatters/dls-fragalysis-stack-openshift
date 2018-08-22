@@ -51,4 +51,6 @@ objects:
         containers:
         - image: mysql:${MYSQL_TAG}
           name: mysql-2
-          ports:
+          env:
+          - name: MYSQL_ROOT_PASSWORD
+            value: mysql1234
