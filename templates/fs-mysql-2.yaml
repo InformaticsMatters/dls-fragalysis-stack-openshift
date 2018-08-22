@@ -1,0 +1,54 @@
+---
+
+# The Fragalysis Stack's MySQL database deployment.
+#
+# oc process -f fs-mysql-2.yaml | oc create -f -
+# oc delete all --selector template=fs-mysql-2
+
+kind: Template
+apiVersion: v1
+metadata:
+  name: fs-mysql-2
+  annotations:
+    description: Fragalysis Stack's MySQL Definition
+    tags: fragalysis,mysql,postgres
+labels:
+  template: fs-mysql-2
+
+parameters:
+
+- name: MYSQL_NAMESPACE
+  value: fragalysis-cicd
+
+- name: MYSQL_TAG
+  value: '8.0.12'
+- name: MYSQL_REPLICAS
+  value: '1'
+- name: MYSQL_NODE_SIZE_SELECTOR
+  value: 'small'
+
+objects:
+
+- kind: DeploymentConfig
+  apiVersion: v1
+  metadata:
+    name: mysql-2
+    namespace: ${MYSQL_NAMESPACE}
+  spec:
+    replicas: ${MYSQL_REPLICAS}
+    selector:
+      name: mysql-2
+    template:
+      metadata:
+        labels:
+          name: mysql-2
+      spec:
+        nodeSelector:
+          size: ${MYSQL_NODE_SIZE_SELECTOR}
+        serviceAccountName: diamond
+
+        # Application containers
+        containers:
+        - image: mysql:${MYSQL_TAG}
+          name: mysql-2
+          ports:
