@@ -1,0 +1,34 @@
+---
+
+# The Fragalysis Stack's Web (Front-End) Image Stream.
+#
+# oc process -f fs-web-is.yaml | oc create -f -
+# oc delete all --selector template=fs-web-is
+
+kind: Template
+apiVersion: v1
+metadata:
+  name: fs-web-is
+  annotations:
+    description: Fragalysis Stack's Web Image Stream
+    tags: fragalysis,web,image stream
+labels:
+  template: fs-web-is
+
+parameters:
+
+- name: WEB_TAG
+  value: 'latest'
+
+objects:
+
+- kind: ImageStream
+  apiVersion: v1
+  metadata:
+    name: web-stream
+  spec:
+    tags:
+    - from:
+        kind: DockerImage
+        name: xchem/web:${WEB_TAG}
+      name: latest

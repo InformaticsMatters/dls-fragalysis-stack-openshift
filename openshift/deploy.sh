@@ -40,5 +40,6 @@ echo "+ Deploying Application..."
 #oc process -f ../templates/fs-graph-jun2018.yaml | oc create -f -
 oc process -f ../templates/fs-graph.yaml | oc create -f -
 oc process -f ../templates/fs-mysql.yaml | oc create -f -
+oc process -f ../templates/fs-web-is.yaml | oc create -f -
 oc process -f ../templates/fs-web.yaml | oc create -f -
 #oc process -f ../templates/fs-db-backup.yaml | oc create -f -

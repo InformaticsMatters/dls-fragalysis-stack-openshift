@@ -9,6 +9,7 @@ echo
 echo "- Undeploying Application..."
 
 #oc delete all --selector template=fs-db-backup
+oc delete all --selector template=fs-web-is
 oc delete all,route --selector template=fs-web
 oc delete all --selector template=fs-mysql
 oc delete all --selector template=fs-graph
