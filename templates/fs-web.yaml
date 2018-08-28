@@ -140,6 +140,11 @@ objects:
               secretKeyRef:
                 name: fs-mysql-secrets
                 key: database-password
+          - name: MYSQL_DATABASE
+            valueFrom:
+              secretKeyRef:
+                name: fs-mysql-secrets
+                key: database
           - name: MYSQL_ROOT_PASSWORD
             valueFrom:
               secretKeyRef:
