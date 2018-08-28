@@ -97,6 +97,11 @@ objects:
               secretKeyRef:
                 name: fs-mysql-secrets
                 key: database-root-password
+          - name: MYSQL_ROOT_HOST
+            valueFrom:
+              secretKeyRef:
+                name: fs-mysql-secrets
+                key: database-root-host
           volumeMounts:
           - name: fs-mysql-data
             mountPath: /var/lib/mysql
