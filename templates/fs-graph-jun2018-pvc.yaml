@@ -3,17 +3,17 @@
 # The Graph Database Persistent Volume Claims.
 #
 # oc process -f fs-graph-jun2018-pvc.yaml | oc create -f -
-# oc delete pvc --selector template=fs-graph-pvc
+# oc delete pvc --selector template=fs-graph-jun2018-pvc
 
 kind: Template
 apiVersion: v1
 metadata:
-  name: fs-graph-pvc
+  name: fs-graph-jun2018-pvc
   annotations:
     description: Fragalysis Stack's Persistent Volume Claims
     tags: fragalysis,db,postgres
 labels:
-  template: fs-graph-pvc
+  template: fs-graph-jun2018-pvc
 
 parameters:
 
@@ -32,7 +32,7 @@ objects:
 - apiVersion: v1
   kind: PersistentVolumeClaim
   metadata:
-    name: fs-graph-data-claim
+    name: fs-graph-jun2018-data-claim
     namespace: ${GRAPH_NAMESPACE}
   spec:
     accessModes:
@@ -44,7 +44,7 @@ objects:
 - apiVersion: v1
   kind: PersistentVolumeClaim
   metadata:
-    name: fs-graph-data-loader-claim
+    name: fs-graph-jun2018-data-loader-claim
     namespace: ${GRAPH_NAMESPACE}
   spec:
     accessModes:
@@ -56,7 +56,7 @@ objects:
 - apiVersion: v1
   kind: PersistentVolumeClaim
   metadata:
-    name: fs-graph-logs-claim
+    name: fs-graph-jun2018-logs-claim
     namespace: ${GRAPH_NAMESPACE}
   spec:
     accessModes:

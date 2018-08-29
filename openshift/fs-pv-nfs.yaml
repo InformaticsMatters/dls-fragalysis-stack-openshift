@@ -27,24 +27,6 @@ parameters:
 - name: NFS_PATH
   value: /data
 
-- name: CARTRIDGE_NAMESPACE
-  value: fragalysis-cicd
-- name: CARTRIDGE_PV_DIR
-  value: pv-fs-cartridge-data
-- name: CARTRIDGE_PV_SIZE
-  value: 20Gi
-
-- name: PG_NAMESPACE
-  value: fragalysis-cicd
-- name: PG_PV_DIR
-  value: pv-fs-pg-data
-- name: PG_PV_SIZE
-  value: 20Gi
-- name: PG_PV_BACKUP_DIR
-  value: pv-fs-pg-data-backup
-- name: PG_PV_BACKUP_SIZE
-  value: 100Gi
-
 - name: MYSQL_NAMESPACE
   value: fragalysis-cicd
 - name: MYSQL_PV_DIR
@@ -53,44 +35,6 @@ parameters:
   value: 20Gi
 
 objects:
-
-# ---------------------------
-# Database (Postgres) Volumes
-# ---------------------------
-
-- kind: PersistentVolume
-  apiVersion: v1
-  metadata:
-    name: fs-pg-data
-  spec:
-    capacity:
-      storage: ${PG_PV_SIZE}
-    accessModes:
-    - ReadWriteMany
-    persistentVolumeReclaimPolicy: Retain
-    nfs:
-      server: ${NFS_SERVER}
-      path: ${NFS_PATH}/${PG_PV_DIR}
-    claimRef:
-      name: fs-pg-data-claim
-      namespace: ${PG_NAMESPACE}
-
-- kind: PersistentVolume
-  apiVersion: v1
-  metadata:
-    name: fs-pg-data-backup
-  spec:
-    capacity:
-      storage: ${PG_PV_BACKUP_SIZE}
-    accessModes:
-    - ReadWriteMany
-    persistentVolumeReclaimPolicy: Retain
-    nfs:
-      server: ${NFS_SERVER}
-      path: ${NFS_PATH}/${PG_PV_BACKUP_DIR}
-    claimRef:
-      name: fs-pg-data-backup-claim
-      namespace: ${PG_NAMESPACE}
 
 # ------------------------
 # Database (MySQL) Volumes
@@ -112,24 +56,3 @@ objects:
     claimRef:
       name: fs-mysql-data-claim
       namespace: ${MYSQL_NAMESPACE}
-
-# -------------------------
-# Cartridge (RDKit) Volumes
-# -------------------------
-
-- kind: PersistentVolume
-  apiVersion: v1
-  metadata:
-    name: fs-cartridge-data
-  spec:
-    capacity:
-      storage: ${CARTRIDGE_PV_SIZE}
-    accessModes:
-    - ReadWriteMany
-    persistentVolumeReclaimPolicy: Retain
-    nfs:
-      server: ${NFS_SERVER}
-      path: ${NFS_PATH}/${CARTRIDGE_PV_DIR}
-    claimRef:
-      name: fs-cartridge-data-claim
-      namespace: ${CARTRIDGE_NAMESPACE}

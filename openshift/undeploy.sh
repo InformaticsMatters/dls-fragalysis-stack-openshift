@@ -8,7 +8,7 @@ oc project fragalysis-cicd > /dev/null
 echo
 echo "- Undeploying Application..."
 
-#oc delete all --selector template=fs-db-backup
+oc delete all --selector template=fs-db-backup
 oc delete all --selector template=fs-web-is
 oc delete all,route --selector template=fs-web
 oc delete all --selector template=fs-mysql
@@ -23,12 +23,12 @@ oc delete secrets --selector template=fs-secrets
 echo
 echo "- Deleting PVCs..."
 
-oc delete pvc --selector template=fs-graph-pvc
-#oc delete pvc --selector template=fs-db-backup-pvc
+#oc delete pvc --selector template=fs-graph-jun2018-pvc
+oc delete pvc --selector template=fs-db-backup-pvc
 oc delete pvc --selector template=fs-mysql-pvc
 
 echo
 echo "- Deleting PVs..."
 
-oc delete pv --selector template=fs-graph-pv-nfs
+#oc delete pv --selector template=fs-graph-pv-nfs
 oc delete pv --selector template=fs-pv-nfs

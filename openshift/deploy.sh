@@ -16,7 +16,7 @@ echo "+ Creating PVs..."
 
 #oc login -u admin > /dev/null
 oc process -f fs-pv-nfs.yaml | oc create -f -
-oc process -f fs-graph-pv-nfs.yaml | oc create -f -
+#oc process -f fs-graph-pv-nfs.yaml | oc create -f -
 
 echo
 echo "+ Creating PVCs..."
@@ -42,4 +42,4 @@ oc process -f ../templates/fs-graph.yaml | oc create -f -
 oc process -f ../templates/fs-mysql.yaml | oc create -f -
 oc process -f ../templates/fs-web-is.yaml | oc create -f -
 oc process -f ../templates/fs-web.yaml | oc create -f -
-#oc process -f ../templates/fs-db-backup.yaml | oc create -f -
+oc process -f ../templates/fs-db-backup.yaml | oc create -f -

@@ -7,8 +7,7 @@ on scheduled CI/CD jobs running in Jenkins.
 The deployment creates a `fragalysis-cicd` project and the following
 OpenShift 3.7 deployments (services): -
 
--   cartridge
--   db
+-   db (MySQL 5.7)
 -   graph (driven by an ImageStream)
 -   web (driven by an ImageStream)
 
