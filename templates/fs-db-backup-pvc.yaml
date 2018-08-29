@@ -27,7 +27,7 @@ objects:
 - apiVersion: v1
   kind: PersistentVolumeClaim
   metadata:
-    name: fs-pg-data-backup-claim
+    name: fs-db-backup-claim
     namespace: ${BACKUP_NAMESPACE}
   spec:
     accessModes:

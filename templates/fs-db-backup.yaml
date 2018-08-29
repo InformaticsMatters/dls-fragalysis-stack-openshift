@@ -23,15 +23,11 @@ parameters:
 - name: BACKUP_REGISTRY
   value: 'docker.io'
 - name: BACKUP_IMAGE
-  value: 'informaticsmatters/postgresql-backup'
+  value: 'informaticsmatters/sql-backup'
 - name: BACKUP_TAG
-  value: 'latest'
+  value: 'stable'
 - name: BACKUP_NODE_SIZE_SELECTOR
   value: 'small'
-- name: BACKUP_PGHOST
-  value: 'db.fragalysis-cicd.svc'
-- name: BACKUP_PGUSER
-  value: 'postgres'
 
 objects:
 
@@ -64,21 +60,34 @@ objects:
               name: backup
               imagePullPolicy: Always
               volumeMounts:
-              - name: fs-pg-data-backup
+              - name: fs-data-backup
                 mountPath: /backup
               env:
               - name: BACKUP_TYPE
                 value: hourly
               - name: BACKUP_COUNT
                 value: '24'
-              - name: PGHOST
-                value: ${BACKUP_PGHOST}
-              - name: PGUSER
-                value: ${BACKUP_PGUSER}
+              - name: MSHOST
+                valueFrom:
+                  secretKeyRef:
+                    name: fs-mysql-secrets
+                    key: database-host
+              - name: MSPORT
+                valueFrom:
+                  secretKeyRef:
+                    name: fs-mysql-secrets
+                    key: database-port
+              - name: MSUSER
+                value: root
+              - name: MSPASS
+                valueFrom:
+                  secretKeyRef:
+                    name: fs-mysql-secrets
+                    key: database-root-password
             volumes:
-            - name: fs-pg-data-backup
+            - name: fs-data-backup
               persistentVolumeClaim:
-                claimName: fs-pg-data-backup-claim
+                claimName: fs-db-backup-claim
             restartPolicy: Never
 
 # The DAILY CronJob (at 00:55)
@@ -110,7 +119,7 @@ objects:
               name: backup
               imagePullPolicy: Always
               volumeMounts:
-              - name: fs-pg-data-backup
+              - name: fs-data-backup
                 mountPath: /backup
               env:
               - name: BACKUP_TYPE
@@ -122,9 +131,9 @@ objects:
               - name: BACKUP_PRIOR_COUNT
                 value: '24'
             volumes:
-            - name: fs-pg-data-backup
+            - name: fs-data-backup
               persistentVolumeClaim:
-                claimName: fs-pg-data-backup-claim
+                claimName: fs-data-backup-claim
             restartPolicy: Never
 
 # The WEEKLY CronJob (at 00:50 on Sunday)
@@ -156,7 +165,7 @@ objects:
               name: backup
               imagePullPolicy: Always
               volumeMounts:
-              - name: fs-pg-data-backup
+              - name: fs-data-backup
                 mountPath: /backup
               env:
               - name: BACKUP_TYPE
@@ -168,9 +177,9 @@ objects:
               - name: BACKUP_PRIOR_COUNT
                 value: '6'
             volumes:
-            - name: fs-pg-data-backup
+            - name: fs-data-backup
               persistentVolumeClaim:
-                claimName: fs-pg-data-backup-claim
+                claimName: fs-data-backup-claim
             restartPolicy: Never
 
 # The MONTHLY CronJob (at 00:45 on the 1st of each month)
@@ -202,7 +211,7 @@ objects:
               name: backup
               imagePullPolicy: Always
               volumeMounts:
-              - name: fs-pg-data-backup
+              - name: fs-data-backup
                 mountPath: /backup
               env:
               - name: BACKUP_TYPE
@@ -214,7 +223,7 @@ objects:
               - name: BACKUP_PRIOR_COUNT
                 value: '3'
             volumes:
-            - name: fs-pg-data-backup
+            - name: fs-data-backup
               persistentVolumeClaim:
-                claimName: fs-pg-data-backup-claim
+                claimName: fs-data-backup-claim
             restartPolicy: Never
