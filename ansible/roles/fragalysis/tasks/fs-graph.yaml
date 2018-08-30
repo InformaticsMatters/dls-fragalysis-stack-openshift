@@ -1,0 +1,19 @@
+---
+
+- name: Move to Fragalysis (TEST) Project
+  shell: oc project fragalysis-cicd
+
+# Create the Graph Deployment
+
+- name: Check Graph Deployment
+  shell: oc get deploymentconfigs
+  register: graph_dc
+
+- name: Create Graph Deployment
+  shell: >
+    oc process -f {{ t_dir }}/fs-graph.yml |
+    oc create -f -
+  when: '"neo4j" not in neo4j_dc.stdout'
+
+# We don't wait for this pod,
+# its deployment is controlled by Jenkins.

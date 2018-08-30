@@ -1,0 +1,37 @@
+---
+
+- name: Move to Fragalysis (TEST) Project
+  shell: oc project fragalysis-cicd
+
+# Create the MySQL PVCs
+
+- name: Check MySQL PVC
+  shell: oc get pvc
+  register: mysql_pvc
+
+- name: Create MySQL PVC
+  shell: >
+    oc process -f {{ t_dir }}/fs-mysql-pvc.yml |
+    oc create -f -
+  when: '"mysql" not in mysql_pvc.stdout'
+
+# Create the MySQL Deployment
+
+- name: Check MySQL Deployment
+  shell: oc get deploymentconfigs
+  register: mysql_dc
+
+- name: Create MySql Deployment
+  shell: >
+    oc process -f {{ t_dir }}/fs-mysql.yml |
+    oc create -f -
+  when: '"neo4j" not in neo4j_dc.stdout'
+
+# Wait...
+
+- name: Wait for MySQL
+  shell: oc get po | grep mysql | grep -v deploy | grep 1/1 > /dev/null
+  retries: 15
+  delay: 20
+  register: result
+  until: result.rc == 0

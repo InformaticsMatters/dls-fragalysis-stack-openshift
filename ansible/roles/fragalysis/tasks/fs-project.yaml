@@ -1,0 +1,28 @@
+---
+
+# Setup the Fragalysis (TEST) Project.
+# Ths includes the project and its service account.
+
+- name: Get Projects
+  shell: oc get projects
+  register: projects_result
+
+- name: Create Fraglysis (TEST) Project
+  shell: oc new-project fragalysis-cicd
+  when: '"fragalysis-cicd" not in projects_result.stdout'
+
+- name: Move to Fragalysis (TEST) Project
+  shell: oc project fragalysis-cicd
+
+- name: Check Diamond Service Account exists (TEST)
+  shell: oc get sa
+  register: diamond_sa_result
+
+- name: Create Diamond Service Account (TEST)
+  shell: "{{ item }}"
+  loop:
+  - oc create sa diamond
+  - oc login -u system:admin
+  - oc adm policy add-role-to-user admin -z diamond
+  - oc login -u admin -p {{ admin_password }}
+  when: '"diamond" not in diamond_sa_result.stdout'
