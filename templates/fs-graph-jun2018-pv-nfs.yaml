@@ -65,7 +65,7 @@ objects:
       server: ${NFS_SERVER}
       path: ${NFS_PATH}/${DATA_PV_DIR}
     claimRef:
-      name: fs-graph-data-claim
+      name: fs-graph-jun2018-data-claim
       namespace: ${GRAPH_NAMESPACE}
 
 - kind: PersistentVolume
@@ -82,13 +82,13 @@ objects:
       server: ${NFS_SERVER}
       path: ${NFS_PATH}/${DATA_LOADER_PV_DIR}
     claimRef:
-      name: fs-graph-data-loader-claim
+      name: fs-graph-jun2018-data-loader-claim
       namespace: ${GRAPH_NAMESPACE}
 
 - kind: PersistentVolume
   apiVersion: v1
   metadata:
-    name: fs-graph-logs
+    name: fs-graph-jun2018-logs-claim
   spec:
     capacity:
       storage: ${LOGS_PV_SIZE}
