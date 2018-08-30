@@ -11,7 +11,10 @@
   register: projects_result
 
 - name: Create Fraglysis (TEST) Project
-  shell: oc new-project fragalysis-cicd
+  shell: >
+    oc new-project fragalysis-cicd
+    --display-name='Fragalsys (TEST)'
+    --description='The Fragalysis TEST (CI/CD) Project'
   when: '"fragalysis-cicd" not in projects_result.stdout'
 
 - name: Move to Fragalysis (TEST) Project
