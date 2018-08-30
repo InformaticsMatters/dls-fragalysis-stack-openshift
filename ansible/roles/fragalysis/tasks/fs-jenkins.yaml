@@ -1,0 +1,16 @@
+---
+
+- name: Move to Fragalysis (TEST) Project
+  shell: oc project fragalysis-cicd
+
+# Create the Jenkins PV
+
+- name: Check Jenkins PV
+  shell: oc get pv
+  register: jenkins_pv
+
+- name: Create Jenkins PV
+  shell: >
+    oc process -f {{ role_path }}/{{ t_dir }}/fs-jenkins-pv-nfs.yaml |
+    oc create -f -
+  when: '"fs-jenkins" not in jenkins_pv.stdout'
