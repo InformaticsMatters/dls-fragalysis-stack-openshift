@@ -5,4 +5,5 @@
 - import_tasks: fs-secrets.yaml
 - import_tasks: fs-mysql.yaml
 - import_tasks: fs-graph.yaml
+- import_tasks: fs-graph-jun2018.yaml
 - import_tasks: fs-web.yaml

@@ -47,3 +47,4 @@
   delay: 20
   register: result
   until: result.rc == 0
+  when: wait_for_mysql

@@ -2,6 +2,9 @@
 
 # Default variables including secrets
 
+wait_for_mysql: true
+install_jun2108_graph: false
+
 # Our Fragalysis template directory
 # (relative to the role_path directory)
 t_dir: ../../../templates

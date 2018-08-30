@@ -1,0 +1,49 @@
+---
+
+- name: Move to Fragalysis (TEST) Project
+  shell: oc project fragalysis-cicd
+
+# Create the Graph PV
+
+- name: Check Jun2018 Graph PV
+  shell: oc get pv
+  register: jun2018_pv
+  when: install_jun2108_graph
+
+- name: Create Jun2018 Graph PV
+  shell: >
+    oc process -f {{ role_path }}/{{ t_dir }}/fs-graph-jun2018-pv-nfs.yaml |
+    oc create -f -
+  when:
+  - install_jun2108_graph
+  - '"fs-graph-data" not in jun2018_pv.stdout'
+
+# Create the Graph PVCs
+
+- name: Check Jun2018 Graph PVC
+  shell: oc get pvc
+  register: jun2018_pvc
+  when: install_jun2108_graph
+
+- name: Create Jun2018 Graph PVC
+  shell: >
+    oc process -f {{ role_path }}/{{ t_dir }}/fs-graph-jun2018-pvc.yaml |
+    oc create -f -
+  when:
+  - install_jun2108_graph
+  - '"fs-graph-jun2018-data-claim" not in jun2018_pvc.stdout'
+
+# Create the Graph Deployment
+
+- name: Check Jun2018 Graph Deployment
+  shell: oc get deploymentconfigs
+  register: jun2018_dc
+  when: install_jun2108_graph
+
+- name: Create Jun2018 Graph Deployment
+  shell: >
+    oc process -f {{ role_path }}/{{ t_dir }}/fs-graph-jun2018.yaml |
+    oc create -f -
+  when:
+  - install_jun2108_graph
+  - '"graph-jun2018" not in jun2018_dc.stdout'

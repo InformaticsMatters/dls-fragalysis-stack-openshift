@@ -25,3 +25,6 @@
     oc process -f {{ role_path }}/{{ t_dir }}/fs-web.yaml |
     oc create -f -
   when: '"web" not in w_dc.stdout'
+
+# We don't wait for this pod,
+# its deployment is controlled by Jenkins.
