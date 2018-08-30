@@ -88,7 +88,7 @@ objects:
 - kind: PersistentVolume
   apiVersion: v1
   metadata:
-    name: fs-graph-jun2018-logs-claim
+    name: fs-graph-logs
   spec:
     capacity:
       storage: ${LOGS_PV_SIZE}
@@ -99,5 +99,5 @@ objects:
       server: ${NFS_SERVER}
       path: ${NFS_PATH}/${LOGS_PV_DIR}
     claimRef:
-      name: fs-graph-logs-claim
+      name: fs-graph-jun2018-logs-claim
       namespace: ${GRAPH_NAMESPACE}
