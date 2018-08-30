@@ -1,0 +1,27 @@
+---
+
+# Deploy the Web image.
+# Which consists of an image stream and deployment configuration.
+
+- name: Move to Fragalysis (TEST) Project
+  shell: oc project fragalysis-cicd
+
+- name: Check Web ImageStream
+  shell: oc get is
+  register: w_is
+
+- name: Create ImageStream
+  shell: >
+    oc process -f {{ role_path }}/{{ t_dir }}/fs-web-is.yaml |
+    oc create -f -
+  when: '"web-stream" not in w_is.stdout'
+
+- name: Check Web Deployment
+  shell: oc get dc
+  register: w_dc
+
+- name: Create Web Deployent
+  shell: >
+    oc process -f {{ role_path }}/{{ t_dir }}/fs-web.yaml |
+    oc create -f -
+  when: '"web" not in w_dc.stdout'

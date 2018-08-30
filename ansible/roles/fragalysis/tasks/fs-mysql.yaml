@@ -3,6 +3,18 @@
 - name: Move to Fragalysis (TEST) Project
   shell: oc project fragalysis-cicd
 
+# Create the MySQL PV
+
+- name: Check MySQL PV
+  shell: oc get pv
+  register: mysql_pv
+
+- name: Create MySQL PV
+  shell: >
+    oc process -f {{ role_path }}/{{ t_dir }}/fs-mysql-pv-nfs.yaml |
+    oc create -f -
+  when: '"mysql" not in mysql_pv.stdout'
+
 # Create the MySQL PVCs
 
 - name: Check MySQL PVC
