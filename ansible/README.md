@@ -8,8 +8,17 @@ The run the playbook with the command: -
         --vault-password-file vault-pass.txt \
         site.yaml
 
+And, to also install the Jun2018 Graph database...
+
+    ansible-playbook -i localhost, \
+        --extra-vars "install_jun2108_graph=true" \
+        --vault-password-file vault-pass.txt \
+        site.yaml
+
+## Creating encrypted secrets
 If you have the ansible vault password you can encrypt strings
 for the `secrets.yaml` file by running something like this: -
 
     ansible-vault encrypt_string <string> \
-            --name <string name> --ask-vault-pass
+        --name <string name> --ask-vault-pass
+
