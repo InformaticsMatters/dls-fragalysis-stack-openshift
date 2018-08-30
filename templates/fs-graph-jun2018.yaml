@@ -95,13 +95,13 @@ objects:
         volumes:
         - name: fs-graph-data-loader
           persistentVolumeClaim:
-            claimName: fs-graph-data-loader-claim
+            claimName: fs-graph-jun2018-data-loader-claim
         - name: fs-graph-data
           persistentVolumeClaim:
-            claimName: fs-graph-data-claim
+            claimName: fs-graph-jun2018-data-claim
         - name: fs-graph-logs
           persistentVolumeClaim:
-            claimName: fs-graph-logs-claim
+            claimName: fs-graph-jun2018-logs-claim
 
         restartPolicy: Always
 
