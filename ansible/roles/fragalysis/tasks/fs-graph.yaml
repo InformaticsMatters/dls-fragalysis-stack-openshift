@@ -13,7 +13,7 @@
   shell: >
     oc process -f {{ role_path }}/{{ t_dir }}/fs-graph.yaml |
     oc create -f -
-  when: '"fs-graph" not in graph_dc.stdout'
+  when: '"mysql" not in graph_dc.stdout'
 
 # We don't wait for this pod,
 # its deployment is controlled by Jenkins.
