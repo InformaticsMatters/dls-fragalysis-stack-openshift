@@ -7,3 +7,9 @@ The run the playbook with the command: -
     ansible-playbook -i localhost, \
         --vault-password-file vault-pass.txt \
         site.yaml
+
+If you have the ansible vault password you can encrypt strings
+for the `secrets.yaml` file by running something like this: -
+
+    ansible-vault encrypt_string <string> \
+            --name <string name> --ask-vault-pass
