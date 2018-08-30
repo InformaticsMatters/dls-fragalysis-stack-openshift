@@ -3,7 +3,26 @@
 - name: Move to Fragalysis (TEST) Project
   shell: oc project fragalysis-cicd
 
+# Create the Jenkins user and add suitable roles
+
+- name: Check Jenkins user exists
+  shell: oc get users
+  register: users_result
+
+- name: Create Jenkins user
+  shell: htpasswd -b /etc/origin/master/htpasswd jenkins {{ weyyu_password }}
+  when: '"jenkins" not in users_result.stdout'
+
+- name: Give Roles to Jenkins
+  shell: "{{ item }}"
+  loop:
+  - oc adm policy add-role-to-user system:registry jenkins
+  - oc adm policy add-role-to-user system:image-builder jenkins
+  - oc adm policy add-role-to-user admin jenkins
+  - oc adm policy add-scc-to-user -z jenkins privileged
+
 # Create the Jenkins PV
+# This is where the Jenkins configuration is persisted.
 
 - name: Check Jenkins PV
   shell: oc get pv
@@ -14,3 +33,24 @@
     oc process -f {{ role_path }}/{{ t_dir }}/fs-jenkins-pv-nfs.yaml |
     oc create -f -
   when: '"fs-jenkins" not in jenkins_pv.stdout'
+
+# Create the Data Input PV/PVC
+# This is where the Wen abd Graph data is expected to be found.
+
+- name: Create Input PV
+  shell: >
+    oc process -f {{ role_path }}/{{ t_dir }}/fs-input-pv-nfs.yaml |
+    oc create -f -
+  when: '"fs-input" not in jenkins_pv.stdout'
+
+# Create the Input PVCs
+
+- name: Check Input PVC
+  shell: oc get pvc
+  register: input_pvc
+
+- name: Create Input PVC
+  shell: >
+    oc process -f {{ role_path }}/{{ t_dir }}/fs-input-pvc.yaml |
+    oc create -f -
+  when: '"fs-input-claim" not in input_pvc.stdout'

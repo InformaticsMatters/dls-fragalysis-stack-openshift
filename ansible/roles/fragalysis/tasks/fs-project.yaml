@@ -29,4 +29,5 @@
   loop:
   - oc create sa diamond
   - oc adm policy add-role-to-user admin -z diamond
+  - oc adm policy add-scc-to-user anyuid -z diamond
   when: '"diamond" not in diamond_sa_result.stdout'
