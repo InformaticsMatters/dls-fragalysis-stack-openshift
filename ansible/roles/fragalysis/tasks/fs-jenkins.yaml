@@ -54,3 +54,15 @@
     oc process -f {{ role_path }}/{{ t_dir }}/fs-input-pvc.yaml |
     oc create -f -
   when: '"fs-input-claim" not in input_pvc.stdout'
+
+# Create the Buildah Slave Agent
+
+- name: Check Buildah Agent ImageStream
+  shell: oc get is
+  register: agent_is
+
+- name: Create Buildah Agent ImageStream
+  shell: >
+    oc process -f {{ role_path }}/{{ t_dir }}/fs-jenkins-slave-agent-is.yaml |
+    oc create -f -
+  when: '"buildah-slave" not in agent_is.stdout'
