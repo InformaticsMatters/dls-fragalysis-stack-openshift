@@ -3,15 +3,7 @@
 - name: Move to Fragalysis (TEST) Project
   shell: oc project fragalysis-cicd
 
-# Create the Jenkins user and add suitable roles
-
-- name: Check Jenkins user exists
-  shell: oc get users
-  register: users_result
-
-- name: Create Jenkins user
-  shell: htpasswd -b /etc/origin/master/htpasswd jenkins {{ jenkins_password }}
-  when: '"jenkins" not in users_result.stdout'
+# Create the Jenkins user roles
 
 - name: Give Roles to Jenkins
   shell: "{{ item }}"
