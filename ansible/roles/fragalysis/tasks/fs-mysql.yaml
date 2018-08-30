@@ -13,7 +13,7 @@
   shell: >
     oc process -f {{ role_path }}/{{ t_dir }}/fs-mysql-pv-nfs.yaml |
     oc create -f -
-  when: '"mysql" not in mysql_pv.stdout'
+  when: '"fs-mysql-data" not in mysql_pv.stdout'
 
 # Create the MySQL PVCs
 
@@ -25,7 +25,7 @@
   shell: >
     oc process -f {{ role_path }}/{{ t_dir }}/fs-mysql-pvc.yaml |
     oc create -f -
-  when: '"mysql" not in mysql_pvc.stdout'
+  when: '"fs-mysql-data-claim" not in mysql_pvc.stdout'
 
 # Create the MySQL Deployment
 
