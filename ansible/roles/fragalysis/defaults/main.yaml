@@ -3,8 +3,8 @@
 # Default variables including secrets
 
 # Our Fragalysis template directory
-# (relative to site.yaml)
-t_dir: ../templates
+# (relative to the role_path directory)
+t_dir: ../../../templates
 
 admin_password: !vault |
   $ANSIBLE_VAULT;1.1;AES256
