@@ -10,7 +10,7 @@
   register: users_result
 
 - name: Create Jenkins user
-  shell: htpasswd -b /etc/origin/master/htpasswd jenkins {{ weyyu_password }}
+  shell: htpasswd -b /etc/origin/master/htpasswd jenkins {{ jenkins_password }}
   when: '"jenkins" not in users_result.stdout'
 
 - name: Give Roles to Jenkins
