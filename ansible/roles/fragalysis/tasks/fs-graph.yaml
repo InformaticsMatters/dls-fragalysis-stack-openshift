@@ -11,7 +11,7 @@
 
 - name: Create Graph Deployment
   shell: >
-    oc process -f {{ t_dir }}/fs-graph.yml |
+    oc process -f {{ role_path }}/{{ t_dir }}/fs-graph.yml |
     oc create -f -
   when: '"neo4j" not in neo4j_dc.stdout'
 

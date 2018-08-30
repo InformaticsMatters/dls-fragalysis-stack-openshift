@@ -11,7 +11,7 @@
 
 - name: Create MySQL PVC
   shell: >
-    oc process -f {{ t_dir }}/fs-mysql-pvc.yml |
+    oc process -f {{ role_path }}/{{ t_dir }}/fs-mysql-pvc.yml |
     oc create -f -
   when: '"mysql" not in mysql_pvc.stdout'
 
@@ -23,7 +23,7 @@
 
 - name: Create MySql Deployment
   shell: >
-    oc process -f {{ t_dir }}/fs-mysql.yml |
+    oc process -f {{ role_path }}/{{ t_dir }}/fs-mysql.yml |
     oc create -f -
   when: '"mysql" not in mysql_dc.stdout'
 
