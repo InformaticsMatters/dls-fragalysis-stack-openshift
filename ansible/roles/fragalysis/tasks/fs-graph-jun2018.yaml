@@ -10,7 +10,7 @@
   register: jun2018_pv
   when:
   - use_nfs
-  - deploy_jun2108_graph
+  - deploy_jun2018_graph
 
 - name: Create Jun2018 Graph PV
   shell: >
