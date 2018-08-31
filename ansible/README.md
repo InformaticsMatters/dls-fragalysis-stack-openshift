@@ -30,6 +30,7 @@ Before running the playbook: -
 1.  An OpenShift cluster has been installed
 1.  There is an `admin` user known to the cluster
 1.  There is a `jenkins` user known to the cluster
+1.  You have created a `vault-pass.txt` file in this directory
 
 If using NFS the following NFS volumes are required for a _full_ installation
 on the bastion `/data` directory: -
