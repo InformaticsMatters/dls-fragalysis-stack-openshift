@@ -48,7 +48,7 @@ various `pvc` templates for details.
  
 ## Creating encrypted secrets
 If you have the ansible vault password you can encrypt strings
-for the `secrets.yaml` file by running something like this: -
+for the `defauls/main.yaml` file by running something like this: -
 
     ansible-vault encrypt_string <string> \
         --name <string name> --ask-vault-pass
