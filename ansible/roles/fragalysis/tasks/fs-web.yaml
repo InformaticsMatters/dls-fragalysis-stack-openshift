@@ -3,7 +3,7 @@
 # Deploy the Web image.
 # Which consists of an image stream and deployment configuration.
 
-- name: Move to Fragalysis (TEST) Project
+- name: Move to Fragalysis (TEST) Project (Web)
   shell: oc project fragalysis-cicd
 
 - name: Check Web ImageStream

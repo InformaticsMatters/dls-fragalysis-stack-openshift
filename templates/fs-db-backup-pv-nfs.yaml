@@ -1,0 +1,57 @@
+---
+
+# The Application's CI/CD Persistent Volumes (NFS).
+#
+# This expects these volumes:
+#
+#   ${NFS_PATH}/pv-fs-db-backup
+#
+# oc process -f fs-db-backup-pv-nfs.yaml | oc create -f -
+# oc delete pv --selector template=fs-db-backup-nfs
+
+kind: Template
+apiVersion: v1
+metadata:
+  name: fs-db-backup-nfs
+  annotations:
+    description: Fragalysis Stack's Persistent Volumes (using NFS)
+    tags: fragalysis,jenkins
+labels:
+  template: fs-db-backup-nfs
+
+parameters:
+
+- name: NFS_SERVER
+  value: bastion.novalocal
+- name: NFS_PATH
+  value: /data
+
+- name: BACKUP_NAMESPACE
+  value: fragalysis-cicd
+- name: BACKUP_PV_DIR
+  value: pv-fs-mysql-data-backup
+- name: BACKUP_PV_SIZE
+  value: 100Gi
+
+objects:
+
+# --------------
+# Backup Volumes
+# --------------
+
+- kind: PersistentVolume
+  apiVersion: v1
+  metadata:
+    name: fs-db-backup
+  spec:
+    capacity:
+      storage: ${BACKUP_PV_SIZE}
+    accessModes:
+    - ReadWriteOnce
+    persistentVolumeReclaimPolicy: Retain
+    nfs:
+      server: ${NFS_SERVER}
+      path: ${NFS_PATH}/${BACKUP_PV_DIR}
+    claimRef:
+      name: fs-db-backup-claim
+      namespace: ${BACKUP_NAMESPACE}

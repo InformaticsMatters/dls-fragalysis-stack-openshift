@@ -1,6 +1,6 @@
 ---
 
-- name: Move to Fragalysis (TEST) Project
+- name: Move to Fragalysis (TEST) Project (Graph)
   shell: oc project fragalysis-cicd
 
 # Create the Graph Deployment

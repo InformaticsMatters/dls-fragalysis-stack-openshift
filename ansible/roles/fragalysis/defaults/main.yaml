@@ -3,7 +3,11 @@
 # Default variables including secrets
 
 wait_for_mysql: true
-install_jun2108_graph: false
+
+use_nfs: true
+
+deploy_jun2108_graph: false
+deploy_backup: false
 
 # Our Fragalysis template directory
 # (relative to the role_path directory)

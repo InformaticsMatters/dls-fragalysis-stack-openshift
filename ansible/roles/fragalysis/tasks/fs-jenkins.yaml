@@ -1,6 +1,6 @@
 ---
 
-- name: Move to Fragalysis (TEST) Project
+- name: Move to Fragalysis (TEST) Project (Jenkins)
   shell: oc project fragalysis-cicd
 
 # Create the Jenkins user roles
@@ -19,12 +19,15 @@
 - name: Check Jenkins PV
   shell: oc get pv
   register: jenkins_pv
+  when: use_nfs
 
 - name: Create Jenkins PV
   shell: >
     oc process -f {{ role_path }}/{{ t_dir }}/fs-jenkins-pv-nfs.yaml |
     oc create -f -
-  when: '"fs-jenkins" not in jenkins_pv.stdout'
+  when:
+  -  use_nfs
+  - '"fs-jenkins" not in jenkins_pv.stdout'
 
 # Create the Data Input PV/PVC
 # This is where the Wen abd Graph data is expected to be found.
@@ -33,7 +36,9 @@
   shell: >
     oc process -f {{ role_path }}/{{ t_dir }}/fs-input-pv-nfs.yaml |
     oc create -f -
-  when: '"fs-input" not in jenkins_pv.stdout'
+  when:
+  - use_nfs
+  - '"fs-input" not in jenkins_pv.stdout'
 
 # Create the Input PVCs
 

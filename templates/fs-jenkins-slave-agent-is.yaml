@@ -1,3 +1,5 @@
+---
+
 # An OpenShift slave image template.
 #
 # oc process -f slave.yaml | oc create -f -
@@ -11,11 +13,6 @@
 #   agent {
 #     label 'buildah-slave'
 #   }
-#
-# For more information refer to this project's README.md
-#
-# Alan Christie
-# April 2018
 
 kind: Template
 apiVersion: v1
