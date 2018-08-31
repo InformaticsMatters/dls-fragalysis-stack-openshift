@@ -46,7 +46,7 @@
 
 - name: Create Graph Deployment
   shell: >
-    oc process -f {{ role_path }}/{{ t_dir }}/fs-backup.yaml |
+    oc process -f {{ role_path }}/{{ t_dir }}/fs-db-backup.yaml |
     oc create -f -
   when:
   - deploy_backup
