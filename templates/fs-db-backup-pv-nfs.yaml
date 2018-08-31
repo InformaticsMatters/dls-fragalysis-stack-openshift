@@ -47,7 +47,7 @@ objects:
     capacity:
       storage: ${BACKUP_PV_SIZE}
     accessModes:
-    - ReadWriteOnce
+    - ReadWriteMany
     persistentVolumeReclaimPolicy: Retain
     nfs:
       server: ${NFS_SERVER}
