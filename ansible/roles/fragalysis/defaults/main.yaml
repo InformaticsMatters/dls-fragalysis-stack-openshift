@@ -6,7 +6,7 @@ wait_for_mysql: true
 
 use_nfs: true
 
-deploy_jun2108_graph: false
+deploy_jun2018_graph: false
 deploy_backup: false
 
 # Our Fragalysis template directory
