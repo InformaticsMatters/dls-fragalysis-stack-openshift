@@ -23,7 +23,7 @@ parameters:
 - name: RECOVERY_REGISTRY
   value: 'docker.io'
 - name: RECOVERY_IMAGE
-  value: 'informaticsmatters/postgresql-recovery'
+  value: 'informaticsmatters/sql-recovery'
 - name: RECOVERY_TAG
   value: 'latest'
 - name: RECOVERY_NODE_SIZE_SELECTOR
@@ -64,7 +64,7 @@ objects:
               name: recovery
               imagePullPolicy: Always
               volumeMounts:
-              - name: fs-pg-data-backup
+              - name: fs-data-backup
                 mountPath: /backup
               env:
               - name: FROM_BACKUP
@@ -74,7 +74,7 @@ objects:
               - name: PGUSER
                 value: ${RECOVERY_PGUSER}
             volumes:
-            - name: fs-pg-data-backup
+            - name: fs-data-backup
               persistentVolumeClaim:
-                claimName: fs-pg-data-backup-claim
+                claimName: fs-db-backup-claim
             restartPolicy: Never

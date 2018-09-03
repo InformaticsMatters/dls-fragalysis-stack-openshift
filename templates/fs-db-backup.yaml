@@ -133,7 +133,7 @@ objects:
             volumes:
             - name: fs-data-backup
               persistentVolumeClaim:
-                claimName: fs-data-backup-claim
+                claimName: fs-db-backup-claim
             restartPolicy: Never
 
 # The WEEKLY CronJob (at 00:50 on Sunday)
@@ -179,7 +179,7 @@ objects:
             volumes:
             - name: fs-data-backup
               persistentVolumeClaim:
-                claimName: fs-data-backup-claim
+                claimName: fs-db-backup-claim
             restartPolicy: Never
 
 # The MONTHLY CronJob (at 00:45 on the 1st of each month)
@@ -225,5 +225,5 @@ objects:
             volumes:
             - name: fs-data-backup
               persistentVolumeClaim:
-                claimName: fs-data-backup-claim
+                claimName: fs-db-backup-claim
             restartPolicy: Never
