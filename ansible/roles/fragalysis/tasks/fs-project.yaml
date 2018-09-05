@@ -13,8 +13,8 @@
 - name: Create Fraglysis (TEST) Project
   shell: >
     oc new-project fragalysis-cicd
-    --display-name='Fragalsys (TEST)'
-    --description='The Fragalysis TEST (CI/CD) Project'
+    --display-name='Fragalysis'
+    --description='The Fragalysis CI/CD Project (Development Deployment)'
   when: '"fragalysis-cicd" not in projects_result.stdout'
 
 - name: Move to Fragalysis (TEST) Project
