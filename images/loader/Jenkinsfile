@@ -1,0 +1,113 @@
+#!groovy​
+
+// The Fragalysis Stack (loader application) Builder.
+
+pipeline {
+
+  agent { label 'buildah-slave' }
+
+  environment {
+    // Registry details
+    REGISTRY_USER = 'jenkins'
+    REGISTRY = 'docker-registry.default:5000'
+    REGISTRY_PRJ = "${REGISTRY}/fragalysis-cicd"
+    STREAM_IMAGE = "${REGISTRY_PRJ}/loader-stream:latest"
+
+    // get_unbuilt_data_directory environment...
+    SOURCE_DATA_ROOT = '/fragalysis/django_data'
+    TARGET_IMAGE = 'fragalysis-cicd/loader-stream'
+    INSIST_ON_READY = 'Yes'
+    READY_FILE = 'READY'
+    HOURLY_DATA = 'Yes'
+    FORCE_BUILD = 'Yes'
+
+    // Always push the image (whether it's new or not)
+    ALWAYS_PUSH = 'No'
+
+    // Slack channel for all notifications
+    SLACK_BUILD_CHANNEL = 'dls-builds'
+    // Slack channel to be used for errors/failures
+    // (which also go to the CI/CD channel)
+    SLACK_ALERT_CHANNEL = 'dls-alerts'
+  }
+
+  stages {
+
+    stage('Inspect') {
+      steps {
+        dir('images') {
+          // - Get the registry user API token (used in the Python module)
+          // - Run the get_unbuilt_data_directory module to find the latest data
+          // - Dump the script log.
+          sh "ls ${env.SOURCE_DATA_ROOT}"
+          slackSend channel: "#${SLACK_BUILD_CHANNEL}",
+                    message: "${JOB_NAME} build ${BUILD_NUMBER} - starting..."
+          script {
+            env.REGISTRY_USER_TOKEN = sh(script: 'oc whoami -t', returnStdout: true).trim()
+            DATA_ORIGIN = sh(script: './get_unbuilt_data_directory.py', returnStdout: true).trim()
+          }
+          sh 'cat get_unbuilt_data_directory.log'
+        }
+      }
+    }
+
+    stage('Build Image') {
+      when {
+        expression { DATA_ORIGIN.length() > 0 }
+      }
+      steps {
+        dir('images/loader') {
+          slackSend channel: "#${SLACK_BUILD_CHANNEL}",
+                    message: "${JOB_NAME} build ${env.BUILD_NUMBER} - using '${DATA_ORIGIN}' data"
+          sh "cp -r ${SOURCE_DATA_ROOT}/${DATA_ORIGIN}/* media"
+          sh "buildah bud --format docker --build-arg DATA_ORIGIN=${DATA_ORIGIN} -f Dockerfile -t ${STREAM_IMAGE} ."
+        }
+
+      }
+    }
+
+    stage('Push Image') {
+      when {
+        expression { DATA_ORIGIN.length() > 0 || ALWAYS_PUSH == 'Yes' }
+      }
+      steps {
+        script {
+          TOKEN = sh(script: 'oc whoami -t', returnStdout: true).trim()
+        }
+        sh "podman login --tls-verify=false --username ${REGISTRY_USER} --password ${TOKEN} ${REGISTRY}"
+        sh "buildah push --tls-verify=false ${STREAM_IMAGE} docker://${env.STREAM_IMAGE}"
+        sh "podman logout ${REGISTRY}"
+        sh "buildah images"
+      }
+    }
+
+  }
+
+  // Post-job actions.
+  // See https://jenkins.io/doc/book/pipeline/syntax/#post
+  post {
+
+    success {
+      slackSend channel: "#${SLACK_BUILD_CHANNEL}",
+                color: 'good',
+                message: "${JOB_NAME} build ${BUILD_NUMBER} - complete"
+    }
+
+    failure {
+      slackSend channel: "#${SLACK_BUILD_CHANNEL}",
+                color: 'danger',
+                message: "${JOB_NAME} build ${env.BUILD_NUMBER} - failed (${BUILD_URL})"
+      slackSend channel: "#${SLACK_ALERT_CHANNEL}",
+                color: 'danger',
+                message: "${JOB_NAME} build ${BUILD_NUMBER} - failed (${BUILD_URL})"
+    }
+
+    fixed {
+      slackSend channel: "#${SLACK_ALERT_CHANNEL}",
+                color: 'good',
+                message: "${JOB_NAME} build - fixed"
+    }
+
+  }
+
+}
