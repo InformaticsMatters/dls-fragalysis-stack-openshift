@@ -52,7 +52,7 @@ pipeline {
             sh 'cat get_unbuilt_data_directory.log'
 
             env.CAUSE = 'DATA'
-            if (DATA_ORIGIN.length()  == 0) {
+            if (DATA_ORIGIN.length() == 0) {
               // Set an environment variable based on the build trigger.
               // This way we know if the build was upstream, a timer or user-driven.
               //
