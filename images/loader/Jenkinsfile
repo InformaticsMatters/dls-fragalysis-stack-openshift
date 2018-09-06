@@ -31,6 +31,9 @@ pipeline {
     // Slack channel to be used for errors/failures
     // (which also go to the CI/CD channel)
     SLACK_ALERT_CHANNEL = 'dls-alerts'
+
+    INFO = currentBuild.rawBuild.getCauses()
+
   }
 
   stages {
