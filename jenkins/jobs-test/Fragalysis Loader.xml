@@ -14,7 +14,7 @@
     <org.jenkinsci.plugins.workflow.job.properties.PipelineTriggersJobProperty>
       <triggers>
         <hudson.triggers.SCMTrigger>
-          <spec># Every 3 minutes
+          <spec>#Â Every 3 minutes
 H/3 * * * *</spec>
           <ignorePostCommitHooks>false</ignorePostCommitHooks>
         </hudson.triggers.SCMTrigger>
@@ -41,7 +41,7 @@ H/3 * * * *</spec>
       <configVersion>2</configVersion>
       <userRemoteConfigs>
         <hudson.plugins.git.UserRemoteConfig>
-          <url>https://github.com/xchem/fragalysis-frontend.git</url>
+          <url>https://github.com/informaticsmatters/fragalysis-loader.git</url>
         </hudson.plugins.git.UserRemoteConfig>
       </userRemoteConfigs>
       <branches>

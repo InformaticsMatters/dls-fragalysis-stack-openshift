@@ -43,12 +43,12 @@ LOGGER = logging.getLogger(os.path.basename(sys.argv[0])[:-3])
 # Check essential environment variables
 J_USER = os.environ.get('FRAG_CICD_USER')
 if not J_USER:
-    LOGGER.error('You must define the environment variable J_USER'
+    LOGGER.error('You must define the environment variable FRAG_CICD_USER'
                  ' and set it to the name of the Jenkins user.')
     sys.exit(1)
 J_TOKEN = os.environ.get('FRAG_CICD_TOKEN')
 if not J_TOKEN:
-    LOGGER.error('You must define the environment variable J_TOKEN'
+    LOGGER.error('You must define the environment variable FRAG_CICD_USER'
                  ' and set it to the Jenkins PI token.')
     sys.exit(1)
 
@@ -89,21 +89,32 @@ elif ARGS.action == 'set':
     J_DOCKER_PASS = os.environ.get('FRAG_DOCKER_PASSWORD')
     if not J_DOCKER_PASS:
         LOGGER.error('To set the configuration you must define'
-                     ' the environment variable J_DOCKER_PASS')
+                     ' the environment variable FRAG_DOCKER_PASSWORD')
         sys.exit(1)
     J_SLACK_TOKEN = os.environ.get('FRAG_SLACK_TOKEN')
     if not J_SLACK_TOKEN:
         LOGGER.error('To set the configuration you must define'
-                     ' the environment variable J_SLACK_TOKEN')
+                     ' the environment variable FRAG_SLACK_TOKEN')
+        sys.exit(1)
+    J_OC_USER = os.environ.get('FRAG_OC_USER')
+    if not J_TOKEN:
+        LOGGER.error('You must define the environment variable FRAG_OC_USER'
+                     ' and set it to the OC command-line user.')
+        sys.exit(1)
+    J_OC_USER_PASSWORD = os.environ.get('FRAG_OC_USER_PASSWORD')
+    if not J_TOKEN:
+        LOGGER.error('You must define the environment variable FRAG_OC_USER_PASSWORD'
+                     ' and set it to the OC command-line user password.')
         sys.exit(1)
 
-    # Destructive
-    # Double-check with the user...
-    print("WARNING: Setting the server value is destructive.")
-    response = input("         If you're sure you want to continue enter 'YES': ")
-    if response not in ['YES']:
-        print('Phew! That was close!')
-        sys.exit(0)
+    if not ARGS.force:
+        # Destructive
+        # Double-check with the user...
+        print("WARNING: Setting the server value is destructive.")
+        response = input("         If you're sure you want to continue enter 'YES': ")
+        if response not in ['YES']:
+            print('Phew! That was close!')
+            sys.exit(0)
 
     LOGGER.info('Writing server configuration...')
     # Set credentials
@@ -113,6 +124,12 @@ elif ARGS.action == 'set':
     JS.set_secret_text('slackJenkinsIntegrationToken',
                        J_SLACK_TOKEN,
                        "Slack channel Jenkins Integration token")
+    JS.set_secret_text('ocUser',
+                       J_OC_USER,
+                       "The OC user (for Agent-based OC commands)")
+    JS.set_secret_text('ocUserPassword',
+                       J_OC_USER_PASSWORD,
+                       "The OC user password (for Agent-based OC commands)")
     # Write Jobs from 'jobs-test' or 'jobs-prod'...
     JS.set_jobs('jobs-' + ARGS.server, force=ARGS.force)
 

@@ -8,16 +8,21 @@
       <parameters/>
     </org.jenkinsci.plugins.pipeline.modeldefinition.actions.DeclarativeJobPropertyTrackerAction>
   </actions>
-  <description></description>
+  <description>The Loader Image is the data-loader container image for the Django application. Driven by changes to the fragalysis-loader repo and changes to the most recent Django data.</description>
   <keepDependencies>false</keepDependencies>
   <properties>
     <org.jenkinsci.plugins.workflow.job.properties.PipelineTriggersJobProperty>
       <triggers>
-        <hudson.triggers.SCMTrigger>
-          <spec># Every 3 minutes
-H/3 * * * *</spec>
-          <ignorePostCommitHooks>false</ignorePostCommitHooks>
-        </hudson.triggers.SCMTrigger>
+        <jenkins.triggers.ReverseBuildTrigger>
+          <spec></spec>
+          <upstreamProjects>Fragalysis Loader</upstreamProjects>
+          <threshold>
+            <name>SUCCESS</name>
+            <ordinal>0</ordinal>
+            <color>BLUE</color>
+            <completeBuild>true</completeBuild>
+          </threshold>
+        </jenkins.triggers.ReverseBuildTrigger>
       </triggers>
     </org.jenkinsci.plugins.workflow.job.properties.PipelineTriggersJobProperty>
     <io.fabric8.jenkins.openshiftsync.BuildConfigProjectProperty plugin="openshift-sync@1.0.23">
@@ -41,7 +46,7 @@ H/3 * * * *</spec>
       <configVersion>2</configVersion>
       <userRemoteConfigs>
         <hudson.plugins.git.UserRemoteConfig>
-          <url>https://github.com/xchem/fragalysis-frontend.git</url>
+          <url>https://github.com/InformaticsMatters/dls-fragalysis-stack-openshift.git</url>
         </hudson.plugins.git.UserRemoteConfig>
       </userRemoteConfigs>
       <branches>
@@ -53,7 +58,7 @@ H/3 * * * *</spec>
       <submoduleCfg class="list"/>
       <extensions/>
     </scm>
-    <scriptPath>Jenkinsfile</scriptPath>
+    <scriptPath>images/loader/Jenkinsfile</scriptPath>
     <lightweight>true</lightweight>
   </definition>
   <triggers/>

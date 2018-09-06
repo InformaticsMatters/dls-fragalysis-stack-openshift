@@ -11,4 +11,6 @@ export FRAG_CICD_USER=jenkins-admin
 export FRAG_CICD_TOKEN=FixMe
 
 export FRAG_DOCKER_PASSWORD=FixMe
+export FRAG_OC_USER=FixMe
+export FRAG_OC_USER_PASSWORD=FixMe
 export FRAG_SLACK_TOKEN=FixMe
