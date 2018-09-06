@@ -42,7 +42,7 @@ pipeline {
           // - Get the registry user API token (used in the Python module)
           // - Run the get_unbuilt_data_directory module to find the latest data
           // - Dump the script log.
-          sh "ls ${env.SOURCE_DATA_ROOT}"
+          sh "ls ${SOURCE_DATA_ROOT}"
           slackSend channel: "#${SLACK_BUILD_CHANNEL}",
                     message: "${JOB_NAME} build ${BUILD_NUMBER} - starting..."
           script {
@@ -55,21 +55,17 @@ pipeline {
             def SCMTriggerCause = currentBuild.rawBuild.getCause(hudson.triggers.SCMTrigger$SCMTriggerCause)
             if (UpstreamCause) {
               env.CAUSE = 'UPSTREAM'
-              echo "1"
             } else if (UserCause) {
               env.CAUSE = 'USER'
-              echo "2"
             } else if (RemoteCause) {
               env.CAUSE = 'REMOTE'
-              echo "3"
             } else if (TimerTriggerCause) {
               env.CAUSE = 'TIMER'
-              echo "4"
             } else if (SCMTriggerCause) {
               env.CAUSE = 'SCM'
-              echo "5"
             }
 
+            REGISTRY_USER_TOKEN = sh(script: 'oc whoami -t', returnStdout: true).trim()
             DATA_ORIGIN = sh(script: './get_unbuilt_data_directory.py', returnStdout: true).trim()
 
           }
@@ -86,7 +82,7 @@ pipeline {
       steps {
         dir('images/loader') {
           slackSend channel: "#${SLACK_BUILD_CHANNEL}",
-                    message: "${JOB_NAME} build ${env.BUILD_NUMBER} - using '${DATA_ORIGIN}' data"
+                    message: "${JOB_NAME} build ${BUILD_NUMBER} - using '${DATA_ORIGIN}' data"
           sh "cp -r ${SOURCE_DATA_ROOT}/${DATA_ORIGIN}/* media"
           sh "buildah bud --format docker --build-arg DATA_ORIGIN=${DATA_ORIGIN} -f Dockerfile -t ${STREAM_IMAGE} ."
         }
@@ -118,7 +114,7 @@ pipeline {
           sh "oc login ${CLUSTER_URL} -u ${OC_USER} -p ${OC_USER_PASSWORD}"
           sh "oc project ${PROJECT}"
           script {
-            env.LOADER_RUNNING = sh(script: 'oc get jobs | grep fs-loader | grep Running | wc -l', returnStdout: true).trim()
+            LOADER_RUNNING = sh(script: 'oc get jobs | grep fs-loader | grep Running | wc -l', returnStdout: true).trim()
           }
           echo "RUNNING=${LOADER_RUNNING}"
         }
@@ -166,7 +162,7 @@ pipeline {
     failure {
       slackSend channel: "#${SLACK_BUILD_CHANNEL}",
                 color: 'danger',
-                message: "${JOB_NAME} build ${env.BUILD_NUMBER} - failed (${BUILD_URL})"
+                message: "${JOB_NAME} build ${BUILD_NUMBER} - failed (${BUILD_URL})"
       slackSend channel: "#${SLACK_ALERT_CHANNEL}",
                 color: 'danger',
                 message: "${JOB_NAME} build ${BUILD_NUMBER} - failed (${BUILD_URL})"
