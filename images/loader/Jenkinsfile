@@ -49,7 +49,7 @@ pipeline {
           script {
             def causes = currentBuild.rawBuild.getCauses()
             for(cause in causes) {
-              echo "CAUSE = ${cause.getShortDescription()}"
+              echo "CAUSE = ${cause.getShortDescription().toString()}"
             }
 
             env.REGISTRY_USER_TOKEN = sh(script: 'oc whoami -t', returnStdout: true).trim()
