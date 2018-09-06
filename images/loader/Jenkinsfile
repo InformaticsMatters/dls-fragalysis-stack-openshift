@@ -47,31 +47,31 @@ pipeline {
                     message: "${JOB_NAME} build ${BUILD_NUMBER} - starting..."
           script {
 
+            env.REGISTRY_USER_TOKEN = sh(script: 'oc whoami -t', returnStdout: true).trim()
+            DATA_ORIGIN = sh(script: './get_unbuilt_data_directory.py', returnStdout: true).trim()
+
             env.CAUSE = 'UNKNOWN'
             def UpstreamCause = currentBuild.rawBuild.getCause(hudson.model.Cause$UpstreamCause)
             def UserIdCause = currentBuild.rawBuild.getCause(hudson.model.Cause$UserIdCause)
             def RemoteCause = currentBuild.rawBuild.getCause(hudson.model.Cause$RemoteCause)
             def TimerTriggerCause = currentBuild.rawBuild.getCause(hudson.triggers.TimerTrigger$TimerTriggerCause)
             def SCMTriggerCause = currentBuild.rawBuild.getCause(hudson.triggers.SCMTrigger$SCMTriggerCause)
-            if (UpstreamCause) {
+            if (UpstreamCause != null) {
               env.CAUSE = 'UPSTREAM'
               echo ">>>>>>>>>>>>>> UPSTREAM"
-            } else if (UserIdCause) {
+            } else if (UserIdCause != null) {
               env.CAUSE = 'USER'
               echo ">>>>>>>>>>>>>> USER"
-            } else if (RemoteCause) {
+            } else if (RemoteCause != null) {
               env.CAUSE = 'REMOTE'
               echo ">>>>>>>>>>>>>> REMOTE"
-            } else if (TimerTriggerCause) {
+            } else if (TimerTriggerCause != null) {
               env.CAUSE = 'TIMER'
               echo ">>>>>>>>>>>>>> TIMER TRIGGER"
-            } else if (SCMTriggerCause) {
+            } else if (SCMTriggerCause != null) {
               env.CAUSE = 'SCM'
               echo ">>>>>>>>>>>>>> SCM TRIGGER"
             }
-
-            env.REGISTRY_USER_TOKEN = sh(script: 'oc whoami -t', returnStdout: true).trim()
-            DATA_ORIGIN = sh(script: './get_unbuilt_data_directory.py', returnStdout: true).trim()
 
           }
           sh 'cat get_unbuilt_data_directory.log'
