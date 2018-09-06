@@ -48,31 +48,33 @@ pipeline {
             // take a look at the image in the current registry.
             // If it's built from the latest data there's nothing to do (DATA_ORIGIN will be blank)
             env.REGISTRY_USER_TOKEN = sh(script: 'oc whoami -t', returnStdout: true).trim()
-            DATA_ORIGIN = sh(script: './get_unbuilt_data_directory.py', returnStdout: true).trim()
+            env.DATA_ORIGIN = sh(script: './get_unbuilt_data_directory.py', returnStdout: true).trim()
             sh 'cat get_unbuilt_data_directory.log'
 
-            // Set an environment variable based on the build trigger.
-            // This way we know if the build was upstream, a timer or user-driven.
-            //
-            // We must build the image is: -
-            //   It is caused by an upstream project (UpstreamCause)
-            //   DATA_ORIGIN is set (indicating a new set of data)
-            CAUSE = 'UNKNOWN'
-            def UpstreamCause = currentBuild.rawBuild.getCause(hudson.model.Cause$UpstreamCause)
-            def UserIdCause = currentBuild.rawBuild.getCause(hudson.model.Cause$UserIdCause)
-            def RemoteCause = currentBuild.rawBuild.getCause(hudson.model.Cause$RemoteCause)
-            def TimerTriggerCause = currentBuild.rawBuild.getCause(hudson.triggers.TimerTrigger$TimerTriggerCause)
-            def SCMTriggerCause = currentBuild.rawBuild.getCause(hudson.triggers.SCMTrigger$SCMTriggerCause)
-            if (UpstreamCause != null) {
-              CAUSE = 'UPSTREAM'
-            } else if (UserIdCause != null) {
-              CAUSE = 'USER'
-            } else if (RemoteCause != null) {
-              CAUSE = 'REMOTE'
-            } else if (TimerTriggerCause != null) {
-              CAUSE = 'TIMER'
-            } else if (SCMTriggerCause != null) {
-              CAUSE = 'SCM'
+            env.CAUSE = 'DATA'
+            if (DATA_ORIGIN.length()  == 0) {
+              // Set an environment variable based on the build trigger.
+              // This way we know if the build was upstream, a timer or user-driven.
+              //
+              // We must build the image is: -
+              //   It is caused by an upstream project (UpstreamCause)
+              //   DATA_ORIGIN is set (indicating a new set of data)
+              def UpstreamCause = currentBuild.rawBuild.getCause(hudson.model.Cause$UpstreamCause)
+              def UserIdCause = currentBuild.rawBuild.getCause(hudson.model.Cause$UserIdCause)
+              def RemoteCause = currentBuild.rawBuild.getCause(hudson.model.Cause$RemoteCause)
+              def TimerTriggerCause = currentBuild.rawBuild.getCause(hudson.triggers.TimerTrigger$TimerTriggerCause)
+              def SCMTriggerCause = currentBuild.rawBuild.getCause(hudson.triggers.SCMTrigger$SCMTriggerCause)
+              if (UpstreamCause != null) {
+                env.CAUSE = 'UPSTREAM'
+              } else if (UserIdCause != null) {
+                env.CAUSE = 'USER'
+              } else if (RemoteCause != null) {
+                env.CAUSE = 'REMOTE'
+              } else if (TimerTriggerCause != null) {
+                env.CAUSE = 'TIMER'
+              } else if (SCMTriggerCause != null) {
+                env.CAUSE = 'SCM'
+              }
             }
             echo "The build cause is '${CAUSE}'"
 
