@@ -45,12 +45,6 @@ pipeline {
           sh "ls ${SOURCE_DATA_ROOT}"
           script {
 
-            // take a look at the image in the current registry.
-            // If it's built from the latest data there's nothing to do (DATA_ORIGIN will be blank)
-            env.REGISTRY_USER_TOKEN = sh(script: 'oc whoami -t', returnStdout: true).trim()
-            env.DATA_ORIGIN = sh(script: './get_unbuilt_data_directory.py', returnStdout: true).trim()
-            sh 'cat get_unbuilt_data_directory.log'
-
             // Set an environment variable based on the build trigger.
             // This way we know if the build was upstream, a timer or user-driven.
             // (see https://javadoc.jenkins.io/hudson/model/Cause.html)
@@ -59,31 +53,34 @@ pipeline {
             //
             //   DATA_ORIGIN is set (indicating a new set of data)
             //   we're the result of an upstream project
-            //
-            // But, if the need to rebuild because of new data then
-            // knowing the actual build cause is superfluous
-            // (as we're going to build anyway). So only check the build cause
-            // if the data is not already a trigger...
             env.CAUSE = 'DATA'
-            if (DATA_ORIGIN.length() == 0) {
-              def UpstreamCause = currentBuild.rawBuild.getCause(hudson.model.Cause$UpstreamCause)
-              def UserIdCause = currentBuild.rawBuild.getCause(hudson.model.Cause$UserIdCause)
-              def RemoteCause = currentBuild.rawBuild.getCause(hudson.model.Cause$RemoteCause)
-              def TimerTriggerCause = currentBuild.rawBuild.getCause(hudson.triggers.TimerTrigger$TimerTriggerCause)
-              def SCMTriggerCause = currentBuild.rawBuild.getCause(hudson.triggers.SCMTrigger$SCMTriggerCause)
-              if (UpstreamCause != null) {
-                env.CAUSE = 'UPSTREAM'
-              } else if (UserIdCause != null) {
-                env.CAUSE = 'USER'
-              } else if (RemoteCause != null) {
-                env.CAUSE = 'REMOTE'
-              } else if (TimerTriggerCause != null) {
-                env.CAUSE = 'TIMER'
-              } else if (SCMTriggerCause != null) {
-                env.CAUSE = 'SCM'
-              }
+            def UpstreamCause = currentBuild.rawBuild.getCause(hudson.model.Cause$UpstreamCause)
+            def UserIdCause = currentBuild.rawBuild.getCause(hudson.model.Cause$UserIdCause)
+            def RemoteCause = currentBuild.rawBuild.getCause(hudson.model.Cause$RemoteCause)
+            def TimerTriggerCause = currentBuild.rawBuild.getCause(hudson.triggers.TimerTrigger$TimerTriggerCause)
+            def SCMTriggerCause = currentBuild.rawBuild.getCause(hudson.triggers.SCMTrigger$SCMTriggerCause)
+            if (UpstreamCause != null) {
+              env.CAUSE = 'UPSTREAM'
+              env.FORCE_BUILD = 'Yes'
+            } else if (UserIdCause != null) {
+              env.CAUSE = 'USER'
+            } else if (RemoteCause != null) {
+              env.CAUSE = 'REMOTE'
+            } else if (TimerTriggerCause != null) {
+              env.CAUSE = 'TIMER'
+            } else if (SCMTriggerCause != null) {
+              env.CAUSE = 'SCM'
             }
             echo "The build cause is '${CAUSE}'"
+            echo "FORCE_BUILD is '${FORCE_BUILD}'"
+
+            // take a look at the image in the current registry.
+            // If it's built from the latest data there's nothing to do
+            // (DATA_ORIGIN will be blank). If FORCE_BUILD is set then
+            // the latest data will be returned.
+            env.REGISTRY_USER_TOKEN = sh(script: 'oc whoami -t', returnStdout: true).trim()
+            env.DATA_ORIGIN = sh(script: './get_unbuilt_data_directory.py', returnStdout: true).trim()
+            sh 'cat get_unbuilt_data_directory.log'
 
           }
 
