@@ -101,7 +101,7 @@ pipeline {
 
     stage('Deploy Image') {
       when {
-        expression { LOADER_RUNNING == '0' }
+        expression { DATA_ORIGIN.length() > 0 && LOADER_RUNNING == '0' }
       }
       steps {
         dir('images/loader') {
@@ -114,7 +114,7 @@ pipeline {
 
     stage('Blocked Image') {
       when {
-        expression { LOADER_RUNNING != '0' }
+        expression { DATA_ORIGIN.length() > 0 && LOADER_RUNNING != '0' }
       }
       steps {
         echo "Loader is running (deployment is blocked)"
