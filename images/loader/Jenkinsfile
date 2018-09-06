@@ -51,6 +51,9 @@ pipeline {
             //
             //   DATA_ORIGIN is set (indicating a new set of data)
             //   we're the result of an upstream project or a user action
+            //
+            // Note: if FORCE_BUILD is in the environment block above
+            //       I can't seem to change its value here...
             env.CAUSE = 'DATA'
             env.FORCE_BUILD = 'No'
             def UpstreamCause = currentBuild.rawBuild.getCause(hudson.model.Cause$UpstreamCause)
