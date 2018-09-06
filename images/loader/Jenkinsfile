@@ -51,9 +51,9 @@ pipeline {
             def SCMCause = currentBuild.rawBuild.getCause(hudson.triggers.SCMTrigger$SCMTriggerCause)
             def UserCause = currentBuild.rawBuild.getCause(hudson.model.Cause$UserIdCause)
             if (SCMCause) {
-              println SCMCause.getShortDescription()
+              println "SCM"
             } else if (UserCause) {
-              println UserCause.getShortDescription()
+              println "USER"
             }
 
             env.REGISTRY_USER_TOKEN = sh(script: 'oc whoami -t', returnStdout: true).trim()
