@@ -103,8 +103,8 @@ pipeline {
       when {
         expression { LOADER_RUNNING == '0' }
       }
-      dir('images/loader') {
-        steps {
+      steps {
+        dir('images/loader') {
           sh "oc delete job --selector template=fs-loader"
           sleep 4
           sh "oc process -f fs-loader.yaml | oc create -f -"
