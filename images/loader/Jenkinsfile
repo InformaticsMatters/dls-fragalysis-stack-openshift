@@ -55,17 +55,21 @@ pipeline {
             def SCMTriggerCause = currentBuild.rawBuild.getCause(hudson.triggers.SCMTrigger$SCMTriggerCause)
             if (UpstreamCause) {
               env.CAUSE = 'UPSTREAM'
+              echo "1"
             } else if (UserCause) {
               env.CAUSE = 'USER'
+              echo "2"
             } else if (RemoteCause) {
               env.CAUSE = 'REMOTE'
+              echo "3"
             } else if (TimerTriggerCause) {
               env.CAUSE = 'TIMER'
+              echo "4"
             } else if (SCMTriggerCause) {
               env.CAUSE = 'SCM'
+              echo "5"
             }
 
-            env.REGISTRY_USER_TOKEN = sh(script: 'oc whoami -t', returnStdout: true).trim()
             DATA_ORIGIN = sh(script: './get_unbuilt_data_directory.py', returnStdout: true).trim()
 
           }
