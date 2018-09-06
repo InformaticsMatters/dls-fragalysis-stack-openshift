@@ -18,7 +18,7 @@ RUN chown -R 2000.2000 ${APP_ROOT}
 
 RUN chmod 755 ${APP_ROOT}/*.sh
 RUN chmod 755 ${APP_ROOT}/*.py
-RUN chmod 777 ${APP_ROOT}/media
+RUN chmod -R 777 ${APP_ROOT}/media
 
 WORKDIR ${APP_ROOT}
 USER 2000
