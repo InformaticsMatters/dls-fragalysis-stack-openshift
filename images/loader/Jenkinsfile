@@ -59,21 +59,25 @@ pipeline {
 
             env.CAUSE = 'UNKNOWN'
             def UpstreamCause = currentBuild.rawBuild.getCause(hudson.model.Cause$UpstreamCause)
-            echo UpstreamCause
-            def UserCause = currentBuild.rawBuild.getCause(hudson.model.Cause$UserCause)
+            def UserCause = currentBuild.rawBuild.getCause(hudson.model.Cause$UserIdCause)
             def RemoteCause = currentBuild.rawBuild.getCause(hudson.model.Cause$RemoteCause)
             def TimerTriggerCause = currentBuild.rawBuild.getCause(hudson.triggers.TimerTrigger$TimerTriggerCause)
             def SCMTriggerCause = currentBuild.rawBuild.getCause(hudson.triggers.SCMTrigger$SCMTriggerCause)
             if (UpstreamCause) {
               env.CAUSE = 'UPSTREAM'
+              echo ">>>>>>>>>>>>>> 1"
             } else if (UserCause) {
               env.CAUSE = 'USER'
+              echo ">>>>>>>>>>>>>> 2"
             } else if (RemoteCause) {
               env.CAUSE = 'REMOTE'
+              echo ">>>>>>>>>>>>>> 3"
             } else if (TimerTriggerCause) {
               env.CAUSE = 'TIMER'
+              echo ">>>>>>>>>>>>>> 4"
             } else if (SCMTriggerCause) {
               env.CAUSE = 'SCM'
+              echo ">>>>>>>>>>>>>> 5"
             }
 
             REGISTRY_USER_TOKEN = sh(script: 'oc whoami -t', returnStdout: true).trim()
