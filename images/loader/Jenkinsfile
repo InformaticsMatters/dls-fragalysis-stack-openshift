@@ -80,7 +80,7 @@ pipeline {
               echo ">>>>>>>>>>>>>> 5"
             }
 
-            REGISTRY_USER_TOKEN = sh(script: 'oc whoami -t', returnStdout: true).trim()
+            env.REGISTRY_USER_TOKEN = sh(script: 'oc whoami -t', returnStdout: true).trim()
             DATA_ORIGIN = sh(script: './get_unbuilt_data_directory.py', returnStdout: true).trim()
 
           }
