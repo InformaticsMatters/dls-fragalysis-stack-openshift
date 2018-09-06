@@ -106,8 +106,9 @@ pipeline {
         expression { LOADER_RUNNING == '0' }
       }
       steps {
-        sh "oc oc process -f fs-loader.yaml | oc create -f -"
         sh "oc delete job --selector template=fs-loader"
+        sleep 4
+        sh "oc process -f fs-loader.yaml | oc create -f -"
       }
     }
 
@@ -116,7 +117,7 @@ pipeline {
         expression { LOADER_RUNNING != '0' }
       }
       steps {
-        echo "Loader is RUNNING (deployment is blocked)"
+        echo "Loader is running (deployment is blocked)"
       }
       // Everything's OK but we were blocked from deploying it
       // as it appears a prior Job instance is running.
