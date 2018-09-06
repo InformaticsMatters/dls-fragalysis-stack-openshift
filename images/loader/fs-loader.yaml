@@ -13,13 +13,18 @@ apiVersion: v1
 metadata:
   name: fs-loader
 labels:
-  template: fs-laoder
+  template: fs-loader
 
 parameters:
 
 - name: APP_NAMESPACE
   value: fragalysis-cicd
 
+- name: BUSYBOX_IMAGE
+  value: busybox:1.28.0
+
+- name: LOADER_IMAGE
+  value: loader-stream
 - name: LOADER_IMAGE_TAG
   value: latest
 
@@ -39,7 +44,21 @@ objects:
       metadata:
         name: fs-loader
       spec:
+        # Init Containers
+        initContainers:
+        - image: ${BUSYBOX_IMAGE}
+          name: wait-for-db
+          command:
+          - 'sh'
+          - '-c'
+          - 'until nslookup mysql; do echo waiting for db; sleep 1; done;'
+
         containers:
-        - image: xchem/loader:${LOADER_IMAGE_TAG}
+        - image: docker-registry.default.svc:5000/${APP_NAMESPACE}/${LOADER_IMAGE}:${LOADER_IMAGE_TAG}
           name: fs-loader
+          command:
+          - 'sh'
+          - '-c'
+          - './run_loader.sh'
+
         restartPolicy: OnFailure

@@ -1,5 +1,9 @@
 FROM xchem/fragalysis-loader:latest
 
+ENV APP_ROOT /code
+ENV APP_USER_ID 2000
+RUN useradd -c 'Container user' --user-group --uid ${APP_USER_ID} --home-dir ${APP_ROOT} -s /bin/bash frag
+
 # Label the image with the origin of the pre-laoded data.
 # Passed to the build process using "--build-arg DATA_ORIGIN=<value>".
 ARG DATA_ORIGIN
@@ -8,3 +12,11 @@ LABEL data.origin=${DATA_ORIGIN}
 # Copy source data in.
 # This is the content of the media directory.
 COPY media/ /code/media/
+
+RUN chmod 755 ${APP_ROOT}/*.sh
+RUN chmod 755 ${APP_ROOT}/*.py
+
+RUN chown -R 2000 ${APP_ROOT}
+
+WORKDIR ${APP_ROOT}
+CMD ["./run_loader.sh"]
