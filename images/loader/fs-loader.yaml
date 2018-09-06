@@ -22,11 +22,10 @@ parameters:
 
 - name: LOADER_NAMESPACE
   value: fragalysis-cicd
-
-- name: LOADER_REGISTRY:
+- name: LOADER_REGISTRY
   value: docker-registry.default.svc:5000
 - name: LOADER_IMAGE
-  value: loader-stream
+  value: fragalysis-cicd/loader-stream
 - name: LOADER_IMAGE_TAG
   value: latest
 
@@ -46,7 +45,6 @@ objects:
       metadata:
         name: fs-loader
       spec:
-
         # Init Containers
         initContainers:
         - image: ${BUSYBOX_IMAGE}
@@ -57,6 +55,42 @@ objects:
           - 'until nslookup mysql; do echo waiting for db; sleep 1; done;'
 
         containers:
-        - image: ${LOADER_REGISTRY}/${LOADER_NAMESPACE}/${LOADER_IMAGE}:${LOADER_IMAGE_TAG}
+        - image: ${LOADER_REGISTRY}/${LOADER_IMAGE}:${LOADER_IMAGE_TAG}
           name: fs-loader
+          command:
+          - 'sh'
+          - '-c'
+          - './run_loader.sh'
+          env:
+          - name: MYSQL_HOST
+            valueFrom:
+              secretKeyRef:
+                name: fs-mysql-secrets
+                key: database-host
+          - name: MYSQL_PORT
+            valueFrom:
+              secretKeyRef:
+                name: fs-mysql-secrets
+                key: database-port
+          - name: MYSQL_USER
+            valueFrom:
+              secretKeyRef:
+                name: fs-mysql-secrets
+                key: database-user
+          - name: MYSQL_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: fs-mysql-secrets
+                key: database-password
+          - name: MYSQL_DATABASE
+            valueFrom:
+              secretKeyRef:
+                name: fs-mysql-secrets
+                key: database
+          - name: MYSQL_ROOT_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: fs-mysql-secrets
+                key: database-root-password
+
         restartPolicy: OnFailure

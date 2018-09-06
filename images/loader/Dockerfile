@@ -13,10 +13,12 @@ LABEL data.origin=${DATA_ORIGIN}
 # This is the content of the media directory.
 COPY media/ /code/media/
 
+# Change ownership of applicaiton root
+RUN chown -R 2000 ${APP_ROOT}
+
 RUN chmod 755 ${APP_ROOT}/*.sh
 RUN chmod 755 ${APP_ROOT}/*.py
 
-RUN chown -R 2000 ${APP_ROOT}
-
 WORKDIR ${APP_ROOT}
+USER 2000
 CMD ["./run_loader.sh"]
