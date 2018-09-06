@@ -23,4 +23,3 @@ RUN chown -R 2000.2000 ${APP_ROOT} && \
 
 WORKDIR ${APP_ROOT}
 USER 2000
-CMD ["./run_loader.sh"]
