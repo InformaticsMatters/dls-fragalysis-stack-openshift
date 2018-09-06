@@ -23,6 +23,8 @@ parameters:
 - name: LOADER_IMAGE_TAG
   value: latest
 
+objects:
+
 # -----------------------------------------------------------------------------
 # Fragalysis Loader (Job)
 # -----------------------------------------------------------------------------
@@ -35,8 +37,7 @@ parameters:
   spec:
     template:
       metadata:
-        labels:
-          name: fs-loader
+        name: fs-loader
       spec:
         containers:
         - image: xchem/loader:${LOADER_IMAGE_TAG}
