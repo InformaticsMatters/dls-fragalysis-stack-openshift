@@ -57,6 +57,10 @@ objects:
         containers:
         - image: ${LOADER_REGISTRY}/${LOADER_IMAGE}:${LOADER_IMAGE_TAG}
           name: fs-loader
+          command:
+          - 'sh'
+          - '-c'
+          - './run_loader.sh'
           env:
           - name: MYSQL_HOST
             valueFrom:
