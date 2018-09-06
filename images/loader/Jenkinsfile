@@ -17,7 +17,7 @@ pipeline {
     // get_unbuilt_data_directory environment...
 
     SOURCE_DATA_ROOT = '/fragalysis/django_data'
-    TARGET_IMAGE = "${PROJECT}/loader-stream'
+    TARGET_IMAGE = "${PROJECT}/loader-stream"
     INSIST_ON_READY = 'Yes'
     READY_FILE = 'READY'
     HOURLY_DATA = 'Yes'
