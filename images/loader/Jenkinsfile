@@ -71,13 +71,54 @@ pipeline {
         expression { DATA_ORIGIN.length() > 0 || ALWAYS_PUSH == 'Yes' }
       }
       steps {
-        script {
-          TOKEN = sh(script: 'oc whoami -t', returnStdout: true).trim()
+        dir('images/loader') {
+          withCredentials([text(credentialsId: 'clusterUrl', variable: 'CLUSTER_URL'),
+                           text(credentialsId: 'ocUser', variable: 'OC_USER'),
+                           text(credentialsId: 'ocUserPassword', variable: 'OC_USER_PASSWORD')]) {
+
+            script {
+              TOKEN = sh(script: 'oc whoami -t', returnStdout: true).trim()
+            }
+            sh "podman login --tls-verify=false --username ${REGISTRY_USER} --password ${TOKEN} ${REGISTRY}"
+            sh "buildah push --tls-verify=false ${STREAM_IMAGE} docker://${STREAM_IMAGE}"
+            sh "podman logout ${REGISTRY}"
+            sh "buildah images"
+
+            // With a new image pushed we need to launch the Loader 'Job'.
+            // But we protect ourselves from doing this if a prior
+            // instance of the 'Job' is running (which would be unusual).
+            // To successfully launch the Job we first delete prior instances.
+            // All of this takes place in the 'deploy.sh'
+            sh "oc login ${CLUSTER_URL} -u ${OC_USER} -p ${OC_USER_PASSWORD}"
+            script {
+              RUNNING = sh(script: 'oc get jobs | grep fs-loader | grep Running | wc -l', returnStdout: true).trim()
+            }
+            sh "echo RUNNING=${RUNNING}"
+
+            stage('Deploy Image') {
+              when {
+                expression { RUNNING == '0' }
+              }
+              steps {
+                sh "oc oc process -f fs-loader.yaml | oc create -f -"
+                sh "oc delete job --selector template=fs-loader"
+              }
+            }
+
+            stage('Blocked Image') {
+              when {
+                expression { RUNNING != '0' }
+              }
+              steps {
+                // Everything's OK but we were blocked from deploying it
+                // as it appears a prior Job instance is running.
+                // Here we just set the build status to UNSTABLE.
+                currentBuild.result = 'UNSTABLE'
+              }
+            }
+
+          }
         }
-        sh "podman login --tls-verify=false --username ${REGISTRY_USER} --password ${TOKEN} ${REGISTRY}"
-        sh "buildah push --tls-verify=false ${STREAM_IMAGE} docker://${env.STREAM_IMAGE}"
-        sh "podman logout ${REGISTRY}"
-        sh "buildah images"
       }
     }
 
@@ -100,6 +141,12 @@ pipeline {
       slackSend channel: "#${SLACK_ALERT_CHANNEL}",
                 color: 'danger',
                 message: "${JOB_NAME} build ${BUILD_NUMBER} - failed (${BUILD_URL})"
+    }
+
+    unstable {
+      slackSend channel: "#${SLACK_BUILD_CHANNEL}",
+                color: 'warning',
+                message: "${JOB_NAME} build ${BUILD_NUMBER} - complete (unstable)"
     }
 
     fixed {

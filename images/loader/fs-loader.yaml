@@ -1,0 +1,46 @@
+---
+
+# The Fragalysis Stack Loader Job Template.
+#
+# This us used by the Jenkins Ci/CD framework to delet and launch
+# loader Jobs.
+#
+# oc process -f fs-loader.yaml | oc create -f -
+# oc delete job --selector template=fs-loader
+
+kind: Template
+apiVersion: v1
+metadata:
+  name: fs-loader
+labels:
+  template: fs-laoder
+
+parameters:
+
+- name: APP_NAMESPACE
+  value: squonk
+
+- name: LOADER_IMAGE_TAG
+  value: latest
+
+# -----------------------------------------------------------------------------
+# Fragalysis Loader (Job)
+# -----------------------------------------------------------------------------
+
+- kind: Job
+  apiVersion: batch/v1
+  metadata:
+    name: fs-loader
+    namespace: ${APP_NAMESPACE}
+  spec:
+    replicas: 1
+    selector:
+      name: fs-loader
+    template:
+      metadata:
+        labels:
+          name: fs-loader
+      spec:
+        containers:
+        - image: xchem/loader:${LOADER_IMAGE_TAG}
+          name: fs-loader
