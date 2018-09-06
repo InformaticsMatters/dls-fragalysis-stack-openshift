@@ -17,12 +17,14 @@ labels:
 
 parameters:
 
-- name: APP_NAMESPACE
-  value: fragalysis-cicd
-
 - name: BUSYBOX_IMAGE
   value: busybox:1.28.0
 
+- name: LOADER_NAMESPACE
+  value: fragalysis-cicd
+
+- name: LOADER_REGISTRY:
+  value: docker-registry.default.svc:5000
 - name: LOADER_IMAGE
   value: loader-stream
 - name: LOADER_IMAGE_TAG
@@ -38,7 +40,7 @@ objects:
   apiVersion: batch/v1
   metadata:
     name: fs-loader
-    namespace: ${APP_NAMESPACE}
+    namespace: ${LOADER_NAMESPACE}
   spec:
     template:
       metadata:
@@ -55,6 +57,6 @@ objects:
           - 'until nslookup mysql; do echo waiting for db; sleep 1; done;'
 
         containers:
-        - image: docker-registry.default.svc:5000/${APP_NAMESPACE}/${LOADER_IMAGE}:${LOADER_IMAGE_TAG}
+        - image: ${LOADER_REGISTRY}/${LOADER_NAMESPACE}/${LOADER_IMAGE}:${LOADER_IMAGE_TAG}
           name: fs-loader
         restartPolicy: OnFailure
