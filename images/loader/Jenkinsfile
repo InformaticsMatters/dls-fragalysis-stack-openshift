@@ -6,6 +6,8 @@ pipeline {
 
   agent { label 'buildah-slave' }
 
+  def causes = currentBuild.rawBuild.getCauses()
+
   environment {
     // Registry details
     PROJECT = 'fragalysis-cicd'
@@ -31,8 +33,6 @@ pipeline {
     // Slack channel to be used for errors/failures
     // (which also go to the CI/CD channel)
     SLACK_ALERT_CHANNEL = 'dls-alerts'
-
-    def causes = currentBuild.rawBuild.getCauses()
 
   }
 
