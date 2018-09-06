@@ -47,13 +47,18 @@ pipeline {
           slackSend channel: "#${SLACK_BUILD_CHANNEL}",
                     message: "${JOB_NAME} build ${BUILD_NUMBER} - starting..."
           script {
-            def causes = currentBuild.rawBuild.getCauses()
-            for(cause in causes) {
-              echo "CAUSE = ${cause.getShortDescription().toString()}"
+
+            def SCMCause = currentBuild.rawBuild.getCause(hudson.triggers.SCMTrigger$SCMTriggerCause)
+            def UserCause = currentBuild.rawBuild.getCause(hudson.model.Cause$UserIdCause)
+            if (SCMCause) {
+              println SCMCause.getShortDescription()
+            } else if (UserCause) {
+              println UserCause.getShortDescription()
             }
 
             env.REGISTRY_USER_TOKEN = sh(script: 'oc whoami -t', returnStdout: true).trim()
             DATA_ORIGIN = sh(script: './get_unbuilt_data_directory.py', returnStdout: true).trim()
+
           }
           sh 'cat get_unbuilt_data_directory.log'
         }
