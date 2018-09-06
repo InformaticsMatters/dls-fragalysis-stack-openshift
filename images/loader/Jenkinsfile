@@ -32,7 +32,10 @@ pipeline {
     // (which also go to the CI/CD channel)
     SLACK_ALERT_CHANNEL = 'dls-alerts'
 
-    INFO = currentBuild.rawBuild.getCauses()
+    def causes = currentBuild.rawBuild.getCauses()
+    for(cause in causes) {
+      echo "CAUSE ${cause.properties.shortDescription}"
+    }
 
   }
 
