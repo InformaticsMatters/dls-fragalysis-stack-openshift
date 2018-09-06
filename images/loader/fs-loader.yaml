@@ -18,7 +18,7 @@ labels:
 parameters:
 
 - name: APP_NAMESPACE
-  value: squonk
+  value: fragalysis-cicd
 
 - name: LOADER_IMAGE_TAG
   value: latest
@@ -33,9 +33,6 @@ parameters:
     name: fs-loader
     namespace: ${APP_NAMESPACE}
   spec:
-    replicas: 1
-    selector:
-      name: fs-loader
     template:
       metadata:
         labels:
@@ -44,3 +41,4 @@ parameters:
         containers:
         - image: xchem/loader:${LOADER_IMAGE_TAG}
           name: fs-loader
+        restartPolicy: OnFailure
