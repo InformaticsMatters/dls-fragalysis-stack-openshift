@@ -45,6 +45,8 @@ pipeline {
           sh "ls ${SOURCE_DATA_ROOT}"
           script {
 
+            // take a look at the image in the current registry.
+            // If it's built from the latest data there's nothing to do (DATA_ORIGIN will be blank)
             env.REGISTRY_USER_TOKEN = sh(script: 'oc whoami -t', returnStdout: true).trim()
             DATA_ORIGIN = sh(script: './get_unbuilt_data_directory.py', returnStdout: true).trim()
             sh 'cat get_unbuilt_data_directory.log'
