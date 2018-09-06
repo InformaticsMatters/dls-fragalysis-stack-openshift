@@ -33,9 +33,6 @@ pipeline {
     SLACK_ALERT_CHANNEL = 'dls-alerts'
 
     def causes = currentBuild.rawBuild.getCauses()
-    for(cause in causes) {
-      echo "CAUSE ${cause.properties.shortDescription}"
-    }
 
   }
 
