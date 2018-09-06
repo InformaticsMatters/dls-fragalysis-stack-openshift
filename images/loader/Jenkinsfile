@@ -71,17 +71,20 @@ pipeline {
             } else if (SCMTriggerCause != null) {
               env.CAUSE = 'SCM'
             }
-            echo "The build cause is '${CAUSE}'"
-            echo "FORCE_BUILD is '${env.FORCE_BUILD}'"
+            echo "The build cause is '${env.CAUSE}'"
 
           }
 
+          // For some reason I have to separate these script
+          // instructions from the previous block to avoid the exception...
+          // java.io.NotSerializableException: hudson.triggers.TimerTrigger$TimerTriggerCause
           script {
             // take a look at the image in the current registry.
             // If it's built from the latest data there's nothing to do
             // (DATA_ORIGIN will be blank). If FORCE_BUILD is set then
             // the latest data will be returned.
             env.REGISTRY_USER_TOKEN = sh(script: 'oc whoami -t', returnStdout: true).trim()
+            echo "FORCE_BUILD is '${env.FORCE_BUILD}'"
             env.DATA_ORIGIN = sh(script: './get_unbuilt_data_directory.py', returnStdout: true).trim()
             sh 'cat get_unbuilt_data_directory.log'
           }
