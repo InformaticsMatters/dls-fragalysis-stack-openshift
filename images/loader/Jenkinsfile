@@ -90,7 +90,7 @@ pipeline {
 
     stage('Build Image') {
       when {
-        expression { DATA_ORIGIN.length() > 0 || CAUSE == 'UPSTREAM' }
+        expression { DATA_ORIGIN.length() > 0 }
       }
       steps {
         dir('images/loader') {
@@ -107,7 +107,7 @@ pipeline {
 
     stage('Push Image') {
       when {
-        expression { DATA_ORIGIN.length() > 0 || ALWAYS_PUSH == 'Yes' || CAUSE == 'UPSTREAM' }
+        expression { DATA_ORIGIN.length() > 0 || ALWAYS_PUSH == 'Yes' }
       }
       steps {
         withCredentials([string(credentialsId: 'clusterUrl', variable: 'CLUSTER_URL'),
@@ -138,7 +138,7 @@ pipeline {
 
     stage('Deploy Image') {
       when {
-        expression { (DATA_ORIGIN.length() > 0 || CAUSE == 'UPSTREAM') && LOADER_RUNNING == '0'}
+        expression { DATA_ORIGIN.length() > 0 && LOADER_RUNNING == '0'}
       }
       steps {
         dir('images/loader') {
@@ -155,7 +155,7 @@ pipeline {
 
     stage('Blocked Image') {
       when {
-        expression { (DATA_ORIGIN.length() > 0 || CAUSE == 'UPSTREAM') && LOADER_RUNNING != '0' }
+        expression { DATA_ORIGIN.length() > 0 && LOADER_RUNNING != '0' }
       }
       steps {
         echo "Loader is running (deployment is blocked)"
