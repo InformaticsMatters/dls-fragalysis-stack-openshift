@@ -51,24 +51,28 @@ pipeline {
             DATA_ORIGIN = sh(script: './get_unbuilt_data_directory.py', returnStdout: true).trim()
             sh 'cat get_unbuilt_data_directory.log'
 
-            CAUSE = 'UNKNOWN'
+            env.CAUSE = 'UNKNOWN'
             def UpstreamCause = currentBuild.rawBuild.getCause(hudson.model.Cause$UpstreamCause)
             def UserIdCause = currentBuild.rawBuild.getCause(hudson.model.Cause$UserIdCause)
             def RemoteCause = currentBuild.rawBuild.getCause(hudson.model.Cause$RemoteCause)
             def TimerTriggerCause = currentBuild.rawBuild.getCause(hudson.triggers.TimerTrigger$TimerTriggerCause)
             def SCMTriggerCause = currentBuild.rawBuild.getCause(hudson.triggers.SCMTrigger$SCMTriggerCause)
             if (UpstreamCause != null) {
-              CAUSE = 'UPSTREAM'
+              env.CAUSE = 'UPSTREAM'
+              echo ">>>>>>>>>>>>>> UPSTREAM"
             } else if (UserIdCause != null) {
-              CAUSE = 'USER'
+              env.CAUSE = 'USER'
+              echo ">>>>>>>>>>>>>> USER"
             } else if (RemoteCause != null) {
-              CAUSE = 'REMOTE'
+              env.CAUSE = 'REMOTE'
+              echo ">>>>>>>>>>>>>> REMOTE"
             } else if (TimerTriggerCause != null) {
-              CAUSE = 'TIMER'
+              env.CAUSE = 'TIMER'
+              echo ">>>>>>>>>>>>>> TIMER TRIGGER"
             } else if (SCMTriggerCause != null) {
-              CAUSE = 'SCM'
+              env.CAUSE = 'SCM'
+              echo ">>>>>>>>>>>>>> SCM TRIGGER"
             }
-            sh "echo Build is caused by '${CAUSE}'"
 
           }
 
