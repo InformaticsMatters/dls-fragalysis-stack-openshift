@@ -51,14 +51,21 @@ pipeline {
             env.DATA_ORIGIN = sh(script: './get_unbuilt_data_directory.py', returnStdout: true).trim()
             sh 'cat get_unbuilt_data_directory.log'
 
+            // Set an environment variable based on the build trigger.
+            // This way we know if the build was upstream, a timer or user-driven.
+            // (see https://javadoc.jenkins.io/hudson/model/Cause.html)
+            //
+            // We must build the image if: -
+            //
+            //   DATA_ORIGIN is set (indicating a new set of data)
+            //   we're the result of an upstream project
+            //
+            // But, if the need to rebuild because of new data then
+            // knowing the actual build cause is superfluous
+            // (as we're going to build anyway). So only check the build cause
+            // if the data is not already a trigger...
             env.CAUSE = 'DATA'
             if (DATA_ORIGIN.length() == 0) {
-              // Set an environment variable based on the build trigger.
-              // This way we know if the build was upstream, a timer or user-driven.
-              //
-              // We must build the image is: -
-              //   It is caused by an upstream project (UpstreamCause)
-              //   DATA_ORIGIN is set (indicating a new set of data)
               def UpstreamCause = currentBuild.rawBuild.getCause(hudson.model.Cause$UpstreamCause)
               def UserIdCause = currentBuild.rawBuild.getCause(hudson.model.Cause$UserIdCause)
               def RemoteCause = currentBuild.rawBuild.getCause(hudson.model.Cause$RemoteCause)
