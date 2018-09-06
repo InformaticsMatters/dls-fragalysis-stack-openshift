@@ -51,28 +51,29 @@ pipeline {
             DATA_ORIGIN = sh(script: './get_unbuilt_data_directory.py', returnStdout: true).trim()
             sh 'cat get_unbuilt_data_directory.log'
 
-            env.CAUSE = 'UNKNOWN'
+            CAUSE = 'UNKNOWN'
             def UpstreamCause = currentBuild.rawBuild.getCause(hudson.model.Cause$UpstreamCause)
             def UserIdCause = currentBuild.rawBuild.getCause(hudson.model.Cause$UserIdCause)
             def RemoteCause = currentBuild.rawBuild.getCause(hudson.model.Cause$RemoteCause)
             def TimerTriggerCause = currentBuild.rawBuild.getCause(hudson.triggers.TimerTrigger$TimerTriggerCause)
             def SCMTriggerCause = currentBuild.rawBuild.getCause(hudson.triggers.SCMTrigger$SCMTriggerCause)
             if (UpstreamCause != null) {
-              env.CAUSE = 'UPSTREAM'
-              echo ">>>>>>>>>>>>>> UPSTREAM"
+              CAUSE = 'UPSTREAM'
+//              echo ">>>>>>>>>>>>>> UPSTREAM"
             } else if (UserIdCause != null) {
-              env.CAUSE = 'USER'
-              echo ">>>>>>>>>>>>>> USER"
+              CAUSE = 'USER'
+//              echo ">>>>>>>>>>>>>> USER"
             } else if (RemoteCause != null) {
-              env.CAUSE = 'REMOTE'
-              echo ">>>>>>>>>>>>>> REMOTE"
+              CAUSE = 'REMOTE'
+//              echo ">>>>>>>>>>>>>> REMOTE"
             } else if (TimerTriggerCause != null) {
-              env.CAUSE = 'TIMER'
-              echo ">>>>>>>>>>>>>> TIMER TRIGGER"
+              CAUSE = 'TIMER'
+//              echo ">>>>>>>>>>>>>> TIMER TRIGGER"
             } else if (SCMTriggerCause != null) {
-              env.CAUSE = 'SCM'
-              echo ">>>>>>>>>>>>>> SCM TRIGGER"
+              CAUSE = 'SCM'
+//              echo ">>>>>>>>>>>>>> SCM TRIGGER"
             }
+            echo "The build cause is '${CAUSE}'"
 
           }
 
@@ -82,7 +83,7 @@ pipeline {
 
     stage('Build Image') {
       when {
-        expression { DATA_ORIGIN.length() > 0 }
+        expression { DATA_ORIGIN.length() > 0 || CAUSE == 'UPSTREAM' }
       }
       steps {
         dir('images/loader') {
@@ -97,7 +98,7 @@ pipeline {
 
     stage('Push Image') {
       when {
-        expression { DATA_ORIGIN.length() > 0 || ALWAYS_PUSH == 'Yes' }
+        expression { DATA_ORIGIN.length() > 0 || ALWAYS_PUSH == 'Yes' || CAUSE == 'UPSTREAM' }
       }
       steps {
         withCredentials([string(credentialsId: 'clusterUrl', variable: 'CLUSTER_URL'),
@@ -128,7 +129,7 @@ pipeline {
 
     stage('Deploy Image') {
       when {
-        expression { DATA_ORIGIN.length() > 0 && LOADER_RUNNING == '0' }
+        expression { (DATA_ORIGIN.length() > 0 || CAUSE == 'UPSTREAM') && LOADER_RUNNING == '0'}
       }
       steps {
         dir('images/loader') {
@@ -141,7 +142,7 @@ pipeline {
 
     stage('Blocked Image') {
       when {
-        expression { DATA_ORIGIN.length() > 0 && LOADER_RUNNING != '0' }
+        expression { (DATA_ORIGIN.length() > 0 || CAUSE == 'UPSTREAM') && LOADER_RUNNING != '0' }
       }
       steps {
         echo "Loader is running (deployment is blocked)"
