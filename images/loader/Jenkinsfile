@@ -8,14 +8,16 @@ pipeline {
 
   environment {
     // Registry details
+    PROJECT = 'fragalysis-cicd'
     REGISTRY_USER = 'jenkins'
     REGISTRY = 'docker-registry.default:5000'
-    REGISTRY_PRJ = "${REGISTRY}/fragalysis-cicd"
+    REGISTRY_PRJ = "${REGISTRY}/${PROJECT}"
     STREAM_IMAGE = "${REGISTRY_PRJ}/loader-stream:latest"
 
     // get_unbuilt_data_directory environment...
+
     SOURCE_DATA_ROOT = '/fragalysis/django_data'
-    TARGET_IMAGE = 'fragalysis-cicd/loader-stream'
+    TARGET_IMAGE = "${PROJECT}/loader-stream'
     INSIST_ON_READY = 'Yes'
     READY_FILE = 'READY'
     HOURLY_DATA = 'Yes'
@@ -89,10 +91,11 @@ pipeline {
             // To successfully launch the Job we first delete prior instances.
             // All of this takes place in the 'deploy.sh'
             sh "oc login ${CLUSTER_URL} -u ${OC_USER} -p ${OC_USER_PASSWORD}"
+            sh "oc project ${PROJECT}"
             script {
               env.LOADER_RUNNING = sh(script: 'oc get jobs | grep fs-loader | grep Running | wc -l', returnStdout: true).trim()
             }
-            echo "RUNNING=${RUNNING}"
+            echo "RUNNING=${LOADER_RUNNING}"
           }
         }
       }
