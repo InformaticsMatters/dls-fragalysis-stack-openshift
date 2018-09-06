@@ -63,3 +63,11 @@
     oc process -f {{ role_path }}/{{ t_dir }}/fs-jenkins-slave-agent-is.yaml |
     oc create -f -
   when: '"buildah-slave" not in agent_is.stdout'
+
+# Configure Jenkins?
+# i.e. set secrets ctc.
+
+- name: Configure Jenkins Jobs/Secrets
+  shell: >
+    {{ role_path }}/../../../jenkins/configure-cicd.py set test --force
+  when: configure_jenkins

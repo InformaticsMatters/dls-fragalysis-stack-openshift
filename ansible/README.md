@@ -4,23 +4,17 @@ contains the password used to create the vault passwords used in this project.
     
 Run the playbook with the command: -
 
-    ansible-playbook -i localhost, \
-        --vault-password-file vault-pass.txt \
-        site.yaml
+    ansible-playbook site.yaml  --vault-password-file vault-pass.txt
 
 And, to also install the backup process...
 
-    ansible-playbook -i localhost, \
-        --extra-vars "deploy_backup=true" \
-        --vault-password-file vault-pass.txt \
-        site.yaml
+    ansible-playbook site.yaml --vault-password-file vault-pass.txt \
+        --extra-vars "deploy_backup=true"
 
 And, to also install the Jun2018 Graph database...
 
-    ansible-playbook -i localhost, \
-        --extra-vars "deploy_jun2018_graph=true" \
-        --vault-password-file vault-pass.txt \
-        site.yaml
+    ansible-playbook site.yaml --vault-password-file vault-pass.txt \
+        --extra-vars "deploy_jun2018_graph=true"
 
 ## Prerequisites
 Before running the playbook: -
