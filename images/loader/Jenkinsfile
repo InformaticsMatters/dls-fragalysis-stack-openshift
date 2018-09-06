@@ -21,7 +21,6 @@ pipeline {
     INSIST_ON_READY = 'Yes'
     READY_FILE = 'READY'
     HOURLY_DATA = 'Yes'
-    FORCE_BUILD = 'No'
 
     // Always push the image (whether it's new or not)
     ALWAYS_PUSH = 'No'
@@ -54,6 +53,7 @@ pipeline {
             //   DATA_ORIGIN is set (indicating a new set of data)
             //   we're the result of an upstream project
             env.CAUSE = 'DATA'
+            env.FORCE_BUILD = 'No'
             def UpstreamCause = currentBuild.rawBuild.getCause(hudson.model.Cause$UpstreamCause)
             def UserIdCause = currentBuild.rawBuild.getCause(hudson.model.Cause$UserIdCause)
             def RemoteCause = currentBuild.rawBuild.getCause(hudson.model.Cause$RemoteCause)
@@ -64,6 +64,7 @@ pipeline {
               env.FORCE_BUILD = 'Yes'
             } else if (UserIdCause != null) {
               env.CAUSE = 'USER'
+              env.FORCE_BUILD = 'Yes'
             } else if (RemoteCause != null) {
               env.CAUSE = 'REMOTE'
             } else if (TimerTriggerCause != null) {
