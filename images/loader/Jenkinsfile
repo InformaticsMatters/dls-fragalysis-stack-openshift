@@ -43,8 +43,6 @@ pipeline {
           // - Run the get_unbuilt_data_directory module to find the latest data
           // - Dump the script log.
           sh "ls ${SOURCE_DATA_ROOT}"
-          slackSend channel: "#${SLACK_BUILD_CHANNEL}",
-                    message: "${JOB_NAME} build ${BUILD_NUMBER} - starting..."
           script {
 
             env.REGISTRY_USER_TOKEN = sh(script: 'oc whoami -t', returnStdout: true).trim()
@@ -88,6 +86,8 @@ pipeline {
       }
       steps {
         dir('images/loader') {
+          slackSend channel: "#${SLACK_BUILD_CHANNEL}",
+                    message: "${JOB_NAME} build ${BUILD_NUMBER} - starting"
           slackSend channel: "#${SLACK_BUILD_CHANNEL}",
                     message: "${JOB_NAME} build ${BUILD_NUMBER} - using '${DATA_ORIGIN}' data"
           sh "cp -r ${SOURCE_DATA_ROOT}/${DATA_ORIGIN}/* media"
@@ -137,6 +137,10 @@ pipeline {
           sh "oc delete job --selector template=fs-loader"
           sleep 4
           sh "oc process -f fs-loader.yaml | oc create -f -"
+
+          slackSend channel: "#${SLACK_BUILD_CHANNEL}",
+                    color: 'good',
+                    message: "${JOB_NAME} build ${BUILD_NUMBER} - complete"
         }
       }
     }
@@ -161,12 +165,6 @@ pipeline {
   // Post-job actions.
   // See https://jenkins.io/doc/book/pipeline/syntax/#post
   post {
-
-    success {
-      slackSend channel: "#${SLACK_BUILD_CHANNEL}",
-                color: 'good',
-                message: "${JOB_NAME} build ${BUILD_NUMBER} - complete"
-    }
 
     failure {
       slackSend channel: "#${SLACK_BUILD_CHANNEL}",
