@@ -44,6 +44,7 @@ objects:
       metadata:
         name: fs-loader
       spec:
+
         # Init Containers
         initContainers:
         - image: ${BUSYBOX_IMAGE}
@@ -56,9 +57,4 @@ objects:
         containers:
         - image: docker-registry.default.svc:5000/${APP_NAMESPACE}/${LOADER_IMAGE}:${LOADER_IMAGE_TAG}
           name: fs-loader
-          command:
-          - 'sh'
-          - '-c'
-          - './run_loader.sh'
-
         restartPolicy: OnFailure
