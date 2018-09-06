@@ -25,6 +25,8 @@ SERVERS = {'test': 'jenkins-fragalysis-cicd.apps.xchem.diamond.ac.uk',
            'prod': 'jenkins-fragalysis-cicd-prod.apps.xchem.diamond.ac.uk'}
 # Our job configuration directory
 JOB_DIR = 'jobs'
+# CLUSTER_URL
+CLUSTER_URL = 'https://openshift.xchem.diamond.ac.uk'
 
 # Load logger configuration (from cwd)...
 # But only if the logging configuration is present!
@@ -124,6 +126,9 @@ elif ARGS.action == 'set':
     JS.set_secret_text('slackJenkinsIntegrationToken',
                        J_SLACK_TOKEN,
                        "Slack channel Jenkins Integration token")
+    JS.set_secret_text('clusterUrl',
+                       CLUSTER_URL,
+                       "The OC cluster URL")
     JS.set_secret_text('ocUser',
                        J_OC_USER,
                        "The OC user (for Agent-based OC commands)")
