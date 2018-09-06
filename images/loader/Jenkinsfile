@@ -73,30 +73,28 @@ pipeline {
         expression { DATA_ORIGIN.length() > 0 || ALWAYS_PUSH == 'Yes' }
       }
       steps {
-        dir('images/loader') {
-          withCredentials([string(credentialsId: 'clusterUrl', variable: 'CLUSTER_URL'),
-                           string(credentialsId: 'ocUser', variable: 'OC_USER'),
-                           string(credentialsId: 'ocUserPassword', variable: 'OC_USER_PASSWORD')]) {
-            script {
-              TOKEN = sh(script: 'oc whoami -t', returnStdout: true).trim()
-            }
-            sh "podman login --tls-verify=false --username ${REGISTRY_USER} --password ${TOKEN} ${REGISTRY}"
-            sh "buildah push --tls-verify=false ${STREAM_IMAGE} docker://${STREAM_IMAGE}"
-            sh "podman logout ${REGISTRY}"
-            sh "buildah images"
-
-            // With a new image pushed we need to launch the Loader 'Job'.
-            // But we protect ourselves from doing this if a prior
-            // instance of the 'Job' is running (which would be unusual).
-            // To successfully launch the Job we first delete prior instances.
-            // All of this takes place in the 'deploy.sh'
-            sh "oc login ${CLUSTER_URL} -u ${OC_USER} -p ${OC_USER_PASSWORD}"
-            sh "oc project ${PROJECT}"
-            script {
-              env.LOADER_RUNNING = sh(script: 'oc get jobs | grep fs-loader | grep Running | wc -l', returnStdout: true).trim()
-            }
-            echo "RUNNING=${LOADER_RUNNING}"
+        withCredentials([string(credentialsId: 'clusterUrl', variable: 'CLUSTER_URL'),
+                         string(credentialsId: 'ocUser', variable: 'OC_USER'),
+                         string(credentialsId: 'ocUserPassword', variable: 'OC_USER_PASSWORD')]) {
+          script {
+            TOKEN = sh(script: 'oc whoami -t', returnStdout: true).trim()
           }
+          sh "podman login --tls-verify=false --username ${REGISTRY_USER} --password ${TOKEN} ${REGISTRY}"
+          sh "buildah push --tls-verify=false ${STREAM_IMAGE} docker://${STREAM_IMAGE}"
+          sh "podman logout ${REGISTRY}"
+          sh "buildah images"
+
+          // With a new image pushed we need to launch the Loader 'Job'.
+          // But we protect ourselves from doing this if a prior
+          // instance of the 'Job' is running (which would be unusual).
+          // To successfully launch the Job we first delete prior instances.
+          // All of this takes place in the 'deploy.sh'
+          sh "oc login ${CLUSTER_URL} -u ${OC_USER} -p ${OC_USER_PASSWORD}"
+          sh "oc project ${PROJECT}"
+          script {
+            env.LOADER_RUNNING = sh(script: 'oc get jobs | grep fs-loader | grep Running | wc -l', returnStdout: true).trim()
+          }
+          echo "RUNNING=${LOADER_RUNNING}"
         }
       }
     }
@@ -105,10 +103,12 @@ pipeline {
       when {
         expression { LOADER_RUNNING == '0' }
       }
-      steps {
-        sh "oc delete job --selector template=fs-loader"
-        sleep 4
-        sh "oc process -f fs-loader.yaml | oc create -f -"
+      dir('images/loader') {
+        steps {
+          sh "oc delete job --selector template=fs-loader"
+          sleep 4
+          sh "oc process -f fs-loader.yaml | oc create -f -"
+        }
       }
     }
 
