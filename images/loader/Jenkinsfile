@@ -47,37 +47,27 @@ pipeline {
                     message: "${JOB_NAME} build ${BUILD_NUMBER} - starting..."
           script {
 
-// Can't do this because I need to login!
-//
-//            sh "wget ${BUILD_URL} -O currentConsole.txt"
-//            upstream = sh(script: 'cat currentConsole.txt | grep -q "Started by upstream project"', returnStatus: true).trim()
-//            user = sh(script: 'cat currentConsole.txt | grep -q "Started by user"', returnStatus: true).trim()
-//            scm = sh(script: 'cat currentConsole.txt | grep -q "Started by an SCM change"', returnStatus: true).trim()
-//            echo "upstream=${upstream}"
-//            echo "user=${user}"
-//            echo "scm=${scm}"
-
             env.CAUSE = 'UNKNOWN'
             def UpstreamCause = currentBuild.rawBuild.getCause(hudson.model.Cause$UpstreamCause)
-            def UserCause = currentBuild.rawBuild.getCause(hudson.model.Cause$UserIdCause)
+            def UserIdCause = currentBuild.rawBuild.getCause(hudson.model.Cause$UserIdCause)
             def RemoteCause = currentBuild.rawBuild.getCause(hudson.model.Cause$RemoteCause)
             def TimerTriggerCause = currentBuild.rawBuild.getCause(hudson.triggers.TimerTrigger$TimerTriggerCause)
             def SCMTriggerCause = currentBuild.rawBuild.getCause(hudson.triggers.SCMTrigger$SCMTriggerCause)
             if (UpstreamCause) {
               env.CAUSE = 'UPSTREAM'
-              echo ">>>>>>>>>>>>>> 1"
-            } else if (UserCause) {
+              echo ">>>>>>>>>>>>>> UPSTREAM"
+            } else if (UserIdCause) {
               env.CAUSE = 'USER'
-              echo ">>>>>>>>>>>>>> 2"
+              echo ">>>>>>>>>>>>>> USER"
             } else if (RemoteCause) {
               env.CAUSE = 'REMOTE'
-              echo ">>>>>>>>>>>>>> 3"
+              echo ">>>>>>>>>>>>>> REMOTE"
             } else if (TimerTriggerCause) {
               env.CAUSE = 'TIMER'
-              echo ">>>>>>>>>>>>>> 4"
+              echo ">>>>>>>>>>>>>> TIMER TRIGGER"
             } else if (SCMTriggerCause) {
               env.CAUSE = 'SCM'
-              echo ">>>>>>>>>>>>>> 5"
+              echo ">>>>>>>>>>>>>> SCM TRIGGER"
             }
 
             env.REGISTRY_USER_TOKEN = sh(script: 'oc whoami -t', returnStdout: true).trim()
