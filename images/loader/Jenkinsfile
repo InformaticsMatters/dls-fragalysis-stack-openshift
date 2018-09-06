@@ -42,18 +42,21 @@ pipeline {
           // - Get the registry user API token (used in the Python module)
           // - Run the get_unbuilt_data_directory module to find the latest data
           // - Dump the script log.
-          sh "env"
           sh "ls ${env.SOURCE_DATA_ROOT}"
           slackSend channel: "#${SLACK_BUILD_CHANNEL}",
                     message: "${JOB_NAME} build ${BUILD_NUMBER} - starting..."
           script {
 
-            def SCMCause = currentBuild.rawBuild.getCause(hudson.triggers.SCMTrigger$SCMTriggerCause)
-            def UserCause = currentBuild.rawBuild.getCause(hudson.model.Cause$UserIdCause)
-            if (SCMCause) {
-              println "SCM"
-            } else if (UserCause) {
-              println "USER"
+            env.CAUSE = 'UNKNOWN'
+            def UpstreamCause = currentBuild.rawBuild.getCause(hudson.model.Cause$UpstreamCause)
+            def UserIdCause = currentBuild.rawBuild.getCause(hudson.model.Cause$UserIdCause)
+            def RemoteCause = currentBuild.rawBuild.getCause(hudson.model.Cause$RemoteCause)
+            if (UpstreamCause) {
+              env.CAUSE = 'UPSTREAM'
+            } else if (UserIdCause) {
+              env.CAUSE = 'USER'
+            } else if (RemoteCause) {
+              env.CAUSE = 'REMOTE'
             }
 
             env.REGISTRY_USER_TOKEN = sh(script: 'oc whoami -t', returnStdout: true).trim()
@@ -61,6 +64,7 @@ pipeline {
 
           }
           sh 'cat get_unbuilt_data_directory.log'
+          sh "env"
         }
       }
     }
