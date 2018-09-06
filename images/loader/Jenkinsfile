@@ -51,7 +51,7 @@ pipeline {
             // We must build the image if: -
             //
             //   DATA_ORIGIN is set (indicating a new set of data)
-            //   we're the result of an upstream project
+            //   we're the result of an upstream project or a user action
             env.CAUSE = 'DATA'
             env.FORCE_BUILD = 'No'
             def UpstreamCause = currentBuild.rawBuild.getCause(hudson.model.Cause$UpstreamCause)
@@ -85,7 +85,6 @@ pipeline {
             // (DATA_ORIGIN will be blank). If FORCE_BUILD is set then
             // the latest data will be returned.
             env.REGISTRY_USER_TOKEN = sh(script: 'oc whoami -t', returnStdout: true).trim()
-            echo "CAUSE is '${env.CAUSE}'"
             echo "FORCE_BUILD is '${env.FORCE_BUILD}'"
             env.DATA_ORIGIN = sh(script: './get_unbuilt_data_directory.py', returnStdout: true).trim()
             sh 'cat get_unbuilt_data_directory.log'
