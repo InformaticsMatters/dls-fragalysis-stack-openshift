@@ -19,5 +19,5 @@ loggers:
     level: DEBUG
     propagate: yes
 root:
-  level: DEBUG
+  level: INFO
   handlers: [console]
