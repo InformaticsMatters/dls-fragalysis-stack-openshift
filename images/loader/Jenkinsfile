@@ -51,6 +51,12 @@ pipeline {
             DATA_ORIGIN = sh(script: './get_unbuilt_data_directory.py', returnStdout: true).trim()
             sh 'cat get_unbuilt_data_directory.log'
 
+            // Set an environment variable based on the build trigger.
+            // This way we know if the build was upstream, a timer or user-driven.
+            //
+            // We must build the image is: -
+            //   It is caused by an upstream project (UpstreamCause)
+            //   DATA_ORIGIN is set (indicating a new set of data)
             CAUSE = 'UNKNOWN'
             def UpstreamCause = currentBuild.rawBuild.getCause(hudson.model.Cause$UpstreamCause)
             def UserIdCause = currentBuild.rawBuild.getCause(hudson.model.Cause$UserIdCause)
@@ -59,19 +65,14 @@ pipeline {
             def SCMTriggerCause = currentBuild.rawBuild.getCause(hudson.triggers.SCMTrigger$SCMTriggerCause)
             if (UpstreamCause != null) {
               CAUSE = 'UPSTREAM'
-//              echo ">>>>>>>>>>>>>> UPSTREAM"
             } else if (UserIdCause != null) {
               CAUSE = 'USER'
-//              echo ">>>>>>>>>>>>>> USER"
             } else if (RemoteCause != null) {
               CAUSE = 'REMOTE'
-//              echo ">>>>>>>>>>>>>> REMOTE"
             } else if (TimerTriggerCause != null) {
               CAUSE = 'TIMER'
-//              echo ">>>>>>>>>>>>>> TIMER TRIGGER"
             } else if (SCMTriggerCause != null) {
               CAUSE = 'SCM'
-//              echo ">>>>>>>>>>>>>> SCM TRIGGER"
             }
             echo "The build cause is '${CAUSE}'"
 
@@ -146,11 +147,13 @@ pipeline {
       }
       steps {
         echo "Loader is running (deployment is blocked)"
+        script {
+          // Everything's OK but we were blocked from deploying it
+          // as it appears a prior Job instance is running.
+          // Here we just set the build status to UNSTABLE.
+          currentBuild.result = 'UNSTABLE'
+        }
       }
-      // Everything's OK but we were blocked from deploying it
-      // as it appears a prior Job instance is running.
-      // Here we just set the build status to UNSTABLE.
-      //currentBuild.result = 'UNSTABLE'
     }
 
   }
