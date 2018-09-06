@@ -6,8 +6,6 @@ pipeline {
 
   agent { label 'buildah-slave' }
 
-  def causes = currentBuild.rawBuild.getCauses()
-
   environment {
     // Registry details
     PROJECT = 'fragalysis-cicd'
@@ -49,6 +47,11 @@ pipeline {
           slackSend channel: "#${SLACK_BUILD_CHANNEL}",
                     message: "${JOB_NAME} build ${BUILD_NUMBER} - starting..."
           script {
+            def causes = currentBuild.rawBuild.getCauses()
+            for(cause in causes) {
+              echo "CAUSE = ${cause.getShortDescription()}"
+            }
+
             env.REGISTRY_USER_TOKEN = sh(script: 'oc whoami -t', returnStdout: true).trim()
             DATA_ORIGIN = sh(script: './get_unbuilt_data_directory.py', returnStdout: true).trim()
           }
