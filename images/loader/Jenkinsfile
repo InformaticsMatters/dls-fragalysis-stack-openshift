@@ -47,16 +47,19 @@ pipeline {
                     message: "${JOB_NAME} build ${BUILD_NUMBER} - starting..."
           script {
 
-            sh "wget ${BUILD_URL} -O currentConsole.txt"
-            upstream = sh(script: 'cat currentConsole.txt | grep -q "Started by upstream project"', returnStatus: true).trim()
-            user = sh(script: 'cat currentConsole.txt | grep -q "Started by user"', returnStatus: true).trim()
-            scm = sh(script: 'cat currentConsole.txt | grep -q "Started by an SCM change"', returnStatus: true).trim()
-            echo "upstream=${upstream}"
-            echo "user=${user}"
-            echo "scm=${scm}"
+// Can't do this because I need to login!
+//
+//            sh "wget ${BUILD_URL} -O currentConsole.txt"
+//            upstream = sh(script: 'cat currentConsole.txt | grep -q "Started by upstream project"', returnStatus: true).trim()
+//            user = sh(script: 'cat currentConsole.txt | grep -q "Started by user"', returnStatus: true).trim()
+//            scm = sh(script: 'cat currentConsole.txt | grep -q "Started by an SCM change"', returnStatus: true).trim()
+//            echo "upstream=${upstream}"
+//            echo "user=${user}"
+//            echo "scm=${scm}"
 
             env.CAUSE = 'UNKNOWN'
             def UpstreamCause = currentBuild.rawBuild.getCause(hudson.model.Cause$UpstreamCause)
+            echo UpstreamCause
             def UserCause = currentBuild.rawBuild.getCause(hudson.model.Cause$UserCause)
             def RemoteCause = currentBuild.rawBuild.getCause(hudson.model.Cause$RemoteCause)
             def TimerTriggerCause = currentBuild.rawBuild.getCause(hudson.triggers.TimerTrigger$TimerTriggerCause)
