@@ -143,7 +143,7 @@ pipeline {
 
     stage('Deploy Image') {
       when {
-        expression { DATA_ORIGIN.length() > 0 && LOADER_RUNNING == '0'}
+        expression { DATA_ORIGIN.length() > 0 && LOADER_RUNNING == '0' }
       }
       steps {
         dir('images/loader') {
