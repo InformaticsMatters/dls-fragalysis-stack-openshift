@@ -118,7 +118,7 @@ pipeline {
       // Everything's OK but we were blocked from deploying it
       // as it appears a prior Job instance is running.
       // Here we just set the build status to UNSTABLE.
-      currentBuild.result = 'UNSTABLE'
+      //currentBuild.result = 'UNSTABLE'
     }
 
   }
