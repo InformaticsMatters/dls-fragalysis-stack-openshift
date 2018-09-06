@@ -72,9 +72,9 @@ pipeline {
       }
       steps {
         dir('images/loader') {
-          withCredentials([text(credentialsId: 'clusterUrl', variable: 'CLUSTER_URL'),
-                           text(credentialsId: 'ocUser', variable: 'OC_USER'),
-                           text(credentialsId: 'ocUserPassword', variable: 'OC_USER_PASSWORD')]) {
+          withCredentials([string(credentialsId: 'clusterUrl', variable: 'CLUSTER_URL'),
+                           string(credentialsId: 'ocUser', variable: 'OC_USER'),
+                           string(credentialsId: 'ocUserPassword', variable: 'OC_USER_PASSWORD')]) {
             script {
               TOKEN = sh(script: 'oc whoami -t', returnStdout: true).trim()
             }
