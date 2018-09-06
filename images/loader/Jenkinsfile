@@ -49,11 +49,11 @@ pipeline {
 
             env.CAUSE = 'UNKNOWN'
             def UpstreamCause = currentBuild.rawBuild.getCause(hudson.model.Cause$UpstreamCause)
-            def UserIdCause = currentBuild.rawBuild.getCause(hudson.model.Cause$UserIdCause)
+            def UserCause = currentBuild.rawBuild.getCause(hudson.model.Cause$UserCause)
             def RemoteCause = currentBuild.rawBuild.getCause(hudson.model.Cause$RemoteCause)
             if (UpstreamCause) {
               env.CAUSE = 'UPSTREAM'
-            } else if (UserIdCause) {
+            } else if (UserCause) {
               env.CAUSE = 'USER'
             } else if (RemoteCause) {
               env.CAUSE = 'REMOTE'
