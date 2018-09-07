@@ -35,8 +35,6 @@ pipeline {
     stage('Inspect') {
       steps {
         dir('images') {
-          slackSend channel: "#${SLACK_BUILD_CHANNEL}",
-                    message: "${JOB_NAME} build ${BUILD_NUMBER} - starting..."
           // - Get the registry user API token (used in the Python module)
           // - Run the get_unbuilt_data_directory  module
           // - Print the script log.
@@ -56,20 +54,13 @@ pipeline {
       }
       steps {
         dir('images/graph') {
+          slackSend channel: "#${SLACK_BUILD_CHANNEL}",
+                    message: "${JOB_NAME} build ${BUILD_NUMBER} - starting..."
+          slackSend channel: "#${SLACK_BUILD_CHANNEL}",
+                    message: "${JOB_NAME} build ${BUILD_NUMBER} - using '${DATA_ORIGIN}' data"
           sh "cp ${SOURCE_DATA_ROOT}/${DATA_ORIGIN}/* data-loader"
           sh "buildah bud --format docker --build-arg DATA_ORIGIN=${DATA_ORIGIN} -f Dockerfile -t ${STREAM_IMAGE} ."
         }
-      }
-    }
-
-    stage('Skip Image') {
-      when {
-        expression { DATA_ORIGIN.length() == 0 && ALWAYS_PUSH == 'No' }
-      }
-      steps {
-        slackSend channel: "#${SLACK_BUILD_CHANNEL}",
-                  color: 'warning',
-                  message: "${JOB_NAME} build ${BUILD_NUMBER} - no new data, skipping"
       }
     }
 
@@ -85,9 +76,10 @@ pipeline {
         sh "buildah push --tls-verify=false ${STREAM_IMAGE} docker://${STREAM_IMAGE}"
         sh "podman logout ${REGISTRY}"
         sh "buildah images"
+
         slackSend channel: "#${SLACK_BUILD_CHANNEL}",
                   color: 'good',
-                  message: "${JOB_NAME} build ${BUILD_NUMBER} - new image for '${DATA_ORIGIN}' data has been pushed"
+                  message: "${JOB_NAME} build ${BUILD_NUMBER} - complete"
       }
     }
 
