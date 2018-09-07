@@ -50,7 +50,7 @@ pipeline {
             // We must build the image if: -
             //
             //   DATA_ORIGIN is set (indicating a new set of data)
-            //   we're the result of an upstream project, a user action or remote trigger
+            //   this build is the result of an upstream project trigger
             //
             // Note: if FORCE_BUILD is in the environment block above
             //       I can't seem to change its value here...
@@ -66,10 +66,8 @@ pipeline {
               env.FORCE_BUILD = 'Yes'
             } else if (UserIdCause != null) {
               env.CAUSE = 'USER'
-              env.FORCE_BUILD = 'Yes'
             } else if (RemoteCause != null) {
               env.CAUSE = 'REMOTE'
-              env.FORCE_BUILD = 'Yes'
             } else if (TimerTriggerCause != null) {
               env.CAUSE = 'TIMER'
             } else if (SCMTriggerCause != null) {
