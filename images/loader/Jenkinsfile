@@ -51,6 +51,7 @@ pipeline {
             //
             //   DATA_ORIGIN is set (indicating a new set of data)
             //   this build is the result of an upstream project trigger
+            //   this build is a result of an SCM change
             //
             // Note: if FORCE_BUILD is in the environment block above
             //       I can't seem to change its value here...
