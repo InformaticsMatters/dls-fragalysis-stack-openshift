@@ -4,7 +4,7 @@ contains the password used to create the vault passwords used in this project.
     
 Run the playbook with the command: -
 
-    ansible-playbook site.yaml  --vault-password-file vault-pass.txt
+    ansible-playbook site.yaml --vault-password-file vault-pass.txt
 
 And, to also install the backup process...
 

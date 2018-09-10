@@ -19,6 +19,7 @@ mkdir pv-fs-input
 mkdir pv-fs-graph-data
 mkdir pv-fs-graph-data-loader
 mkdir pv-fs-graph-logs
+mkdir pv-fs-web-media
 chmod -R 777 pv-*
 chown -R nfsnobody.nfsnobody pv-*
 
@@ -34,6 +35,7 @@ echo ${EXPORT_DIR}/pv-fs-input *(rw,root_squash) >> frag.exports
 echo ${EXPORT_DIR}/pv-fs-graph-data *(rw,root_squash) >> frag.exports
 echo ${EXPORT_DIR}/pv-fs-graph-data-loader *(rw,root_squash) >> frag.exports
 echo ${EXPORT_DIR}/pv-fs-graph-logs *(rw,root_squash) >> frag.exports
+echo ${EXPORT_DIR}/pv-fs-web-media *(rw,root_squash) >> frag.exports
 
 systemctl restart nfs-server
 showmount -e localhost

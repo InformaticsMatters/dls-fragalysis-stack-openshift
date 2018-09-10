@@ -2,18 +2,18 @@
 
 # The Application's Persistent Volumes (NFS).
 #
-# oc process -f fs-mysql-pv-nfs.yaml | oc create -f -
-# oc delete pv --selector template=fs-pv-nfs
+# oc process -f fs-web-pv-nfs.yaml | oc create -f -
+# oc delete pv --selector template=fs-web-pv-nfs
 
 kind: Template
 apiVersion: v1
 metadata:
-  name: fs-pv-nfs
+  name: fs-web-pv-nfs
   annotations:
     description: Fragalysis Stack's Persistent Volumes (using NFS)
-    tags: fragalysis
+    tags: fragalysis,web
 labels:
-  template: fs-pv-nfs
+  template: fs-web-pv-nfs
 
 parameters:
 
@@ -22,32 +22,32 @@ parameters:
 - name: NFS_PATH
   value: /data
 
-- name: MYSQL_NAMESPACE
+- name: WEB_NAMESPACE
   value: fragalysis-cicd
-- name: MYSQL_PV_DIR
-  value: pv-fs-mysql-data
-- name: MYSQL_PV_SIZE
+- name: WEB_MEDIA_PV_DIR
+  value: pv-fs-web-media
+- name: WEB_MEDIA_PV_SIZE
   value: 20Gi
 
 objects:
 
-# ------------------------
-# Database (MySQL) Volumes
-# ------------------------
+# --------------------------
+# Web (Django Media) Volumes
+# --------------------------
 
 - kind: PersistentVolume
   apiVersion: v1
   metadata:
-    name: fs-mysql-data
+    name: fs-web-media
   spec:
     capacity:
-      storage: ${MYSQL_PV_SIZE}
+      storage: ${WEB_MEDIA_PV_SIZE}
     accessModes:
     - ReadWriteMany
     persistentVolumeReclaimPolicy: Retain
     nfs:
       server: ${NFS_SERVER}
-      path: ${NFS_PATH}/${MYSQL_PV_DIR}
+      path: ${NFS_PATH}/${WEB_MEDIA_PV_DIR}
     claimRef:
-      name: fs-mysql-data-claim
-      namespace: ${MYSQL_NAMESPACE}
+      name: fs-web-media-claim
+      namespace: ${WEB_NAMESPACE}

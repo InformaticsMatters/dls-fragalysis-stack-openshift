@@ -1,10 +1,48 @@
 ---
 
 # Deploy the Web image.
-# Which consists of an image stream and deployment configuration.
+# Which consists of an image stream, PV, PVC and deployment configuration.
 
 - name: Move to Fragalysis (TEST) Project (Web)
   shell: oc project fragalysis-cicd
+
+# Create the Web PV
+
+- name: Check Web PV
+  shell: oc get pv
+  register: w_pv
+  when: use_nfs
+
+- name: Create Web PV
+  shell: >
+    oc process -f {{ role_path }}/{{ t_dir }}/fs-web-pv-nfs.yaml |
+    oc create -f -
+  when:
+  - use_nfs
+  - '"fs-web-media" not in w_pv.stdout'
+
+# Crete the Image Stream, PVC, Deployment and Route...
+
+- name: Check Web PVC
+  shell: oc get pvc
+  register: w_pvc
+
+- name: Create Web PVC
+  shell: >
+    oc process -f {{ role_path }}/{{ t_dir }}/fs-web-pvc.yaml |
+    oc create -f -
+  when: '"fs-web-media-claim" not in w_pvc.stdout'
+
+- name: Wait for Web PVCs to become Bound
+  shell: >
+    oc get pvc/{{ item }} | grep Bound
+  retries: 12
+  delay: 5
+  register: result
+  until: result.rc == 0
+  loop:
+  - fs-web-media-claim
+  when: '"fs-web-media-claim" not in w_pvc.stdout'
 
 - name: Check Web ImageStream
   shell: oc get is
@@ -25,6 +63,16 @@
     oc process -f {{ role_path }}/{{ t_dir }}/fs-web.yaml |
     oc create -f -
   when: '"web" not in w_dc.stdout'
+
+- name: Check Web Route
+  shell: oc get routes
+  register: w_r
+
+- name: Create Web Route
+  shell: >
+    oc process -f {{ role_path }}/{{ t_dir }}/fs-web-route.yaml |
+    oc create -f -
+  when: '"web" not in w_r.stdout'
 
 # We don't wait for this pod,
 # its deployment is controlled by Jenkins.

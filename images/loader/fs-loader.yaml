@@ -60,7 +60,7 @@ objects:
           command:
           - 'sh'
           - '-c'
-          - './run_loader.sh'
+          - './docker-entrypoint.sh'
           env:
           - name: MYSQL_HOST
             valueFrom:
@@ -92,5 +92,17 @@ objects:
               secretKeyRef:
                 name: fs-mysql-secrets
                 key: database-root-password
+          volumeMounts:
+          - name: fs-web-media-data
+            mountPath: /code/media
+          - name: fs-input
+            mountPath: /fragalysis
+        volumes:
+        - name: fs-web-media-data
+          persistentVolumeClaim:
+            claimName: fs-web-media-data-claim
+        - name: fs-input
+          persistentVolumeClaim:
+            claimName: fs-input-claim
 
         restartPolicy: OnFailure

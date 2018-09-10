@@ -2,6 +2,8 @@
 
 # Default variables including secrets
 
+cluster_url: https://openshift.xchem.diamond.ac.uk
+
 wait_for_mysql: yes
 
 use_nfs: yes

@@ -30,6 +30,17 @@
     oc create -f -
   when: '"fs-mysql-data-claim" not in mysql_pvc.stdout'
 
+- name: Wait for MySQL PVCs to become Bound
+  shell: >
+    oc get pvc/{{ item }} | grep Bound
+  retries: 12
+  delay: 5
+  register: result
+  until: result.rc == 0
+  loop:
+  - fs-mysql-data-claim
+  when: '"fs-mysql-data-claim" not in mysql_pvc.stdout'
+
 # Create the MySQL Deployment
 
 - name: Check MySQL Deployment

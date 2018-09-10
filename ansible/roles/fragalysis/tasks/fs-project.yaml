@@ -4,7 +4,7 @@
 # Ths includes the project and its service account.
 
 - name: Login (admin)
-  shell: oc login -u admin -p {{ admin_password }}
+  shell: oc login {{ cluster_url }} -u admin -p {{ admin_password }}
 
 - name: Get Projects
   shell: oc get projects

@@ -1,0 +1,38 @@
+---
+
+# The Fragalysis Stack's Web (Front-End) Route deployment.
+#
+# oc process -f fs-web-route.yaml | oc create -f -
+# oc delete route --selector template=fs-web-route
+
+kind: Template
+apiVersion: v1
+metadata:
+  name: fs-web-route
+  annotations:
+    description: Fragalysis Stack's Web Route's Definition
+    tags: fragalysis,web
+labels:
+  template: fs-web-route
+
+parameters:
+
+- name: WEB_HOSTNAME
+  value: fragalysis.apps.xchem.diamond.ac.uk
+
+objects:
+
+- kind: Route
+  apiVersion: v1
+  metadata:
+    annotations:
+      kubernetes.io/tls-acme: 'false'
+    name: web
+  spec:
+    host: ${WEB_HOSTNAME}
+    to:
+      kind: Service
+      name: web
+    tls:
+      termination: edge
+      insecureEdgeTerminationPolicy: Redirect

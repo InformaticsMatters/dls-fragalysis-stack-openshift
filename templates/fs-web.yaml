@@ -3,7 +3,7 @@
 # The Fragalysis Stack's Web (Front-End) deployment.
 #
 # oc process -f fs-web.yaml | oc create -f -
-# oc delete all,route --selector template=fs-web
+# oc delete all --selector template=fs-web
 
 kind: Template
 apiVersion: v1
@@ -161,6 +161,13 @@ objects:
                 key: ispyb-port
           ports:
           - containerPort: 80
+          volumeMounts:
+          - name: fs-web-media-data
+            mountPath: /code/media
+        volumes:
+        - name: fs-web-media-data
+          persistentVolumeClaim:
+            claimName: fs-web-media-data-claim
         restartPolicy: Always
 
     triggers:
@@ -186,18 +193,3 @@ objects:
       targetPort: 80
     selector:
       name: web
-
-- kind: Route
-  apiVersion: v1
-  metadata:
-    annotations:
-      kubernetes.io/tls-acme: 'false'
-    name: web
-  spec:
-    host: ${WEB_HOSTNAME}
-    to:
-      kind: Service
-      name: web
-    tls:
-      termination: edge
-      insecureEdgeTerminationPolicy: Redirect
