@@ -53,6 +53,16 @@
     oc create -f -
   when: '"mysql" not in mysql_dc.stdout'
 
+- name: Check MySQL Service
+  shell: oc get svc
+  register: mysql_svc
+
+- name: Create MySql Service
+  shell: >
+    oc process -f {{ role_path }}/{{ t_dir }}/fs-mysql-svc.yaml |
+    oc create -f -
+  when: '"mysql" not in mysql_svc.stdout'
+
 # Wait...
 
 - name: Wait for MySQL

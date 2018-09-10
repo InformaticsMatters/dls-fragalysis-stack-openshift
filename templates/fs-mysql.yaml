@@ -110,16 +110,3 @@ objects:
           persistentVolumeClaim:
             claimName: fs-mysql-data-claim
         restartPolicy: Always
-
-- kind: Service
-  apiVersion: v1
-  metadata:
-    name: mysql
-    namespace: ${MYSQL_NAMESPACE}
-  spec:
-    ports:
-    - name: api
-      port: 3306
-      targetPort: 3306
-    selector:
-      name: mysql

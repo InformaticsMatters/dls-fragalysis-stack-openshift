@@ -15,5 +15,18 @@
     oc create -f -
   when: '"graph" not in graph_dc.stdout'
 
+- name: Check Graph Service
+  shell: oc get svc
+  register: graph_svc
+
+# The space ("neo4j ") here is important.
+# There's also the possibility that there's a neo4j-jun2018 service...
+
+- name: Create Graph Service
+  shell: >
+    oc process -f {{ role_path }}/{{ t_dir }}/fs-graph-svc.yaml |
+    oc create -f -
+  when: '"neo4j " not in graph_svc.stdout'
+
 # We don't wait for this pod,
 # its deployment is controlled by Jenkins.

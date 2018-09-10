@@ -1,0 +1,36 @@
+---
+
+# The Fragalysis Stack's MySQL database deployment.
+#
+# oc process -f fs-mysql-svc.yaml | oc create -f -
+# oc delete svc --selector template=fs-mysql-svc
+
+kind: Template
+apiVersion: v1
+metadata:
+  name: fs-mysql-svc
+  annotations:
+    description: Fragalysis Stack's MySQL Service Definition
+    tags: fragalysis,mysql
+labels:
+  template: fs-mysql-svc
+
+parameters:
+
+- name: MYSQL_NAMESPACE
+  value: fragalysis-cicd
+
+objects:
+
+- kind: Service
+  apiVersion: v1
+  metadata:
+    name: mysql
+    namespace: ${MYSQL_NAMESPACE}
+  spec:
+    ports:
+    - name: api
+      port: 3306
+      targetPort: 3306
+    selector:
+      name: mysql
