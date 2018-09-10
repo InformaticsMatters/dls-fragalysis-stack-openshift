@@ -26,10 +26,9 @@ fi
 
 # OK if we get here...
 #
-# - Remove destination content
+# - Wipe the (temporary) destination directory
 # - Copy new content
 # - Run the loader
-#rm -rf /code/media/*
 DST=/code/media/NEW_DATA
 echo "+> Removing ${DST}"
 rm -rf ${DST}
