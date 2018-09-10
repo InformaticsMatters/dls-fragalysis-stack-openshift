@@ -54,15 +54,25 @@
     oc create -f -
   when: '"web-stream" not in w_is.stdout'
 
-- name: Check Web Deployment
+- name: Check Web Deployment Config
   shell: oc get dc
   register: w_dc
 
-- name: Create Web Deployent
+- name: Create Web Deployent Config
   shell: >
     oc process -f {{ role_path }}/{{ t_dir }}/fs-web.yaml |
     oc create -f -
   when: '"web" not in w_dc.stdout'
+
+- name: Check Web Service
+  shell: oc get svc
+  register: w_svc
+
+- name: Create Web Swervice
+  shell: >
+    oc process -f {{ role_path }}/{{ t_dir }}/fs-web-svc.yaml |
+    oc create -f -
+  when: '"web" not in w_svc.stdout'
 
 - name: Check Web Route
   shell: oc get routes

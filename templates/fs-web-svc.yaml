@@ -1,0 +1,36 @@
+---
+
+# The Fragalysis Stack's Web (Front-End) deployment.
+#
+# oc process -f fs-web.yaml | oc create -f -
+# oc delete all --selector template=fs-web
+
+kind: Template
+apiVersion: v1
+metadata:
+  name: fs-web-svc
+  annotations:
+    description: Fragalysis Stack's Web Service Definition
+    tags: fragalysis,web,svc
+labels:
+  template: fs-web-svc
+
+parameters:
+
+- name: WEB_NAMESPACE
+  value: fragalysis-cicd
+
+objects:
+
+- kind: Service
+  apiVersion: v1
+  metadata:
+    name: web
+    namespace: ${WEB_NAMESPACE}
+  spec:
+    ports:
+    - name: http
+      port: 8000
+      targetPort: 80
+    selector:
+      name: web

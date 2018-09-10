@@ -180,16 +180,3 @@ objects:
          from:
            kind: ImageStreamTag
            name: web-stream:${WEB_TAG}
-
-- kind: Service
-  apiVersion: v1
-  metadata:
-    name: web
-    namespace: ${WEB_NAMESPACE}
-  spec:
-    ports:
-    - name: http
-      port: 8000
-      targetPort: 80
-    selector:
-      name: web
