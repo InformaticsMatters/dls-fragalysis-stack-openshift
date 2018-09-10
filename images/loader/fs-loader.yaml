@@ -93,14 +93,14 @@ objects:
                 name: fs-mysql-secrets
                 key: database-root-password
           volumeMounts:
-          - name: fs-web-media-data
+          - name: fs-web-media
             mountPath: /code/media
           - name: fs-input
             mountPath: /fragalysis
         volumes:
-        - name: fs-web-media-data
+        - name: fs-web-media
           persistentVolumeClaim:
-            claimName: fs-web-media-data-claim
+            claimName: fs-web-media-claim
         - name: fs-input
           persistentVolumeClaim:
             claimName: fs-input-claim
