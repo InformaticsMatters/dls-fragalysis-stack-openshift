@@ -30,5 +30,7 @@ fi
 # - Copy new content
 # - Run the loader
 #rm -rf /code/media/*
+echo "+> Copying ${DATA_ORIGIN} to /code/media..."
 cp -r ${SRC}/* /code/media
-./run_loader.py
+echo "+> Running loader..."
+./run_loader.sh

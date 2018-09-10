@@ -64,14 +64,15 @@ pipeline {
             if (UpstreamCause != null) {
               env.CAUSE = 'UPSTREAM'
               env.FORCE_BUILD = 'Yes'
+            } else if (SCMTriggerCause != null) {
+              env.CAUSE = 'SCM'
+              env.FORCE_BUILD = 'Yes'
             } else if (UserIdCause != null) {
               env.CAUSE = 'USER'
             } else if (RemoteCause != null) {
               env.CAUSE = 'REMOTE'
             } else if (TimerTriggerCause != null) {
               env.CAUSE = 'TIMER'
-            } else if (SCMTriggerCause != null) {
-              env.CAUSE = 'SCM'
             }
             echo "The build cause is '${env.CAUSE}'"
 
