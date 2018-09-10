@@ -14,15 +14,7 @@ pipeline {
     STREAM_IMAGE = "${REGISTRY_PRJ}/web-stream:latest"
 
     // get_unbuilt_data_directory environment...
-    SOURCE_DATA_ROOT = '/fragalysis/django_data'
     TARGET_IMAGE = 'fragalysis-cicd/web-stream'
-    INSIST_ON_READY = 'Yes'
-    READY_FILE = 'READY'
-    HOURLY_DATA = 'Yes'
-    FORCE_BUILD = 'Yes'
-
-    // Always push the image (whether it's new or not)
-    ALWAYS_PUSH = 'No'
 
     // Slack channel for all notifications
     SLACK_BUILD_CHANNEL = 'dls-builds'
@@ -33,51 +25,30 @@ pipeline {
 
   stages {
 
-    stage('Inspect') {
-      steps {
-        dir('images') {
-          // - Get the registry user API token (used in the Python module)
-          // - Run the get_unbuilt_data_directory module to find the latest data
-          // - Dump the script log.
-          sh "ls ${env.SOURCE_DATA_ROOT}"
-          slackSend channel: "#${SLACK_BUILD_CHANNEL}",
-                    message: "${JOB_NAME} build ${BUILD_NUMBER} - starting..."
-          script {
-            env.REGISTRY_USER_TOKEN = sh(script: 'oc whoami -t', returnStdout: true).trim()
-            DATA_ORIGIN = sh(script: './get_unbuilt_data_directory.py', returnStdout: true).trim()
-          }
-          sh 'cat get_unbuilt_data_directory.log'
-        }
-      }
-    }
-
     stage('Build Image') {
-      when {
-        expression { DATA_ORIGIN.length() > 0 }
-      }
       steps {
         dir('images/web') {
           slackSend channel: "#${SLACK_BUILD_CHANNEL}",
-                    message: "${JOB_NAME} build ${env.BUILD_NUMBER} - using '${DATA_ORIGIN}' data"
-          sh "cp -r ${SOURCE_DATA_ROOT}/${DATA_ORIGIN}/* media"
-          sh "buildah bud --format docker --build-arg DATA_ORIGIN=${DATA_ORIGIN} -f Dockerfile -t ${STREAM_IMAGE} ."
+                    message: "${JOB_NAME} build ${BUILD_NUMBER} - starting"
+          sh "buildah bud --format docker -f Dockerfile -t ${STREAM_IMAGE} ."
         }
 
       }
     }
 
     stage('Push Image') {
-      when {
-        expression { DATA_ORIGIN.length() > 0 || ALWAYS_PUSH == 'Yes' }
-      }
       steps {
         script {
           TOKEN = sh(script: 'oc whoami -t', returnStdout: true).trim()
         }
-        sh "podman login --tls-verify=false --username ${env.REGISTRY_USER} --password ${TOKEN} ${env.REGISTRY}"
-        sh "buildah push --tls-verify=false ${env.STREAM_IMAGE} docker://${env.STREAM_IMAGE}"
-        sh "podman logout ${env.REGISTRY}"
+        sh "podman login --tls-verify=false --username ${REGISTRY_USER} --password ${TOKEN} ${REGISTRY}"
+        sh "buildah push --tls-verify=false ${STREAM_IMAGE} docker://${STREAM_IMAGE}"
+        sh "podman logout ${REGISTRY}"
         sh "buildah images"
+
+        slackSend channel: "#${SLACK_BUILD_CHANNEL}",
+                  color: 'good',
+                  message: "${JOB_NAME} build ${BUILD_NUMBER} - complete"
       }
     }
 

@@ -162,12 +162,12 @@ objects:
           ports:
           - containerPort: 80
           volumeMounts:
-          - name: fs-web-media-data
+          - name: fs-web-media
             mountPath: /code/media
         volumes:
-        - name: fs-web-media-data
+        - name: fs-web-media
           persistentVolumeClaim:
-            claimName: fs-web-media-data-claim
+            claimName: fs-web-media-claim
         restartPolicy: Always
 
     triggers:

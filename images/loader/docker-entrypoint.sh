@@ -34,3 +34,4 @@ echo "+> Copying ${DATA_ORIGIN} to /code/media..."
 cp -r ${SRC}/* /code/media
 echo "+> Running loader..."
 ./run_loader.sh
+echo "+> Done."
