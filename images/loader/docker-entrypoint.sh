@@ -5,7 +5,7 @@
 #
 # The environment variable 'DATA_ORIGIN' identifies the
 # fragalysis directory to be copied, i.e.
-# '/fragalysis/django_data/${DATA_ORIGIN}' is written to '/code/media'.
+# '/fragalysis/django_data/${DATA_ORIGIN}' is written to '/code/media/NEW_DATA'.
 
 # Does the container look intact?
 # We need an environment variable and
@@ -30,8 +30,12 @@ fi
 # - Copy new content
 # - Run the loader
 #rm -rf /code/media/*
-echo "+> Copying ${DATA_ORIGIN} to /code/media..."
-cp -r ${SRC}/* /code/media
+DST=/code/media/NEW_DATA
+echo "+> Removing ${DST}"
+rm -rf ${DST}
+mkdir ${DST}
+echo "+> Copying ${DATA_ORIGIN} to ${DST}..."
+cp -r ${SRC}/* ${DST}
 echo "+> Running loader..."
 ./run_loader.sh
 touch /code/media/loaded

@@ -9,10 +9,10 @@ wait_for_mysql: yes
 use_nfs: yes
 
 deploy_jun2018_graph: no
-deploy_backup: no
+deploy_backup: yes
 
 # If set ansible will attempt to configure Jenkins
-# bu running our configure-cicd.py module.
+# by running our configure-cicd.py module.
 # This will require the environment variables to have been set.
 configure_jenkins: no
 
