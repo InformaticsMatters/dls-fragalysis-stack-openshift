@@ -68,7 +68,7 @@
   shell: oc get svc
   register: w_svc
 
-- name: Create Web Swervice
+- name: Create Web Service
   shell: >
     oc process -f {{ role_path }}/{{ t_dir }}/fs-web-svc.yaml |
     oc create -f -
