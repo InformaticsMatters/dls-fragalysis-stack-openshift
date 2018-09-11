@@ -5,6 +5,16 @@
 
 # Create the Graph Deployment
 
+- name: Check Graph ImageStream
+  shell: oc get imagestreams
+  register: graph_is
+
+- name: Create Graph ImageStream
+  shell: >
+    oc process -f {{ role_path }}/{{ t_dir }}/fs-graph-is.yaml |
+    oc create -f -
+  when: '"graph-stream" not in graph_is.stdout'
+
 - name: Check Graph Deployment
   shell: oc get deploymentconfigs
   register: graph_dc

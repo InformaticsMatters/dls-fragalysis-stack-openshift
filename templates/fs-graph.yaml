@@ -20,8 +20,6 @@ parameters:
 - name: GRAPH_NAMESPACE
   value: fragalysis-cicd
 
-- name: GRAPH_TAG
-  value: 'latest'
 - name: NEO4J_AUTH
   value: none
 - name: NEO4J_PAGECACHE
@@ -32,17 +30,6 @@ parameters:
   value: 'big'
 
 objects:
-
-- kind: ImageStream
-  apiVersion: v1
-  metadata:
-    name: graph-stream
-  spec:
-    tags:
-    - from:
-        kind: DockerImage
-        name: xchem/graph:${GRAPH_TAG}
-      name: latest
 
 - kind: DeploymentConfig
   apiVersion: v1
