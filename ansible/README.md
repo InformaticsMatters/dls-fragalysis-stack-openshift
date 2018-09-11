@@ -1,47 +1,35 @@
-# Fraglysis Ansible OpenShift Deployment
+# Fragalysis Ansible OpenShift Deployment
 To run the playbook you will need to create a `vault-pass.txt` file that
-contains the password used to create the vault passwords used in this project.
+contains the password used to create the vault secrets used in this project.
     
-Run the playbook with the command: -
+Run the playbook to deploy the CI/CD (TEST) project with the command: -
 
-    ansible-playbook site.yaml --vault-password-file vault-pass.txt
-
-And, to also install the backup process...
-
-    ansible-playbook site.yaml --vault-password-file vault-pass.txt \
-        --extra-vars "deploy_backup=true"
+    ansible-playbook playbooks/fragalysis-dev/deploy.yaml \
+        --vault-password-file vault-pass.txt
 
 And, to also install the Jun2018 Graph database...
 
-    ansible-playbook site.yaml --vault-password-file vault-pass.txt \
+    ansible-playbook playbooks/fragalysis-dev/deploy.yaml \
+        --vault-password-file vault-pass.txt \
         --extra-vars "deploy_jun2018_graph=true"
 
 ## Prerequisites
 Before running the playbook: -
 
-1.  You're on the bastion node
 1.  The `oc` command-set is available to you as a user
 1.  An OpenShift cluster has been installed
 1.  There is an `admin` user known to the cluster
 1.  There is a `jenkins` user known to the cluster
 1.  You have created a `vault-pass.txt` file in this directory
 
-If using NFS the following NFS volumes are required for a _full_ installation
-on the bastion `/data` directory: -
-
-*   fs-input
-*   pv-fs-graph-data
-*   pv-fs-graph-data-loader
-*   pv-fs-graph-logs
-*   pv-fs-jenkins
-*   pv-fs-mysql-data
-*   pv-fs-mysql-data-backup
+If using NFS make sure you've configured it with all the appropriate mounts.
+The playbook will create the PVs and pVCs: -
 
 You will need to accommodate at least 1,420Gi of disk space. Check the
 various `pvc` templates for details.
  
 ## Creating encrypted secrets
-If you have the ansible vault password you can encrypt strings
+If you have the Ansible vault password you can encrypt strings
 for the `defauls/main.yaml` file by running something like this: -
 
     ansible-vault encrypt_string <string> \

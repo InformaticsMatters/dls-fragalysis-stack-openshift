@@ -8,3 +8,4 @@
 - import_tasks: fs-graph-jun2018.yaml
 - import_tasks: fs-web.yaml
 - import_tasks: fs-backup.yaml
+  when: deploy_backup

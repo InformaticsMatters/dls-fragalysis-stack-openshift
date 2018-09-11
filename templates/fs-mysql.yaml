@@ -26,6 +26,8 @@ parameters:
   value: '1'
 - name: MYSQL_NODE_SIZE_SELECTOR
   value: 'small'
+- name: MYSQL_VOLUME_CLAIM_NAME
+  value: fs-mysql-data-claim
 
 objects:
 
@@ -108,5 +110,5 @@ objects:
         volumes:
         - name: fs-mysql-data
           persistentVolumeClaim:
-            claimName: fs-mysql-data-claim
+            claimName: ${MYSQL_VOLUME_CLAIM_NAME}
         restartPolicy: Always

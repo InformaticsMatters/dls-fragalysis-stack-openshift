@@ -1,7 +1,8 @@
 ---
 
-- name: Move to Fragalysis (TEST) Project (Jenkins)
+- name: Move to Fragalysis Project (Jenkins)
   shell: oc project fragalysis-cicd
+  changed_when: False
 
 # Create the Jenkins user roles
 
@@ -20,11 +21,12 @@
   shell: oc get pv
   register: jenkins_pv
   when: use_nfs
+  changed_when: False
 
 - name: Create Jenkins PV
   shell: >
-    oc process -f {{ role_path }}/{{ t_dir }}/fs-jenkins-pv-nfs.yaml |
-    oc create -f -
+    oc process -f {{ role_path }}/{{ t_dir }}/fs-jenkins-pv-nfs.yaml
+    | oc create -f -
   when:
   -  use_nfs
   - '"fs-jenkins" not in jenkins_pv.stdout'
@@ -34,8 +36,8 @@
 
 - name: Create Input PV
   shell: >
-    oc process -f {{ role_path }}/{{ t_dir }}/fs-input-pv-nfs.yaml |
-    oc create -f -
+    oc process -f {{ role_path }}/{{ t_dir }}/fs-input-pv-nfs.yaml
+    | oc create -f -
   when:
   - use_nfs
   - '"fs-input" not in jenkins_pv.stdout'
@@ -45,11 +47,12 @@
 - name: Check Input PVC
   shell: oc get pvc
   register: input_pvc
+  changed_when: False
 
 - name: Create Input PVC
   shell: >
-    oc process -f {{ role_path }}/{{ t_dir }}/fs-input-pvc.yaml |
-    oc create -f -
+    oc process -f {{ role_path }}/{{ t_dir }}/fs-input-pvc.yaml
+    | oc create -f -
   when: '"fs-input-claim" not in input_pvc.stdout'
 
 - name: Wait for Jenkins PVCs to become Bound
@@ -62,17 +65,19 @@
   loop:
   - fs-input-claim
   when: '"fs-input-claim" not in input_pvc.stdout'
+  changed_when: False
 
 # Create the Buildah Slave Agent
 
 - name: Check Buildah Agent ImageStream
   shell: oc get is
   register: agent_is
+  changed_when: False
 
 - name: Create Buildah Agent ImageStream
   shell: >
-    oc process -f {{ role_path }}/{{ t_dir }}/fs-jenkins-slave-agent-is.yaml |
-    oc create -f -
+    oc process -f {{ role_path }}/{{ t_dir }}/fs-jenkins-slave-agent-is.yaml
+    | oc create -f -
   when: '"buildah-slave" not in agent_is.stdout'
 
 # Configure Jenkins?

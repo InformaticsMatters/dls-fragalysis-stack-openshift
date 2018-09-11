@@ -1,9 +1,10 @@
 ---
 
-- name: Move to Fragalysis (TEST) Project (Backup)
+- name: Move to Fragalysis Project (Backup)
   shell: oc project fragalysis-cicd
+  changed_when: False
 
-# Create the MySQL PV
+# Create the Backup PV
 
 - name: Check Backup PV
   shell: oc get pv
@@ -11,11 +12,12 @@
   when:
   - deploy_backup
   - use_nfs
+  changed_when: False
 
 - name: Create Backup PV
   shell: >
-    oc process -f {{ role_path }}/{{ t_dir }}/fs-db-backup-pv-nfs.yaml |
-    oc create -f -
+    oc process -f {{ role_path }}/{{ t_dir }}/fs-db-backup-pv-nfs.yaml
+    | oc create -f -
   when:
   - deploy_backup
   - use_nfs
@@ -28,11 +30,12 @@
   register: bu_pvc
   when:
   - deploy_backup
+  changed_when: False
 
 - name: Create Backup PVC
   shell: >
-    oc process -f {{ role_path }}/{{ t_dir }}/fs-db-backup-pvc.yaml |
-    oc create -f -
+    oc process -f {{ role_path }}/{{ t_dir }}/fs-db-backup-pvc.yaml
+    | oc create -f -
   when:
   - deploy_backup
   - '"fs-db-backup-claim" not in bu_pvc.stdout'
@@ -43,11 +46,12 @@
   shell: oc get cronjobs
   register: bu_cj
   when: deploy_backup
+  changed_when: False
 
-- name: Create Graph Deployment
+- name: Create Backup Deployment
   shell: >
-    oc process -f {{ role_path }}/{{ t_dir }}/fs-db-backup.yaml |
-    oc create -f -
+    oc process -f {{ role_path }}/{{ t_dir }}/fs-db-backup.yaml
+    | oc create -f -
   when:
   - deploy_backup
   - '"db-backup-hourly" not in bu_cj.stdout'

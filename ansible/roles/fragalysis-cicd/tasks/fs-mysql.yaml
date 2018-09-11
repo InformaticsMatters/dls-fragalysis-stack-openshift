@@ -1,7 +1,8 @@
 ---
 
-- name: Move to Fragalysis (TEST) Project (MySQL)
+- name: Move to Fragalysis Project (MySQL)
   shell: oc project fragalysis-cicd
+  changed_when: False
 
 # Create the MySQL PV
 
@@ -9,11 +10,12 @@
   shell: oc get pv
   register: mysql_pv
   when: use_nfs
+  changed_when: False
 
 - name: Create MySQL PV
   shell: >
-    oc process -f {{ role_path }}/{{ t_dir }}/fs-mysql-pv-nfs.yaml |
-    oc create -f -
+    oc process -f {{ role_path }}/{{ t_dir }}/fs-mysql-pv-nfs.yaml
+    | oc create -f -
   when:
   - use_nfs
   - '"fs-mysql-data" not in mysql_pv.stdout'
@@ -23,11 +25,12 @@
 - name: Check MySQL PVC
   shell: oc get pvc
   register: mysql_pvc
+  changed_when: False
 
 - name: Create MySQL PVC
   shell: >
-    oc process -f {{ role_path }}/{{ t_dir }}/fs-mysql-pvc.yaml |
-    oc create -f -
+    oc process -f {{ role_path }}/{{ t_dir }}/fs-mysql-pvc.yaml
+    | oc create -f -
   when: '"fs-mysql-data-claim" not in mysql_pvc.stdout'
 
 - name: Wait for MySQL PVCs to become Bound
@@ -40,27 +43,30 @@
   loop:
   - fs-mysql-data-claim
   when: '"fs-mysql-data-claim" not in mysql_pvc.stdout'
+  changed_when: False
 
 # Create the MySQL Deployment
 
 - name: Check MySQL Deployment
   shell: oc get deploymentconfigs
   register: mysql_dc
+  changed_when: False
 
 - name: Create MySql Deployment
   shell: >
-    oc process -f {{ role_path }}/{{ t_dir }}/fs-mysql.yaml |
-    oc create -f -
+    oc process -f {{ role_path }}/{{ t_dir }}/fs-mysql.yaml
+    | oc create -f -
   when: '"mysql" not in mysql_dc.stdout'
 
 - name: Check MySQL Service
   shell: oc get svc
   register: mysql_svc
+  changed_when: False
 
 - name: Create MySql Service
   shell: >
-    oc process -f {{ role_path }}/{{ t_dir }}/fs-mysql-svc.yaml |
-    oc create -f -
+    oc process -f {{ role_path }}/{{ t_dir }}/fs-mysql-svc.yaml
+    | oc create -f -
   when: '"mysql" not in mysql_svc.stdout'
 
 # Wait...
@@ -72,3 +78,4 @@
   register: result
   until: result.rc == 0
   when: wait_for_mysql
+  changed_when: False

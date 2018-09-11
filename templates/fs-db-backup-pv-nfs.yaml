@@ -30,6 +30,10 @@ parameters:
   value: fragalysis-cicd
 - name: BACKUP_PV_DIR
   value: pv-fs-mysql-data-backup
+- name: BACKUP_VOLUME_NAME
+  value: fs-db-backup
+- name: BACKUP_VOLUME_CLAIM_NAME
+  value: fs-db-backup-claim
 - name: BACKUP_PV_SIZE
   value: 100Gi
 
@@ -42,7 +46,7 @@ objects:
 - kind: PersistentVolume
   apiVersion: v1
   metadata:
-    name: fs-db-backup
+    name: ${BACKUP_VOLUME_NAME}
   spec:
     capacity:
       storage: ${BACKUP_PV_SIZE}
@@ -53,5 +57,5 @@ objects:
       server: ${NFS_SERVER}
       path: ${NFS_PATH}/${BACKUP_PV_DIR}
     claimRef:
-      name: fs-db-backup-claim
+      name: ${BACKUP_VOLUME_CLAIM_NAME}
       namespace: ${BACKUP_NAMESPACE}

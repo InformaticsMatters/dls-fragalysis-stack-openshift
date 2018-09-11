@@ -5,26 +5,30 @@
 
 - name: Login (admin)
   shell: oc login {{ cluster_url }} -u admin -p {{ admin_password }}
+  changed_when: False
 
 - name: Get Projects
   shell: oc get projects
   register: projects_result
+  changed_when: False
 
-- name: Create Fraglysis (TEST) Project
+- name: Create Fraglysis Project
   shell: >
     oc new-project fragalysis-cicd
     --display-name='Fragalysis'
     --description='The Fragalysis CI/CD Project (Development Deployment)'
   when: '"fragalysis-cicd" not in projects_result.stdout'
 
-- name: Move to Fragalysis (TEST) Project
+- name: Move to Fragalysis Project
   shell: oc project fragalysis-cicd
+  changed_when: False
 
-- name: Check Diamond Service Account exists (TEST)
+- name: Check Diamond Service Account exists
   shell: oc get sa
   register: diamond_sa_result
+  changed_when: False
 
-- name: Create Diamond Service Account (TEST)
+- name: Create Diamond Service Account
   shell: "{{ item }}"
   loop:
   - oc create sa diamond

@@ -4,19 +4,18 @@
 
 cluster_url: https://openshift.xchem.diamond.ac.uk
 
-wait_for_mysql: yes
-
-use_nfs: yes
-
-deploy_jun2018_graph: no
+# Project-specific variables
 deploy_backup: yes
+deploy_jun2018_graph: no
+use_nfs: yes
+wait_for_mysql: yes
 
 # If set ansible will attempt to configure Jenkins
 # by running our configure-cicd.py module.
 # This will require the environment variables to have been set.
 configure_jenkins: no
 
-# Our Fragalysis template directory
+# Our Fragalysis OpenShift template directory
 # (relative to the role_path directory)
 t_dir: ../../../templates
 

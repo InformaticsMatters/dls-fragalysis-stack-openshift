@@ -19,6 +19,8 @@ parameters:
 
 - name: BACKUP_NAMESPACE
   value: fragalysis-cicd
+- name: BACKUP_VOLUME_CLAIM_NAME
+  value: fs-db-backup-claim
 - name: BACKUP_PV_BACKUP_SIZE
   value: 100Gi
 
@@ -27,7 +29,7 @@ objects:
 - apiVersion: v1
   kind: PersistentVolumeClaim
   metadata:
-    name: fs-db-backup-claim
+    name: ${BACKUP_VOLUME_CLAIM_NAME}
     namespace: ${BACKUP_NAMESPACE}
   spec:
     accessModes:

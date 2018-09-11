@@ -1,7 +1,8 @@
 ---
 
-- name: Move to Fragalysis (TEST) Project (Graph Jun2018)
+- name: Move to Fragalysis Project (Graph Jun2018)
   shell: oc project fragalysis-cicd
+  changed_when: False
 
 # Create the Graph PV
 
@@ -11,11 +12,12 @@
   when:
   - use_nfs
   - deploy_jun2018_graph
+  changed_when: False
 
 - name: Create Jun2018 Graph PV
   shell: >
-    oc process -f {{ role_path }}/{{ t_dir }}/fs-graph-jun2018-pv-nfs.yaml |
-    oc create -f -
+    oc process -f {{ role_path }}/{{ t_dir }}/fs-graph-jun2018-pv-nfs.yaml
+    | c create -f -
   when:
   - use_nfs
   - deploy_jun2018_graph
@@ -27,11 +29,12 @@
   shell: oc get pvc
   register: jun2018_pvc
   when: deploy_jun2018_graph
+  changed_when: False
 
 - name: Create Jun2018 Graph PVC
   shell: >
-    oc process -f {{ role_path }}/{{ t_dir }}/fs-graph-jun2018-pvc.yaml |
-    oc create -f -
+    oc process -f {{ role_path }}/{{ t_dir }}/fs-graph-jun2018-pvc.yaml
+    | oc create -f -
   when:
   - deploy_jun2018_graph
   - '"fs-graph-jun2018-data-claim" not in jun2018_pvc.stdout'
@@ -42,11 +45,12 @@
   shell: oc get deploymentconfigs
   register: jun2018_dc
   when: deploy_jun2018_graph
+  changed_when: False
 
 - name: Create Jun2018 Graph Deployment
   shell: >
-    oc process -f {{ role_path }}/{{ t_dir }}/fs-graph-jun2018.yaml |
-    oc create -f -
+    oc process -f {{ role_path }}/{{ t_dir }}/fs-graph-jun2018.yaml
+    | oc create -f -
   when:
   - deploy_jun2018_graph
   - '"graph-jun2018" not in jun2018_dc.stdout'

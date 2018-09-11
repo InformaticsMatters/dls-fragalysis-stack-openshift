@@ -19,6 +19,8 @@ parameters:
 
 - name: WEB_NAMESPACE
   value: fragalysis-cicd
+- name: WEB_VOLUME_CLAIM_NAME
+  value: fs-web-media-claim
 - name: WEB_PV_SIZE
   value: 20Gi
 
@@ -27,7 +29,7 @@ objects:
 - apiVersion: v1
   kind: PersistentVolumeClaim
   metadata:
-    name: fs-web-media-claim
+    name: ${WEB_VOLUME_CLAIM_NAME}
     namespace: ${WEB_NAMESPACE}
   spec:
     accessModes:

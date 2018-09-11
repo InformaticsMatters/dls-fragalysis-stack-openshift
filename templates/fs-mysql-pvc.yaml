@@ -19,6 +19,8 @@ parameters:
 
 - name: MYSQL_NAMESPACE
   value: fragalysis-cicd
+- name: MYSQL_VOLUME_CLAIM_NAME
+  value: fs-mysql-data-claim
 - name: MYSQL_PV_SIZE
   value: 20Gi
 
@@ -27,7 +29,7 @@ objects:
 - apiVersion: v1
   kind: PersistentVolumeClaim
   metadata:
-    name: fs-mysql-data-claim
+    name: ${MYSQL_VOLUME_CLAIM_NAME}
     namespace: ${MYSQL_NAMESPACE}
   spec:
     accessModes:
