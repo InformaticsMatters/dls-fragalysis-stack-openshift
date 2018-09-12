@@ -57,7 +57,7 @@
     | oc create -f -
   when: '"fs-input-claim" not in input_pvc.stdout'
 
-- name: Wait for Jenkins PVCs to become Bound
+- name: Wait for Input PVC to become Bound
   shell: >
     oc get pvc/{{ item }} | grep Bound
   retries: 12
