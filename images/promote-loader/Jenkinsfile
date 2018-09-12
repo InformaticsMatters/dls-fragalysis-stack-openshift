@@ -39,6 +39,10 @@ pipeline {
                          string(credentialsId: 'ocUser', variable: 'OC_USER'),
                          string(credentialsId: 'ocUserPassword', variable: 'OC_USER_PASSWORD')]) {
 
+          slackSend channel: "#${SLACK_BUILD_CHANNEL}",
+                    color: 'good',
+                    message: "${JOB_NAME} - promoting loader/${PROMOTE_BUILD}"
+
           sh "oc login ${CLUSTER_URL} -u ${OC_USER} -p ${OC_USER_PASSWORD}"
           sh "oc tag ${SRC_STREAM_IMAGE} ${TGT_STREAM_IMAGE}"
 
