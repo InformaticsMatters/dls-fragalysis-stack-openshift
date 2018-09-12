@@ -37,7 +37,8 @@ pipeline {
 
     stage('Promote Image') {
       steps {
-        echo "Promoting WEB..."
+        echo 'Promoting WEB...'
+        sh 'env'
       }
     }
 
