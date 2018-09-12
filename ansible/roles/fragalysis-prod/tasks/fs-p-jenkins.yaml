@@ -40,8 +40,6 @@
 # Create the Jenkins PV
 # This is where the Jenkins configuration is persisted.
 
-- set_fact: input_claim_name={{ input_pv_name }}-claim
-
 - name: Check Jenkins PV
   shell: oc get pv
   register: jenkins_pv
@@ -55,11 +53,11 @@
   shell: >
     oc process -f {{ role_path }}/{{ t_dir }}/fs-input-pv-nfs.yaml
     -p INPUT_NAMESPACE={{ namespace }}
-    -p INPUT_PV_NAME={{ input_pv_name }}
+    -p INPUT_PV_NAME={{ input_vol_name }}
     | oc create -f -
   when:
   - use_nfs
-  - input_pv_name not in jenkins_pv.stdout
+  - input_vol_name not in jenkins_pv.stdout
 
 # Create the Input PVC
 
@@ -72,9 +70,9 @@
   shell: >
     oc process -f {{ role_path }}/{{ t_dir }}/fs-input-pvc.yaml
     -p INPUT_NAMESPACE={{ namespace }}
-    -p INPUT_VOLUME_NAME={{ input_pv_name }}
+    -p INPUT_VOLUME_NAME={{ input_vol_name }}
     | oc create -f -
-  when: input_claim_name not in input_pvc.stdout
+  when: '"fs-input-claim" not in input_pvc.stdout'
 
 - name: Wait for Jenkins PVCs to become Bound
   shell: >
@@ -84,6 +82,6 @@
   register: result
   until: result.rc == 0
   loop:
-  - "{{ input_claim_name }}"
-  when: input_claim_name not in input_pvc.stdout
+  - fs-input-claim
+  when: item not in input_pvc.stdout
   changed_when: False

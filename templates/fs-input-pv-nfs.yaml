@@ -32,6 +32,8 @@ parameters:
   value: fs-input
 - name: INPUT_PV_NAME
   value: fs-input
+- name: INPUT_CLAIM_NAME
+  value: fs-input-claim
 - name: INPUT_PV_SIZE
   value: 500Gi
 
@@ -56,5 +58,5 @@ objects:
       path: ${NFS_PATH}/${INPUT_PV_DIR}
       readOnly: True
     claimRef:
-      name: ${INPUT_PV_NAME}-claim
+      name: ${INPUT_CLAIM_NAME}
       namespace: ${INPUT_NAMESPACE}

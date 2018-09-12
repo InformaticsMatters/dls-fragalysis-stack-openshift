@@ -2,8 +2,6 @@
 
 # Create the MySQL PV
 
-- set_fact: mysql_claim_name={{ mysql_vol_name }}-claim
-
 - name: Check MySQL PV
   shell: oc get pv
   register: mysql_pv
@@ -16,7 +14,6 @@
     -p MYSQL_NAMESPACE={{ namespace }}
     -p MYSQL_PV_DIR={{ mysql_nfs_dir }}
     -p MYSQL_VOLUME_NAME={{ mysql_vol_name }}
-    -p MYSQL_VOLUME_CLAIM_NAME={{ mysql_claim_name }}
     | oc create -f -
   when:
   - use_nfs
@@ -33,9 +30,8 @@
   shell: >
     oc process -f {{ role_path }}/{{ t_dir }}/fs-mysql-pvc.yaml
     -p MYSQL_NAMESPACE={{ namespace }}
-    -p MYSQL_VOLUME_CLAIM_NAME={{ mysql_claim_name }}
     | oc create -f -
-  when: mysql_claim_name not in mysql_pvc.stdout
+  when: '"fs-mysql-data-claim" not in mysql_pvc.stdout'
 
 - name: Wait for MySQL PVCs to become Bound
   shell: oc get pvc/{{ item }} | grep Bound
@@ -44,7 +40,7 @@
   register: result
   until: result.rc == 0
   loop:
-  - "{{ mysql_claim_name }}"
+  - fs-mysql-data-claim
   when: item not in mysql_pvc.stdout
   changed_when: False
 
@@ -59,7 +55,6 @@
   shell: >
     oc process -f {{ role_path }}/{{ t_dir }}/fs-mysql.yaml
     -p MYSQL_NAMESPACE={{ namespace }}
-    -p MYSQL_VOLUME_CLAIM_NAME={{ mysql_claim_name }}
     | oc create -f -
   when: '"mysql" not in mysql_dc.stdout'
 

@@ -5,8 +5,6 @@
 
 # Create the Web PV
 
-- set_fact: web_claim_name={{ web_vol_name }}-claim
-
 - name: Check Web PV
   shell: oc get pv
   register: w_pv
@@ -18,7 +16,6 @@
     oc process -f {{ role_path }}/{{ t_dir }}/fs-web-pv-nfs.yaml
     -p WEB_NAMESPACE={{ namespace }}
     -p WEB_VOLUME_NAME={{ web_vol_name }}
-    -p WEB_VOLUME_CLAIM_NAME={{ web_claim_name }}
     -p WEB_MEDIA_PV_DIR={{ web_nfs_dir }}
     | oc create -f -
   when:
@@ -36,9 +33,8 @@
   shell: >
     oc process -f {{ role_path }}/{{ t_dir }}/fs-web-pvc.yaml
     -p WEB_NAMESPACE={{ namespace }}
-    -p WEB_VOLUME_CLAIM_NAME={{ web_claim_name }}
     | oc create -f -
-  when: web_claim_name not in w_pvc.stdout
+  when: '"fs-web-media-claim" not in w_pvc.stdout'
 
 - name: Wait for Web PVCs to become Bound
   shell: >
@@ -48,7 +44,7 @@
   register: result
   until: result.rc == 0
   loop:
-  - "{{ web_claim_name }}"
+  - fs-web-media-claim
   when: item not in w_pvc.stdout
   changed_when: False
 
@@ -73,7 +69,6 @@
   shell: >
     oc process -f {{ role_path }}/{{ t_dir }}/fs-web.yaml
     -p WEB_NAMESPACE={{ namespace }}
-    -p WEB_VOLUME_CLAIM_NAME={{ web_claim_name }}
     -p WEB_HOSTNAME={{ web_hostname }}
     -p WEB_GRAPH_URL={{ graph_url }}
     -p WEB_GRAPH_SERVICE={{ graph_svc }}

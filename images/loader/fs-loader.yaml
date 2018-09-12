@@ -25,9 +25,7 @@ parameters:
 - name: LOADER_REGISTRY
   value: docker-registry.default.svc:5000
 - name: LOADER_IMAGE
-  value: fragalysis-cicd/loader-stream
-- name: LOADER_IMAGE_TAG
-  value: latest
+  value: fragalysis-cicd/loader-stream:latest
 - name: LOADER_INPUT_VOLUME_CLAIM_NAME
   value: fs-input-claim
 - name: LOADER_MEDIA_VOLUME_CLAIM_NAME
@@ -59,7 +57,7 @@ objects:
           - 'until nslookup mysql; do echo waiting for db; sleep 1; done;'
 
         containers:
-        - image: ${LOADER_REGISTRY}/${LOADER_IMAGE}:${LOADER_IMAGE_TAG}
+        - image: ${LOADER_REGISTRY}/${LOADER_IMAGE}
           name: fs-loader
           command:
           - 'sh'

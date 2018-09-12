@@ -23,13 +23,15 @@ parameters:
   value: fragalysis-cicd
 - name: INPUT_VOLUME_NAME
   value: fs-input
+- name: INPUT_CLAIM_NAME
+  value: fs-input-claim
 
 objects:
 
 - apiVersion: v1
   kind: PersistentVolumeClaim
   metadata:
-    name: ${INPUT_VOLUME_NAME}-claim
+    name: ${INPUT_CLAIM_NAME}
     namespace: ${INPUT_NAMESPACE}
   spec:
     accessModes:

@@ -40,5 +40,5 @@
   - "{{ mysql_vol_name }}"
   - "{{ backup_vol_name }}"
   - "{{ web_vol_name }}"
-  - "{{ input_pv_name }}"
+  - "{{ input_vol_name }}"
   when: item in pv_result.stdout

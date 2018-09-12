@@ -40,12 +40,52 @@ pipeline {
                          string(credentialsId: 'ocUserPassword', variable: 'OC_USER_PASSWORD')]) {
 
           slackSend channel: "#${SLACK_BUILD_CHANNEL}",
-                    color: 'good',
                     message: "${JOB_NAME} - promoting loader/${PROMOTE_BUILD}"
 
           sh "oc login ${CLUSTER_URL} -u ${OC_USER} -p ${OC_USER_PASSWORD}"
           sh "oc tag ${SRC_STREAM_IMAGE} ${TGT_STREAM_IMAGE}"
+          sh "oc project ${TGT_PROJECT}"
+          script {
+            LOADER_RUNNING = sh(script: 'oc get jobs | grep loader | grep Running | wc -l', returnStdout: true).trim()
+          }
+          echo "RUNNING=${LOADER_RUNNING}"
 
+        }
+      }
+    }
+
+    stage('Deploy Image') {
+      when {
+        expression { LOADER_RUNNING == '0' }
+      }
+      steps {
+        dir('images/loader') {
+          sh "oc delete job --selector template=fs-loader"
+          sleep 4
+          sh "oc process -p LOADER_NAMESPACE=${TGT_PROJECT} -p LOADER_IMAGE=${TGT_STREAM_IMAGE} -f fs-loader.yaml | oc create -f -"
+
+          slackSend channel: "#${SLACK_BUILD_CHANNEL}",
+                    color: 'good',
+                    message: "${JOB_NAME} - complete"
+        }
+      }
+    }
+
+    stage('Blocked Image') {
+      when {
+        expression { LOADER_RUNNING != '0' }
+      }
+      steps {
+        echo "A prior loader is still running (deployment is blocked)"
+        script {
+          slackSend channel: "#${SLACK_BUILD_CHANNEL}",
+                    color: 'warning',
+                    message: "${JOB_NAME} - deployment blocked"
+
+          // Everything's OK but we were blocked from deploying it
+          // as it appears a prior Job instance is running.
+          // Here we just set the build status to UNSTABLE.
+          currentBuild.result = 'UNSTABLE'
         }
       }
     }

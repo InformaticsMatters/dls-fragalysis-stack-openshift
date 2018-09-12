@@ -2,8 +2,6 @@
 
 # Create the Backup PV
 
-- set_fact: backup_claim_name={{ backup_vol_name }}-claim
-
 - name: Check Backup PV
   shell: oc get pv
   register: bu_pv
@@ -18,7 +16,6 @@
     -p BACKUP_NAMESPACE={{ namespace }}
     -p BACKUP_PV_DIR={{ backup_nfs_dir }}
     -p BACKUP_VOLUME_NAME={{ backup_vol_name }}
-    -p BACKUP_VOLUME_CLAIM_NAME={{ backup_claim_name }}
     | oc create -f -
   when:
   - deploy_backup
@@ -38,11 +35,10 @@
   shell: >
     oc process -f {{ role_path }}/{{ t_dir }}/fs-db-backup-pvc.yaml
     -p BACKUP_NAMESPACE={{ namespace }}
-    -p BACKUP_VOLUME_CLAIM_NAME={{ backup_claim_name }}
     | oc create -f -
   when:
   - deploy_backup
-  - backup_claim_name not in bu_pvc.stdout
+  - '"fs-db-backup-claim" not in bu_pvc.stdout'
 
 # Create the Backup Deployment
 
