@@ -21,17 +21,20 @@ parameters:
   value: 500Gi
 - name: INPUT_NAMESPACE
   value: fragalysis-cicd
+- name: INPUT_VOLUME_NAME
+  value: fs-input
 
 objects:
 
 - apiVersion: v1
   kind: PersistentVolumeClaim
   metadata:
-    name: fs-input-claim
+    name: ${INPUT_VOLUME_NAME}-claim
     namespace: ${INPUT_NAMESPACE}
   spec:
     accessModes:
-    - ReadWriteMany
+    - ReadOnlyMany
+    volumeName: ${INPUT_VOLUME_NAME}
     resources:
       requests:
         storage: ${INPUT_PV_SIZE}

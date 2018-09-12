@@ -1,9 +1,5 @@
 ---
 
-- name: Move to Fragalysis Project (Graph)
-  shell: oc project fragalysis-cicd
-  changed_when: False
-
 # Create the Graph Deployment
 
 - name: Check Graph ImageStream

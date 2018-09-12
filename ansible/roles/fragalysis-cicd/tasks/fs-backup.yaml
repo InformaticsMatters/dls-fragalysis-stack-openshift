@@ -1,9 +1,5 @@
 ---
 
-- name: Move to Fragalysis Project (Backup)
-  shell: oc project fragalysis-cicd
-  changed_when: False
-
 # Create the Backup PV
 
 - name: Check Backup PV

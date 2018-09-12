@@ -9,6 +9,9 @@ cluster_url: https://openshift.xchem.diamond.ac.uk
 # (i.e. the Graph database)
 fragalysis_cicd_namespace: fragalysis-cicd
 
+# The Jenkins CI/CD user
+jenkins_user: jenkins
+
 # Project-specific variables
 backup_nfs_dir: pv-fs-p-mysql-data-backup
 backup_vol_name: fs-p-db-backup
@@ -16,6 +19,7 @@ deploy_backup: yes
 deploy_jun2018_graph: no
 graph_svc: neo4j.{{ fragalysis_cicd_namespace }}.svc
 graph_url: bolt://neo4j:test@neo4j.{{ fragalysis_cicd_namespace }}.svc:7687
+input_pv_name: fs-p-input
 mysql_nfs_dir: pv-fs-p-mysql-data
 mysql_vol_name: fs-p-mysql-data
 namespace: fragalysis-prod

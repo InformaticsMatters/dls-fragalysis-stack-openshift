@@ -3,10 +3,6 @@
 # Deploy the Web image.
 # Which consists of an image stream, PV, PVC and deployment configuration.
 
-- name: Move to Fragalysis Project (Web)
-  shell: oc project fragalysis-cicd
-  changed_when: False
-
 # Create the Web PV
 
 - name: Check Web PV

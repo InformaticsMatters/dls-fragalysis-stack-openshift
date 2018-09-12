@@ -1,9 +1,5 @@
 ---
 
-- name: Move to Fragalysis Project (Graph Jun2018)
-  shell: oc project fragalysis-cicd
-  changed_when: False
-
 # Create the Graph PV
 
 - name: Check Jun2018 Graph PV

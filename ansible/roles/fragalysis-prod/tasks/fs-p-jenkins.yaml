@@ -1,6 +1,27 @@
 ---
 
+- name: Move to Fragalysis Project (Jenkins)
+  shell: oc project {{ namespace }}
+  changed_when: False
+
 # Check and create the Jenkins user roles
+
+# Give the jenkins user access to this project.
+# The builds take place in the CI/CD project and images
+# need to be pushed to this project.
+# The system:image-builder role allows both pull and push capability.
+#
+# See: -
+#
+#   https://docs.openshift.com/container-platform/3.9/
+#         install_config/registry/accessing_registry.html
+#
+# And a handy crib-sheet of verbs and names that can be used
+# with the 'oc adm policy who-can' command...
+#
+#   https://docs.openshift.com/container-platform/3.6/
+#          architecture/additional_concepts/
+#          authorization.html#evaluating-authorization
 
 - name: Check Jenkins Role
   shell: oc adm policy who-can update imagestreamimages
@@ -19,19 +40,13 @@
 # Create the Jenkins PV
 # This is where the Jenkins configuration is persisted.
 
+- set_fact: input_claim_name={{ input_pv_name }}-claim
+
 - name: Check Jenkins PV
   shell: oc get pv
   register: jenkins_pv
   when: use_nfs
   changed_when: False
-
-- name: Create Jenkins PV
-  shell: >
-    oc process -f {{ role_path }}/{{ t_dir }}/fs-jenkins-pv-nfs.yaml
-    | oc create -f -
-  when:
-  -  use_nfs
-  - '"fs-jenkins" not in jenkins_pv.stdout'
 
 # Create the Data Input PV/PVC
 # This is where the Web and Graph data is expected to be found.
@@ -39,12 +54,14 @@
 - name: Create Input PV
   shell: >
     oc process -f {{ role_path }}/{{ t_dir }}/fs-input-pv-nfs.yaml
+    -p INPUT_NAMESPACE={{ namespace }}
+    -p INPUT_PV_NAME={{ input_pv_name }}
     | oc create -f -
   when:
   - use_nfs
-  - '"fs-input" not in jenkins_pv.stdout'
+  - input_pv_name not in jenkins_pv.stdout
 
-# Create the Input PVCs
+# Create the Input PVC
 
 - name: Check Input PVC
   shell: oc get pvc
@@ -54,8 +71,10 @@
 - name: Create Input PVC
   shell: >
     oc process -f {{ role_path }}/{{ t_dir }}/fs-input-pvc.yaml
+    -p INPUT_NAMESPACE={{ namespace }}
+    -p INPUT_VOLUME_NAME={{ input_pv_name }}
     | oc create -f -
-  when: '"fs-input-claim" not in input_pvc.stdout'
+  when: input_claim_name not in input_pvc.stdout
 
 - name: Wait for Jenkins PVCs to become Bound
   shell: >
@@ -65,27 +84,6 @@
   register: result
   until: result.rc == 0
   loop:
-  - fs-input-claim
-  when: '"fs-input-claim" not in input_pvc.stdout'
+  - "{{ input_claim_name }}"
+  when: input_claim_name not in input_pvc.stdout
   changed_when: False
-
-# Create the Buildah Slave Agent
-
-- name: Check Buildah Agent ImageStream
-  shell: oc get is
-  register: agent_is
-  changed_when: False
-
-- name: Create Buildah Agent ImageStream
-  shell: >
-    oc process -f {{ role_path }}/{{ t_dir }}/fs-jenkins-slave-agent-is.yaml
-    | oc create -f -
-  when: '"buildah-slave" not in agent_is.stdout'
-
-# Configure Jenkins?
-# i.e. set secrets ctc.
-
-- name: Configure Jenkins Jobs/Secrets
-  shell: >
-    {{ role_path }}/../../../jenkins/configure-cicd.py set test --force
-  when: configure_jenkins

@@ -14,6 +14,8 @@ wait_for_mysql: yes
 # by running our configure-cicd.py module.
 # This will require the environment variables to have been set.
 configure_jenkins: no
+# The Jenkins CI/CD user
+jenkins_user: jenkins
 
 # Our Fragalysis OpenShift template directory
 # (relative to the role_path directory)

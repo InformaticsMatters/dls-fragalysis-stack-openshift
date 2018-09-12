@@ -30,19 +30,21 @@ parameters:
   value: fragalysis-cicd
 - name: INPUT_PV_DIR
   value: fs-input
+- name: INPUT_PV_NAME
+  value: fs-input
 - name: INPUT_PV_SIZE
   value: 500Gi
 
 objects:
 
-# -----------------------------
-# Fragalysis Data-Input Volumes
-# -----------------------------
+# ----------------------------
+# Fragalysis Data-Input Volume
+# ----------------------------
 
 - kind: PersistentVolume
   apiVersion: v1
   metadata:
-    name: fs-input
+    name: ${INPUT_PV_NAME}
   spec:
     capacity:
       storage: ${INPUT_PV_SIZE}
@@ -52,6 +54,7 @@ objects:
     nfs:
       server: ${NFS_SERVER}
       path: ${NFS_PATH}/${INPUT_PV_DIR}
+      readOnly: True
     claimRef:
-      name: fs-input-claim
+      name: ${INPUT_PV_NAME}-claim
       namespace: ${INPUT_NAMESPACE}
