@@ -37,8 +37,14 @@ pipeline {
 
     stage('Promote Image') {
       steps {
-        echo 'Promoting WEB...'
-        sh 'env'
+        withCredentials([string(credentialsId: 'clusterUrl', variable: 'CLUSTER_URL'),
+                         string(credentialsId: 'ocUser', variable: 'OC_USER'),
+                         string(credentialsId: 'ocUserPassword', variable: 'OC_USER_PASSWORD')]) {
+
+          sh "oc login ${CLUSTER_URL} -u ${OC_USER} -p ${OC_USER_PASSWORD}"
+          sh "oc tag fragalysis-cicd/web-stream:latest fragalysis-prod/web-stream:stable"
+
+        }
       }
     }
 
