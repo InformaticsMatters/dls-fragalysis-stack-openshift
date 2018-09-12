@@ -55,6 +55,7 @@
   shell: >
     oc process -f {{ role_path }}/{{ t_dir }}/fs-mysql.yaml
     -p MYSQL_NAMESPACE={{ namespace }}
+    -p MYSQL_NAME={{ mysql_name }}
     | oc create -f -
   when: '"mysql" not in mysql_dc.stdout'
 
@@ -67,8 +68,9 @@
   shell: >
     oc process -f {{ role_path }}/{{ t_dir }}/fs-mysql-svc.yaml
     -p MYSQL_NAMESPACE={{ namespace }}
+    -p MYSQL_NAME={{ mysql_name }}
     | oc create -f -
-  when: '"mysql" not in mysql_svc.stdout'
+  when: mysql_name not in mysql_svc.stdout
 
 # Wait...
 

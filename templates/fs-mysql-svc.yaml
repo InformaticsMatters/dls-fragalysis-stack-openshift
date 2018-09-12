@@ -19,13 +19,15 @@ parameters:
 
 - name: MYSQL_NAMESPACE
   value: fragalysis-cicd
+- name: MYSQL_NAME
+  value: mysql
 
 objects:
 
 - kind: Service
   apiVersion: v1
   metadata:
-    name: mysql
+    name: ${MYSQL_NAME}
     namespace: ${MYSQL_NAMESPACE}
   spec:
     ports:
@@ -33,4 +35,4 @@ objects:
       port: 3306
       targetPort: 3306
     selector:
-      name: mysql
+      name: ${MYSQL_NAME}

@@ -19,13 +19,15 @@ parameters:
 
 - name: WEB_NAMESPACE
   value: fragalysis-cicd
+- name: WEB_NAME
+  value: web
 
 objects:
 
 - kind: Service
   apiVersion: v1
   metadata:
-    name: web
+    name: ${WEB_NAME}
     namespace: ${WEB_NAMESPACE}
   spec:
     ports:
@@ -33,4 +35,4 @@ objects:
       port: 8000
       targetPort: 80
     selector:
-      name: web
+      name: ${WEB_NAME}

@@ -30,6 +30,8 @@ parameters:
   value: fs-input-claim
 - name: LOADER_MEDIA_VOLUME_CLAIM_NAME
   value: fs-web-media-claim
+- name: LOADER_MYSQL_SERVICE
+  value: mysql
 
 objects:
 
@@ -54,7 +56,10 @@ objects:
           command:
           - 'sh'
           - '-c'
-          - 'until nslookup mysql; do echo waiting for db; sleep 1; done;'
+          - 'until nslookup ${WEB_MYSQL_SERVICE}; do echo waiting for db; sleep 1; done;'
+          env:
+          - name: LOADER_MYSQL_SERVICE
+            value: ${LOADER_MYSQL_SERVICE}
 
         containers:
         - image: ${LOADER_REGISTRY}/${LOADER_IMAGE}

@@ -72,6 +72,7 @@
     -p WEB_HOSTNAME={{ web_hostname }}
     -p WEB_GRAPH_URL={{ graph_url }}
     -p WEB_GRAPH_SERVICE={{ graph_svc }}
+    -p WEB_MYSQL_SERVICE={{ mysql_name }}
     -p WEB_TAG=stable
     | oc create -f -
   when: '"web" not in w_dc.stdout'
@@ -85,8 +86,9 @@
   shell: >
     oc process -f {{ role_path }}/{{ t_dir }}/fs-web-svc.yaml
     -p WEB_NAMESPACE={{ namespace }}
+    -p WEB_NAME={{ web_name }}
     | oc create -f -
-  when: '"web" not in w_svc.stdout'
+  when: web_name not in w_svc.stdout
 
 - name: Check Web Route
   shell: oc get routes
@@ -97,8 +99,9 @@
   shell: >
     oc process -f {{ role_path }}/{{ t_dir }}/fs-web-route.yaml
     -p WEB_HOSTNAME={{ web_hostname }}
+    -p WEB_SERVICE_NAME={{ web_name }}
     | oc create -f -
-  when: '"web" not in w_r.stdout'
+  when: web_name not in w_r.stdout
 
 # We don't wait for this pod,
 # its deployment is controlled by Jenkins.

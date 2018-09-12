@@ -19,6 +19,8 @@ parameters:
 
 - name: WEB_HOSTNAME
   value: fragalysis.apps.xchem.diamond.ac.uk
+- name: WEB_SERVICE_NAME
+  valeu: web
 
 objects:
 
@@ -27,12 +29,12 @@ objects:
   metadata:
     annotations:
       kubernetes.io/tls-acme: 'false'
-    name: web
+    name: ${WEB_SERVICE_NAME}
   spec:
     host: ${WEB_HOSTNAME}
     to:
       kind: Service
-      name: web
+      name: ${WEB_SERVICE_NAME}
     tls:
       termination: edge
       insecureEdgeTerminationPolicy: Redirect

@@ -19,6 +19,8 @@ parameters:
 
 - name: MYSQL_NAMESPACE
   value: fragalysis-cicd
+- name: MYSQL_NAME
+  value: mysql
 
 - name: MYSQL_TAG
   value: '5.7.23'
@@ -34,16 +36,16 @@ objects:
 - kind: DeploymentConfig
   apiVersion: v1
   metadata:
-    name: mysql
+    name: ${MYSQL_NAME}
     namespace: ${MYSQL_NAMESPACE}
   spec:
     replicas: ${MYSQL_REPLICAS}
     selector:
-      name: mysql
+      name: ${MYSQL_NAME}
     template:
       metadata:
         labels:
-          name: mysql
+          name: ${MYSQL_NAME}
       spec:
         nodeSelector:
           size: ${MYSQL_NODE_SIZE_SELECTOR}
@@ -52,7 +54,7 @@ objects:
         # Application containers
         containers:
         - image: mysql:${MYSQL_TAG}
-          name: mysql
+          name: ${MYSQL_NAME}
           ports:
           - containerPort: 3306
             protocol: TCP

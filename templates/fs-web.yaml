@@ -34,6 +34,8 @@ parameters:
   value: bolt://neo4j:test@neo4j:7687
 - name: WEB_GRAPH_SERVICE
   value: neo4j
+- name: WEB_MYSQL_SERVICE
+  value: mysql
 - name: WEB_VOLUME_CLAIM_NAME
   value: fs-web-media-claim
 
@@ -66,7 +68,10 @@ objects:
           command:
           - 'sh'
           - '-c'
-          - 'until nslookup mysql; do echo waiting for db; sleep 1; done;'
+          - 'until nslookup ${WEB_MYSQL_SERVICE}; do echo waiting for db; sleep 1; done;'
+          env:
+          - name: WEB_MYSQL_SERVICE
+            value: ${WEB_MYSQL_SERVICE}
         - image: ${BUSYBOX_IMAGE}
           name: wait-for-graph
           command:

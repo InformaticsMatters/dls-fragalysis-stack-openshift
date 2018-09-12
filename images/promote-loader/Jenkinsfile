@@ -14,6 +14,7 @@ pipeline {
     // User/Registry information.
     REGISTRY_USER = 'jenkins'
     REGISTRY = 'docker-registry.default:5000'
+    DB_NAME = 'mysql-prod'
 
     // Source registry details
     SRC_PROJECT = 'fragalysis-cicd'
@@ -62,7 +63,7 @@ pipeline {
         dir('images/loader') {
           sh "oc delete job --selector template=fs-loader"
           sleep 4
-          sh "oc process -p LOADER_NAMESPACE=${TGT_PROJECT} -p LOADER_IMAGE=${TGT_STREAM_IMAGE} -f fs-loader.yaml | oc create -f -"
+          sh "oc process -p LOADER_NAMESPACE=${TGT_PROJECT} -p LOADER_IMAGE=${TGT_STREAM_IMAGE} -p LOADER_MYSQL_SERVICE=${DB_NAME} -f fs-loader.yaml | oc create -f -"
 
           slackSend channel: "#${SLACK_BUILD_CHANNEL}",
                     color: 'good',
