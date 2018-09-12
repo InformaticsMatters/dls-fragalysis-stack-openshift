@@ -21,7 +21,7 @@ pipeline {
 
     // Target registry details
     TGT_PROJECT = 'fragalysis-prod'
-    TGT_STREAM_IMAGE = "${TGT_PROJECT}/loader-stream:latest"
+    TGT_STREAM_IMAGE = "${TGT_PROJECT}/loader-stream:stable"
 
     // Slack channel for all notifications
     SLACK_BUILD_CHANNEL = 'dls-builds'
