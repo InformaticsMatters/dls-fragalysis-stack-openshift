@@ -2,7 +2,7 @@
 
 # The Fragalysis Stack Loader Job Template.
 #
-# This us used by the Jenkins Ci/CD framework to delet and launch
+# This us used by the Jenkins CI/CD framework to delete and launch
 # loader Jobs.
 #
 # oc process -f fs-loader.yaml | oc create -f -
@@ -28,6 +28,10 @@ parameters:
   value: fragalysis-cicd/loader-stream
 - name: LOADER_IMAGE_TAG
   value: latest
+- name: LOADER_INPUT_VOLUME_CLAIM_NAME
+  value: fs-input-claim
+- name: LOADER_MEDIA_VOLUME_CLAIM_NAME
+  value: fs-web-media-claim
 
 objects:
 
@@ -100,9 +104,9 @@ objects:
         volumes:
         - name: fs-web-media
           persistentVolumeClaim:
-            claimName: fs-web-media-claim
+            claimName: ${LOADER_MEDIA_VOLUME_CLAIM_NAME}
         - name: fs-input
           persistentVolumeClaim:
-            claimName: fs-input-claim
+            claimName: ${LOADER_INPUT_VOLUME_CLAIM_NAME}
 
         restartPolicy: OnFailure
