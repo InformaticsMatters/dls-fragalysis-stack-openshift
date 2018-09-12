@@ -1,9 +1,5 @@
 ---
 
-- name: Move to Fragalysis Project (MySQL)
-  shell: oc project {{ namespace }}
-  changed_when: False
-
 # Create the MySQL PV
 
 - set_fact: mysql_claim_name={{ mysql_vol_name }}-claim

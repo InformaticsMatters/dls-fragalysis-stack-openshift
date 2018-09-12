@@ -1,11 +1,7 @@
 ---
 
 # Deploy the Web image.
-# Which consists of an image stream, PV, PVC and deployment configuration.
-
-- name: Move to Fragalysis Project (Web)
-  shell: oc project {{ namespace }}
-  changed_when: False
+# Which consists of a PV, image stream, PVC and deployment configuration.
 
 # Create the Web PV
 
@@ -56,27 +52,34 @@
   when: item not in w_pvc.stdout
   changed_when: False
 
-#- name: Check Web ImageStream
-#  shell: oc get is
-#  register: w_is
-#  changed_when: False
-#
-#- name: Create ImageStream
-#  shell: >
-#    oc process -f {{ role_path }}/{{ t_dir }}/fs-web-is.yaml
-#    | oc create -f -
-#  when: '"web-stream" not in w_is.stdout'
-#
-#- name: Check Web Deployment Config
-#  shell: oc get dc
-#  register: w_dc
-#  changed_when: False
-#
-#- name: Create Web Deployent Config
-#  shell: >
-#    oc process -f {{ role_path }}/{{ t_dir }}/fs-web.yaml
-#    | oc create -f -
-#  when: '"web" not in w_dc.stdout'
+- name: Check Web ImageStream
+  shell: oc get is
+  register: w_is
+  changed_when: False
+
+- name: Create ImageStream
+  shell: >
+    oc process -f {{ role_path }}/{{ t_dir }}/fs-web-is.yaml
+    -p WEB_TAG=stable
+    | oc create -f -
+  when: '"web-stream" not in w_is.stdout'
+
+- name: Check Web Deployment Config
+  shell: oc get dc
+  register: w_dc
+  changed_when: False
+
+- name: Create Web Deployment Config
+  shell: >
+    oc process -f {{ role_path }}/{{ t_dir }}/fs-web.yaml
+    -p WEB_NAMESPACE={{ namespace }}
+    -p WEB_VOLUME_CLAIM_NAME={{ web_claim_name }}
+    -p WEB_HOSTNAME={{ web_hostname }}
+    -p WEB_GRAPH_URL={{ graph_url }}
+    -p WEB_GRAPH_SERVICE={{ graph_svc }}
+    -p WEB_TAG=stable
+    | oc create -f -
+  when: '"web" not in w_dc.stdout'
 
 - name: Check Web Service
   shell: oc get svc

@@ -31,4 +31,4 @@ objects:
     - from:
         kind: DockerImage
         name: xchem/web:${WEB_TAG}
-      name: latest
+      name: ${WEB_TAG}

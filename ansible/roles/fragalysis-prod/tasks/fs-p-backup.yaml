@@ -1,9 +1,5 @@
 ---
 
-- name: Move to Fragalysis Project (Backup)
-  shell: oc project {{ namespace }}
-  changed_when: False
-
 # Create the Backup PV
 
 - set_fact: backup_claim_name={{ backup_vol_name }}-claim

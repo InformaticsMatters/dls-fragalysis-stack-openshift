@@ -30,6 +30,12 @@ parameters:
   value: '1'
 - name: WEB_NODE_SIZE_SELECTOR
   value: 'small'
+- name: WEB_GRAPH_URL
+  value: bolt://neo4j:test@neo4j:7687
+- name: WEB_GRAPH_SERVICE
+  value: neo4j
+- name: WEB_VOLUME_CLAIM_NAME
+  value: fs-web-media-claim
 
 objects:
 
@@ -42,6 +48,8 @@ objects:
     replicas: ${WEB_REPLICAS}
     selector:
       name: web
+    strategy:
+      type: Recreate
     template:
       metadata:
         labels:
@@ -64,7 +72,10 @@ objects:
           command:
           - 'sh'
           - '-c'
-          - 'until nslookup neo4j; do echo waiting for neo4j; sleep 1; done;'
+          - 'until nslookup ${WEB_GRAPH_SERVICE}; do echo waiting for neo4j; sleep 1; done;'
+          env:
+          - name: WEB_GRAPH_SERVICE
+            value: ${WEB_GRAPH_SERVICE}
 
         # Application containers
         containers:
@@ -159,6 +170,8 @@ objects:
               secretKeyRef:
                 name: fs-ispyb-secrets
                 key: ispyb-port
+          - name: NEO4J_BOLT_URL
+            value: ${WEB_GRAPH_URL}
           ports:
           - containerPort: 80
           volumeMounts:
@@ -167,7 +180,7 @@ objects:
         volumes:
         - name: fs-web-media
           persistentVolumeClaim:
-            claimName: fs-web-media-claim
+            claimName: ${WEB_VOLUME_CLAIM_NAME}
         restartPolicy: Always
 
     triggers:

@@ -1,5 +1,13 @@
 ---
 
+# Removes the production deployment.
+# This essentially consists of removing the project (and waiting for it)
+# and then removing the persistent volumes we expect to exist.
+
+- name: Login (admin)
+  shell: oc login {{ cluster_url }} -u admin -p {{ admin_password }}
+  changed_when: False
+
 # Remove the Production project
 
 - name: Check project
