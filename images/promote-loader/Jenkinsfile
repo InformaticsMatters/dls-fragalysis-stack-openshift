@@ -1,0 +1,73 @@
+#!groovy​
+
+// The Production Fragalysis Stack (loader application).
+//
+// This pipeline is executed in order to promote
+// the most recent 'latest' image (in the Developer project)
+// to the 'stable' image in the Production project.
+
+pipeline {
+
+  agent { label 'buildah-slave' }
+
+  environment {
+    // User/Registry information.
+    REGISTRY_USER = 'jenkins'
+    REGISTRY = 'docker-registry.default:5000'
+
+    // Source registry details
+    SRC_PROJECT = 'fragalysis-cicd'
+    SRC_REGISTRY_PRJ = "${REGISTRY}/${PROJECT}"
+    SRC_STREAM_IMAGE = "${REGISTRY_PRJ}/loader-stream:latest"
+
+    // Target registry details
+    PROJECT = 'fragalysis-prod'
+    REGISTRY_PRJ = "${REGISTRY}/${PROJECT}"
+    STREAM_IMAGE = "${REGISTRY_PRJ}/loader-stream:latest"
+
+    // Slack channel for all notifications
+    SLACK_BUILD_CHANNEL = 'dls-builds'
+    // Slack channel to be used for errors/failures
+    // (which also go to the CI/CD channel)
+    SLACK_ALERT_CHANNEL = 'dls-alerts'
+
+  }
+
+  stages {
+
+    stage('Promote Image') {
+      steps {
+        echo "Promote..."
+      }
+    }
+
+  }
+
+  // Post-job actions.
+  // See https://jenkins.io/doc/book/pipeline/syntax/#post
+  post {
+
+    failure {
+      slackSend channel: "#${SLACK_BUILD_CHANNEL}",
+                color: 'danger',
+                message: "${JOB_NAME} build ${BUILD_NUMBER} - failed (${BUILD_URL})"
+      slackSend channel: "#${SLACK_ALERT_CHANNEL}",
+                color: 'danger',
+                message: "${JOB_NAME} build ${BUILD_NUMBER} - failed (${BUILD_URL})"
+    }
+
+    unstable {
+      slackSend channel: "#${SLACK_BUILD_CHANNEL}",
+                color: 'warning',
+                message: "${JOB_NAME} build ${BUILD_NUMBER} - complete (unstable)"
+    }
+
+    fixed {
+      slackSend channel: "#${SLACK_ALERT_CHANNEL}",
+                color: 'good',
+                message: "${JOB_NAME} build - fixed"
+    }
+
+  }
+
+}
