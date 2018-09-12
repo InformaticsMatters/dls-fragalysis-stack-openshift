@@ -30,7 +30,7 @@ pipeline {
         dir('images/web') {
           slackSend channel: "#${SLACK_BUILD_CHANNEL}",
                     message: "${JOB_NAME} build ${BUILD_NUMBER} - starting"
-          sh "buildah bud --format docker -f Dockerfile -t ${STREAM_IMAGE} ."
+          sh "buildah bud --format docker --build-arg BUILD_NUMBER=${BUILD_NUMBER} -f Dockerfile -t ${STREAM_IMAGE} ."
         }
 
       }

@@ -111,7 +111,7 @@ pipeline {
                     message: "${JOB_NAME} build ${BUILD_NUMBER} - starting"
           slackSend channel: "#${SLACK_BUILD_CHANNEL}",
                     message: "${JOB_NAME} build ${BUILD_NUMBER} - using '${DATA_ORIGIN}' data"
-          sh "buildah bud --format docker --build-arg DATA_ORIGIN=${DATA_ORIGIN} -f Dockerfile -t ${STREAM_IMAGE} ."
+          sh "buildah bud --format docker --build-arg DATA_ORIGIN=${DATA_ORIGIN} --build-arg BUILD_NUMBER=${BUILD_NUMBER} -f Dockerfile -t ${STREAM_IMAGE} ."
         }
 
       }
