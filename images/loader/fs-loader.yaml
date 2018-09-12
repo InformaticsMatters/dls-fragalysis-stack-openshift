@@ -65,6 +65,7 @@ objects:
         containers:
         - image: ${LOADER_REGISTRY}/${LOADER_IMAGE}
           name: fs-loader
+          imagePullPolicy: Always
           command:
           - 'sh'
           - '-c'
