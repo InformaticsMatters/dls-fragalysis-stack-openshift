@@ -17,13 +17,11 @@ pipeline {
 
     // Source registry details
     SRC_PROJECT = 'fragalysis-cicd'
-    SRC_REGISTRY_PRJ = "${REGISTRY}/${PROJECT}"
-    SRC_STREAM_IMAGE = "${REGISTRY_PRJ}/loader-stream:latest"
+    SRC_STREAM_IMAGE = "${SRC_PROJECT}/loader-stream:latest"
 
     // Target registry details
-    PROJECT = 'fragalysis-prod'
-    REGISTRY_PRJ = "${REGISTRY}/${PROJECT}"
-    STREAM_IMAGE = "${REGISTRY_PRJ}/loader-stream:latest"
+    TGT_PROJECT = 'fragalysis-prod'
+    TGT_STREAM_IMAGE = "${TGT_PROJECT}/loader-stream:latest"
 
     // Slack channel for all notifications
     SLACK_BUILD_CHANNEL = 'dls-builds'
@@ -42,7 +40,7 @@ pipeline {
                          string(credentialsId: 'ocUserPassword', variable: 'OC_USER_PASSWORD')]) {
 
           sh "oc login ${CLUSTER_URL} -u ${OC_USER} -p ${OC_USER_PASSWORD}"
-          sh "oc tag ${SRC_STREAM_IMAGE} ${STREAM_IMAGE}"
+          sh "oc tag ${SRC_STREAM_IMAGE} ${TGT_STREAM_IMAGE}"
 
         }
       }
