@@ -42,7 +42,7 @@ pipeline {
                          string(credentialsId: 'ocUserPassword', variable: 'OC_USER_PASSWORD')]) {
 
           sh "oc login ${CLUSTER_URL} -u ${OC_USER} -p ${OC_USER_PASSWORD}"
-          sh "oc tag fragalysis-cicd/web-stream:latest fragalysis-prod/web-stream:stable"
+          sh "oc tag ${SRC_STREAM_IMAGE} ${STREAM_IMAGE}"
 
         }
       }
