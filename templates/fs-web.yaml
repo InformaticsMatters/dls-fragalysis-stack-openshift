@@ -85,6 +85,7 @@ objects:
         # Application containers
         containers:
         - name: web
+          imagePullPolicy: Always
           # Expect the earliest that the container can be ready is 60 seconds.
           # But check every 15 seconds and permit 36 failures before
           # considering the startup to have failed (that's about 10 minutes).
