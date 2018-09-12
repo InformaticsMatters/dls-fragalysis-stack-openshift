@@ -24,6 +24,8 @@ parameters:
   value: fragalysis.apps.xchem.diamond.ac.uk
 - name: WEB_NAMESPACE
   value: fragalysis-cicd
+- name: WEB_NAME
+  value: web
 - name: WEB_TAG
   value: 'latest'
 - name: WEB_REPLICAS
@@ -44,18 +46,18 @@ objects:
 - kind: DeploymentConfig
   apiVersion: v1
   metadata:
-    name: web
+    name: ${WEB_NAME}
     namespace: ${WEB_NAMESPACE}
   spec:
     replicas: ${WEB_REPLICAS}
     selector:
-      name: web
+      name: ${WEB_NAME}
     strategy:
       type: Recreate
     template:
       metadata:
         labels:
-          name: web
+          name: ${WEB_NAME}
       spec:
         nodeSelector:
           size: ${WEB_NODE_SIZE_SELECTOR}
@@ -84,7 +86,7 @@ objects:
 
         # Application containers
         containers:
-        - name: web
+        - name: ${WEB_NAME}
           imagePullPolicy: Always
           # Expect the earliest that the container can be ready is 60 seconds.
           # But check every 15 seconds and permit 36 failures before
@@ -195,7 +197,7 @@ objects:
        imageChangeParams:
          automatic: true
          containerNames:
-         - web
+         - ${WEB_NAME}
          from:
            kind: ImageStreamTag
            name: web-stream:${WEB_TAG}

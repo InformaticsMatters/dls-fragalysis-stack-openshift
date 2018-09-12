@@ -73,9 +73,10 @@
     -p WEB_GRAPH_URL={{ graph_url }}
     -p WEB_GRAPH_SERVICE={{ graph_svc }}
     -p WEB_MYSQL_SERVICE={{ mysql_name }}
+    -p WEB_NAME={{ web_name }}
     -p WEB_TAG=stable
     | oc create -f -
-  when: '"web" not in w_dc.stdout'
+  when: web_name not in w_dc.stdout
 
 - name: Check Web Service
   shell: oc get svc
