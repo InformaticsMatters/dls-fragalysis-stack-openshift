@@ -54,7 +54,7 @@ process headShred {
 process cgd {
 
     container 'xchem/fragalysis:0.0.7'
-    publishDir 'results/', mode: 'move'
+    publishDir 'results/', mode: 'copy'
     errorStrategy 'retry'
     maxRetries 3
 
@@ -62,10 +62,10 @@ process cgd {
     file part from origin_parts
 
     output:
-    file '*.nodes.gz' into node_parts
-    file '*.edges.gz' into edge_parts
-    file '*.attributes.gz' into attribute_parts
-    file '*.timing' into timing_parts
+    file '*.nodes'
+    file '*.edges'
+    file '*.attributes'
+    file '*.timing'
 
     shell:
     '''
@@ -82,11 +82,8 @@ process cgd {
     find . -name edges.txt -print | xargs awk '!x[$0]++' > !{part}.edges
     find . -name attributes.txt -print | xargs awk '!x[$0]++' > !{part}.attributes
     echo removing-output,$(date +"%d/%m/%Y %H:%M:%S") >> timing
-    rm !{part}
-    rm ligands_part*.smi
-    gzip !{part}.nodes
-    gzip !{part}.edges
-    gzip !{part}.attributes
+    #rm !{part}
+    #rm ligands_part*.smi
     echo done-!{part},$(date +"%d/%m/%Y %H:%M:%S") >> timing
     mv timing !{part}.timing
     '''
