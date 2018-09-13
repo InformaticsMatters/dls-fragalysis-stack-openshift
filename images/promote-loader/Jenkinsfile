@@ -58,7 +58,7 @@ pipeline {
           // Does the build exist as a tagged image?
           sh "oc login ${CLUSTER_URL} -u ${OC_USER} -p ${OC_USER_PASSWORD}"
           script {
-            IMAGE_TAG = sh(script 'oc describe is web-stream | grep latest-${PROMOTE_BUILD}$', returnStdout: true).trim()
+            IMAGE_TAG = sh(script: 'oc describe is web-stream | grep latest-${PROMOTE_BUILD}$', returnStdout: true).trim()
           }
           echo "IMAGE_TAG is '${IMAGE_TAG}'"
 
