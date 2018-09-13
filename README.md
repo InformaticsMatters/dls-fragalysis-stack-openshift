@@ -1,51 +1,39 @@
-# An OpenShift deployment of Fragalysis Stack
-An OpenShift deployment of Anthony Bradley's [Fragalysis], that automatically
-restarts the Graph (Neo4J) and Web (Django) application containers based
-on scheduled CI/CD jobs running in Jenkins.
+# OpenShift, CI/CD and Graph Processing support for Fragalysis Stack
+A collection of software and files to support the CI/CD deployment of the
+[Fragalysis] Stack. This essentially contains the tools to manage the
+[Jenkins] CI/CD deployment to [OpenShift] using [ansible] and the material
+used to assist the generation of a [neo4j] graph representation of the
+underlying molecule data using [nextflow].
 
-## Deployment
-The deployment creates a `fragalysis-cicd` project and the following
-OpenShift 3.7 deployments (services): -
+Distributed amongst a number of sub-directories: -
+ 
+-   **ansible**: a directory of roles and playbooks used to deploy
+    (and un-deploy) the stack and related software into an OpenShift cluster
+    as paired projects used for development/test and production.
+-   **images**: Dockerfiles and Jenkinsfiles for additional container images.
+    This includes a data loader, specialised graph and jobs to automate
+    the promotion of development project images to the production project.
+-   **jenkins**: Utilities to support the configuration and backup of the
+    cluster's Jenkins deployment. Based on a simple set of Python-based
+    utilities, this code uses the Jenkins API to write and read job
+    configurations and write job-related secrets.
+-   **minishift**: A simple and early deployment of the stack to a local
+    [Minishift] installation allowing experimentation on the desktop.
+-   **openshift**: All the OpenShift templates required to deploy the
+    developer/test and production application, used in conjunction with the
+    Ansible roles & playbooks.  
+-   **s2g-processor**: Material used to support the generation of the graph
+    representation of molecule data using Fragalysis utilities and Nextflow.
 
--   db (MySQL 5.7)
--   graph (driven by an ImageStream)
--   web (driven by an ImageStream)
-
-For the demo (minishift) we also create: -
-
--   A user ('diamond')
--   A service account ('diamond')
-
-## Creating PVs (Minishift)
-You can create your own PVs in Minishift.
-Follow the instructions in `minishift/mkpvs.sh`.
-
-Tested with Minishift using:
-
--   `--openshift-version 3.6.1`
--   `--openshift-version 3.7.1`
-    
-## Deploy (Minishift)
-Assuming you ave a suitable minishift instance running,
-from the `minishift` directory run: -
-
-    $ eval $(minishift oc-env)
-    
-    $ ./deploy.sh
-    
-This should create a `fragalysis-cicd` project and deploy the services.
-
-## Undeploy (Minishift)
-From the `minishift` directory run: -
-
-    $ ./undeploy.sh
-
->   Note: the `project` and `service account` created by `deploy`
-    is not removed by `undeploy`. This is deliberate because
-    the Jenkins CI/CD platform is currently installed (separately)
-    into the same project.
-    
 ---
 
-[Blog]: https://developers.redhat.com/blog/2017/04/05/adding-persistent-storage-to-minishift-cdk-3-in-minutes/
-[Fragalysis]: https://github.com/xchem/fragalysis-stack
+Alan Christie  
+Informatics Matters Ltd.  
+
+[ansible]: https://www.ansible.com
+[fragalysis]: https://github.com/xchem/fragalysis-stack
+[jenkins]: https://jenkins.io
+[minishift]: https://github.com/minishift/minishift
+[neo4j]: https://neo4j.com
+[nextflow]: https://www.nextflow.io
+[openshift]: https://www.openshift.com

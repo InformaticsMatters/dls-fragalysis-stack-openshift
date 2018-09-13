@@ -1,6 +1,6 @@
 im-jenkins-utils >= 1.1.3
 
-ansible == 2.6.3
-awscli == 1.16.8
+ansible == 2.6.4
+awscli == 1.16.14
 PyYAML == 3.13
-tqdm == 4.25.0
+tqdm == 4.26.0
