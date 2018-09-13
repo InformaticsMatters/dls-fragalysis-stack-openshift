@@ -45,10 +45,6 @@ pipeline {
         sh "buildah push --tls-verify=false ${STREAM_IMAGE} docker://${STREAM_IMAGE}"
         sh "podman logout ${REGISTRY}"
         sh "buildah images"
-
-        slackSend channel: "#${SLACK_BUILD_CHANNEL}",
-                  color: 'good',
-                  message: "${JOB_NAME} build ${BUILD_NUMBER} - complete"
       }
     }
 
