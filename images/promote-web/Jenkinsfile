@@ -83,7 +83,7 @@ pipeline {
         expression { IMAGE_TAG.length() != 0 }
       }
       steps {
-        sh "oc tag ${SRC_STREAM_IMAGE} ${TGT_STREAM_IMAGE}"
+        sh "oc tag ${SRC_STREAM_IMAGE}-${PROMOTE_BUILD} ${TGT_STREAM_IMAGE}"
         slackSend channel: "#${SLACK_BUILD_CHANNEL}",
                   color: 'good',
                   message: "${JOB_NAME} - complete"
