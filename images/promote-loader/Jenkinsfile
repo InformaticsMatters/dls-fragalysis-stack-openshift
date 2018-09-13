@@ -5,6 +5,14 @@
 // This pipeline is executed in order to promote
 // the most recent 'latest' image (in the Developer project)
 // to the 'stable' image in the Production project.
+//
+// You can start this job externally using curl with something like...
+// assuming you have a <user> and <token>
+//
+// curl -X POST https://jenkins-fragalysis-cicd.apps.xchem.diamond.ac.uk/job/Promote%20Loader%20Image/build \
+//       --user <user>:<token> \
+//       --data-urlencode json='{"parameter": [{"name":"PROMOTE_BUILD", "value":"32"}, {"name":"AS_VERSION", "value":"1.2.0"}]}'
+
 
 pipeline {
 
