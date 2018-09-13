@@ -62,18 +62,18 @@ echo "+ Creating PVCs..."
 oc login -u $USER -p $PASSWORD > /dev/null
 oc project $PROJECT > /dev/null
 
-oc process -f ../templates/fs-db-pvc.yaml | oc create -f -
-oc process -f ../templates/fs-cartridge-pvc.yaml | oc create -f -
+oc process -f ../openshift/templates/fs-db-pvc.yaml | oc create -f -
+oc process -f ../openshift/templates/fs-cartridge-pvc.yaml | oc create -f -
 
 echo
 echo "+ Creating Secrets..."
 
-oc process -f ../templates/fs-secrets.yaml | oc create -f -
+oc process -f ../openshift/templates/fs-secrets.yaml | oc create -f -
 
 echo
 echo "+ Deploying Application..."
 
-oc process -f ../templates/fs-graph.yaml | oc create -f -
-oc process -f ../templates/fs-db.yaml | oc create -f -
-oc process -f ../templates/fs-cartridge.yaml | oc create -f -
-oc process -f ../templates/fs-web.yaml | oc create -f -
+oc process -f ../openshift/templates/fs-graph.yaml | oc create -f -
+oc process -f ../openshift/templates/fs-db.yaml | oc create -f -
+oc process -f ../openshift/templates/fs-cartridge.yaml | oc create -f -
+oc process -f ../openshift/templates/fs-web.yaml | oc create -f -

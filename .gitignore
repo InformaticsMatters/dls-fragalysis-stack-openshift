@@ -1,4 +1,5 @@
 .DS_Store
+.idea
 
 ansible/vault-pass.txt
 images/get_unbuilt_data_directory.log

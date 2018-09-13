@@ -17,7 +17,7 @@ from datetime import datetime, timedelta
 # Number of slices the analysis is processing.
 # With 5,000,000 molecules cut into 2,000 molecule slices
 # the number of slices is 2,500.
-expected_slices = 2500
+expected_slices = 250
 
 # The name of the slice
 origin_part = None

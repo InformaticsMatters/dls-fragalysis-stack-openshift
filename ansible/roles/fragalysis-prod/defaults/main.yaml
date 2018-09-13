@@ -36,7 +36,7 @@ web_vol_name: fs-p-web-media
 
 # Our Fragalysis OpenShift template directory
 # (relative to the role_path directory)
-t_dir: ../../../templates
+t_dir: ../../../openshift/templates
 
 admin_password: !vault |
   $ANSIBLE_VAULT;1.1;AES256
