@@ -32,8 +32,6 @@ parameters:
   value: '1'
 - name: WEB_NODE_SIZE_SELECTOR
   value: 'small'
-- name: WEB_GRAPH_URL
-  value: bolt://neo4j:test@neo4j:7687
 - name: WEB_GRAPH_SERVICE
   value: neo4j
 - name: WEB_MYSQL_SERVICE
@@ -53,7 +51,7 @@ objects:
     selector:
       name: ${WEB_NAME}
     strategy:
-      type: Recreate
+      type: Rolling
     template:
       metadata:
         labels:
@@ -179,7 +177,15 @@ objects:
                 name: fs-ispyb-secrets
                 key: ispyb-port
           - name: NEO4J_BOLT_URL
-            value: ${WEB_GRAPH_URL}
+            valueFrom:
+              secretKeyRef:
+                name: fs-graph-secrets
+                key: graph-bolt-url
+          - name: NEO4J_QUERY
+            valueFrom:
+              secretKeyRef:
+                name: fs-graph-secrets
+                key: graph-service-name
           ports:
           - containerPort: 80
           volumeMounts:

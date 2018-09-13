@@ -70,7 +70,6 @@
     oc process -f {{ role_path }}/{{ t_dir }}/fs-web.yaml
     -p WEB_NAMESPACE={{ namespace }}
     -p WEB_HOSTNAME={{ web_hostname }}
-    -p WEB_GRAPH_URL={{ graph_url }}
     -p WEB_GRAPH_SERVICE={{ graph_svc }}
     -p WEB_MYSQL_SERVICE={{ mysql_name }}
     -p WEB_NAME={{ web_name }}
