@@ -134,7 +134,7 @@ pipeline {
           // Each build pushes a 'latest' image (done above)
           // but we also create a 'latest-${BUILD_NUMBER}'
           // for use when promoting the image to production...
-          sh "podman tag ${STREAM_IMAGE} ${STREAM_IMAGE}-${BUILD_NUMBER}"
+          sh "buildah tag --tls-verify=false docker://${STREAM_IMAGE} docker://${STREAM_IMAGE}-${BUILD_NUMBER}"
 
           // Done with buildah/podman
           sh "podman logout ${REGISTRY}"
