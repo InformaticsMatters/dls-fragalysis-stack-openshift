@@ -8,13 +8,14 @@ pipeline {
 
   environment {
     // Registry details
+    PROJECT = 'fragalysis-cicd'
     REGISTRY_USER = 'jenkins'
     REGISTRY = 'docker-registry.default:5000'
-    REGISTRY_PRJ = "${REGISTRY}/fragalysis-cicd"
-    STREAM_IMAGE = "${REGISTRY_PRJ}/web-stream:latest"
+    PROJECT_IMAGE = "${PROJECT}/web-stream:latest"
+    STREAM_IMAGE = "${REGISTRY}/${PROJECT_IMAGE}"
 
-    // get_unbuilt_data_directory environment...
-    TARGET_IMAGE = 'fragalysis-cicd/web-stream'
+    // For the get_unbuilt_data_directory environment...
+    TARGET_IMAGE = "${PROJECT}/web-stream"
 
     // Slack channel for all notifications
     SLACK_BUILD_CHANNEL = 'dls-builds'
@@ -38,13 +39,27 @@ pipeline {
 
     stage('Push Image') {
       steps {
-        script {
-          TOKEN = sh(script: 'oc whoami -t', returnStdout: true).trim()
+        withCredentials([string(credentialsId: 'clusterUrl', variable: 'CLUSTER_URL'),
+                         string(credentialsId: 'ocUser', variable: 'OC_USER'),
+                         string(credentialsId: 'ocUserPassword', variable: 'OC_USER_PASSWORD')]) {
+
+          script {
+            TOKEN = sh(script: 'oc whoami -t', returnStdout: true).trim()
+          }
+          sh "podman login --tls-verify=false --username ${REGISTRY_USER} --password ${TOKEN} ${REGISTRY}"
+          sh "buildah push --tls-verify=false ${STREAM_IMAGE} docker://${STREAM_IMAGE}"
+          // Done with buildah/podman
+          sh "podman logout ${REGISTRY}"
+          sh "buildah images"
+
+          // Each build pushes a 'latest' image (done above)
+          // but we also create a 'latest-${BUILD_NUMBER}'
+          // for use when promoting the image to production...
+          sh "oc login ${CLUSTER_URL} -u ${OC_USER} -p ${OC_USER_PASSWORD}"
+          sh "oc project ${PROJECT}"
+          sh "oc tag ${PROJECT_IMAGE} ${PROJECT_IMAGE}-${BUILD_NUMBER}"
+
         }
-        sh "podman login --tls-verify=false --username ${REGISTRY_USER} --password ${TOKEN} ${REGISTRY}"
-        sh "buildah push --tls-verify=false ${STREAM_IMAGE} docker://${STREAM_IMAGE}"
-        sh "podman logout ${REGISTRY}"
-        sh "buildah images"
       }
     }
 
