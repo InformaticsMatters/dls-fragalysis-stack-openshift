@@ -50,7 +50,7 @@ pipeline {
 
           // Expose the supplied parameters...
           echo "PROMOTE_BUILD is '${PROMOTE_BUILD}'"
-          echo "AS_VERSION is ''${AS_VERSION}'"
+          echo "AS_VERSION is '${AS_VERSION}'"
 
           sh "oc login ${CLUSTER_URL} -u ${OC_USER} -p ${OC_USER_PASSWORD}"
           sh "oc tag ${SRC_STREAM_IMAGE} ${TGT_STREAM_IMAGE}"

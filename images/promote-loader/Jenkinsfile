@@ -59,7 +59,7 @@ pipeline {
           sh "oc login ${CLUSTER_URL} -u ${OC_USER} -p ${OC_USER_PASSWORD}"
           sh "oc project ${SRC_PROJECT}"
           script {
-            IMAGE_TAG = sh(script: "oc describe is loader-stream | grep latest-${PROMOTE_BUILD}$", returnStdout: true).trim()
+            IMAGE_TAG = sh(script: "oc describe is loader-stream | grep latest-${PROMOTE_BUILD}\$", returnStdout: true).trim()
           }
           echo "IMAGE_TAG is '${IMAGE_TAG}'"
 
