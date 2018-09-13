@@ -42,7 +42,7 @@ pipeline {
 
   stages {
 
-    stage('Promote Image') {
+    stage('Inspect') {
       steps {
         withCredentials([string(credentialsId: 'clusterUrl', variable: 'CLUSTER_URL'),
                          string(credentialsId: 'ocUser', variable: 'OC_USER'),
@@ -52,24 +52,50 @@ pipeline {
                     message: "${JOB_NAME} - promoting loader/${PROMOTE_BUILD} as version ${AS_VERSION}"
 
           // Expose the supplied parameters...
-          echo "PROMOTE_BUILD is ${PROMOTE_BUILD}"
-          echo "AS_VERSION is ${AS_VERSION}"
+          echo "PROMOTE_BUILD is '${PROMOTE_BUILD}'"
+          echo "AS_VERSION is '${AS_VERSION}'"
 
+          // Does the build exist as a tagged image?
           sh "oc login ${CLUSTER_URL} -u ${OC_USER} -p ${OC_USER_PASSWORD}"
-          sh "oc tag ${SRC_STREAM_IMAGE} ${TGT_STREAM_IMAGE}"
-          sh "oc project ${TGT_PROJECT}"
           script {
-            LOADER_RUNNING = sh(script: 'oc get jobs | grep loader | grep Running | wc -l', returnStdout: true).trim()
+            IMAGE_TAG = sh(script 'oc describe is web-stream | grep latest-${PROMOTE_BUILD}$'
           }
-          echo "RUNNING=${LOADER_RUNNING}"
+          echo "IMAGE_TAG is '${IMAGE_TAG}'"
 
         }
       }
     }
 
+    stage('Missing Image') {
+      when {
+        expression { IMAGE_TAG.length() == 0 }
+      }
+      steps {
+        script {
+          // The build number that we're meant to tag does not exist.
+          echo "OOOPS: The build number to promote (${PROMOTE_BUILD}) does not exist"
+          currentBuild.result = 'FAILURE'
+        }
+      }
+    }
+
+    stage('Promote Image') {
+      when {
+        expression { IMAGE_TAG.length() > 0 }
+      }
+      steps {
+        sh "oc tag ${SRC_STREAM_IMAGE}-${PROMOTE_BUILD} ${TGT_STREAM_IMAGE}"
+        sh "oc project ${TGT_PROJECT}"
+        script {
+          LOADER_RUNNING = sh(script: 'oc get jobs | grep loader | grep Running | wc -l', returnStdout: true).trim()
+        }
+        echo "RUNNING=${LOADER_RUNNING}"
+      }
+    }
+
     stage('Deploy Image') {
       when {
-        expression { LOADER_RUNNING == '0' }
+        expression { IMAGE_TAG.length() > 0 && LOADER_RUNNING == '0' }
       }
       steps {
         dir('images/loader') {
@@ -86,7 +112,7 @@ pipeline {
 
     stage('Blocked Image') {
       when {
-        expression { LOADER_RUNNING != '0' }
+        expression { IMAGE_TAG.length() > 0 && LOADER_RUNNING != '0' }
       }
       steps {
         echo "A prior loader is still running (deployment is blocked)"
