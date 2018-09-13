@@ -185,6 +185,7 @@ On Set no. 7 the de-duplication results are: -
 Grand script: -
 
     time (export LC_ALL=C; zcat *.nodes.gz
+
 Preparing for CSV. With a `nodes.txt`, `edges.txt` and `attributes.txt` file
 in a `directory` you can generate the final DB files with: -
 
