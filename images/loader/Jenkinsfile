@@ -47,11 +47,12 @@ pipeline {
             // This way we know if the build was upstream, a timer or user-driven.
             // (see https://javadoc.jenkins.io/hudson/model/Cause.html)
             //
-            // We must build the image if: -
+            // We must alwayy build the image if: -
             //
-            //   DATA_ORIGIN is set (indicating a new set of data)
             //   this build is the result of an upstream project trigger
             //   this build is a result of an SCM change
+            //
+            // Otherwise we only build if there's new data.
             //
             // Note: if FORCE_BUILD is in the environment block above
             //       I can't seem to change its value here...
@@ -70,7 +71,6 @@ pipeline {
               env.FORCE_BUILD = 'Yes'
             } else if (UserIdCause != null) {
               env.CAUSE = 'USER'
-              env.FORCE_BUILD = 'Yes'
             } else if (RemoteCause != null) {
               env.CAUSE = 'REMOTE'
             } else if (TimerTriggerCause != null) {
