@@ -17,16 +17,12 @@ labels:
 
 parameters:
 
-- name: GRAPH_NAMESPACE
-  value: fragalysis-cicd
-
 objects:
 
 - kind: Service
   apiVersion: v1
   metadata:
     name: neo4j
-    namespace: ${GRAPH_NAMESPACE}
   spec:
     ports:
     - name: http

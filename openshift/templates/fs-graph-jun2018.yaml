@@ -17,9 +17,6 @@ labels:
 
 parameters:
 
-- name: GRAPH_NAMESPACE
-  value: fragalysis-cicd
-
 - name: GRAPH_TAG
   value: '3.4.5'
 - name: NEO4J_AUTH
@@ -48,7 +45,6 @@ objects:
   apiVersion: v1
   metadata:
     name: graph-jun2018
-    namespace: ${GRAPH_NAMESPACE}
   spec:
     replicas: ${NEO4J_REPLICAS}
     selector:
@@ -112,7 +108,6 @@ objects:
   apiVersion: v1
   metadata:
     name: neo4j-jun2018
-    namespace: ${GRAPH_NAMESPACE}
   spec:
     ports:
     - name: http

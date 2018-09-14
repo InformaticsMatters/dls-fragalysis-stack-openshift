@@ -28,9 +28,9 @@ parameters:
 
 - name: INPUT_NAMESPACE
   value: fragalysis-cicd
-- name: INPUT_PV_DIR
+- name: INPUT_VOLUME_DIR
   value: fs-input
-- name: INPUT_PV_NAME
+- name: INPUT_VOLUME_NAME
   value: fs-input
 - name: INPUT_CLAIM_NAME
   value: fs-input-claim
@@ -46,16 +46,16 @@ objects:
 - kind: PersistentVolume
   apiVersion: v1
   metadata:
-    name: ${INPUT_PV_NAME}
+    name: ${INPUT_VOLUME_NAME}
   spec:
     capacity:
-      storage: ${INPUT_PV_SIZE}
+      storage: ${INPUT_VOLUME_NAME}
     accessModes:
     - ReadWriteMany
     persistentVolumeReclaimPolicy: Retain
     nfs:
       server: ${NFS_SERVER}
-      path: ${NFS_PATH}/${INPUT_PV_DIR}
+      path: ${NFS_PATH}/${INPUT_VOLUME_DIR}
       readOnly: True
     claimRef:
       name: ${INPUT_CLAIM_NAME}

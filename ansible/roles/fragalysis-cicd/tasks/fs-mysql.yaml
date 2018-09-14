@@ -11,6 +11,8 @@
 - name: Create MySQL PV
   shell: >
     oc process -f {{ role_path }}/{{ t_dir }}/fs-mysql-pv-nfs.yaml
+    -p MYSQL_NAMESPACE={{ namespace }}
+    -p MYSQL_VOLUME_NAME={{ mysql_vol_name }}
     | oc create -f -
   when:
   - use_nfs
@@ -26,6 +28,7 @@
 - name: Create MySQL PVC
   shell: >
     oc process -f {{ role_path }}/{{ t_dir }}/fs-mysql-pvc.yaml
+    -p MYSQL_VOLUME_NAME={{ mysql_vol_name }}
     | oc create -f -
   when: '"fs-mysql-data-claim" not in mysql_pvc.stdout'
 

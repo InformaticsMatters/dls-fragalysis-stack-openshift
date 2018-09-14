@@ -28,6 +28,7 @@ parameters:
 
 - name: BACKUP_NAMESPACE
   value: fragalysis-cicd
+
 - name: BACKUP_PV_DIR
   value: pv-fs-mysql-data-backup
 - name: BACKUP_VOLUME_NAME

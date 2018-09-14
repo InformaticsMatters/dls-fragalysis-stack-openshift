@@ -13,6 +13,8 @@
 - name: Create Backup PV
   shell: >
     oc process -f {{ role_path }}/{{ t_dir }}/fs-db-backup-pv-nfs.yaml
+    -p BACKUP_NAMESPACE={{ namespace }}
+    -p BACKUP_VOLUME_NAME={{ backup_vol_name }}
     | oc create -f -
   when:
   - deploy_backup
@@ -31,6 +33,7 @@
 - name: Create Backup PVC
   shell: >
     oc process -f {{ role_path }}/{{ t_dir }}/fs-db-backup-pvc.yaml
+    -p BACKUP_VOLUME_NAME={{ backup_vol_name }}
     | oc create -f -
   when:
   - deploy_backup

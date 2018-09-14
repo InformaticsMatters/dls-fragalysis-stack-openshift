@@ -32,7 +32,7 @@
 - name: Create Web PVC
   shell: >
     oc process -f {{ role_path }}/{{ t_dir }}/fs-web-pvc.yaml
-    -p WEB_NAMESPACE={{ namespace }}
+    -p WEB_VOLUME_NAME={{ web_vol_name }}
     | oc create -f -
   when: '"fs-web-media-claim" not in w_pvc.stdout'
 
@@ -85,7 +85,6 @@
 - name: Create Web Service
   shell: >
     oc process -f {{ role_path }}/{{ t_dir }}/fs-web-svc.yaml
-    -p WEB_NAMESPACE={{ namespace }}
     -p WEB_NAME={{ web_name }}
     | oc create -f -
   when: web_name not in w_svc.stdout

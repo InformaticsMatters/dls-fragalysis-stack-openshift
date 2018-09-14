@@ -1,0 +1,9 @@
+---
+
+- hosts: localhost
+
+  tasks:
+  - name: Run the Fragalysis Production Undeploy Tasks
+    include_role:
+      name: fragalysis-cicd
+      tasks_from: fs-undeploy.yaml

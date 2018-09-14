@@ -1,0 +1,48 @@
+---
+
+# Removes the developer (cicd) deployment.
+# This essentially consists of removing the project (and waiting for it)
+# and then removing the persistent volumes we expect to exist.
+
+- name: Login (admin)
+  shell: oc login {{ cluster_url }} -u admin -p {{ admin_password }}
+  changed_when: False
+
+# Remove the Production project
+
+- name: Check project
+  shell: oc get projects
+  register: p_result
+  changed_when: False
+
+- name: Delete project
+  shell: oc delete project/{{ namespace }}
+  when: namespace in p_result.stdout
+
+- name: Wait for project deletion
+  shell: oc get projects
+  register: wait_cmd
+  retries: 12
+  delay: 10
+  until: namespace not in wait_cmd.stdout
+  changed_when: False
+
+# Remove Persistent Volumes
+
+- name: Check Persistent Volumes
+  shell: oc get pv
+  register: pv_result
+  changed_when: False
+
+- name: Delete Persistent Volumes
+  shell: oc delete pv/{{ item }}
+  loop:
+  - "{{ mysql_vol_name }}"
+  - "{{ backup_vol_name }}"
+  - "{{ web_vol_name }}"
+  - "{{ input_vol_name }}"
+  - "{{ graph_data_vol_name }}"
+  - "{{ graph_loader_vol_name }}"
+  - "{{ graph_logs_vol_name }}"
+  - "{{ jenkins_vol_name }}"
+  when: item in pv_result.stdout

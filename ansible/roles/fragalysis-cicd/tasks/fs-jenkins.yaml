@@ -28,7 +28,8 @@
 - name: Create Jenkins PV
   shell: >
     oc process -f {{ role_path }}/{{ t_dir }}/fs-jenkins-pv-nfs.yaml
-    | oc create -f -
+    -p JENKINS_NAMESPACE={{ namespace }}
+   | oc create -f -
   when:
   -  use_nfs
   - '"fs-jenkins" not in jenkins_pv.stdout'
@@ -39,6 +40,8 @@
 - name: Create Input PV
   shell: >
     oc process -f {{ role_path }}/{{ t_dir }}/fs-input-pv-nfs.yaml
+    -p INPUT_NAMESPACE={{ namespace }}
+    -p INPUT_VOLUME_NAME={{ input_vol_name }}
     | oc create -f -
   when:
   - use_nfs
@@ -54,6 +57,7 @@
 - name: Create Input PVC
   shell: >
     oc process -f {{ role_path }}/{{ t_dir }}/fs-input-pvc.yaml
+    -p INPUT_VOLUME_NAME={{ input_vol_name }}
     | oc create -f -
   when: '"fs-input-claim" not in input_pvc.stdout'
 

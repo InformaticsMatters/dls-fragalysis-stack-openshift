@@ -1,0 +1,107 @@
+---
+
+# The Fragalysis Stack's database backup deployment (hourly plus rsync).
+#
+# oc process -f fs-db-backup-h.yaml | oc create -f -
+# oc delete all --selector template=fs-db-backup-h-plus-rsync
+
+kind: Template
+apiVersion: v1
+metadata:
+  name: fs-db-backup-h-plus-rsync
+  annotations:
+    description: Fragalysis Stack's Postgres Backup
+    tags: fragalysis,db,postgres
+labels:
+  template: fs-db-backup-h-plus-rsync
+
+parameters:
+
+- name: BACKUP_REGISTRY
+  value: 'docker.io'
+- name: BACKUP_IMAGE
+  value: 'informaticsmatters/sql-backup'
+- name: BACKUP_TAG
+  value: 'stable'
+- name: BACKUP_NODE_SIZE_SELECTOR
+  value: 'small'
+
+objects:
+
+# The HOURLY CronJob (at HH:05)
+# This job will create new postgres backups every hour
+# Keeping the last 24 backups in the directory /backup/hourly
+- kind: CronJob
+  apiVersion: batch/v1beta1
+  metadata:
+    name: db-backup-hourly
+  spec:
+    schedule: '5 * * * *'
+    startingDeadlineSeconds: 180
+    concurrencyPolicy: Forbid
+    jobTemplate:
+      spec:
+        template:
+          metadata:
+            labels:
+              name: backup-hourly
+          spec:
+            nodeSelector:
+              size: ${BACKUP_NODE_SIZE_SELECTOR}
+            serviceAccountName: diamond
+
+            # Application containers
+            containers:
+            - image: ${BACKUP_REGISTRY}/${BACKUP_IMAGE}:${BACKUP_TAG}
+              name: backup
+              imagePullPolicy: Always
+              volumeMounts:
+              - name: fs-data-backup
+                mountPath: /backup
+              env:
+              - name: BACKUP_TYPE
+                value: hourly
+              - name: BACKUP_COUNT
+                value: '24'
+              - name: MSHOST
+                valueFrom:
+                  secretKeyRef:
+                    name: fs-mysql-secrets
+                    key: database-host
+              - name: MSPORT
+                valueFrom:
+                  secretKeyRef:
+                    name: fs-mysql-secrets
+                    key: database-port
+              - name: MSUSER
+                value: root
+              - name: MSPASS
+                valueFrom:
+                  secretKeyRef:
+                    name: fs-mysql-secrets
+                    key: database-root-password
+              - name: RSYNC_HOST
+                valueFrom:
+                  secretKeyRef:
+                    name: fs-backup-secrets
+                    key: backup-rsync-host
+              - name: RSYNC_PATH
+                valueFrom:
+                  secretKeyRef:
+                    name: fs-backup-secrets
+                    key: backup-rsync-path
+              - name: RSYNC_USER
+                valueFrom:
+                  secretKeyRef:
+                    name: fs-backup-secrets
+                    key: backup-rsync-user
+              - name: RSYNC_PASS
+                valueFrom:
+                  secretKeyRef:
+                    name: fs-backup-secrets
+                    key: backup-rsync-pass
+            volumes:
+            - name: fs-data-backup
+              persistentVolumeClaim:
+                claimName: fs-db-backup-claim
+            restartPolicy: Never

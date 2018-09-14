@@ -1,4 +1,4 @@
-# OpenShift, CI/CD and Graph Processing support for Fragalysis Stack
+# OpenShift, CI/CD and Graph processing support for Fragalysis Stack
 A collection of software and files to support the CI/CD deployment of the
 [Fragalysis] Stack. This essentially contains the tools to manage the
 [Jenkins] CI/CD deployment to [OpenShift] using [ansible] and the material
@@ -7,22 +7,33 @@ underlying molecule data using [nextflow].
 
 Distributed amongst a number of sub-directories: -
  
--   **ansible**: a directory of roles and playbooks used to deploy
+-   **ansible**:
+    A directory of roles and playbooks used to deploy
     (and un-deploy) the stack and related software into an OpenShift cluster
     as paired projects used for development/test and production.
--   **images**: Dockerfiles and Jenkinsfiles for additional container images.
+    
+-   **images**:
+    Dockerfiles and Jenkinsfiles for additional container images.
     This includes a data loader, specialised graph and jobs to automate
     the promotion of development project images to the production project.
--   **jenkins**: Utilities to support the configuration and backup of the
+    
+-   **jenkins**:
+    Utilities to support the configuration and backup of the
     cluster's Jenkins deployment. Based on a simple set of Python-based
     utilities, this code uses the Jenkins API to write and read job
     configurations and write job-related secrets.
--   **minishift**: A simple and early deployment of the stack to a local
+    
+-   **minishift**:
+    A simple and early deployment of the stack to a local
     [Minishift] installation allowing experimentation on the desktop.
--   **openshift**: All the OpenShift templates required to deploy the
+    
+-   **openshift**:
+    All the OpenShift templates required to deploy the
     developer/test and production application, used in conjunction with the
-    Ansible roles & playbooks.  
--   **s2g-processor**: Material used to support the generation of the graph
+    Ansible roles & playbooks.
+    
+-   **s2g-processor**:
+    Material used to support the generation of the graph
     representation of molecule data using Fragalysis utilities and Nextflow.
 
 ---

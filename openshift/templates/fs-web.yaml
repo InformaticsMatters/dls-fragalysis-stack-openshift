@@ -20,10 +20,11 @@ parameters:
 - name: BUSYBOX_IMAGE
   value: busybox:1.28.0
 
-- name: WEB_HOSTNAME
-  value: fragalysis.apps.xchem.diamond.ac.uk
 - name: WEB_NAMESPACE
   value: fragalysis-cicd
+
+- name: WEB_HOSTNAME
+  value: fragalysis.apps.xchem.diamond.ac.uk
 - name: WEB_NAME
   value: web
 - name: WEB_TAG

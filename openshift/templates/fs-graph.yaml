@@ -17,9 +17,6 @@ labels:
 
 parameters:
 
-- name: GRAPH_NAMESPACE
-  value: fragalysis-cicd
-
 - name: NEO4J_AUTH
   value: none
 - name: NEO4J_PAGECACHE
@@ -35,7 +32,6 @@ objects:
   apiVersion: v1
   metadata:
     name: graph
-    namespace: ${GRAPH_NAMESPACE}
   spec:
     replicas: ${NEO4J_REPLICAS}
     selector:

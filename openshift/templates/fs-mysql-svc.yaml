@@ -17,8 +17,6 @@ labels:
 
 parameters:
 
-- name: MYSQL_NAMESPACE
-  value: fragalysis-cicd
 - name: MYSQL_NAME
   value: mysql
 
@@ -28,7 +26,6 @@ objects:
   apiVersion: v1
   metadata:
     name: ${MYSQL_NAME}
-    namespace: ${MYSQL_NAMESPACE}
   spec:
     ports:
     - name: api

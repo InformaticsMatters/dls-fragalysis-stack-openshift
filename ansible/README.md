@@ -1,10 +1,14 @@
 # Fragalysis Ansible OpenShift Deployment
 To run the playbook you will need to create a `vault-pass.txt` file that
 contains the password used to create the vault secrets used in this project.
-    
-Run the playbook to deploy the CI/CD (TEST) project with the command: -
+
+Ideally, you'd deploy DEV and then PROD.    
+Run the playbooks to deploy the projects with the command: -
 
     ansible-playbook playbooks/fragalysis-dev/deploy.yaml \
+        --vault-password-file vault-pass.txt
+
+    ansible-playbook playbooks/fragalysis-prod/deploy.yaml \
         --vault-password-file vault-pass.txt
 
 And, to also install the Jun2018 Graph database...

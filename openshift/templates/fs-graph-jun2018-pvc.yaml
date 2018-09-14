@@ -17,9 +17,6 @@ labels:
 
 parameters:
 
-- name: GRAPH_NAMESPACE
-  value: fragalysis-cicd
-
 - name: GRAPH_DATA_LOADER_SIZE
   value: 300Gi
 - name: GRAPH_DATA_SIZE
@@ -33,7 +30,6 @@ objects:
   kind: PersistentVolumeClaim
   metadata:
     name: fs-graph-jun2018-data-claim
-    namespace: ${GRAPH_NAMESPACE}
   spec:
     accessModes:
     - ReadWriteMany
@@ -45,7 +41,6 @@ objects:
   kind: PersistentVolumeClaim
   metadata:
     name: fs-graph-jun2018-data-loader-claim
-    namespace: ${GRAPH_NAMESPACE}
   spec:
     accessModes:
     - ReadWriteMany
@@ -57,7 +52,6 @@ objects:
   kind: PersistentVolumeClaim
   metadata:
     name: fs-graph-jun2018-logs-claim
-    namespace: ${GRAPH_NAMESPACE}
   spec:
     accessModes:
     - ReadWriteMany

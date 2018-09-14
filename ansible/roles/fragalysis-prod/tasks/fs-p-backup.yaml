@@ -34,7 +34,7 @@
 - name: Create Backup PVC
   shell: >
     oc process -f {{ role_path }}/{{ t_dir }}/fs-db-backup-pvc.yaml
-    -p BACKUP_NAMESPACE={{ namespace }}
+    -p BACKUP_VOLUME_NAME={{ backup_vol_name }}
     | oc create -f -
   when:
   - deploy_backup
@@ -48,14 +48,31 @@
   when: deploy_backup
   changed_when: False
 
-- name: Create Backup Deployment
+- name: Create Backup Deployment (H)
   shell: >
-    oc process -f {{ role_path }}/{{ t_dir }}/fs-db-backup.yaml
-    -p BACKUP_NAMESPACE={{ namespace }}
+    oc process -f {{ role_path }}/{{ t_dir }}/fs-db-backup-h.yaml
     | oc create -f -
   when:
   - deploy_backup
+  - not enable_rsync_in_backup
   - '"db-backup-hourly" not in bu_cj.stdout'
+
+- name: Create Backup Deployment (H+RSYNC)
+  shell: >
+    oc process -f {{ role_path }}/{{ t_dir }}/fs-db-backup-h-plus-rsync.yaml
+    | oc create -f -
+  when:
+  - deploy_backup
+  - enable_rsync_in_backup
+  - '"db-backup-hourly" not in bu_cj.stdout'
+
+- name: Create Backup Deployment (DWM)
+  shell: >
+    oc process -f {{ role_path }}/{{ t_dir }}/fs-db-backup-dwm.yaml
+    | oc create -f -
+  when:
+  - deploy_backup
+  - '"db-backup-daily" not in bu_cj.stdout'
 
 # We don't wait for this job,
 # its deployment is controlled by Cron.

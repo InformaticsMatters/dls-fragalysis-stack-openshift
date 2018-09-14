@@ -14,6 +14,7 @@
 - name: Create Web PV
   shell: >
     oc process -f {{ role_path }}/{{ t_dir }}/fs-web-pv-nfs.yaml
+    -p WEB_NAMESPACE={{ namespace }}
     | oc create -f -
   when:
   - use_nfs
@@ -52,6 +53,7 @@
 - name: Create ImageStream
   shell: >
     oc process -f {{ role_path }}/{{ t_dir }}/fs-web-is.yaml
+    -p WEB_NAMESPACE={{ namespace }}
     | oc create -f -
   when: '"web-stream" not in w_is.stdout'
 
@@ -63,6 +65,7 @@
 - name: Create Web Deployent Config
   shell: >
     oc process -f {{ role_path }}/{{ t_dir }}/fs-web.yaml
+    -p WEB_NAMESPACE={{ namespace }}
     | oc create -f -
   when: '"web" not in w_dc.stdout'
 

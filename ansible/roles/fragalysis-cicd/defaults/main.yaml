@@ -5,10 +5,19 @@
 cluster_url: https://openshift.xchem.diamond.ac.uk
 
 # Project-specific variables
+backup_vol_name: fs-db-backup
 deploy_backup: yes
 deploy_jun2018_graph: no
+graph_data_vol_name: fs-graph-data
+graph_loader_vol_name: fs-graph-data-loader
+graph_logs_vol_name: fs-graph-logs
+input_vol_name: fs-input
+jenkins_vol_name: fs-jenkins
+mysql_vol_name: fs-mysql-data
+namespace: fragalysis-cicd
 use_nfs: yes
 wait_for_mysql: yes
+web_vol_name: fs-web-media
 
 # If set ansible will attempt to configure Jenkins
 # by running our configure-cicd.py module.
@@ -20,6 +29,16 @@ jenkins_user: jenkins
 # Our Fragalysis OpenShift template directory
 # (relative to the role_path directory)
 t_dir: ../../../openshift/templates
+
+# Enable rsync in backup?
+# If so we need encrypted rsync credentials here.
+# which will be used to create backup secrets.
+enable_rsync_in_backup: no
+
+backup_rsync_host: FixMe
+backup_rsync_path: FixMe
+backup_rsync_user: FixMe
+backup_rsync_pass: FixMe
 
 admin_password: !vault |
   $ANSIBLE_VAULT;1.1;AES256

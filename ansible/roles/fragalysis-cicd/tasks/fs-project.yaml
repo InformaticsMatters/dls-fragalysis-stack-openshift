@@ -14,13 +14,13 @@
 
 - name: Create Fraglysis Project
   shell: >
-    oc new-project fragalysis-cicd
+    oc new-project {{ namespace }}
     --display-name='Fragalysis'
     --description='The Fragalysis CI/CD Project (Development Deployment)'
-  when: '"fragalysis-cicd" not in projects_result.stdout'
+  when: namespace not in projects_result.stdout
 
 - name: Move to Fragalysis Project
-  shell: oc project fragalysis-cicd
+  shell: oc project {{ namespace }}
   changed_when: False
 
 - name: Check Diamond Service Account exists

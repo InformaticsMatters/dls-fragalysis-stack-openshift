@@ -17,9 +17,6 @@ labels:
 
 parameters:
 
-- name: RECOVERY_NAMESPACE
-  value: fragalysis-cicd
-
 - name: RECOVERY_REGISTRY
   value: 'docker.io'
 - name: RECOVERY_IMAGE
@@ -42,7 +39,6 @@ objects:
   apiVersion: batch/v1beta1
   metadata:
     name: db-recovery-test
-    namespace: ${RECOVERY_NAMESPACE}
   spec:
     schedule: '30 4 * * *'
     startingDeadlineSeconds: 180

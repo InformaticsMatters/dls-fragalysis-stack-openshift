@@ -19,8 +19,6 @@ parameters:
 
 - name: INPUT_PV_SIZE
   value: 500Gi
-- name: INPUT_NAMESPACE
-  value: fragalysis-cicd
 - name: INPUT_VOLUME_NAME
   value: fs-input
 - name: INPUT_CLAIM_NAME
@@ -32,7 +30,6 @@ objects:
   kind: PersistentVolumeClaim
   metadata:
     name: ${INPUT_CLAIM_NAME}
-    namespace: ${INPUT_NAMESPACE}
   spec:
     accessModes:
     - ReadOnlyMany

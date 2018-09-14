@@ -13,6 +13,7 @@
 - name: Create Jun2018 Graph PV
   shell: >
     oc process -f {{ role_path }}/{{ t_dir }}/fs-graph-jun2018-pv-nfs.yaml
+    -p GRAPH_NAMESPACE={{ namespace }}
     | c create -f -
   when:
   - use_nfs
