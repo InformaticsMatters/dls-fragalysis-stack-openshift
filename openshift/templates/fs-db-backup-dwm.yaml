@@ -25,6 +25,20 @@ parameters:
   value: 'stable'
 - name: BACKUP_NODE_SIZE_SELECTOR
   value: 'small'
+- name: BACKUP_D_SCHEDULE
+  value: '55 0 * * *'
+- name: BACKUP_W_SCHEDULE
+  value: '50 0 * * 0'
+- name: BACKUP_M_SCHEDULE
+  value: '45 0 1 * *'
+- name: BACKUP_H_COUNT
+  value: '24'
+- name: BACKUP_D_COUNT
+  value: '6'
+- name: BACKUP_W_COUNT
+  value: '3'
+- name: BACKUP_M_COUNT
+  value: '11'
 
 objects:
 
@@ -36,7 +50,7 @@ objects:
   metadata:
     name: db-backup-daily
   spec:
-    schedule: '55 0 * * *'
+    schedule: ${BACKUP_D_SCHEDULE}
     startingDeadlineSeconds: 180
     concurrencyPolicy: Forbid
     jobTemplate:
@@ -54,7 +68,7 @@ objects:
             containers:
             - image: ${BACKUP_REGISTRY}/${BACKUP_IMAGE}:${BACKUP_TAG}
               name: backup
-              imagePullPolicy: Always
+              imagePullPolicy: IfNotPresent
               volumeMounts:
               - name: fs-data-backup
                 mountPath: /backup
@@ -62,11 +76,11 @@ objects:
               - name: BACKUP_TYPE
                 value: daily
               - name: BACKUP_COUNT
-                value: '6'
+                value: ${BACKUP_D_COUNT}
               - name: BACKUP_PRIOR_TYPE
                 value: hourly
               - name: BACKUP_PRIOR_COUNT
-                value: '24'
+                value: ${BACKUP_H_COUNT}
             volumes:
             - name: fs-data-backup
               persistentVolumeClaim:
@@ -81,7 +95,7 @@ objects:
   metadata:
     name: db-backup-weekly
   spec:
-    schedule: '50 0 * * 0'
+    schedule: ${BACKUP_W_SCHEDULE}
     startingDeadlineSeconds: 180
     concurrencyPolicy: Forbid
     jobTemplate:
@@ -99,7 +113,7 @@ objects:
             containers:
             - image: ${BACKUP_REGISTRY}/${BACKUP_IMAGE}:${BACKUP_TAG}
               name: backup
-              imagePullPolicy: Always
+              imagePullPolicy: IfNotPresent
               volumeMounts:
               - name: fs-data-backup
                 mountPath: /backup
@@ -107,11 +121,11 @@ objects:
               - name: BACKUP_TYPE
                 value: weekly
               - name: BACKUP_COUNT
-                value: '3'
+                value: ${BACKUP_W_COUNT}
               - name: BACKUP_PRIOR_TYPE
                 value: daily
               - name: BACKUP_PRIOR_COUNT
-                value: '6'
+                value: ${BACKUP_D_COUNT}
             volumes:
             - name: fs-data-backup
               persistentVolumeClaim:
@@ -126,7 +140,7 @@ objects:
   metadata:
     name: db-backup-monthly
   spec:
-    schedule: '45 0 1 * *'
+    schedule: ${BACKUP_M_SCHEDULE}
     startingDeadlineSeconds: 180
     concurrencyPolicy: Forbid
     jobTemplate:
@@ -144,7 +158,7 @@ objects:
             containers:
             - image: ${BACKUP_REGISTRY}/${BACKUP_IMAGE}:${BACKUP_TAG}
               name: backup
-              imagePullPolicy: Always
+              imagePullPolicy: IfNotPresent
               volumeMounts:
               - name: fs-data-backup
                 mountPath: /backup
@@ -152,11 +166,11 @@ objects:
               - name: BACKUP_TYPE
                 value: monthly
               - name: BACKUP_COUNT
-                value: '11'
+                value: ${BACKUP_M_COUNT}
               - name: BACKUP_PRIOR_TYPE
                 value: weekly
               - name: BACKUP_PRIOR_COUNT
-                value: '3'
+                value: ${BACKUP_W_COUNT}
             volumes:
             - name: fs-data-backup
               persistentVolumeClaim:

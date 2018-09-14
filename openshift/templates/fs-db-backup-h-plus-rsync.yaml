@@ -25,6 +25,10 @@ parameters:
   value: 'stable'
 - name: BACKUP_NODE_SIZE_SELECTOR
   value: 'small'
+- name: BACKUP_H_SCHEDULE
+  value: '5 * * * *'
+- name: BACKUP_H_COUNT
+  value: '24'
 
 objects:
 
@@ -36,7 +40,7 @@ objects:
   metadata:
     name: db-backup-hourly
   spec:
-    schedule: '5 * * * *'
+    schedule: ${BACKUP_H_SCHEDULE}
     startingDeadlineSeconds: 180
     concurrencyPolicy: Forbid
     jobTemplate:
@@ -54,7 +58,7 @@ objects:
             containers:
             - image: ${BACKUP_REGISTRY}/${BACKUP_IMAGE}:${BACKUP_TAG}
               name: backup
-              imagePullPolicy: Always
+              imagePullPolicy: IfNotPresent
               volumeMounts:
               - name: fs-data-backup
                 mountPath: /backup
@@ -62,7 +66,7 @@ objects:
               - name: BACKUP_TYPE
                 value: hourly
               - name: BACKUP_COUNT
-                value: '24'
+                value: ${BACKUP_H_COUNT}
               - name: MSHOST
                 valueFrom:
                   secretKeyRef:
