@@ -114,4 +114,4 @@ objects:
           persistentVolumeClaim:
             claimName: ${LOADER_INPUT_VOLUME_CLAIM_NAME}
 
-        restartPolicy: OnFailure
+        restartPolicy: Never

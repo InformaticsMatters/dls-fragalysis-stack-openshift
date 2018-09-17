@@ -23,9 +23,6 @@ pipeline {
     REGISTRY_USER = 'jenkins'
     IMAGE_NAME = 'loader-stream'
 
-    REGISTRY = 'docker-registry.default.svc:5000'
-    DB_NAME = 'mysql-prod'
-
     // Source registry details
     SRC_PROJECT = 'fragalysis-cicd'
     SRC_STREAM_IMAGE = "${SRC_PROJECT}/${IMAGE_NAME}:latest"
