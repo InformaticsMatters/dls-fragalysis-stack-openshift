@@ -68,7 +68,7 @@ REGISTRY_USER = os.environ.get('REGISTRY_USER', 'jenkins')
 REGISTRY_USER_TOKEN = os.environ.get('REGISTRY_USER_TOKEN', 'jenkins123')
 
 # The image we'll be manufacturing...
-REGISTRY = 'docker-registry.default:5000'
+REGISTRY = 'docker-registry.default.svc:5000'
 TAG = 'latest'
 
 # The key of the label value used to record

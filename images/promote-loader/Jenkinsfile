@@ -23,7 +23,7 @@ pipeline {
     REGISTRY_USER = 'jenkins'
     IMAGE_NAME = 'loader-stream'
 
-    REGISTRY = 'docker-registry.default:5000'
+    REGISTRY = 'docker-registry.default.svc:5000'
     DB_NAME = 'mysql-prod'
 
     // Source registry details

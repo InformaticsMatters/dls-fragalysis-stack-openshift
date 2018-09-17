@@ -9,7 +9,7 @@ pipeline {
   environment {
     // Registry details
     REGISTRY_USER = 'jenkins'
-    REGISTRY = 'docker-registry.default:5000'
+    REGISTRY = 'docker-registry.default.svc:5000'
     STREAM_IMAGE = "${REGISTRY}/fragalysis-cicd/graph-stream:latest"
 
     // get_unbuilt_data_directory environment...
