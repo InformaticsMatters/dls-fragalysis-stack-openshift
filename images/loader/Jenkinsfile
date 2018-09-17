@@ -10,7 +10,7 @@ pipeline {
     // Registry details
     PROJECT = 'fragalysis-cicd'
     REGISTRY_USER = 'jenkins'
-    REGISTRY = 'docker-registry.default:5000'
+    REGISTRY = 'docker-registry.default.svc:5000'
     PROJECT_IMAGE = "${PROJECT}/loader-stream:latest"
     STREAM_IMAGE = "${REGISTRY}/${PROJECT_IMAGE}"
 
