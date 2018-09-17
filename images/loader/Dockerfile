@@ -1,4 +1,4 @@
-FROM docker-registry.default.svc:5000/fragalysis-cicd/fragalysis-loader:latest
+FROM fragalysis-cicd/fragalysis-loader:latest
 
 ENV APP_ROOT /code
 
