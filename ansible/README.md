@@ -37,4 +37,4 @@ If you have the Ansible vault password you can encrypt strings
 for the `defauls/main.yaml` file by running something like this: -
 
     ansible-vault encrypt_string <string> \
-        --name <string name> --ask-vault-pass
+        --name <string name> --vault-password-file vault-pass.txt
