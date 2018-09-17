@@ -71,7 +71,6 @@ pipeline {
               env.FORCE_BUILD = 'Yes'
             } else if (UserIdCause != null) {
               env.CAUSE = 'USER'
-              env.FORCE_BUILD = 'Yes'
             } else if (RemoteCause != null) {
               env.CAUSE = 'REMOTE'
             } else if (TimerTriggerCause != null) {
