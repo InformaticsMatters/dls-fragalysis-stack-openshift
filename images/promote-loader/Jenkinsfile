@@ -102,7 +102,7 @@ pipeline {
       }
       steps {
         dir('images/loader') {
-          sh "oc delete job --selector template=fs-loader"
+          sh "oc delete job/fs-loader"
           sleep 4
           sh "oc process -p LOADER_NAMESPACE=${TGT_PROJECT} -p LOADER_IMAGE=${TGT_STREAM_IMAGE} -f fs-loader.yaml | oc create -f -"
 

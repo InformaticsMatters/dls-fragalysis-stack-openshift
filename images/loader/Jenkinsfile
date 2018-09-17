@@ -162,7 +162,7 @@ pipeline {
       }
       steps {
         dir('images/loader') {
-          sh "oc delete job --selector template=fs-loader"
+          sh "oc delete job/fs-loader"
           sleep 4
           sh "oc process -f fs-loader.yaml | oc create -f -"
 
