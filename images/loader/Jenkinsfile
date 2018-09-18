@@ -168,10 +168,9 @@ pipeline {
         expression { DATA_ORIGIN.length() == 0 }
       }
       steps {
-          slackSend channel: "#${SLACK_BUILD_CHANNEL}",
-                    color: 'good',
-                    message: "${JOB_NAME} build ${BUILD_NUMBER} - complete (no deployment required)"
-        }
+        slackSend channel: "#${SLACK_BUILD_CHANNEL}",
+                  color: 'good',
+                  message: "${JOB_NAME} build ${BUILD_NUMBER} - complete (no deployment required)"
       }
     }
 
