@@ -112,7 +112,6 @@ pipeline {
         dir('images/loader') {
           sh "buildah bud --tls-verify=false --creds=${REGISTRY_USER}:${REGISTRY_USER_TOKEN} --format docker --build-arg DATA_ORIGIN=${DATA_ORIGIN} --build-arg BUILD_NUMBER=${BUILD_NUMBER} -f Dockerfile -t ${STREAM_IMAGE} ."
         }
-
       }
     }
 
@@ -147,19 +146,18 @@ pipeline {
         expression { DATA_ORIGIN.length() > 0 }
       }
       steps {
-          slackSend channel: "#${SLACK_BUILD_CHANNEL}",
-                    message: "${JOB_NAME} build ${BUILD_NUMBER} - using '${DATA_ORIGIN}' data"
+        slackSend channel: "#${SLACK_BUILD_CHANNEL}",
+                  message: "${JOB_NAME} build ${BUILD_NUMBER} - using '${DATA_ORIGIN}' data"
 
-          // We need to launch the Loader 'Job'.
-          // But we protect ourselves from doing this if a prior
-          // instance of the 'Job' is running (which would be unusual).
-          // To successfully launch the Job we first delete prior instances.
-          // All of this takes place in the 'deploy.sh'
-          script {
-            LOADER_RUNNING = sh(script: 'oc get jobs | grep fs-loader | grep Running | wc -l', returnStdout: true).trim()
-          }
-          echo "RUNNING=${LOADER_RUNNING}"
+        // We need to launch the Loader 'Job'.
+        // But we protect ourselves from doing this if a prior
+        // instance of the 'Job' is running (which would be unusual).
+        // To successfully launch the Job we first delete prior instances.
+        // All of this takes place in the 'deploy.sh'
+        script {
+          LOADER_RUNNING = sh(script: 'oc get jobs | grep fs-loader | grep Running | wc -l', returnStdout: true).trim()
         }
+        echo "RUNNING=${LOADER_RUNNING}"
       }
     }
 
