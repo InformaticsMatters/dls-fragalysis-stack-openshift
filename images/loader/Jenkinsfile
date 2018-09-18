@@ -22,9 +22,6 @@ pipeline {
     READY_FILE = 'READY'
     HOURLY_DATA = 'Yes'
 
-    // Always push the image (whether it's new or not)
-    ALWAYS_PUSH = 'No'
-
     // Slack channel for all notifications
     SLACK_BUILD_CHANNEL = 'dls-builds'
     // Slack channel to be used for errors/failures
@@ -38,6 +35,9 @@ pipeline {
     stage('Inspect') {
       steps {
         dir('images') {
+          slackSend channel: "#${SLACK_BUILD_CHANNEL}",
+                    message: "${JOB_NAME} build ${BUILD_NUMBER} - starting"
+
           // List the possible data source directories...
           sh "ls ${SOURCE_DATA_ROOT}"
 
@@ -47,12 +47,15 @@ pipeline {
             // This way we know if the build was upstream, a timer or user-driven.
             // (see https://javadoc.jenkins.io/hudson/model/Cause.html)
             //
-            // We must alwayy build the image if: -
+            // We must always build the image if: -
             //
             //   this build is the result of an upstream project trigger
             //   this build is a result of an SCM change
             //
             // Otherwise we only build if there's new data.
+            //
+            // The image will deploy if data has changed but the deployment
+            // is also forced if we're here because of a REMOTE trigger.
             //
             // Note: if FORCE_BUILD is in the environment block above
             //       I can't seem to change its value here...
@@ -65,14 +68,13 @@ pipeline {
             def SCMTriggerCause = currentBuild.rawBuild.getCause(hudson.triggers.SCMTrigger$SCMTriggerCause)
             if (UpstreamCause != null) {
               env.CAUSE = 'UPSTREAM'
-              env.FORCE_BUILD = 'Yes'
             } else if (SCMTriggerCause != null) {
               env.CAUSE = 'SCM'
-              env.FORCE_BUILD = 'Yes'
             } else if (UserIdCause != null) {
               env.CAUSE = 'USER'
             } else if (RemoteCause != null) {
               env.CAUSE = 'REMOTE'
+              env.FORCE_BUILD = 'Yes'
             } else if (TimerTriggerCause != null) {
               env.CAUSE = 'TIMER'
             }
@@ -104,15 +106,10 @@ pipeline {
 
     stage('Build Image') {
       when {
-        expression { DATA_ORIGIN.length() > 0 }
+        expression { CAUSE == 'UPSTREAM' || CAUSE == 'SCM' }
       }
       steps {
         dir('images/loader') {
-          slackSend channel: "#${SLACK_BUILD_CHANNEL}",
-                    message: "${JOB_NAME} build ${BUILD_NUMBER} - starting"
-          slackSend channel: "#${SLACK_BUILD_CHANNEL}",
-                    message: "${JOB_NAME} build ${BUILD_NUMBER} - using '${DATA_ORIGIN}' data"
-
           sh "buildah bud --tls-verify=false --creds=${REGISTRY_USER}:${REGISTRY_USER_TOKEN} --format docker --build-arg DATA_ORIGIN=${DATA_ORIGIN} --build-arg BUILD_NUMBER=${BUILD_NUMBER} -f Dockerfile -t ${STREAM_IMAGE} ."
         }
 
@@ -121,7 +118,7 @@ pipeline {
 
     stage('Push Image') {
       when {
-        expression { DATA_ORIGIN.length() > 0 || ALWAYS_PUSH == 'Yes' }
+        expression { CAUSE == 'UPSTREAM' || CAUSE == 'SCM' }
       }
       steps {
         withCredentials([string(credentialsId: 'clusterUrl', variable: 'CLUSTER_URL'),
@@ -141,7 +138,19 @@ pipeline {
           sh "oc project ${PROJECT}"
           sh "oc tag ${PROJECT_IMAGE} ${PROJECT_IMAGE}-${BUILD_NUMBER}"
 
-          // With a new image pushed we need to launch the Loader 'Job'.
+        }
+      }
+    }
+
+    stage('Check Prior Deployment') {
+      when {
+        expression { DATA_ORIGIN.length() > 0 }
+      }
+      steps {
+          slackSend channel: "#${SLACK_BUILD_CHANNEL}",
+                    message: "${JOB_NAME} build ${BUILD_NUMBER} - using '${DATA_ORIGIN}' data"
+
+          // We need to launch the Loader 'Job'.
           // But we protect ourselves from doing this if a prior
           // instance of the 'Job' is running (which would be unusual).
           // To successfully launch the Job we first delete prior instances.
@@ -150,6 +159,18 @@ pipeline {
             LOADER_RUNNING = sh(script: 'oc get jobs | grep fs-loader | grep Running | wc -l', returnStdout: true).trim()
           }
           echo "RUNNING=${LOADER_RUNNING}"
+        }
+      }
+    }
+
+    stage('Skip Deployment') {
+      when {
+        expression { DATA_ORIGIN.length() == 0 }
+      }
+      steps {
+          slackSend channel: "#${SLACK_BUILD_CHANNEL}",
+                    color: 'good',
+                    message: "${JOB_NAME} build ${BUILD_NUMBER} - complete (no deployment required)"
         }
       }
     }
@@ -166,7 +187,7 @@ pipeline {
 
           slackSend channel: "#${SLACK_BUILD_CHANNEL}",
                     color: 'good',
-                    message: "${JOB_NAME} build ${BUILD_NUMBER} - complete"
+                    message: "${JOB_NAME} build ${BUILD_NUMBER} - complete (deployed)"
         }
       }
     }
@@ -180,7 +201,7 @@ pipeline {
         script {
           slackSend channel: "#${SLACK_BUILD_CHANNEL}",
                     color: 'warning',
-                    message: "${JOB_NAME} build ${BUILD_NUMBER} - deployment blocked"
+                    message: "${JOB_NAME} build ${BUILD_NUMBER} - complete (deployment blocked)"
 
           // Everything's OK but we were blocked from deploying it
           // as it appears a prior Job instance is running.
