@@ -106,7 +106,7 @@ pipeline {
 
     stage('Build Image') {
       when {
-        expression { CAUSE == 'UPSTREAM' || CAUSE == 'SCM' }
+        expression { CAUSE == 'REMOTE' || CAUSE == 'UPSTREAM' || CAUSE == 'SCM' }
       }
       steps {
         dir('images/loader') {
@@ -117,7 +117,7 @@ pipeline {
 
     stage('Push Image') {
       when {
-        expression { CAUSE == 'UPSTREAM' || CAUSE == 'SCM' }
+        expression { CAUSE == 'REMOTE' || CAUSE == 'UPSTREAM' || CAUSE == 'SCM' }
       }
       steps {
         withCredentials([string(credentialsId: 'clusterUrl', variable: 'CLUSTER_URL'),
