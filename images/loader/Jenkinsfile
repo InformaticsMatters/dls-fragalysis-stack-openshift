@@ -48,6 +48,7 @@ pipeline {
             // We must always build the image if: -
             //
             //   this build is the result of a cURL trigger
+            //   or the user action
             //
             // And, in fact, a remote/curl trigger should be the only way into
             // this build process. And a remote trigger will result in a new
@@ -69,6 +70,7 @@ pipeline {
               env.CAUSE = 'SCM'
             } else if (UserIdCause != null) {
               env.CAUSE = 'USER'
+              env.FORCE_BUILD = 'Yes'
             } else if (RemoteCause != null) {
               env.CAUSE = 'REMOTE'
               env.FORCE_BUILD = 'Yes'
@@ -99,7 +101,7 @@ pipeline {
 
             // For this build to work we must have some data...
             if (env.DATA_ORIGIN.length() == 0) {
-              error('Unable to build - there is no data (DATA_ORIGIN is blank)')
+              error('Unable to build - there is no new data (DATA_ORIGIN is blank)')
             }
 
           }
