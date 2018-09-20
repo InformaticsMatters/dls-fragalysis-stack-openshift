@@ -160,7 +160,7 @@ pipeline {
 
     stage('Deploy Image') {
       when {
-        expression { LOADER_RUNNING == '0' }
+        expression { LOADER_RUNNING != '0' }
       }
       steps {
         dir('images/loader') {
@@ -177,7 +177,7 @@ pipeline {
 
     stage('Blocked Image') {
       when {
-        expression { LOADER_RUNNING != '0' }
+        expression { LOADER_RUNNING == '0' }
       }
       steps {
         echo "A prior loader is still running (deployment is blocked)"
