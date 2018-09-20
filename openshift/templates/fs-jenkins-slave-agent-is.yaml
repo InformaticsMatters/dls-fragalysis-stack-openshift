@@ -50,7 +50,7 @@ parameters:
     The image name
 
 - name: TAG
-  value: latest
+  value: '3.9'
   description: >
     The image tag
 
@@ -59,15 +59,15 @@ objects:
 - kind: ImageStream
   apiVersion: v1
   metadata:
-    name: ${{SLAVE_LABEL}}
+    name: ${SLAVE_LABEL}
   spec:
     tags:
     - annotations:
         openshift.io/display-name: "${DISPLAY_NAME}"
-        slave-label: ${{SLAVE_LABEL}}
+        slave-label: ${SLAVE_LABEL}
       from:
         kind: DockerImage
         name: ${REGISTRY}/${PROJECT}/${IMAGE}:${TAG}
-      name: ${{TAG}}
+      name: ${TAG}
       importPolicy:
         scheduled: false
