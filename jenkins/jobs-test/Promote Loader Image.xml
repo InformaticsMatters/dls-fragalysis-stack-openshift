@@ -11,6 +11,20 @@
   <description>Promotes a loader image identified by a build number to Production</description>
   <keepDependencies>false</keepDependencies>
   <properties>
+    <hudson.model.ParametersDefinitionProperty>
+      <parameterDefinitions>
+        <hudson.model.StringParameterDefinition>
+          <name>PROMOTE_BUILD</name>
+          <description>The Jenkins build number of the development project&apos;s Loader Image to promote</description>
+          <defaultValue></defaultValue>
+        </hudson.model.StringParameterDefinition>
+        <hudson.model.StringParameterDefinition>
+          <name>AS_VERSION</name>
+          <description>The semantic version to apply to the promoted image, e.g. &quot;1.14.7&quot;</description>
+          <defaultValue></defaultValue>
+        </hudson.model.StringParameterDefinition>
+      </parameterDefinitions>
+    </hudson.model.ParametersDefinitionProperty>
     <io.fabric8.jenkins.openshiftsync.BuildConfigProjectProperty plugin="openshift-sync@1.0.23">
       <uid></uid>
       <namespace></namespace>
@@ -26,20 +40,6 @@
       </strategy>
     </jenkins.model.BuildDiscarderProperty>
     <org.jenkinsci.plugins.workflow.job.properties.DisableConcurrentBuildsJobProperty/>
-    <hudson.model.ParametersDefinitionProperty>
-      <parameterDefinitions>
-        <hudson.model.StringParameterDefinition>
-          <name>PROMOTE_BUILD</name>
-          <description>The Jenkins build number of the development project&apos;s Loader Image to promote</description>
-          <defaultValue></defaultValue>
-        </hudson.model.StringParameterDefinition>
-        <hudson.model.StringParameterDefinition>
-          <name>AS_VERSION</name>
-          <description>The semantic version to apply to the promoted image, e.g. &quot;1.14.7&quot;</description>
-          <defaultValue></defaultValue>
-        </hudson.model.StringParameterDefinition>
-      </parameterDefinitions>
-    </hudson.model.ParametersDefinitionProperty>
   </properties>
   <definition class="org.jenkinsci.plugins.workflow.cps.CpsScmFlowDefinition" plugin="workflow-cps@2.53">
     <scm class="hudson.plugins.git.GitSCM" plugin="git@3.9.1">

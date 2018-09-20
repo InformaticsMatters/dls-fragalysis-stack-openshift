@@ -8,7 +8,7 @@
       <parameters/>
     </org.jenkinsci.plugins.pipeline.modeldefinition.actions.DeclarativeJobPropertyTrackerAction>
   </actions>
-  <description>The Web Image is the production container image for the Django application. At the moment it is based on the fragalysis-stack container image but adds the media data.</description>
+  <description>The Web Image is the production container image for the Django application. This is based on the fragalysis-stack container image.</description>
   <keepDependencies>false</keepDependencies>
   <properties>
     <org.jenkinsci.plugins.workflow.job.properties.PipelineTriggersJobProperty>
