@@ -81,7 +81,9 @@ DATA_ORIGIN_KEY = 'data.origin'
 # These exist in the SOURCE_DATA_ROOT.
 DATA_DIR_RE = r'\d\d\d\d-\d\d-\d\d'
 if HOURLY_DATA:
-    DATA_DIR_RE += r'T\d\d'
+    DATA_DIR_RE += r'T\d\d$'
+else:
+    DATA_DIR_RE += '$'
 
 # -----------------------------------------------------------------------------
 
@@ -114,43 +116,69 @@ LOGGER.info('REGISTRY_USER=%s', REGISTRY_USER)
 if not os.path.isdir(SOURCE_DATA_ROOT):
     LOGGER.error('The data root directory does not exist.'
                  ' Is anything mounted at %s?', SOURCE_DATA_ROOT)
-    sys.exit(1)
+    sys.exit(0)
 
-# More serious problems...
-#
-# Search the root data directory for sub-directories.
-# We'll assume the last one holds the most recent data.
-# There may not be any data directories.
+# Get the content of the root data directory.
 most_recent_data_dir = None
 DATA_DIRS = sorted(os.listdir(SOURCE_DATA_ROOT))
-if DATA_DIRS:
-    most_recent_data_dir = DATA_DIRS[-1]
-else:
+if not DATA_DIRS:
     # No data directories.
     LOGGER.error('No data directories in the root (%s)', SOURCE_DATA_ROOT)
-    sys.exit(2)
+    sys.exit(0)
+
+# We'll assume the last one holds the most recent data
+# but if INSIST_ON_READY is set we search backwards for the most
+# recent directory that is READY. In our search we omit poorly
+# formatted directories, and anything that's not a directory.
+#
+# There may not be any data directories and there may be none
+# that are READY.
+if INSIST_ON_READY:
+    # Walk back through the data directories
+    # until we find one that is READY
+    LOGGER.info('Searching for READY data...')
+    for data_dir in reversed(DATA_DIRS):
+        data_path = os.path.join(SOURCE_DATA_ROOT, data_dir)
+        if os.path.isdir(data_path):
+            if re.match(DATA_DIR_RE, data_dir):
+                if os.path.exists(os.path.join(data_path, READY_FILE)):
+                    LOGGER.info('DataDir: %s is READY', data_dir)
+                    most_recent_data_dir = data_dir
+                    break
+                else:
+                    LOGGER.warning('DataDir: %s is not READY', data_dir)
+            else:
+                LOGGER.warning('DataDir: %s uses an incorrect format', data_dir)
+        else:
+            LOGGER.warning('DataDir: %s is not a directory', data_dir)
+else:
+    # Not insisting on READY,
+    # just pick the most recent directory...
+    most_recent_data_dir = DATA_DIRS[-1]
+
+# Did we find a data directory?
+if not most_recent_data_dir:
+    # No data directories.
+    LOGGER.error('Could not find a viable data directory')
+    LOGGER.info('Looked at...')
+    for data_dir in DATA_DIRS:
+        LOGGER.info('+ %s', data_dir)
+    sys.exit(0)
+
 # Is the directory name correct?
 if not re.match(DATA_DIR_RE, most_recent_data_dir):
     # Doesn't look right
     LOGGER.error('Most recent data directory name'
                  ' is not correct (%s)', most_recent_data_dir)
-    sys.exit(3)
+    sys.exit(0)
 most_recent_data_path = os.path.join(SOURCE_DATA_ROOT, most_recent_data_dir)
 if not os.path.isdir(most_recent_data_path):
     # Most recent does not look like a directory.
     LOGGER.error('Most recent data directory is not a directory'
                  ' (%s)', most_recent_data_dir)
-    sys.exit(4)
+    sys.exit(0)
 
 # OK - fit to continue if we get here...
-
-# Check data is READY?
-if INSIST_ON_READY and not os.path.exists(os.path.join(most_recent_data_path,
-                                                       READY_FILE)):
-    # Directory exists but it's not 'ready'.
-    LOGGER.info('Most recent data directory is not READY'
-                ' (%s)', most_recent_data_dir)
-    sys.exit(0)
 
 # We have source data (that is READY) if we get here!
 # Next stage build if the latest image does not contain this data

@@ -35,8 +35,6 @@ pipeline {
     stage('Inspect') {
       steps {
         dir('images') {
-          slackSend channel: "#${SLACK_BUILD_CHANNEL}",
-                    message: "${JOB_NAME} build ${BUILD_NUMBER} - starting"
 
           // List the possible data source directories...
           sh "ls ${SOURCE_DATA_ROOT}"
@@ -49,16 +47,15 @@ pipeline {
             //
             // We must always build the image if: -
             //
-            //   this build is the result of an upstream project trigger
-            //   this build is a result of an SCM change
+            //   this build is the result of a cURL trigger
             //
-            // Otherwise we only build if there's new data.
-            //
-            // The image will deploy if data has changed but the deployment
-            // is also forced if we're here because of a REMOTE trigger.
+            // And, in fact, a remote/curl trigger should be the only way into
+            // this build process. And a remote trigger will result in a new
+            // loader image and a deployment, whether one was required or not.
             //
             // Note: if FORCE_BUILD is in the environment block above
             //       I can't seem to change its value here...
+            //
             env.CAUSE = 'DATA'
             env.FORCE_BUILD = 'No'
             def UpstreamCause = currentBuild.rawBuild.getCause(hudson.model.Cause$UpstreamCause)
@@ -86,6 +83,7 @@ pipeline {
           // instructions from the previous block to avoid the exception...
           // java.io.NotSerializableException: hudson.triggers.TimerTrigger$TimerTriggerCause
           script {
+
             // - Get the registry user API token (used in the Python module)
             // - Run the get_unbuilt_data_directory module to find the latest data
             // - Dump the script log.
@@ -98,16 +96,22 @@ pipeline {
             echo "FORCE_BUILD is '${env.FORCE_BUILD}'"
             env.DATA_ORIGIN = sh(script: './get_unbuilt_data_directory.py', returnStdout: true).trim()
             sh 'cat get_unbuilt_data_directory.log'
+
+            // For this build to work we must have some data...
+            if (env.DATA_ORIGIN.length() == 0) {
+              error('Unable to build - there is no data (DATA_ORIGIN is blank)')
+            }
+
           }
+
+          slackSend channel: "#${SLACK_BUILD_CHANNEL}",
+                    message: "${JOB_NAME} build ${BUILD_NUMBER} - using '${DATA_ORIGIN}' data"
 
         }
       }
     }
 
     stage('Build Image') {
-      when {
-        expression { CAUSE == 'REMOTE' || CAUSE == 'UPSTREAM' || CAUSE == 'SCM' }
-      }
       steps {
         dir('images/loader') {
           sh "buildah bud --tls-verify=false --creds=${REGISTRY_USER}:${REGISTRY_USER_TOKEN} --format docker --build-arg DATA_ORIGIN=${DATA_ORIGIN} --build-arg BUILD_NUMBER=${BUILD_NUMBER} -f Dockerfile -t ${STREAM_IMAGE} ."
@@ -116,9 +120,6 @@ pipeline {
     }
 
     stage('Push Image') {
-      when {
-        expression { CAUSE == 'REMOTE' || CAUSE == 'UPSTREAM' || CAUSE == 'SCM' }
-      }
       steps {
         withCredentials([string(credentialsId: 'clusterUrl', variable: 'CLUSTER_URL'),
                          string(credentialsId: 'ocUser', variable: 'OC_USER'),
@@ -142,13 +143,7 @@ pipeline {
     }
 
     stage('Check Prior Deployment') {
-      when {
-        expression { DATA_ORIGIN.length() > 0 }
-      }
       steps {
-        slackSend channel: "#${SLACK_BUILD_CHANNEL}",
-                  message: "${JOB_NAME} build ${BUILD_NUMBER} - using '${DATA_ORIGIN}' data"
-
         // We need to launch the Loader 'Job'.
         // But we protect ourselves from doing this if a prior
         // instance of the 'Job' is running (which would be unusual).
@@ -161,20 +156,9 @@ pipeline {
       }
     }
 
-    stage('Skip Deployment') {
-      when {
-        expression { DATA_ORIGIN.length() == 0 }
-      }
-      steps {
-        slackSend channel: "#${SLACK_BUILD_CHANNEL}",
-                  color: 'good',
-                  message: "${JOB_NAME} build ${BUILD_NUMBER} - complete (no deployment required)"
-      }
-    }
-
     stage('Deploy Image') {
       when {
-        expression { DATA_ORIGIN.length() > 0 && LOADER_RUNNING == '0' }
+        expression { LOADER_RUNNING == '0' }
       }
       steps {
         dir('images/loader') {
@@ -191,7 +175,7 @@ pipeline {
 
     stage('Blocked Image') {
       when {
-        expression { DATA_ORIGIN.length() > 0 && LOADER_RUNNING != '0' }
+        expression { LOADER_RUNNING != '0' }
       }
       steps {
         echo "A prior loader is still running (deployment is blocked)"
