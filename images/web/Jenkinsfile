@@ -31,7 +31,14 @@ pipeline {
         dir('images/web') {
           slackSend channel: "#${SLACK_BUILD_CHANNEL}",
                     message: "${JOB_NAME} build ${BUILD_NUMBER} - starting"
+
+          // Display some tool versions
+          sh "buildah -v"
+          sh "podman -v"
+          sh "skopeo -v"
+          // Build
           sh "buildah bud --format docker --build-arg BUILD_NUMBER=${BUILD_NUMBER} -f Dockerfile -t ${STREAM_IMAGE} ."
+
         }
 
       }
