@@ -2,8 +2,6 @@
 
 # An OpenShift slave image template.
 #
-# oc process -f slave.yaml | oc create -f -
-#
 # This is a template for an ImageStream recognised by Jenkins as a viable
 # image for the creation of slave instances due to the presence of the label
 # `role` with value `jenkins-slave`. We refer to this image in our
