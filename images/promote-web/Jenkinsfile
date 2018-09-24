@@ -60,34 +60,32 @@ pipeline {
           echo "AS_VERSION is '${AS_VERSION}'"
 
           // Does the build exist as a tagged image?
+          // It must if we are to continue.
+          //
           sh "oc login ${CLUSTER_URL} -u ${OC_USER} -p ${OC_USER_PASSWORD}"
           sh "oc project ${SRC_PROJECT}"
           script {
             IMAGE_TAG = sh(script: "oc describe is ${IMAGE_NAME} | grep latest-${PROMOTE_BUILD}\$ || true", returnStdout: true).trim()
+            if (IMAGE_TAG.length() == 0) {
+              error("Unable to promote the build -  build ${PROMOTE_BUILD} does not exist')
+            }
           }
           echo "IMAGE_TAG is '${IMAGE_TAG}'"
 
-        }
-      }
-    }
+          // Does the build exist as a versioned image?
+          // It must not if we are to continue.
+          script {
+            VERSION_TAG = sh(script: "oc describe is ${IMAGE_NAME} | grep ^${AS_VERSION}\$ || true", returnStdout: true).trim()
+            if (VERSION_TAG.length() != 0) {
+              error("Unable to promote the build - version ${PROMOTE_BUILD} already exists')
+            }
+          }
 
-    stage('Missing Image') {
-      when {
-        expression { IMAGE_TAG.length() == 0 }
-      }
-      steps {
-        script {
-          // The build number that we're meant to tag does not exist.
-          echo "OOOPS: The build number to promote (${PROMOTE_BUILD}) does not exist"
-          currentBuild.result = 'FAILURE'
         }
       }
     }
 
     stage('Build Versioned Image') {
-      when {
-        expression { IMAGE_TAG.length() != 0 }
-      }
       steps {
         dir('images/promote-web') {
 
@@ -109,9 +107,6 @@ pipeline {
 
     // Push the versioned image into our local registry
     stage('Push Image') {
-      when {
-        expression { IMAGE_TAG.length() != 0 }
-      }
       steps {
 
         sh "buildah push --tls-verify=false ${SRC_STREAM_IMAGE}:${AS_VERSION} docker://${REGISTRY}/${SRC_STREAM_IMAGE}:${AS_VERSION}"
@@ -124,9 +119,6 @@ pipeline {
     // to a 'stable' image that will trigger a deployment of the
     // production image.
     stage('Promote Image') {
-      when {
-        expression { IMAGE_TAG.length() != 0 }
-      }
       steps {
 
         // Tag 'latest-NNN' as 'stable'
@@ -138,9 +130,6 @@ pipeline {
 
     // Archive the versioned image (to DockerHub)
     stage('Archive Image') {
-      when {
-        expression { IMAGE_TAG.length() != 0 }
-      }
       steps {
 
         sh "podman login --username ${DOCKER_USER} --password ${DOCKER_PASSWORD} docker.io"
