@@ -88,25 +88,27 @@ pipeline {
       when {
         expression { IMAGE_TAG.length() != 0 }
       }
-      dir('images/promote-web') {
+      steps {
+        dir('images/promote-web') {
 
-        // Builds a new production image using the PROMOTE_BUILD image.
-        // The build is simply used to add addition tags.
-        // To do this (as ARG-before-FROM is not supported in buildah 1.3)
-        // we have to re-tag the image as 'latest-0' (the FROM in our Dockerfile)
-        script {
-          TOKEN = sh(script: 'oc whoami -t', returnStdout: true).trim()
+          // Builds a new production image using the PROMOTE_BUILD image.
+          // The build is simply used to add addition tags.
+          // To do this (as ARG-before-FROM is not supported in buildah 1.3)
+          // we have to re-tag the image as 'latest-0' (the FROM in our Dockerfile)
+          script {
+            TOKEN = sh(script: 'oc whoami -t', returnStdout: true).trim()
+          }
+          sh "podman login --tls-verify=false --username ${REGISTRY_USER} --password ${TOKEN} ${REGISTRY}"
+          sh "buildah pull --tls-verify=false docker://${REGISTRY}/${SRC_STREAM_IMAGE}-${PROMOTE_BUILD}"
+          sh "buildah tag ${REGISTRY}/${SRC_STREAM_IMAGE}-${PROMOTE_BUILD} ${SRC_STREAM_IMAGE}-0"
+          sh "buildah bud --format docker --build-arg VERSION_NUMBER=${AS_VERSION} -f Dockerfile -t alanbchristie/blob:${AS_VERSION} ."
+          sh "podman logout ${REGISTRY}"
+
+          sh "podman login --username ${DOCKER_USER} --password ${DOCKER_PASSWORD} docker.io"
+          sh "buildah push --tls-verify localhost/alanbchristie/blob:${AS_VERSION} docker://docker.io/alanbchristie/blob:${AS_VERSION}"
+          sh "podman logout docker.io"
+
         }
-        sh "podman login --tls-verify=false --username ${REGISTRY_USER} --password ${TOKEN} ${REGISTRY}"
-        sh "buildah pull --tls-verify=false docker://${REGISTRY}/${SRC_STREAM_IMAGE}-${PROMOTE_BUILD}"
-        sh "buildah tag ${REGISTRY}/${SRC_STREAM_IMAGE}-${PROMOTE_BUILD} ${SRC_STREAM_IMAGE}-0"
-        sh "buildah bud --format docker --build-arg VERSION_NUMBER=${AS_VERSION} -f Dockerfile -t alanbchristie/blob:${AS_VERSION} ."
-        sh "podman logout ${REGISTRY}"
-
-        sh "podman login --username ${DOCKER_USER} --password ${DOCKER_PASSWORD} docker.io"
-        sh "buildah push --tls-verify localhost/alanbchristie/blob:${AS_VERSION} docker://docker.io/alanbchristie/blob:${AS_VERSION}"
-        sh "podman logout docker.io"
-
       }
     }
 
