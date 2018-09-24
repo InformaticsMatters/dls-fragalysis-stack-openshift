@@ -131,8 +131,7 @@ pipeline {
 
         // Tag 'latest-NNN' as 'stable'
         // forcing a re-deploy in the production project
-//        sh "oc tag ${SRC_STREAM_IMAGE}:${AS_VERSION} ${TGT_STREAM_IMAGE}:stable"
-        sh "echo ${SRC_STREAM_IMAGE}:${AS_VERSION}"
+        sh "oc tag ${SRC_STREAM_IMAGE}:${AS_VERSION} ${TGT_STREAM_IMAGE}:stable"
 
       }
     }
@@ -148,10 +147,6 @@ pipeline {
         sh "buildah push --tls-verify localhost/${SRC_STREAM_IMAGE}:${AS_VERSION} docker://docker.io/alanbchristie/blob:${AS_VERSION}"
         sh "podman logout docker.io"
 
-        slackSend channel: "#${SLACK_BUILD_CHANNEL}",
-                  color: 'good',
-                  message: "${JOB_NAME} - complete"
-
       }
     }
 
@@ -160,6 +155,12 @@ pipeline {
   // Post-job actions.
   // See https://jenkins.io/doc/book/pipeline/syntax/#post
   post {
+
+    success {
+      slackSend channel: "#${SLACK_BUILD_CHANNEL}",
+                color: 'good',
+                message: "${JOB_NAME} - complete"
+    }
 
     failure {
       slackSend channel: "#${SLACK_BUILD_CHANNEL}",
