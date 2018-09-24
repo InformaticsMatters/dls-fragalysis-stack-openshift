@@ -118,7 +118,7 @@ pipeline {
 
         // Tag 'latest-NNN' as 'stable'
         // forcing a re-deploy in the production project
-        sh "oc tag ${SRC_STREAM_IMAGE}-${PROMOTE_BUILD} ${TGT_STREAM_IMAGE}"
+//        sh "oc tag ${SRC_STREAM_IMAGE}-${PROMOTE_BUILD} ${TGT_STREAM_IMAGE}"
 
         slackSend channel: "#${SLACK_BUILD_CHANNEL}",
                   color: 'good',
