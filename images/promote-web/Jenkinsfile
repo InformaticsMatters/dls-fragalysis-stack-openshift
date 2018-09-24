@@ -67,7 +67,7 @@ pipeline {
           script {
             IMAGE_TAG = sh(script: "oc describe is ${IMAGE_NAME} | grep latest-${PROMOTE_BUILD}\$ || true", returnStdout: true).trim()
             if (IMAGE_TAG.length() == 0) {
-              error("Unable to promote the build -  build ${PROMOTE_BUILD} does not exist')
+              error("Unable to promote the build -  build '${PROMOTE_BUILD}' does not exist")
             }
           }
           echo "IMAGE_TAG is '${IMAGE_TAG}'"
@@ -77,7 +77,7 @@ pipeline {
           script {
             VERSION_TAG = sh(script: "oc describe is ${IMAGE_NAME} | grep ^${AS_VERSION}\$ || true", returnStdout: true).trim()
             if (VERSION_TAG.length() != 0) {
-              error("Unable to promote the build - version ${PROMOTE_BUILD} already exists')
+              error("Unable to promote the build - version '${PROMOTE_BUILD}' already exists")
             }
           }
 
