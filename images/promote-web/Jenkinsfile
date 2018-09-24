@@ -132,6 +132,7 @@ pipeline {
         // Tag 'latest-NNN' as 'stable'
         // forcing a re-deploy in the production project
 //        sh "oc tag ${SRC_STREAM_IMAGE}:${AS_VERSION} ${TGT_STREAM_IMAGE}:stable"
+        sh "echo ${SRC_STREAM_IMAGE}:${AS_VERSION}"
 
       }
     }
