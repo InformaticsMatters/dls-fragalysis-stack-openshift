@@ -84,7 +84,7 @@ pipeline {
       }
     }
 
-    stage('Build Image') {
+    stage('Build Versioned Image') {
       when {
         expression { IMAGE_TAG.length() != 0 }
       }
