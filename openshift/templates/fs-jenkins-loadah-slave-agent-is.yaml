@@ -5,11 +5,10 @@
 # This is a template for an ImageStream recognised by Jenkins as a viable
 # image for the creation of slave instances due to the presence of the label
 # `role` with value `jenkins-slave`. We refer to this image in our
-# Jenkins pipeline agent with the label defined by `SLAVE_LABEL`
-# (`buildah-slave` by default), i.e.:
+# Jenkins pipeline agent with the label defined by `SLAVE_LABEL`, i.e.:
 #
 #   agent {
-#     label 'buildah-slave'
+#     label 'loadah-slave'
 #   }
 
 kind: Template
@@ -22,30 +21,15 @@ labels:
 parameters:
 
 - name: SLAVE_LABEL
-  value: buildah-slave
+  value: loadah-slave
   description: >
     The name by which this image is known to the Jenkins agent.
     The value of the agent label.
 
 - name: DISPLAY_NAME
-  value: Jenkins Buildah Slave Image
+  value: Jenkins Web Loader Slave Image
   description: >
     A short phrase used as the display name for the image
-
-- name: REGISTRY
-  value: docker.io
-  description: >
-    The Docker registry
-
-- name: PROJECT
-  value: informaticsmatters
-  description: >
-    The Docker project or Image owner
-
-- name: IMAGE
-  value: jenkins-slave-buildah-centos7
-  description: >
-    The image name
 
 - name: TAG
   value: '3.9'
@@ -65,7 +49,7 @@ objects:
         slave-label: ${SLAVE_LABEL}
       from:
         kind: DockerImage
-        name: ${REGISTRY}/${PROJECT}/${IMAGE}:${TAG}
+        name: docker.io/informaticsmatters/jenkins-slave-buildah-centos7:${TAG}
       name: ${TAG}
       importPolicy:
         scheduled: false

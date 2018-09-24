@@ -29,7 +29,7 @@
   shell: >
     oc process -f {{ role_path }}/{{ t_dir }}/fs-jenkins-pv-nfs.yaml
     -p JENKINS_NAMESPACE={{ namespace }}
-   | oc create -f -
+    | oc create -f -
   when:
   -  use_nfs
   - '"fs-jenkins" not in jenkins_pv.stdout'
@@ -45,7 +45,7 @@
     | oc create -f -
   when:
   - use_nfs
-  - '"fs-input" not in jenkins_pv.stdout'
+  - not jenkins_pv.stdout | regex_search('^fs-input\s', multiline=True)
 
 # Create the Input PVCs
 
@@ -59,7 +59,7 @@
     oc process -f {{ role_path }}/{{ t_dir }}/fs-input-pvc.yaml
     -p INPUT_VOLUME_NAME={{ input_vol_name }}
     | oc create -f -
-  when: '"fs-input-claim" not in input_pvc.stdout'
+  when: not input_pvc.stdout | regex_search('^fs-input-claim\s', multiline=True)
 
 - name: Wait for Input PVC to become Bound
   shell: >
@@ -70,21 +70,25 @@
   until: result.rc == 0
   loop:
   - fs-input-claim
-  when: '"fs-input-claim" not in input_pvc.stdout'
+  when: not input_pvc.stdout | regex_search('^fs-input-claim\s', multiline=True)
   changed_when: False
 
-# Create the Buildah Slave Agent
+# Create the Web (Buildah) Slave Agents
 
-- name: Check Buildah Agent ImageStream
+- name: Check Buildah Agent ImageStreams
   shell: oc get is
   register: agent_is
   changed_when: False
 
-- name: Create Buildah Agent ImageStream
+- name: Create Agent ImageStreams
   shell: >
-    oc process -f {{ role_path }}/{{ t_dir }}/fs-jenkins-slave-agent-is.yaml
+    oc process -f {{ role_path }}/{{ t_dir }}/fs-jenkins-{{ item }}-agent-is.yaml
     | oc create -f -
-  when: '"buildah-slave" not in agent_is.stdout'
+  loop:
+  - buildah-slave
+  - graph-slave
+  - loadah-slave
+  when: not agent_is.stdout | regex_search('^%s\s' % item, multiline=True)
 
 # Configure Jenkins?
 # i.e. set secrets ctc.

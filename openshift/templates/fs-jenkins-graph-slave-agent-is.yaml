@@ -1,0 +1,55 @@
+---
+
+# An OpenShift slave image template.
+#
+# This is a template for an ImageStream recognised by Jenkins as a viable
+# image for the creation of slave instances due to the presence of the label
+# `role` with value `jenkins-slave`. We refer to this image in our
+# Jenkins pipeline agent with the label defined by `SLAVE_LABEL`, i.e.:
+#
+#   agent {
+#     label 'graph-slave'
+#   }
+
+kind: Template
+apiVersion: v1
+labels:
+  template: slave
+  app: slave
+  role: jenkins-slave
+
+parameters:
+
+- name: SLAVE_LABEL
+  value: graph-slave
+  description: >
+    The name by which this image is known to the Jenkins agent.
+    The value of the agent label.
+
+- name: DISPLAY_NAME
+  value: Jenkins Graph Builder Slave Image
+  description: >
+    A short phrase used as the display name for the image
+
+- name: TAG
+  value: '3.9'
+  description: >
+    The image tag
+
+objects:
+
+- kind: ImageStream
+  apiVersion: v1
+  metadata:
+    name: ${SLAVE_LABEL}
+  spec:
+    tags:
+    - annotations:
+        openshift.io/display-name: "${DISPLAY_NAME}"
+        slave-label: ${SLAVE_LABEL}
+      from:
+        kind: DockerImage
+        name: docker.io/informaticsmatters/jenkins-slave-buildah-centos7:${TAG}
+      name: ${TAG}
+      importPolicy:
+        scheduled: false
