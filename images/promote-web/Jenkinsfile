@@ -77,7 +77,7 @@ pipeline {
           script {
             VERSION_TAG = sh(script: "oc describe is ${IMAGE_NAME} | grep ^${AS_VERSION}\$ || true", returnStdout: true).trim()
             if (VERSION_TAG.length() != 0) {
-              error("Unable to promote the build - version '${PROMOTE_BUILD}' already exists")
+              error("Unable to promote the build - version '${AS_VERSION}' already exists")
             }
           }
 
