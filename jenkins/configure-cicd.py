@@ -88,6 +88,11 @@ if ARGS.action == 'get':
 
 elif ARGS.action == 'set':
 
+    J_DOCKER_USER = os.environ.get('FRAG_DOCKER_USER')
+    if not J_DOCKER_USER:
+        LOGGER.error('To set the configuration you must define'
+                     ' the environment variable FRAG_DOCKER_USER')
+        sys.exit(1)
     J_DOCKER_PASS = os.environ.get('FRAG_DOCKER_PASSWORD')
     if not J_DOCKER_PASS:
         LOGGER.error('To set the configuration you must define'
@@ -123,6 +128,9 @@ elif ARGS.action == 'set':
     JS.set_secret_text('abcDockerPassword',
                        J_DOCKER_PASS,
                        "Docker Password")
+    JS.set_secret_text('abcDockerUser',
+                       J_DOCKER_USER,
+                       "Docker User")
     JS.set_secret_text('slackJenkinsIntegrationToken',
                        J_SLACK_TOKEN,
                        "Slack channel Jenkins Integration token")
