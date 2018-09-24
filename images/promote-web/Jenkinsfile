@@ -104,7 +104,7 @@ pipeline {
         sh "podman logout ${REGISTRY}"
 
         sh "podman login --username ${DOCKER_USER} --password ${DOCKER_PASSWORD} docker.io"
-        sh "buildah push --tls-verify localhost/alanbchristie/blob:${AS_VERSION} docker://docker.io/alanbchristie/blob:${AS_VERSION}""
+        sh "buildah push --tls-verify localhost/alanbchristie/blob:${AS_VERSION} docker://docker.io/alanbchristie/blob:${AS_VERSION}"
         sh "podman logout docker.io"
 
       }
