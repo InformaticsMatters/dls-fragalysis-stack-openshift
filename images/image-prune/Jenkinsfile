@@ -29,7 +29,7 @@ pipeline {
                            string(credentialsId: 'ocUserPassword', variable: 'OC_USER_PASSWORD')]) {
 
             slackSend channel: "#${SLACK_BUILD_CHANNEL}",
-                      message: "${JOB_NAME} - pruning..."
+                      message: "${JOB_NAME} session ${BUILD_NUMBER} - starting"
 
             sh "./prune.sh"
 
@@ -48,28 +48,28 @@ pipeline {
     success {
       slackSend channel: "#${SLACK_BUILD_CHANNEL}",
                 color: 'good',
-                message: "${JOB_NAME} - complete"
+                message: "${JOB_NAME} session ${BUILD_NUMBER} - complete"
     }
 
     failure {
       slackSend channel: "#${SLACK_BUILD_CHANNEL}",
                 color: 'danger',
-                message: "${JOB_NAME} build ${BUILD_NUMBER} - failed (${BUILD_URL})"
+                message: "${JOB_NAME} session ${BUILD_NUMBER} - failed (${BUILD_URL})"
       slackSend channel: "#${SLACK_ALERT_CHANNEL}",
                 color: 'danger',
-                message: "${JOB_NAME} build ${BUILD_NUMBER} - failed (${BUILD_URL})"
+                message: "${JOB_NAME} session ${BUILD_NUMBER} - failed (${BUILD_URL})"
     }
 
     unstable {
       slackSend channel: "#${SLACK_BUILD_CHANNEL}",
                 color: 'warning',
-                message: "${JOB_NAME} build ${BUILD_NUMBER} - complete (unstable)"
+                message: "${JOB_NAME} session ${BUILD_NUMBER} - complete (unstable)"
     }
 
     fixed {
       slackSend channel: "#${SLACK_ALERT_CHANNEL}",
                 color: 'good',
-                message: "${JOB_NAME} build - fixed"
+                message: "${JOB_NAME} - fixed"
     }
 
   }
