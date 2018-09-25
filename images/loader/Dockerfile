@@ -22,4 +22,5 @@ WORKDIR ${APP_ROOT}
 
 # Upstream Git commits
 RUN export BE_COMMIT=$(git log --pretty=format:'%h' -n 1)
+ENV BE_COMMIT=${BE_COMMIT}
 LABEL build.be.commit=${BE_COMMIT}
