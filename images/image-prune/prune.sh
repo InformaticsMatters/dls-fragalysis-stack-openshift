@@ -18,4 +18,4 @@ oc describe is/loader-stream | \
     awk '{system("oc delete istag/loader-stream:latest-"$1)}'
 
 echo "=-> Pruning images..."
-oc adm prune images --confirm
+oc adm prune images --force-insecure --confirm
