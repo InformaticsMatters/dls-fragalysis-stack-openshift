@@ -1,0 +1,79 @@
+#!groovy​
+
+// The Production Fragalysis Stack (image pruning application).
+//
+// This pipeline is executed in order to prune tagged image streams
+// and registry images that accumulate as a side-effect of the main
+// CI/CD jobs running.
+
+
+pipeline {
+
+  agent { label 'buildah-slave' }
+
+  environment {
+    // Slack channel for all notifications
+    SLACK_BUILD_CHANNEL = 'dls-builds'
+    // Slack channel to be used for errors/failures
+    // (which also go to the CI/CD channel)
+    SLACK_ALERT_CHANNEL = 'dls-alerts'
+  }
+
+  stages {
+
+    stage('Prune') {
+      steps {
+        dir('images/image-prune') {
+          withCredentials([string(credentialsId: 'clusterUrl', variable: 'CLUSTER_URL'),
+                           string(credentialsId: 'ocUser', variable: 'OC_USER'),
+                           string(credentialsId: 'ocUserPassword', variable: 'OC_USER_PASSWORD')]) {
+
+            slackSend channel: "#${SLACK_BUILD_CHANNEL}",
+                      message: "${JOB_NAME} - pruning..."
+
+            sh "oc login ${CLUSTER_URL} -u ${OC_USER} -p ${OC_USER_PASSWORD}"
+            sh "prune.sh"
+            sh "oc adm prune images --confirm"
+
+          }
+        }
+      }
+    }
+
+
+  }
+
+  // Post-job actions.
+  // See https://jenkins.io/doc/book/pipeline/syntax/#post
+  post {
+
+    success {
+      slackSend channel: "#${SLACK_BUILD_CHANNEL}",
+                color: 'good',
+                message: "${JOB_NAME} - complete"
+    }
+
+    failure {
+      slackSend channel: "#${SLACK_BUILD_CHANNEL}",
+                color: 'danger',
+                message: "${JOB_NAME} build ${BUILD_NUMBER} - failed (${BUILD_URL})"
+      slackSend channel: "#${SLACK_ALERT_CHANNEL}",
+                color: 'danger',
+                message: "${JOB_NAME} build ${BUILD_NUMBER} - failed (${BUILD_URL})"
+    }
+
+    unstable {
+      slackSend channel: "#${SLACK_BUILD_CHANNEL}",
+                color: 'warning',
+                message: "${JOB_NAME} build ${BUILD_NUMBER} - complete (unstable)"
+    }
+
+    fixed {
+      slackSend channel: "#${SLACK_ALERT_CHANNEL}",
+                color: 'good',
+                message: "${JOB_NAME} build - fixed"
+    }
+
+  }
+
+}
