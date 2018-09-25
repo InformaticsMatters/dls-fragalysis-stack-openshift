@@ -5,3 +5,11 @@ FROM xchem/fragalysis-stack:latest
 # It's probably just the Jenkins BUILD_ID.
 ARG BUILD_NUMBER
 LABEL build.number=${BUILD_NUMBER}
+
+# Upstream Git commits
+BE_COMMIT=$(git log --pretty=format:'%h' -n 1)
+WORKDIR ${APP_ROOT}/frontend
+FE_COMMIT=$(git log --pretty=format:'%h' -n 1)
+WORKDIR ${APP_ROOT}
+LABEL build.be.commit=${BE_COMMIT}
+LABEL build.fe.commit=${FE_COMMIT}
