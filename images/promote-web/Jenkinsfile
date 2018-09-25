@@ -137,7 +137,7 @@ pipeline {
       steps {
 
         sh "podman login --username ${DOCKER_USER} --password ${DOCKER_PASSWORD} docker.io"
-        sh "buildah push --tls-verify localhost/${SRC_STREAM_IMAGE}:${AS_VERSION} docker://${ARCHIVE_REGISTRY}/${ARCHIVE_NAME}:${AS_VERSION}"
+//        sh "buildah push --tls-verify localhost/${SRC_STREAM_IMAGE}:${AS_VERSION} docker://${ARCHIVE_REGISTRY}/${ARCHIVE_NAME}:${AS_VERSION}"
         sh "podman logout docker.io"
 
       }
