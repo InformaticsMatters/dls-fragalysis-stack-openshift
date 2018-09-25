@@ -21,5 +21,5 @@ RUN chmod 755 *.sh && \
 WORKDIR ${APP_ROOT}
 
 # Upstream Git commits
-BE_COMMIT=$(git log --pretty=format:'%h' -n 1)
+RUN export BE_COMMIT=$(git log --pretty=format:'%h' -n 1)
 LABEL build.be.commit=${BE_COMMIT}
