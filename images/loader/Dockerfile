@@ -20,6 +20,5 @@ RUN chmod 755 *.sh && \
 
 WORKDIR ${APP_ROOT}
 
-# Upstream Git commits
-RUN export BE_COMMIT=$(git log --pretty=format:'%h' -n 1) && \
-    echo ${BE_COMMIT}
+# Echo upstream Git commits
+RUN git log --pretty=format:'%h' -n 1
