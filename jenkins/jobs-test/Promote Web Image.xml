@@ -8,19 +8,19 @@
       <parameters/>
     </org.jenkinsci.plugins.pipeline.modeldefinition.actions.DeclarativeJobPropertyTrackerAction>
   </actions>
-  <description>Promotes a web image identified by a build number to Production</description>
+  <description>Promotes a web image identified by a Jenkins Web Image build NUMBER to a Production VERSION.</description>
   <keepDependencies>false</keepDependencies>
   <properties>
     <hudson.model.ParametersDefinitionProperty>
       <parameterDefinitions>
         <hudson.model.StringParameterDefinition>
           <name>PROMOTE_BUILD</name>
-          <description>The Jenkins build number of the development project&apos;s Web Image to promote</description>
+          <description>The Jenkins Job build number of the development project&apos;s Web Image to promote, i.e. &quot;268&quot;. This build must exist if the the promotion is to be successful.</description>
           <defaultValue></defaultValue>
         </hudson.model.StringParameterDefinition>
         <hudson.model.StringParameterDefinition>
           <name>AS_VERSION</name>
-          <description>The semantic version to apply to the promoted image, e.g. &quot;1.14.7&quot;</description>
+          <description>The semantic version to apply to the promoted image, e.g. &quot;0.0.7&quot;. The promoted image version must not exist. You can promote built &quot;268&quot; as &quot;0.0.7&quot; as long as version &quot;0.0.7&quot; does not exist but you cannot promote any build to &quot;0.0.7&quot; once it exists.</description>
           <defaultValue></defaultValue>
         </hudson.model.StringParameterDefinition>
       </parameterDefinitions>
@@ -33,7 +33,7 @@
     </io.fabric8.jenkins.openshiftsync.BuildConfigProjectProperty>
     <jenkins.model.BuildDiscarderProperty>
       <strategy class="hudson.tasks.LogRotator">
-        <daysToKeep>5</daysToKeep>
+        <daysToKeep>-1</daysToKeep>
         <numToKeep>25</numToKeep>
         <artifactDaysToKeep>-1</artifactDaysToKeep>
         <artifactNumToKeep>-1</artifactNumToKeep>
