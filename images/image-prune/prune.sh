@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
 
+# Login (using expected environment variables)
+echo "=-> Logging in..."
+oc login ${CLUSTER_URL} -u ${OC_USER} -p ${OC_USER_PASSWORD}
+
 KEEP=10
 
 echo "=-> Deleting web-stream tags..."

@@ -31,9 +31,7 @@ pipeline {
             slackSend channel: "#${SLACK_BUILD_CHANNEL}",
                       message: "${JOB_NAME} - pruning..."
 
-            sh "oc login ${CLUSTER_URL} -u ${OC_USER} -p ${OC_USER_PASSWORD}"
             sh "./prune.sh"
-            sh "oc adm prune images --confirm"
 
           }
         }
