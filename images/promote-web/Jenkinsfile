@@ -29,7 +29,7 @@ pipeline {
 
     // Target registry details
     TGT_PROJECT = 'fragalysis-prod'
-    TGT_STREAM_IMAGE = "${TGT_PROJECT}/${STREAM_NAME}"
+    TGT_STREAM_IMAGE = "${TGT_PROJECT}/${STREAM_NAME}:stable"
 
     // Archive registry (on DockerHub)
     ARCHIVE_REGISTRY = 'docker.io/xchem'
@@ -41,9 +41,7 @@ pipeline {
     // (which also go to the CI/CD channel)
     SLACK_ALERT_CHANNEL = 'dls-alerts'
 
-    // Destination image, tagged with the 'AS-VERSION' value
-    // and pushed to docker hub.
-    IMAGE = 'alanbchristie/blob'
+    // Docker hub credentials
     DOCKER_USER = credentials('abcDockerUser')
     DOCKER_PASSWORD = credentials('abcDockerPassword')
   }
@@ -127,7 +125,7 @@ pipeline {
 
         // Tag 'latest-NNN' as 'stable'
         // forcing a re-deploy in the production project
-        sh "oc tag ${SRC_STREAM_IMAGE}:${AS_VERSION} ${TGT_STREAM_IMAGE}:stable"
+        sh "oc tag ${SRC_STREAM_IMAGE}:${AS_VERSION} ${TGT_STREAM_IMAGE}"
 
       }
     }
