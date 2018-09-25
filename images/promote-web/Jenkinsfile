@@ -21,15 +21,19 @@ pipeline {
     // User/Registry information.
     REGISTRY_USER = 'jenkins'
     REGISTRY = 'docker-registry.default.svc:5000'
-    IMAGE_NAME = 'web-stream'
+    STREAM_NAME = 'web-stream'
 
     // Source registry details
     SRC_PROJECT = 'fragalysis-cicd'
-    SRC_STREAM_IMAGE = "${SRC_PROJECT}/${IMAGE_NAME}"
+    SRC_STREAM_IMAGE = "${SRC_PROJECT}/${STREAM_NAME}"
 
     // Target registry details
     TGT_PROJECT = 'fragalysis-prod'
-    TGT_STREAM_IMAGE = "${TGT_PROJECT}/${IMAGE_NAME}"
+    TGT_STREAM_IMAGE = "${TGT_PROJECT}/${STREAM_NAME}"
+
+    // Archive registry (on DockerHub)
+    ARCHIVE_REGISTRY = 'docker.io/xchem'
+    ARCHIVE_NAME = 'web-image'
 
     // Slack channel for all notifications
     SLACK_BUILD_CHANNEL = 'dls-builds'
@@ -65,7 +69,7 @@ pipeline {
           sh "oc login ${CLUSTER_URL} -u ${OC_USER} -p ${OC_USER_PASSWORD}"
           sh "oc project ${SRC_PROJECT}"
           script {
-            IMAGE_TAG = sh(script: "oc describe is ${IMAGE_NAME} | grep latest-${PROMOTE_BUILD}\$ || true", returnStdout: true).trim()
+            IMAGE_TAG = sh(script: "oc describe is ${STREAM_NAME} | grep latest-${PROMOTE_BUILD}\$ || true", returnStdout: true).trim()
             if (IMAGE_TAG.length() == 0) {
               error("Unable to promote the build -  build '${PROMOTE_BUILD}' does not exist")
             }
@@ -75,7 +79,7 @@ pipeline {
           // Does the build exist as a versioned image?
           // It must not if we are to continue.
           script {
-            VERSION_TAG = sh(script: "oc describe is ${IMAGE_NAME} | grep ^${AS_VERSION}\$ || true", returnStdout: true).trim()
+            VERSION_TAG = sh(script: "oc describe is ${STREAM_NAME} | grep ^${AS_VERSION}\$ || true", returnStdout: true).trim()
             if (VERSION_TAG.length() != 0) {
               error("Unable to promote the build - version '${AS_VERSION}' already exists")
             }
@@ -133,7 +137,7 @@ pipeline {
       steps {
 
         sh "podman login --username ${DOCKER_USER} --password ${DOCKER_PASSWORD} docker.io"
-        sh "buildah push --tls-verify localhost/${SRC_STREAM_IMAGE}:${AS_VERSION} docker://docker.io/alanbchristie/blob:${AS_VERSION}"
+        sh "buildah push --tls-verify localhost/${SRC_STREAM_IMAGE}:${AS_VERSION} docker://${ARCHIVE_REGISTRY}/${ARCHIVE_NAME}:${AS_VERSION}"
         sh "podman logout docker.io"
 
       }
