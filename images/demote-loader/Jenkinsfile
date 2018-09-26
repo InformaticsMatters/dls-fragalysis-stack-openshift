@@ -75,8 +75,8 @@ pipeline {
         // But, as it's used in a Job this does not result in a re-deployment.
         // Instead we need to check that a prior instance is not running
         // before we launch the image as a new job using the OC CLI.
-//        sh "oc tag ${SRC_STREAM_IMAGE}:${TO_VERSION} ${TGT_STREAM_IMAGE}"
-//        sh "oc project ${TGT_PROJECT}"
+        sh "oc tag ${SRC_STREAM_IMAGE}:${TO_VERSION} ${TGT_STREAM_IMAGE}"
+        sh "oc project ${TGT_PROJECT}"
         script {
           LOADER_RUNNING = sh(script: 'oc get jobs | grep loader | grep Running | wc -l', returnStdout: true).trim()
         }
@@ -91,10 +91,9 @@ pipeline {
       }
       steps {
         dir('images/loader') {
-//          sh "oc delete job/fs-loader"
+          sh "oc delete job/fs-loader"
           sleep 4
-//          sh "oc process -p LOADER_NAMESPACE=${TGT_PROJECT} -p LOADER_IMAGE=${TGT_STREAM_IMAGE} -f fs-loader.yaml | oc create -f -"
-
+          sh "oc process -p LOADER_NAMESPACE=${TGT_PROJECT} -p LOADER_IMAGE=${TGT_STREAM_IMAGE} -f fs-loader.yaml | oc create -f -"
         }
       }
     }
