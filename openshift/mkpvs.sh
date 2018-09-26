@@ -23,6 +23,7 @@ mkdir pv-fs-web-media
 mkdir pv-fs-p-mysql-data
 mkdir pv-fs-p-mysql-data-backup
 mkdir pv-fs-p-web-media
+mkdir pv-fs-s-mysql-data
 chmod -R 777 pv-*
 chown -R nfsnobody.nfsnobody pv-*
 
@@ -41,6 +42,7 @@ echo ${EXPORT_DIR}/pv-fs-graph-logs *(rw,root_squash) >> frag.exports
 echo ${EXPORT_DIR}/pv-fs-p-mysql-data *(rw,no_subtree_check,no_root_squash)
 echo ${EXPORT_DIR}/pv-fs-p-mysql-data-backup *(rw,root_squash) >> frag.exports
 echo ${EXPORT_DIR}/pv-fs-p-web-media *(rw,root_squash) >> frag.exports
+echo ${EXPORT_DIR}/pv-fs-s-mysql-data *(rw,no_subtree_check,no_root_squash)
 echo ${EXPORT_DIR}/pv-fs-web-media *(rw,root_squash) >> frag.exports
 
 systemctl restart nfs-server

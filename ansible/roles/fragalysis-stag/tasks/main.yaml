@@ -1,0 +1,5 @@
+---
+
+- import_tasks: fs-s-project.yaml
+- import_tasks: fs-s-secrets.yaml
+- import_tasks: fs-s-mysql.yaml

@@ -1,0 +1,37 @@
+---
+
+# Setup the Fragalysis (Staging) Project.
+# Ths includes the project and its service account.
+
+- name: Login (admin)
+  shell: oc login {{ cluster_url }} -u admin -p {{ admin_password }}
+  changed_when: False
+
+- name: Get Projects
+  shell: oc get projects
+  register: projects_result
+  changed_when: False
+
+- name: Create Fraglysis Project
+  shell: >
+    oc new-project {{ namespace }}
+    --display-name='Fragalysis (Staging)'
+    --description='The Fragalysis Project (Staging Deployment)'
+  when: not projects_result.stdout | regex_search('^%s\s' % namespace, multiline=True)
+
+- name: Move to Fragalysis Project
+  shell: oc project {{ namespace }}
+  changed_when: False
+
+- name: Check Diamond Service Account exists
+  shell: oc get sa
+  register: sa_result
+  changed_when: False
+
+- name: Create Diamond Service Account
+  shell: "{{ item }}"
+  loop:
+  - oc create sa {{ service_account }}
+  - oc adm policy add-role-to-user admin -z {{ service_account }}
+  - oc adm policy add-scc-to-user anyuid -z {{ service_account }}
+  when: not sa_result.stdout | regex_search('^%s\s' % service_account, multiline=True)

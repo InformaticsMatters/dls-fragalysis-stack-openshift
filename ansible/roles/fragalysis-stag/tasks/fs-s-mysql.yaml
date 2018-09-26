@@ -1,0 +1,82 @@
+---
+
+# Create the MySQL PV
+
+- name: Check MySQL PV
+  shell: oc get pv
+  register: mysql_pv
+  when: use_nfs
+  changed_when: False
+
+- name: Create MySQL PV
+  shell: >
+    oc process -f {{ role_path }}/{{ t_dir }}/fs-mysql-pv-nfs.yaml
+    -p MYSQL_NAMESPACE={{ namespace }}
+    -p MYSQL_PV_DIR={{ mysql_nfs_dir }}
+    -p MYSQL_VOLUME_NAME={{ mysql_vol_name }}
+    | oc create -f -
+  when:
+  - use_nfs
+  - mysql_vol_name not in mysql_pv.stdout
+
+# Create the MySQL PVCs
+
+- name: Check MySQL PVC
+  shell: oc get pvc
+  register: mysql_pvc
+  changed_when: False
+
+- name: Create MySQL PVC
+  shell: >
+    oc process -f {{ role_path }}/{{ t_dir }}/fs-mysql-pvc.yaml
+    -p MYSQL_VOLUME_NAME={{ mysql_vol_name }}
+    | oc create -f -
+  when: not mysql_pvc.stdout | regex_search('^fs-mysql-data-claim\s', multiline=True)
+
+- name: Wait for MySQL PVCs to become Bound
+  shell: oc get pvc/{{ item }} | grep Bound
+  retries: 12
+  delay: 5
+  register: result
+  until: result.rc == 0
+  loop:
+  - fs-mysql-data-claim
+  when: not mysql_pvc.stdout | regex_search('^%s\s' % item, multiline=True)
+  changed_when: False
+
+# Create the MySQL Deployment
+
+- name: Check MySQL Deployment
+  shell: oc get deploymentconfigs
+  register: mysql_dc
+  changed_when: False
+
+- name: Create MySql Deployment
+  shell: >
+    oc process -f {{ role_path }}/{{ t_dir }}/fs-mysql.yaml
+    -p MYSQL_NAME={{ mysql_name }}
+    | oc create -f -
+  when: not mysql_dc.stdout | regex_search('^%s\s' % mysql_name, multiline=True)
+
+- name: Check MySQL Service
+  shell: oc get svc
+  register: mysql_svc
+  changed_when: False
+
+- name: Create MySql Service
+  shell: >
+    oc process -f {{ role_path }}/{{ t_dir }}/fs-mysql-svc.yaml
+    -p MYSQL_NAME={{ mysql_name }}
+    | oc create -f -
+  when: not mysql_svc.stdout | regex_search('^%s\s' % mysql_name, multiline=True)
+
+# Wait...
+
+- name: Wait for MySQL
+  shell: oc get po | grep mysql | grep -v deploy | grep 1/1 > /dev/null
+  retries: 15
+  delay: 20
+  register: result
+  until: result.rc == 0
+  when: wait_for_mysql
+  changed_when: False
