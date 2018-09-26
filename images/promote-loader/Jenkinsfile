@@ -105,9 +105,9 @@ pipeline {
             TOKEN = sh(script: 'oc whoami -t', returnStdout: true).trim()
           }
           sh "podman login --tls-verify=false --username ${REGISTRY_USER} --password ${TOKEN} ${REGISTRY}"
-          sh "buildah pull --tls-verify=false docker://${REGISTRY}/${SRC_STREAM_IMAGE}:latest-${PROMOTE_BUILD}"
-          sh "buildah tag ${REGISTRY}/${SRC_STREAM_IMAGE}:latest-${PROMOTE_BUILD} ${SRC_STREAM_IMAGE}:latest-0"
-          sh "buildah bud --format docker --build-arg VERSION_NUMBER=${AS_VERSION} -f Dockerfile -t ${SRC_STREAM_IMAGE}:${AS_VERSION} ."
+//          sh "buildah pull --tls-verify=false docker://${REGISTRY}/${SRC_STREAM_IMAGE}:latest-${PROMOTE_BUILD}"
+//          sh "buildah tag ${REGISTRY}/${SRC_STREAM_IMAGE}:latest-${PROMOTE_BUILD} ${SRC_STREAM_IMAGE}:latest-0"
+//          sh "buildah bud --format docker --build-arg VERSION_NUMBER=${AS_VERSION} -f Dockerfile -t ${SRC_STREAM_IMAGE}:${AS_VERSION} ."
 
         }
       }
@@ -117,7 +117,7 @@ pipeline {
     stage('Push Image') {
       steps {
 
-        sh "buildah push --tls-verify=false ${SRC_STREAM_IMAGE}:${AS_VERSION} docker://${REGISTRY}/${SRC_STREAM_IMAGE}:${AS_VERSION}"
+//        sh "buildah push --tls-verify=false ${SRC_STREAM_IMAGE}:${AS_VERSION} docker://${REGISTRY}/${SRC_STREAM_IMAGE}:${AS_VERSION}"
         sh "podman logout ${REGISTRY}"
 
       }
@@ -146,9 +146,9 @@ pipeline {
       }
       steps {
         dir('images/loader') {
-          sh "oc delete job/fs-loader"
-          sleep 4
-          sh "oc process -p LOADER_NAMESPACE=${TGT_PROJECT} -p LOADER_IMAGE=${TGT_STREAM_IMAGE} -f fs-loader.yaml | oc create -f -"
+//          sh "oc delete job/fs-loader"
+//          sleep 4
+//          sh "oc process -p LOADER_NAMESPACE=${TGT_PROJECT} -p LOADER_IMAGE=${TGT_STREAM_IMAGE} -f fs-loader.yaml | oc create -f -"
 
           slackSend channel: "#${SLACK_BUILD_CHANNEL}",
                     color: 'good',
