@@ -87,7 +87,9 @@ pipeline {
             // i.e. 0.0.0 or 1.70.5
             // but not 01.005.1
             def re = /(0|[1-9][0-9]*)[.](0|[1-9][0-9]*)[.](0|[1-9][0-9]*)/
-            if (!(VERSION_TAG =~ /$re/)) {
+            def match = (VERSION_TAG =~ /$re/)
+            echo ("match = " + match)
+            if (!match) {
               error("Unable to promote the build - incorrect version format '${AS_VERSION}'")
             }
           }
