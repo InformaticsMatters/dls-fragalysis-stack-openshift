@@ -8,19 +8,14 @@
       <parameters/>
     </org.jenkinsci.plugins.pipeline.modeldefinition.actions.DeclarativeJobPropertyTrackerAction>
   </actions>
-  <description>Promotes a loader image identified by a build number to Production</description>
+  <description>Demotes a Web image identified by a version number previously promoted.</description>
   <keepDependencies>false</keepDependencies>
   <properties>
     <hudson.model.ParametersDefinitionProperty>
       <parameterDefinitions>
         <hudson.model.StringParameterDefinition>
-          <name>PROMOTE_BUILD</name>
-          <description>The Jenkins build number of the development project&apos;s Loader Image to promote</description>
-          <defaultValue></defaultValue>
-        </hudson.model.StringParameterDefinition>
-        <hudson.model.StringParameterDefinition>
-          <name>AS_VERSION</name>
-          <description>The semantic version to apply to the promoted image, e.g. &quot;1.14.7&quot;</description>
+          <name>TO_VERSION</name>
+          <description>The semantic version to to use as the demoted image, e.g. &quot;1.14.7&quot;. The version must have been previously promoted.</description>
           <defaultValue></defaultValue>
         </hudson.model.StringParameterDefinition>
       </parameterDefinitions>
@@ -58,9 +53,10 @@
       <submoduleCfg class="list"/>
       <extensions/>
     </scm>
-    <scriptPath>images/promote-loader/Jenkinsfile</scriptPath>
+    <scriptPath>images/demote-web/Jenkinsfile</scriptPath>
     <lightweight>true</lightweight>
   </definition>
   <triggers/>
+  <authToken>az365mny3pDmMq</authToken>
   <disabled>false</disabled>
 </flow-definition>

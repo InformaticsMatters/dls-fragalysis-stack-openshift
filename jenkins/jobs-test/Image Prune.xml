@@ -29,8 +29,8 @@
     <org.jenkinsci.plugins.workflow.job.properties.PipelineTriggersJobProperty>
       <triggers>
         <hudson.triggers.TimerTrigger>
-          <spec># Sometime around 3AM
-H 1,13 * * *</spec>
+          <spec># Sometime around 1AM
+H 1 * * *</spec>
         </hudson.triggers.TimerTrigger>
       </triggers>
     </org.jenkinsci.plugins.workflow.job.properties.PipelineTriggersJobProperty>
