@@ -76,7 +76,7 @@ pipeline {
 
         // Tag 'TO_VERSION' as 'stable'
         // forcing a re-deploy in the production project
-//        sh "oc tag ${SRC_STREAM_IMAGE}:${TO_VERSION} ${TGT_STREAM_IMAGE}"
+        sh "oc tag ${SRC_STREAM_IMAGE}:${TO_VERSION} ${TGT_STREAM_IMAGE}"
         echo "Tagging ${SRC_STREAM_IMAGE}:${TO_VERSION} as ${TGT_STREAM_IMAGE}"
 
       }
