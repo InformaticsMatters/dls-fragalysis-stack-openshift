@@ -1,0 +1,40 @@
+#!groovy​
+
+// The Production Fragalysis Stack (security probe application).
+//
+// This pipeline is executed to build the security probe image.
+
+
+pipeline {
+
+  agent { label 'buildah-slave' }
+
+  environment {
+    // Registry details
+    REGISTRY_USER = 'jenkins'
+    REGISTRY = 'docker-registry.default.svc:5000'
+    STREAM_IMAGE = "${REGISTRY}/fragalysis-cicd/probe-stream:latest"
+  }
+
+  stages {
+
+    stage('Build') {
+      steps {
+        dir('images/security-probe') {
+
+          script {
+            TOKEN = sh(script: 'oc whoami -t', returnStdout: true).trim()
+          }
+          sh "podman login --tls-verify=false --username ${REGISTRY_USER} --password ${TOKEN} ${REGISTRY}"
+          sh "buildah images"
+          sh "buildah bud --format docker -f Dockerfile -t ${STREAM_IMAGE} ."
+          sh "buildah push --tls-verify=false ${STREAM_IMAGE} docker://${STREAM_IMAGE}"
+          sh "podman logout ${REGISTRY}"
+
+        }
+      }
+    }
+
+  }
+
+}
