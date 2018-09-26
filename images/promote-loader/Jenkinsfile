@@ -83,8 +83,8 @@ pipeline {
               error("Unable to promote the build - version '${AS_VERSION}' already exists")
             }
             // Does it look like a version number Major.Minor.Patch?
-            // Basically we need 3 numbers separated by a period.
-            if (!(VERSION_TAG ==~ /^\d+[.]\d+[.]\d+$/)) {
+            // Basically we need 3 numbers separated by a period and it must be an exact match.
+            if (!(VERSION_TAG ==~ /\d+[.]\d+[.]\d+/)) {
               error("Unable to promote the build - incorrect version format '${AS_VERSION}'")
             }
           }
