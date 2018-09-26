@@ -1,0 +1,157 @@
+#!groovy​
+
+// The Production Fragalysis Stack (loader application).
+//
+// This pipeline is executed in order to demote the loader
+// to a previously promoted.
+//
+// You can start this job externally using curl with something like...
+// assuming you have a <user> and <token>
+//
+// curl -X POST https://jenkins-fragalysis-cicd.apps.xchem.diamond.ac.uk/job/Demote%20Loader%20Image/build \
+//       --user <user>:<token> \
+//       --data-urlencode json='{"parameter": [{"name":"TO_VERSION", "value":"1.2.0"}]}'
+
+
+pipeline {
+
+  agent { label 'buildah-slave' }
+
+  environment {
+    // User/Registry information.
+    REGISTRY_USER = 'jenkins'
+    REGISTRY = 'docker-registry.default.svc:5000'
+    STREAM_NAME = 'loader-stream'
+
+    // Source registry details
+    SRC_PROJECT = 'fragalysis-cicd'
+    SRC_STREAM_IMAGE = "${SRC_PROJECT}/${STREAM_NAME}"
+
+    // Target registry details
+    TGT_PROJECT = 'fragalysis-prod'
+    TGT_STREAM_IMAGE = "${TGT_PROJECT}/${STREAM_NAME}:stable"
+
+    // Slack channel for all notifications
+    SLACK_BUILD_CHANNEL = 'dls-builds'
+    // Slack channel to be used for errors/failures
+    // (which also go to the CI/CD channel)
+    SLACK_ALERT_CHANNEL = 'dls-alerts'
+  }
+
+  stages {
+
+    stage('Inspect') {
+      steps {
+        withCredentials([string(credentialsId: 'clusterUrl', variable: 'CLUSTER_URL'),
+                         string(credentialsId: 'ocUser', variable: 'OC_USER'),
+                         string(credentialsId: 'ocUserPassword', variable: 'OC_USER_PASSWORD')]) {
+
+          slackSend channel: "#${SLACK_BUILD_CHANNEL}",
+                    message: "${JOB_NAME} - demoting to version ${TO_VERSION}"
+
+          // Expose the supplied parameters...
+          echo "TO_VERSION is '${TO_VERSION}'"
+
+          // Does the version exist as a tagged image?
+          // It must if we are to continue.
+          //
+          sh "oc login ${CLUSTER_URL} -u ${OC_USER} -p ${OC_USER_PASSWORD}"
+          sh "oc project ${SRC_PROJECT}"
+          script {
+            IMAGE_TAG = sh(script: "oc describe is ${STREAM_NAME} | grep ^${TO_VERSION}\$ || true", returnStdout: true).trim()
+            if (IMAGE_TAG.length() == 0) {
+              error("Unable to demote the image - version '${TO_VERSION}' does not exist")
+            }
+          }
+
+        }
+      }
+    }
+
+    stage('Demote Image') {
+      steps {
+
+        // Tag 'AS_VERSION' as 'stable'.
+        // But, as it's used in a Job this does not result in a re-deployment.
+        // Instead we need to check that a prior instance is not running
+        // before we launch the image as a new job using the OC CLI.
+//        sh "oc tag ${SRC_STREAM_IMAGE}:${TO_VERSION} ${TGT_STREAM_IMAGE}"
+//        sh "oc project ${TGT_PROJECT}"
+        script {
+          LOADER_RUNNING = sh(script: 'oc get jobs | grep loader | grep Running | wc -l', returnStdout: true).trim()
+        }
+        echo "RUNNING=${LOADER_RUNNING}"
+
+      }
+    }
+
+    stage('Deploy Image') {
+      when {
+        expression { LOADER_RUNNING == '0' }
+      }
+      steps {
+        dir('images/loader') {
+//          sh "oc delete job/fs-loader"
+          sleep 4
+//          sh "oc process -p LOADER_NAMESPACE=${TGT_PROJECT} -p LOADER_IMAGE=${TGT_STREAM_IMAGE} -f fs-loader.yaml | oc create -f -"
+
+        }
+      }
+    }
+
+    stage('Blocked Image') {
+      when {
+        expression { LOADER_RUNNING != '0' }
+      }
+      steps {
+        echo "A prior loader is still running (deployment is blocked)"
+        script {
+          slackSend channel: "#${SLACK_BUILD_CHANNEL}",
+                    color: 'warning',
+                    message: "${JOB_NAME} - deployment blocked"
+
+          // Everything's OK but we were blocked from deploying it
+          // as it appears a prior Job instance is running.
+          // Here we just set the build status to UNSTABLE.
+          currentBuild.result = 'UNSTABLE'
+
+        }
+      }
+    }
+
+  }
+
+  // Post-job actions.
+  // See https://jenkins.io/doc/book/pipeline/syntax/#post
+  post {
+
+    success {
+      slackSend channel: "#${SLACK_BUILD_CHANNEL}",
+                color: 'good',
+                message: "${JOB_NAME} - complete"
+    }
+
+    failure {
+      slackSend channel: "#${SLACK_BUILD_CHANNEL}",
+                color: 'danger',
+                message: "${JOB_NAME} build ${BUILD_NUMBER} - failed (${BUILD_URL})"
+      slackSend channel: "#${SLACK_ALERT_CHANNEL}",
+                color: 'danger',
+                message: "${JOB_NAME} build ${BUILD_NUMBER} - failed (${BUILD_URL})"
+    }
+
+    unstable {
+      slackSend channel: "#${SLACK_BUILD_CHANNEL}",
+                color: 'warning',
+                message: "${JOB_NAME} build ${BUILD_NUMBER} - complete (unstable)"
+    }
+
+    fixed {
+      slackSend channel: "#${SLACK_ALERT_CHANNEL}",
+                color: 'good',
+                message: "${JOB_NAME} build - fixed"
+    }
+
+  }
+
+}
