@@ -1,14 +1,14 @@
 #!groovy​
 
-// The Production Fragalysis Stack (loader application).
+// The Production Fragalysis Stack (web application).
 //
-// This pipeline is executed in order to demote the loader
+// This pipeline is executed in order to demote the web
 // to a previously promoted version.
 //
 // You can start this job externally using curl with something like...
 // assuming you have a <user> and <token>
 //
-// curl -X POST https://jenkins-fragalysis-cicd.apps.xchem.diamond.ac.uk/job/Demote%20Web%20Image/build \
+// curl -X POST https://jenkins-fragalysis-cicd.apps.xchem.diamond.ac.uk/job/Demote%20Loader%20Image/build \
 //       --user <user>:<token> \
 //       --data-urlencode json='{"parameter": [{"name":"TO_VERSION", "value":"1.2.0"}]}'
 
@@ -21,7 +21,7 @@ pipeline {
     // User/Registry information.
     REGISTRY_USER = 'jenkins'
     REGISTRY = 'docker-registry.default.svc:5000'
-    STREAM_NAME = 'loader-stream'
+    STREAM_NAME = 'web-stream'
 
     // Source registry details
     SRC_PROJECT = 'fragalysis-cicd'
@@ -68,54 +68,17 @@ pipeline {
       }
     }
 
-    stage('Demote Image') {
+    // Promote the existing image from the local registry
+    // to a 'stable' image that will trigger a deployment of the
+    // production image.
+    stage('Promote Image') {
       steps {
 
-        // Tag 'AS_VERSION' as 'stable'.
-        // But, as it's used in a Job this does not result in a re-deployment.
-        // Instead we need to check that a prior instance is not running
-        // before we launch the image as a new job using the OC CLI.
+        // Tag 'TO_VERSION' as 'stable'
+        // forcing a re-deploy in the production project
 //        sh "oc tag ${SRC_STREAM_IMAGE}:${TO_VERSION} ${TGT_STREAM_IMAGE}"
-//        sh "oc project ${TGT_PROJECT}"
-        script {
-          LOADER_RUNNING = sh(script: 'oc get jobs | grep loader | grep Running | wc -l', returnStdout: true).trim()
-        }
-        echo "RUNNING=${LOADER_RUNNING}"
+        echo "Tagging ${SRC_STREAM_IMAGE}:${TO_VERSION} as ${TGT_STREAM_IMAGE}"
 
-      }
-    }
-
-    stage('Deploy Image') {
-      when {
-        expression { LOADER_RUNNING == '0' }
-      }
-      steps {
-        dir('images/loader') {
-//          sh "oc delete job/fs-loader"
-          sleep 4
-//          sh "oc process -p LOADER_NAMESPACE=${TGT_PROJECT} -p LOADER_IMAGE=${TGT_STREAM_IMAGE} -f fs-loader.yaml | oc create -f -"
-
-        }
-      }
-    }
-
-    stage('Blocked Image') {
-      when {
-        expression { LOADER_RUNNING != '0' }
-      }
-      steps {
-        echo "A prior loader is still running (deployment is blocked)"
-        script {
-          slackSend channel: "#${SLACK_BUILD_CHANNEL}",
-                    color: 'warning',
-                    message: "${JOB_NAME} - deployment blocked"
-
-          // Everything's OK but we were blocked from deploying it
-          // as it appears a prior Job instance is running.
-          // Here we just set the build status to UNSTABLE.
-          currentBuild.result = 'UNSTABLE'
-
-        }
       }
     }
 
