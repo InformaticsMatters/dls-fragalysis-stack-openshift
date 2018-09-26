@@ -78,9 +78,14 @@ pipeline {
           // Does the build exist as a versioned image?
           // It must not if we are to continue.
           script {
-            VERSION_TAG = sh(script: "oc describe is ${STREAM_NAME} | grep ^${AS_VERSION}\$ || true", returnStdout: true).trim()
+            String VERSION_TAG = sh(script: "oc describe is ${STREAM_NAME} | grep ^${AS_VERSION}\$ || true", returnStdout: true).trim()
             if (VERSION_TAG.length() != 0) {
               error("Unable to promote the build - version '${AS_VERSION}' already exists")
+            }
+            // Does it look like a version number Major.Minor.Patch?
+            // Basically we need 3 numbers separated by a period.
+            if (!(VERSION_TAG ==~ /^\d+[.]\d+[.]\d+$/)) {
+              error("Unable to promote the build - incorrect version format '${AS_VERSION}'")
             }
           }
 
