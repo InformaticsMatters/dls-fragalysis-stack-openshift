@@ -87,11 +87,10 @@ pipeline {
             // i.e. 0.0.0 or 1.70.5
             // but not 01.005.1
             def re = /(0|[1-9][0-9]*)[.](0|[1-9][0-9]*)[.](0|[1-9][0-9]*)/
-            def match = (AS_VERSION =~ /$re/)
-            echo ("match = " + match)
-            if (!match) {
+            if (!(AS_VERSION =~ /$re/)) {
               error("Unable to promote the build - incorrect version format '${AS_VERSION}'")
             }
+            echo "Version '${AS_VERSION}' format looks good"
           }
 
         }
@@ -135,8 +134,8 @@ pipeline {
         // But, as it's used in a Job this does not result in a re-deployment.
         // Instead we need to check that a prior instance is not running
         // before we launch the image as a new job using the OC CLI.
-        sh "oc tag ${SRC_STREAM_IMAGE}:${AS_VERSION} ${TGT_STREAM_IMAGE}"
-        sh "oc project ${TGT_PROJECT}"
+//        sh "oc tag ${SRC_STREAM_IMAGE}:${AS_VERSION} ${TGT_STREAM_IMAGE}"
+//        sh "oc project ${TGT_PROJECT}"
         script {
           LOADER_RUNNING = sh(script: 'oc get jobs | grep loader | grep Running | wc -l', returnStdout: true).trim()
         }
