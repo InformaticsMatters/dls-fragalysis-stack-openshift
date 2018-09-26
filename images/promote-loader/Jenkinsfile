@@ -84,7 +84,9 @@ pipeline {
             }
             // Does it look like a version number Major.Minor.Patch?
             // Basically we need 3 numbers separated by a period and it must be an exact match.
-            if (!(VERSION_TAG ==~ /\d+[.]\d+[.]\d+/)) {
+            // i.e. 0.0.0 or 1.70.5
+            // but not 01.005.1
+            if (!(VERSION_TAG ==~ /([0]|[1-9]\d*)[.](0|[1-9]\d*)[.](0|[1-9]\d*)/)) {
               error("Unable to promote the build - incorrect version format '${AS_VERSION}'")
             }
           }
