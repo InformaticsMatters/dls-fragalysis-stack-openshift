@@ -68,10 +68,10 @@ pipeline {
       }
     }
 
-    // Promote the existing image from the local registry
+    // Demote the existing image from the local registry
     // to a 'stable' image that will trigger a deployment of the
     // production image.
-    stage('Promote Image') {
+    stage('Demote Image') {
       steps {
 
         // Tag 'TO_VERSION' as 'stable'
