@@ -82,7 +82,7 @@ pipeline {
             if (VERSION_TAG.length() != 0) {
               error("Unable to promote the build - version '${AS_VERSION}' already exists")
             }
-            // Does it look like a version number Major.Minor.Patch?
+            // Does AS_VERSION look like a version number (Major.Minor.Patch)?
             // Basically we need 3 numbers separated by a period and it must be an exact match.
             // i.e. 0.0.0 or 1.70.5
             // but not 01.005.1
@@ -109,9 +109,9 @@ pipeline {
             TOKEN = sh(script: 'oc whoami -t', returnStdout: true).trim()
           }
           sh "podman login --tls-verify=false --username ${REGISTRY_USER} --password ${TOKEN} ${REGISTRY}"
-//          sh "buildah pull --tls-verify=false docker://${REGISTRY}/${SRC_STREAM_IMAGE}:latest-${PROMOTE_BUILD}"
-//          sh "buildah tag ${REGISTRY}/${SRC_STREAM_IMAGE}:latest-${PROMOTE_BUILD} ${SRC_STREAM_IMAGE}:latest-0"
-//          sh "buildah bud --format docker --build-arg VERSION_NUMBER=${AS_VERSION} -f Dockerfile -t ${SRC_STREAM_IMAGE}:${AS_VERSION} ."
+          sh "buildah pull --tls-verify=false docker://${REGISTRY}/${SRC_STREAM_IMAGE}:latest-${PROMOTE_BUILD}"
+          sh "buildah tag ${REGISTRY}/${SRC_STREAM_IMAGE}:latest-${PROMOTE_BUILD} ${SRC_STREAM_IMAGE}:latest-0"
+          sh "buildah bud --format docker --build-arg VERSION_NUMBER=${AS_VERSION} -f Dockerfile -t ${SRC_STREAM_IMAGE}:${AS_VERSION} ."
 
         }
       }
@@ -121,7 +121,7 @@ pipeline {
     stage('Push Image') {
       steps {
 
-//        sh "buildah push --tls-verify=false ${SRC_STREAM_IMAGE}:${AS_VERSION} docker://${REGISTRY}/${SRC_STREAM_IMAGE}:${AS_VERSION}"
+        sh "buildah push --tls-verify=false ${SRC_STREAM_IMAGE}:${AS_VERSION} docker://${REGISTRY}/${SRC_STREAM_IMAGE}:${AS_VERSION}"
         sh "podman logout ${REGISTRY}"
 
       }
@@ -134,8 +134,8 @@ pipeline {
         // But, as it's used in a Job this does not result in a re-deployment.
         // Instead we need to check that a prior instance is not running
         // before we launch the image as a new job using the OC CLI.
-//        sh "oc tag ${SRC_STREAM_IMAGE}:${AS_VERSION} ${TGT_STREAM_IMAGE}"
-//        sh "oc project ${TGT_PROJECT}"
+        sh "oc tag ${SRC_STREAM_IMAGE}:${AS_VERSION} ${TGT_STREAM_IMAGE}"
+        sh "oc project ${TGT_PROJECT}"
         script {
           LOADER_RUNNING = sh(script: 'oc get jobs | grep loader | grep Running | wc -l', returnStdout: true).trim()
         }
@@ -150,9 +150,9 @@ pipeline {
       }
       steps {
         dir('images/loader') {
-//          sh "oc delete job/fs-loader"
-//          sleep 4
-//          sh "oc process -p LOADER_NAMESPACE=${TGT_PROJECT} -p LOADER_IMAGE=${TGT_STREAM_IMAGE} -f fs-loader.yaml | oc create -f -"
+          sh "oc delete job/fs-loader"
+          sleep 4
+          sh "oc process -p LOADER_NAMESPACE=${TGT_PROJECT} -p LOADER_IMAGE=${TGT_STREAM_IMAGE} -f fs-loader.yaml | oc create -f -"
 
           slackSend channel: "#${SLACK_BUILD_CHANNEL}",
                     color: 'good',
@@ -185,7 +185,7 @@ pipeline {
       steps {
 
         sh "podman login --username ${DOCKER_USER} --password ${DOCKER_PASSWORD} docker.io"
-//        sh "buildah push --tls-verify localhost/${SRC_STREAM_IMAGE}:${AS_VERSION} docker://${ARCHIVE_REGISTRY}/${ARCHIVE_NAME}:${AS_VERSION}"
+        sh "buildah push --tls-verify localhost/${SRC_STREAM_IMAGE}:${AS_VERSION} docker://${ARCHIVE_REGISTRY}/${ARCHIVE_NAME}:${AS_VERSION}"
         sh "podman logout docker.io"
 
       }
