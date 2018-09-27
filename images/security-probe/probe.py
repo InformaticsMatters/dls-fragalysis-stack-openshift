@@ -428,15 +428,15 @@ message('Suspending the service...')
 # Suspend the service.
 # To suspend the service we scale the DeploymentConfig
 # so that the number of replicas is 0...
+suspended = False
 
 # Login
 #
 message('Logging in to OpenShift...')
 cmd = 'oc login %s -u %s -p %s' % (OC_HOST, OC_USER, OC_PASSWORD)
-message(cmd)
-result = subprocess.run(cmd.split())
-
-suspended = False
+result = subprocess.run(cmd.split(),
+                        stdout=subprocess.PIPE,
+                        stderr=subprocess.PIPE)
 if result.returncode:
     # Login failed!
     message('Login failed! (%d)' % result.returncode)
