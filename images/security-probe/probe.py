@@ -363,7 +363,7 @@ while not failed:
 # If we get here the probe has failed!
 # We must send an email.
 
-message('Probe failure - suspending the service...')
+message('Suspending the service...')
 
 # Suspend the service.
 # To suspend the service we scale the DeploymentConfig
