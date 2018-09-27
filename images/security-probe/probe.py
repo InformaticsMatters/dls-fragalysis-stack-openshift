@@ -105,19 +105,16 @@ def message(msg):
 def email_warning():
     """Sends a warning email"""
     print('-) Sent warning email')
-    pass
 
 
 def email_suspension():
     """Sends a service suspension email"""
     print('-) Sent suspension email')
-    pass
 
 
 def email_suspension_failure():
     """Sends a fail to suspend service email"""
     print('-) Sent suspension failure email')
-    pass
 
 
 def probe():
@@ -261,8 +258,20 @@ else:
         if result.returncode:
             # The scaling command failed!
             pass
-        message('Suspended!')
-        suspended = True
+        message('Suspended - waiting...')
+
+        # Continue to probe until success...
+        waited_s = 0
+        waited_long_enough = False
+        while not waited_long_enough:
+            if probe():
+                suspended = True
+                waited_long_enough = True
+            else:
+                time.sleep(POST_TERMINATE_PROBE_PERIOD_S)
+                waited_s += POST_TERMINATE_PROBE_PERIOD_S
+                if waited_s >= POST_TERMINATE_PERIOD_S:
+                    waited_long_enough = True
 
 # If we failed to suspend the service...
 if not suspended:
