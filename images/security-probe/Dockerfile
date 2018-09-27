@@ -22,7 +22,8 @@ WORKDIR ${APP_ROOT}
 COPY requirements.txt ${APP_ROOT}/
 COPY probe.py ${APP_ROOT}/
 RUN pip install -r requirements.txt && \
-    chmod 755 ${APP_ROOT}/probe.py
+    chmod 755 ${APP_ROOT}/probe.py && \
+    chmod 777 ${APP_ROOT}
 
 # Force the binary layer of the stdout and stderr streams
 # to be unbuffered
