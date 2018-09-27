@@ -15,28 +15,22 @@ PROBE_LOCATION          The rest location to probe.
                         This is typically a path and service
                         (rather than a route) endpoint.
 
-PROBE_RECIPIENTS        A comma-separated list of email recipients.
-                        This is optional, if not provided no email will be
-                        sent.
-
 PROBE_OC_PASSWORD       The OpenShift user's password
 
 PROBE_MAILGUBN_LOGIN    The Mailgun account login.
 
 PROBE_MAILGUBN_PASSWORD The Mailgun account password.
 
-And a number of optional environment variables: -
+PROBE_NAMESPACE         The name of the deployment's namespace.
+
+PROBE_NAMESPACE_H       The human name of the deployment's namespace.
+                        For use in email transmissions.
+
+And a number of 'optional' environment variables: -
 
 PROBE_DEPLOYMENT        The name of the deployment that should be scaled-down
                         on probe failure.
                         (default 'web')
-
-PROBE_NAMESPACE         The name of the deployment's namespace.
-                        (default 'fragalysis-cicd')
-
-PROBE_NAMESPACE_H       The human name of the deployment's namespace.
-                        For use in email transmissions.
-                        (default 'Development')
 
 PROBE_OC_HOST           A valid OpenShift host
                         (default 'openshift.xchem.diamond.ac.uk')
@@ -46,6 +40,10 @@ PROBE_OC_USER           A valid OpenShift host user
 
 PROBE_PERIOD_M          The period between probes (minutes)
                         (default 5)
+
+PROBE_RECIPIENTS        A comma-separated list of email recipients.
+                        This is optional, if not provided no email will be
+                        sent.
 
 PROBE_THRESHOLD         The number of failures after which
                         the service will be suspended.
@@ -65,29 +63,40 @@ import sys
 import subprocess
 import time
 
+# Required environment variables
+
 LOCATION_ENV = 'PROBE_LOCATION'
 LOCATION = os.environ.get(LOCATION_ENV)
-RECIPIENTS_ENV = 'PROBE_RECIPIENTS'
-RECIPIENTS = os.environ.get(RECIPIENTS_ENV)
 
 DEPLOYMENT_ENV = 'PROBE_DEPLOYMENT'
 DEPLOYMENT = os.environ.get(DEPLOYMENT_ENV, 'web')
+
 NAMESPACE_ENV = 'PROBE_NAMESPACE'
-NAMESPACE = os.environ.get(NAMESPACE_ENV, 'fragalysis-cicd')
-NAMESPACE_H_ENV = 'PROBE_NAMESPACE_HUMAN'
-NAMESPACE_H = os.environ.get(NAMESPACE_H_ENV, 'Development')
+NAMESPACE = os.environ.get(NAMESPACE_ENV)
+
+NAMESPACE_H_ENV = 'PROBE_NAMESPACE_H'
+NAMESPACE_H = os.environ.get(NAMESPACE_H_ENV)
+
+OC_PASSWORD = os.environ.get('PROBE_OC_PASSWORD')
+
+MAILGUN_LOGIN = os.environ.get('PROBE_MAILGUN_LOGIN')
+MAILGUN_PASSWORD = os.environ.get('PROBE_MAILGUN_PASSWORD')
+
+# Optional environment variables
+
 PERIOD_M_ENV = 'PROBE_PERIOD_M'
 PERIOD_M = os.environ.get(PERIOD_M_ENV, '5')
+
+RECIPIENTS_ENV = 'PROBE_RECIPIENTS'
+RECIPIENTS = os.environ.get(RECIPIENTS_ENV)
+
 THRESHOLD_ENV = 'PROBE_THRESHOLD'
 THRESHOLD = os.environ.get(THRESHOLD_ENV, '2')
 
 OC_HOST = os.environ.get('PROBE_OC_HOST', 'openshift.xchem.diamond.ac.uk')
 OC_USER = os.environ.get('PROBE_OC_USER', 'admin')
-OC_PASSWORD = os.environ.get('PROBE_OC_PASSWORD')
 
 # SMTP (Mailgun) details...
-MAILGUN_LOGIN = os.environ.get('PROBE_MAILGUN_LOGIN')
-MAILGUN_PASSWORD = os.environ.get('PROBE_MAILGUN_PASSWORD')
 MAILGUN_ADDR = 'smtp.mailgun.org'
 MAILGUN_PORT = 587
 
@@ -102,7 +111,7 @@ PRE_PROBE_DELAY_S = 10.0
 PROBE_TIMEOUT_S = 4.0
 
 # The time (in seconds) to wait after suspending the
-# service to wait for a los of response.
+# service to wait for a loss of response.
 POST_TERMINATE_PERIOD_S = 120
 # The polling period for the probe after terminating.
 POST_TERMINATE_PROBE_PERIOD_S = 5
@@ -142,6 +151,11 @@ def email_warning():
     This email delivers a warning that the first probe attempt has
     failed. Another email will come when the probe fails a second time.
     """
+    # Do nothing if no recipients
+    if not RECIPIENTS:
+        warning('Skipping email (no recipients)')
+        return
+
     msg = MIMEText("The Fragalysis %s Project's Security Probe"
                    " has detected an initial failure.\n\n"
                    "The Security Probe will run again in %s minutes.\n\n"
@@ -150,7 +164,8 @@ def email_warning():
                    % (NAMESPACE_H, PERIOD_M, THRESHOLD, NAMESPACE_H),
                    _charset='utf-8')
 
-    msg['Subject'] = 'Fragalysis %s Project Security Probe Failure' \
+    msg['Subject'] = 'Security Probe Failure' \
+                     ' - Fragalysis %s Project' \
                      ' - First Event' % NAMESPACE_H
     msg['From'] = PROBE_EMAIL
     msg['To'] = RECIPIENTS
@@ -172,15 +187,21 @@ def email_suspension():
     This email delivers a warning that the final security probe attempt has
     failed and the probed service is being shutdown.
     """
+    # Do nothing if no recipients
+    if not RECIPIENTS:
+        warning('Skipping email (no recipients)')
+        return
+
     msg = MIMEText("The Fragalysis %s Project's Security Probe"
                    " has detected too many failures.\n\n"
                    "The service is now being suspended.\n\n"
                    "You should check the service implementation"
-                   " and deploy a working solution."
+                   " and deploy a new working solution."
                    % NAMESPACE_H,
                    _charset='utf-8')
 
-    msg['Subject'] = 'Fragalysis %s Project Security Probe Failure' \
+    msg['Subject'] = 'Security Probe Failure' \
+                     ' - Fragalysis %s Project' \
                      ' - Service Suspended' % NAMESPACE_H
     msg['From'] = PROBE_EMAIL
     msg['To'] = RECIPIENTS
@@ -203,6 +224,11 @@ def email_suspension_failure():
     service failed and there is a possibility that it is still running
     and vulnerable.
     """
+    # Do nothing if no recipients
+    if not RECIPIENTS:
+        warning('Skipping email (no recipients)')
+        return
+
     msg = MIMEText("The Fragalysis %s Project's Service"
                    " has failed to respond to a suspension request."
                    " This is unexpected and leaves the service deployed"
@@ -212,7 +238,8 @@ def email_suspension_failure():
                    % NAMESPACE_H,
                    _charset='utf-8')
 
-    msg['Subject'] = 'Fragalysis %s Project Security Probe Failure' \
+    msg['Subject'] = 'Security Probe Failure' \
+                     ' - Fragalysis %s Project' \
                      ' - Service Suspension Failure' % NAMESPACE_H
     msg['From'] = PROBE_EMAIL
     msg['To'] = RECIPIENTS
@@ -252,7 +279,7 @@ def probe():
             count = resp.json()['count']
             if count:
                 ret_val = False
-                warning('Ooops - received "count" value of %d' % count)
+                warning('Received probe "count" value of %d' % count)
         else:
             # Count not in the response. Odd?
             warning('"count" not in the response')
@@ -337,7 +364,6 @@ while not failed:
 # We must send an email.
 
 message('Probe failure - suspending the service...')
-email_suspension()
 
 # Suspend the service.
 # To suspend the service we scale the DeploymentConfig
@@ -372,9 +398,8 @@ else:
 
         # Scale
         #
-        #cmd = 'oc scale dc %s --replicas=0' % DEPLOYMENT
         message('Suspending service...')
-        cmd = 'oc get projects'
+        cmd = 'oc scale dc %s --replicas=0' % DEPLOYMENT
         result = subprocess.run(cmd.split(),
                                 stdout=subprocess.PIPE,
                                 stderr=subprocess.PIPE)
@@ -383,6 +408,7 @@ else:
             message('Suspension failed!')
         else:
             message('Suspended')
+            email_suspension()
 
             # Continue to probe until success
             #
