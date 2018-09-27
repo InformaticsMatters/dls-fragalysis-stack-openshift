@@ -370,6 +370,7 @@ if threshold_int < 2:
 # then enter the probe/sleep loop
 
 message('LOCATION="%s"' % LOCATION)
+message('RECIPIENTS="%s"' % RECIPIENTS)
 message('PERIOD_M=%s' % PERIOD_M)
 message('THRESHOLD=%s' % THRESHOLD)
 
