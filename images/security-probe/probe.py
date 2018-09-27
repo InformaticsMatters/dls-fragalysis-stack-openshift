@@ -295,6 +295,7 @@ def probe():
     """
     # Probe the location (REST GET)
     # with a 4-second timeout
+    resp = None
     try:
         resp = requests.get(LOCATION,
                             headers={'accept': 'application/json'},

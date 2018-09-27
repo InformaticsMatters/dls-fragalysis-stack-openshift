@@ -41,7 +41,7 @@ objects:
   apiVersion: batch/v1
   metadata:
     name: fs-security-probe
-    namespace: ${LOADER_NAMESPACE}
+    namespace: ${PROBE_NAMESPACE}
   spec:
     template:
       metadata:
