@@ -140,6 +140,22 @@ def message(msg):
     print('-) [%s] %s' % (datetime.now(), msg))
 
 
+def sendmail(msg):
+    """Sends the MIMETest message to the mailgun account.
+
+    :param msg: The message to send
+    :type msg: ``MIMEText``
+    """
+
+    smtp = smtplib.SMTP(MAILGUN_ADDR, MAILGUN_PORT)
+    rv = smtp.login(MAILGUN_LOGIN, MAILGUN_PASSWORD)
+    if rv[0] == 235:
+        smtp.sendmail(PROBE_EMAIL,
+                      RECIPIENTS.split(','),
+                      msg.as_string())
+    smtp.quit()
+
+
 def email_warning():
     """Sends an email, driven by the first probe failure.
 
@@ -165,13 +181,7 @@ def email_warning():
     msg['From'] = PROBE_EMAIL
     msg['To'] = RECIPIENTS
 
-    smtp = smtplib.SMTP(MAILGUN_ADDR, MAILGUN_PORT)
-    rv = smtp.login(MAILGUN_LOGIN, MAILGUN_PASSWORD)
-    if rv[0] == 235:
-        smtp.sendmail(PROBE_EMAIL,
-                      RECIPIENTS.split(','),
-                      msg.as_string())
-    smtp.quit()
+    sendmail(msg)
 
     message('Sent warning email')
 
@@ -201,13 +211,7 @@ def email_recovery():
     msg['From'] = PROBE_EMAIL
     msg['To'] = RECIPIENTS
 
-    smtp = smtplib.SMTP(MAILGUN_ADDR, MAILGUN_PORT)
-    rv = smtp.login(MAILGUN_LOGIN, MAILGUN_PASSWORD)
-    if rv[0] == 235:
-        smtp.sendmail(PROBE_EMAIL,
-                      RECIPIENTS.split(','),
-                      msg.as_string())
-    smtp.quit()
+    sendmail(msg)
 
     message('Sent recovery email')
 
@@ -237,13 +241,7 @@ def email_suspension():
     msg['From'] = PROBE_EMAIL
     msg['To'] = RECIPIENTS
 
-    smtp = smtplib.SMTP(MAILGUN_ADDR, MAILGUN_PORT)
-    rv = smtp.login(MAILGUN_LOGIN, MAILGUN_PASSWORD)
-    if rv[0] == 235:
-        smtp.sendmail(PROBE_EMAIL,
-                      RECIPIENTS.split(','),
-                      msg.as_string())
-    smtp.quit()
+    sendmail(msg)
 
     message('Sent suspension email')
 
@@ -275,13 +273,7 @@ def email_suspension_failure():
     msg['From'] = PROBE_EMAIL
     msg['To'] = RECIPIENTS
 
-    smtp = smtplib.SMTP(MAILGUN_ADDR, MAILGUN_PORT)
-    rv = smtp.login(MAILGUN_LOGIN, MAILGUN_PASSWORD)
-    if rv[0] == 235:
-        smtp.sendmail(PROBE_EMAIL,
-                      RECIPIENTS.split(','),
-                      msg.as_string())
-    smtp.quit()
+    sendmail(msg)
 
     message('Sent suspension failure email')
 
@@ -368,6 +360,9 @@ try:
     threshold_int = int(THRESHOLD)
 except ValueError:
     error('The threshold is not a number (%s)' % THRESHOLD)
+# And greater than 1
+if threshold_int < 2:
+    error('The threshold must be 2 or more')
 
 # Ready to go...
 #
@@ -438,6 +433,7 @@ message('Suspending the service...')
 #
 message('Logging in to OpenShift...')
 cmd = 'oc login %s -u %s -p %s' % (OC_HOST, OC_USER, OC_PASSWORD)
+message(cmd)
 result = subprocess.run(cmd.split(),
                         stdout=subprocess.PIPE,
                         stderr=subprocess.PIPE)
