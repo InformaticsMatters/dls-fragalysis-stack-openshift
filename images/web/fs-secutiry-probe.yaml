@@ -1,0 +1,84 @@
+---
+
+# The Fragalysis Stack Security Probe Job Template.
+#
+# This us used by the Jenkins CI/CD framework to delete and launch
+# security probe Jobs that run alongside the development Stack.
+#
+# oc process -f fs-security-probe.yaml | oc create -f -
+# oc delete job --selector template=fs-security-probe
+
+kind: Template
+apiVersion: v1
+metadata:
+  name: fs-security-probe
+labels:
+  template: fs-security-probe
+
+parameters:
+
+- name: PROBE_NAMESPACE
+  value: fragalysis-cicd
+
+- name: PROBE_NAMESPACE_H
+  value: Development
+- name: PROBE_LOCATION
+  value: web.fragalysis-cicd.svc
+- name: PROBE_DEPLOYMENT
+  value: web
+- name: PROBE_REGISTRY
+  value: docker-registry.default.svc:5000
+- name: PROBE_IMAGE
+  value: fragalysis-cicd/probe-stream:latest
+
+objects:
+
+# -----------------------------------------------------------------------------
+# Fragalysis Security Probe (Job)
+# -----------------------------------------------------------------------------
+
+- kind: Job
+  apiVersion: batch/v1
+  metadata:
+    name: fs-security-probe
+    namespace: ${LOADER_NAMESPACE}
+  spec:
+    template:
+      metadata:
+        name: fs-security-probe
+      spec:
+        containers:
+        - image: ${PROBE_REGISTRY}/${PROBE_IMAGE}
+          name: fs-security-probe
+          imagePullPolicy: Always
+          env:
+          - name: PROBE_LOCATION
+            value: ${PROBE_LOCATION}/api/targets/?title=private_dummy_target
+          - name: PROBE_DEPLOYMENT
+            value: ${PROBE_DEPLOYMENT}
+          - name: PROBE_NAMESPACE
+            value: ${PROBE_NAMESPACE}
+          - name: PROBE_NAMESPACE_H
+            value: ${PROBE_NAMESPACE_H}
+          - name: PROBE_OC_USER
+            valueFrom:
+              secretKeyRef:
+                name: fs-security-probe-secrets
+                key: probe-oc-user
+          - name: PROBE_OC_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: fs-security-probe-secrets
+                key: probe-oc-password
+          - name: PROBE_MAILGUN_LOGIN
+            valueFrom:
+              secretKeyRef:
+                name: fs-security-probe-secrets
+                key: probe-mailgun-login
+          - name: PROBE_MAILGUN_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: fs-security-probe-secrets
+                key: probe-mailgun-password
+
+        restartPolicy: Never
