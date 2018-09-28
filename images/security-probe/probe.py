@@ -84,7 +84,7 @@ OC_HOST = os.environ.get('PROBE_OC_HOST', 'openshift.xchem.diamond.ac.uk')
 OC_USER = os.environ.get('PROBE_OC_USER', 'admin')
 
 # SMTP (Mailgun) details...
-MAILGUN_ADDR = 'smtp.mailgun.org'
+MAILGUN_ADDR = 'smtp.eu.mailgun.org'
 MAILGUN_PORT = 587
 
 # The email address of the Security Probe.
