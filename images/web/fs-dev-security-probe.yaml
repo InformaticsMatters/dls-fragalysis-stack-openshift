@@ -76,6 +76,7 @@ objects:
       metadata:
         name: fs-dev-security-probe
       spec:
+        serviceAccountName: diamond
         containers:
         - image: ${PROBE_REGISTRY}/${PROBE_IMAGE}
           name: fs-dev-security-probe
