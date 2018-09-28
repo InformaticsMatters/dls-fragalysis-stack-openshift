@@ -175,7 +175,7 @@ def email_warning():
 
     msg = MIMEText("The Fragalysis %s Project's Security Probe"
                    " has detected that the Stack service is 'at risk'.\n\n"
-                   "The Security Probe will run again in %s minutes.\n\n"
+                   "The Security Probe will run again in approximately %s minutes.\n\n"
                    "After %s consecutive failures (this counts as one)"
                    " the %s service will be suspended."
                    % (NAMESPACE_H, PERIOD_M, THRESHOLD, NAMESPACE_H),
@@ -208,7 +208,7 @@ def email_recovery():
     msg = MIMEText("The Fragalysis %s Project's Security Probe"
                    " has detected that the Stack service is now 'safe'.\n\n"
                    "The Security Probe has been reset and will run again"
-                   " in %s minutes."
+                   " in approximately %s minutes."
                    % (NAMESPACE_H, PERIOD_M),
                    _charset='utf-8')
 
@@ -237,9 +237,9 @@ def email_suspension():
 
     msg = MIMEText("The Fragalysis %s Project's Security Probe"
                    " has found that the Stack has been 'at risk' for too long.\n\n"
-                   "The service is now being suspended.\n\n"
-                   "You now need to check the service implementation"
-                   " and deploy a new working solution."
+                   "The service has been suspended.\n\n"
+                   "You should check the service implementation"
+                   " and deploy a new image."
                    % NAMESPACE_H,
                    _charset='utf-8')
 
