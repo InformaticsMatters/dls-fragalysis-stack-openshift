@@ -44,27 +44,62 @@ pipeline {
       }
     }
 
-    stage('Push Image') {
+    // We must: -
+    //
+    //  - check for the presence of a probe and stop it (and pause)
+    //  - push the new image
+    //  - set deployment replicas to 1 (they may have been set to 0 by the probe)
+    //  - deploy a new security probe
+
+    stage('Stop Probe') {
       steps {
         withCredentials([string(credentialsId: 'clusterUrl', variable: 'CLUSTER_URL'),
                          string(credentialsId: 'ocUser', variable: 'OC_USER'),
                          string(credentialsId: 'ocUserPassword', variable: 'OC_USER_PASSWORD')]) {
 
-          script {
-            TOKEN = sh(script: 'oc whoami -t', returnStdout: true).trim()
-          }
-          sh "podman login --tls-verify=false --username ${REGISTRY_USER} --password ${TOKEN} ${REGISTRY}"
-          sh "buildah push --tls-verify=false ${STREAM_IMAGE} docker://${STREAM_IMAGE}"
-          // Done with buildah/podman
-          sh "podman logout ${REGISTRY}"
-          sh "buildah images"
-
-          // Each build pushes a 'latest' image (done above)
-          // but we also create a 'latest-${BUILD_NUMBER}'
-          // for use when promoting the image to production...
           sh "oc login ${CLUSTER_URL} -u ${OC_USER} -p ${OC_USER_PASSWORD}"
           sh "oc project ${PROJECT}"
-          sh "oc tag ${PROJECT_IMAGE} ${PROJECT_IMAGE}-${BUILD_NUMBER}"
+          script {
+            PROBE_COUNT = sh(script: 'oc get jobs | grep security-probe | wc -l', returnStdout: true).trim()
+            if (PROBE_COUNT != '0') {
+              sh "oc delete job/fs-dev-security-probe"
+              sleep 4
+            }
+          }
+
+        }
+      }
+    }
+
+    stage('Push Image') {
+      steps {
+
+        script {
+          TOKEN = sh(script: 'oc whoami -t', returnStdout: true).trim()
+        }
+        // Pushing the image will resul tin it being deployed...
+        sh "podman login --tls-verify=false --username ${REGISTRY_USER} --password ${TOKEN} ${REGISTRY}"
+        sh "buildah push --tls-verify=false ${STREAM_IMAGE} docker://${STREAM_IMAGE}"
+        // Done with buildah/podman
+        sh "podman logout ${REGISTRY}"
+        sh "buildah images"
+
+        // Restore replicas
+        sh "oc scale dc web --replicas=1"
+
+        // Each build pushes a 'latest' image (done above)
+        // but we also create a 'latest-${BUILD_NUMBER}'
+        // for use when promoting the image to production.
+        sh "oc tag ${PROJECT_IMAGE} ${PROJECT_IMAGE}-${BUILD_NUMBER}"
+
+      }
+    }
+
+    stage('Deploy Probe') {
+      steps {
+        dir('images/web') {
+
+          sh "oc process -f fs-dev-security-probe.yaml | oc create -f -"
 
         }
       }

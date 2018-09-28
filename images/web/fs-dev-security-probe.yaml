@@ -45,9 +45,8 @@ parameters:
 
 - name: PROBE_RECIPIENTS
   value: >
-    rachael.skyner@diamond.ac.uk
-    anthony.bradley@diamond.ac.uk
-    richard.gillams@diamond.ac.uk
+    alan@kaitak.co.uk
+    achristie@informaticsmatters.com
   description: >
     A white-space-delimited list of emails for recipients of
     security emails
