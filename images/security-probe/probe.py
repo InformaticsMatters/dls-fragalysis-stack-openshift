@@ -168,14 +168,14 @@ def email_warning():
         return
 
     msg = MIMEText("The Fragalysis %s Project's Security Probe"
-                   " has detected an initial failure.\n\n"
+                   " has detected that the Stack service is 'at risk'.\n\n"
                    "The Security Probe will run again in %s minutes.\n\n"
                    "After %s failures (this counts as one)"
                    " the %s service will be suspended."
                    % (NAMESPACE_H, PERIOD_M, THRESHOLD, NAMESPACE_H),
                    _charset='utf-8')
 
-    msg['Subject'] = 'Security Probe Failure' \
+    msg['Subject'] = 'Service AT RISK' \
                      ' - Fragalysis %s Project' \
                      ' - First Event' % NAMESPACE_H
     msg['From'] = PROBE_EMAIL
@@ -199,13 +199,13 @@ def email_recovery():
         return
 
     msg = MIMEText("The Fragalysis %s Project's Security Probe"
-                   " has recovered from its initial failure.\n\n"
+                   " has detected that the Stack service is now 'safe'.\n\n"
                    "The Security Probe has been reset and will run again"
                    " in %s minutes."
                    % (NAMESPACE_H, PERIOD_M),
                    _charset='utf-8')
 
-    msg['Subject'] = 'Security Probe Recovered' \
+    msg['Subject'] = 'Service SAFE' \
                      ' - Fragalysis %s Project' \
                      % NAMESPACE_H
     msg['From'] = PROBE_EMAIL
@@ -228,16 +228,16 @@ def email_suspension():
         return
 
     msg = MIMEText("The Fragalysis %s Project's Security Probe"
-                   " has detected too many failures.\n\n"
+                   " has found that the Stack has been 'at risk' for too long.\n\n"
                    "The service is now being suspended.\n\n"
                    "You now need to check the service implementation"
                    " and deploy a new working solution."
                    % NAMESPACE_H,
                    _charset='utf-8')
 
-    msg['Subject'] = 'Security Probe Failure' \
+    msg['Subject'] = 'Service SUSPENDED' \
                      ' - Fragalysis %s Project' \
-                     ' - Service Suspended' % NAMESPACE_H
+                     % NAMESPACE_H
     msg['From'] = PROBE_EMAIL
     msg['To'] = RECIPIENTS
 
@@ -258,16 +258,16 @@ def email_suspension_failure():
         warning('Skipping suspension failure email (no recipients)')
         return
 
-    msg = MIMEText("The Fragalysis %s Project's Service"
+    msg = MIMEText("The Fragalysis %s Project's Stack service"
                    " has failed to respond to a suspension request."
                    " This is unexpected and leaves the service deployed"
-                   " and vulnerable.\n\n"
+                   " and potentially at risk.\n\n"
                    "Please seek the urgent advice of a"
                    " cluster administrator."
                    % NAMESPACE_H,
                    _charset='utf-8')
 
-    msg['Subject'] = 'Security Probe Failure' \
+    msg['Subject'] = 'Service ERROR' \
                      ' - Fragalysis %s Project' \
                      ' - Service Suspension Failure' % NAMESPACE_H
     msg['From'] = PROBE_EMAIL
@@ -395,7 +395,7 @@ while not time_to_suspend:
     if probe_result == ProbeResult.AT_RISK:
 
         failure_count += 1
-        message('Service at risk (%d/%d)'
+        message('The stack service is "at risk" (%d/%d)'
                 % (failure_count, threshold_int))
         if failure_count == 1:
             email_warning()
@@ -404,7 +404,7 @@ while not time_to_suspend:
 
         if failure_count:
             failure_count = 0
-            message('Service is safe (reset)')
+            message('The stack service is now "safe" (reset)')
             email_recovery()
 
     elif probe_result == ProbeResult.ERROR:
@@ -419,7 +419,7 @@ while not time_to_suspend:
     # Have we seen sufficient failures
     # to warrant suspending the service?
     if failure_count >= threshold_int:
-        message('Reached at-risk threshold')
+        message('Spent too long in a "at risk" state')
         time_to_suspend = True
 
     # If not failed,
