@@ -176,7 +176,7 @@ def email_warning():
     msg = MIMEText("The Fragalysis %s Project's Security Probe"
                    " has detected that the Stack service is 'at risk'.\n\n"
                    "The Security Probe will run again in %s minutes.\n\n"
-                   "After %s failures (this counts as one)"
+                   "After %s consecutive failures (this counts as one)"
                    " the %s service will be suspended."
                    % (NAMESPACE_H, PERIOD_M, THRESHOLD, NAMESPACE_H),
                    _charset='utf-8')
