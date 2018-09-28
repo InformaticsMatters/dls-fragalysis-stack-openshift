@@ -68,6 +68,30 @@ pipeline {
       }
     }
 
+    // With regard to the security probe
+    // we must: -
+    //
+    //  - check for the presence of a probe and stop it (and pause)
+    //  - push the new image
+    //  - set deployment replicas to 1 (they may have been set to 0 by the probe)
+    //  - deploy a new security probe
+
+    stage('Stop Probe') {
+      steps {
+
+          script {
+            sh "oc project ${TGT_PROJECT}"
+            PROBE_COUNT = sh(script: 'oc get jobs | grep prod-security-probe | wc -l', returnStdout: true).trim()
+            if (PROBE_COUNT != '0') {
+              sh "oc delete job/fs-prod-security-probe"
+              sleep 4
+            }
+          }
+
+        }
+      }
+    }
+
     // Demote the existing image from the local registry
     // to a 'stable' image that will trigger a deployment of the
     // production image.
@@ -76,9 +100,24 @@ pipeline {
 
         // Tag 'TO_VERSION' as 'stable'
         // forcing a re-deploy in the production project
+        sh "oc project ${SRC_PROJECT}"
         sh "oc tag ${SRC_STREAM_IMAGE}:${TO_VERSION} ${TGT_STREAM_IMAGE}"
         echo "Tagging ${SRC_STREAM_IMAGE}:${TO_VERSION} as ${TGT_STREAM_IMAGE}"
 
+        // Restore replicas
+        sh "oc project ${TGT_PROJECT}"
+        sh "oc scale dc web-prod --replicas=1"
+
+      }
+    }
+
+    stage('Deploy Probe') {
+      steps {
+        dir('images/promote-web') {
+
+          sh "oc process -f fs-prod-security-probe.yaml | oc create -f -"
+
+        }
       }
     }
 
