@@ -147,13 +147,19 @@ def sendmail(msg):
     :type msg: ``MIMEText``
     """
 
-    smtp = smtplib.SMTP(MAILGUN_ADDR, MAILGUN_PORT)
-    rv = smtp.login(MAILGUN_LOGIN, MAILGUN_PASSWORD)
-    if rv[0] == 235:
-        smtp.sendmail(PROBE_EMAIL,
-                      RECIPIENTS.split(','),
-                      msg.as_string())
-    smtp.quit()
+    try:
+        smtp = smtplib.SMTP(MAILGUN_ADDR, MAILGUN_PORT)
+        rv = smtp.login(MAILGUN_LOGIN, MAILGUN_PASSWORD)
+        if rv[0] == 235:
+            smtp.sendmail(PROBE_EMAIL,
+                          RECIPIENTS.split(','),
+                          msg.as_string())
+        smtp.quit()
+    except:
+        warning('Email transmission failed')
+        return False
+
+    return True
 
 
 def email_warning():
@@ -181,9 +187,10 @@ def email_warning():
     msg['From'] = PROBE_EMAIL
     msg['To'] = RECIPIENTS
 
-    sendmail(msg)
-
-    message('Sent warning email')
+    if sendmail(msg):
+        message('Sent warning email')
+    else:
+        warning('Failed to send warning email')
 
 
 def email_recovery():
@@ -211,9 +218,10 @@ def email_recovery():
     msg['From'] = PROBE_EMAIL
     msg['To'] = RECIPIENTS
 
-    sendmail(msg)
-
-    message('Sent recovery email')
+    if sendmail(msg):
+        message('Sent recovery email')
+    else:
+        warning('Failed to send recovery email')
 
 
 def email_suspension():
@@ -241,9 +249,10 @@ def email_suspension():
     msg['From'] = PROBE_EMAIL
     msg['To'] = RECIPIENTS
 
-    sendmail(msg)
-
-    message('Sent suspension email')
+    if sendmail(msg):
+        message('Sent suspension email')
+    else:
+        warning('Failed to send suspension email')
 
 
 def email_suspension_failure():
@@ -273,9 +282,10 @@ def email_suspension_failure():
     msg['From'] = PROBE_EMAIL
     msg['To'] = RECIPIENTS
 
-    sendmail(msg)
-
-    message('Sent suspension failure email')
+    if sendmail(msg):
+        message('Sent suspension failure email')
+    else:
+        warning('Failed to send suspension failure email')
 
 
 def probe():
@@ -365,20 +375,31 @@ except ValueError:
 if threshold_int < 2:
     error('The threshold must be 2 or more')
 
-# Ready to go...
-#
-# Log startup conditions, pause for a moment
-# then enter the probe/sleep loop
-
 # Normalise the list of email addresses.
 # Split and join with a comma
 if RECIPIENTS:
     RECIPIENTS = ','.join(RECIPIENTS.split())
 
+# Ready to go...
+#
+# - Log startup conditions
+# - test the email,
+# - pause for a moment
+# - then enter the probe/sleep loop
+
 message('LOCATION="%s"' % LOCATION)
 message('RECIPIENTS="%s"' % RECIPIENTS)
 message('PERIOD_M=%s' % PERIOD_M)
 message('THRESHOLD=%s' % THRESHOLD)
+
+message('Checking email...')
+try:
+    smtp = smtplib.SMTP(MAILGUN_ADDR, MAILGUN_PORT)
+    smtp.login(MAILGUN_LOGIN, MAILGUN_PASSWORD)
+    smtp.quit()
+except:
+    error('Email login failed')
+message('Email OK')
 
 message('In pre-probe delay...')
 time.sleep(PRE_PROBE_DELAY_S)
