@@ -93,7 +93,7 @@ PROBE_EMAIL = 'Security Probe <dls.security.probe@informaticsmatters.com>'
 
 # The period of time to pause
 # prior to entering the probe loop
-PRE_PROBE_DELAY_S = 10.0
+PRE_PROBE_DELAY_S = 60.0
 
 # Timeout of the probe call
 PROBE_TIMEOUT_S = 3.0
