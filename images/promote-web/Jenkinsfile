@@ -107,10 +107,10 @@ pipeline {
           script {
             TOKEN = sh(script: 'oc whoami -t', returnStdout: true).trim()
           }
-          sh "podman login --tls-verify=false --username ${REGISTRY_USER} --password ${TOKEN} ${REGISTRY}"
-          sh "buildah pull --tls-verify=false docker://${REGISTRY}/${SRC_STREAM_IMAGE}:latest-${PROMOTE_BUILD}"
-          sh "buildah tag ${REGISTRY}/${SRC_STREAM_IMAGE}:latest-${PROMOTE_BUILD} ${SRC_STREAM_IMAGE}:latest-0"
-          sh "buildah bud --format docker --build-arg VERSION_NUMBER=${AS_VERSION} -f Dockerfile -t ${SRC_STREAM_IMAGE}:${AS_VERSION} ."
+//          sh "podman login --tls-verify=false --username ${REGISTRY_USER} --password ${TOKEN} ${REGISTRY}"
+//          sh "buildah pull --tls-verify=false docker://${REGISTRY}/${SRC_STREAM_IMAGE}:latest-${PROMOTE_BUILD}"
+//          sh "buildah tag ${REGISTRY}/${SRC_STREAM_IMAGE}:latest-${PROMOTE_BUILD} ${SRC_STREAM_IMAGE}:latest-0"
+//          sh "buildah bud --format docker --build-arg VERSION_NUMBER=${AS_VERSION} -f Dockerfile -t ${SRC_STREAM_IMAGE}:${AS_VERSION} ."
 
         }
       }
@@ -120,7 +120,7 @@ pipeline {
     stage('Push Image') {
       steps {
 
-        sh "buildah push --tls-verify=false ${SRC_STREAM_IMAGE}:${AS_VERSION} docker://${REGISTRY}/${SRC_STREAM_IMAGE}:${AS_VERSION}"
+//        sh "buildah push --tls-verify=false ${SRC_STREAM_IMAGE}:${AS_VERSION} docker://${REGISTRY}/${SRC_STREAM_IMAGE}:${AS_VERSION}"
         sh "podman logout ${REGISTRY}"
 
       }
@@ -140,6 +140,7 @@ pipeline {
         script {
           PROBE_COUNT = sh(script: 'oc get jobs | grep prod-security-probe | wc -l', returnStdout: true).trim()
           if (PROBE_COUNT != '0') {
+            sh "oc project ${TGT_PROJECT}"
             sh "oc delete job/fs-prod-security-probe"
             sleep 4
           }
@@ -156,9 +157,11 @@ pipeline {
 
         // Tag 'latest-NNN' as 'stable'
         // forcing a re-deploy in the production project
-        sh "oc tag ${SRC_STREAM_IMAGE}:${AS_VERSION} ${TGT_STREAM_IMAGE}"
+        sh "oc project ${SRC_PROJECT}"
+//        sh "oc tag ${SRC_STREAM_IMAGE}:${AS_VERSION} ${TGT_STREAM_IMAGE}"
 
         // Restore replicas
+        sh "oc project ${TGT_PROJECT}"
         sh "oc scale dc web-prod --replicas=1"
 
       }
