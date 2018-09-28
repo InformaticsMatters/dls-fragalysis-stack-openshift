@@ -78,9 +78,9 @@ pipeline {
           // It must not if we are to continue.
           script {
             String VERSION_TAG = sh(script: "oc describe is ${STREAM_NAME} | grep ^${AS_VERSION}\$ || true", returnStdout: true).trim()
-//            if (VERSION_TAG.length() != 0) {
-//              error("Unable to promote the build - version '${AS_VERSION}' already exists")
-//            }
+            if (VERSION_TAG.length() != 0) {
+              error("Unable to promote the build - version '${AS_VERSION}' already exists")
+            }
             // Does AS_VERSION look like a version number (Major.Minor.Patch)?
             // Basically we need 3 numbers separated by a period and it must be an exact match.
             // i.e. 0.0.0 or 1.70.5
@@ -108,9 +108,9 @@ pipeline {
             TOKEN = sh(script: 'oc whoami -t', returnStdout: true).trim()
           }
           sh "podman login --tls-verify=false --username ${REGISTRY_USER} --password ${TOKEN} ${REGISTRY}"
-//          sh "buildah pull --tls-verify=false docker://${REGISTRY}/${SRC_STREAM_IMAGE}:latest-${PROMOTE_BUILD}"
-//          sh "buildah tag ${REGISTRY}/${SRC_STREAM_IMAGE}:latest-${PROMOTE_BUILD} ${SRC_STREAM_IMAGE}:latest-0"
-//          sh "buildah bud --format docker --build-arg VERSION_NUMBER=${AS_VERSION} -f Dockerfile -t ${SRC_STREAM_IMAGE}:${AS_VERSION} ."
+          sh "buildah pull --tls-verify=false docker://${REGISTRY}/${SRC_STREAM_IMAGE}:latest-${PROMOTE_BUILD}"
+          sh "buildah tag ${REGISTRY}/${SRC_STREAM_IMAGE}:latest-${PROMOTE_BUILD} ${SRC_STREAM_IMAGE}:latest-0"
+          sh "buildah bud --format docker --build-arg VERSION_NUMBER=${AS_VERSION} -f Dockerfile -t ${SRC_STREAM_IMAGE}:${AS_VERSION} ."
 
         }
       }
@@ -120,7 +120,7 @@ pipeline {
     stage('Push Image') {
       steps {
 
-//        sh "buildah push --tls-verify=false ${SRC_STREAM_IMAGE}:${AS_VERSION} docker://${REGISTRY}/${SRC_STREAM_IMAGE}:${AS_VERSION}"
+        sh "buildah push --tls-verify=false ${SRC_STREAM_IMAGE}:${AS_VERSION} docker://${REGISTRY}/${SRC_STREAM_IMAGE}:${AS_VERSION}"
         sh "podman logout ${REGISTRY}"
 
       }
@@ -158,7 +158,7 @@ pipeline {
         // Tag 'latest-NNN' as 'stable'
         // forcing a re-deploy in the production project
         sh "oc project ${SRC_PROJECT}"
-//        sh "oc tag ${SRC_STREAM_IMAGE}:${AS_VERSION} ${TGT_STREAM_IMAGE}"
+        sh "oc tag ${SRC_STREAM_IMAGE}:${AS_VERSION} ${TGT_STREAM_IMAGE}"
 
         // Restore replicas
         sh "oc project ${TGT_PROJECT}"
