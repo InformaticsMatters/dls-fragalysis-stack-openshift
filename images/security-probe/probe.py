@@ -105,10 +105,10 @@ POST_TERMINATE_PERIOD_S = 120
 POST_TERMINATE_PROBE_PERIOD_S = 5
 
 # Probe status, returned by probe().
-# It's either good, bad or there were problems probing.
+# It's either safe, at risk or there were problems probing.
 class ProbeResult(Enum):
-    SUCCESS = 1
-    FAILURE = 2
+    SAFE = 1
+    AT_RISK = 2
     ERROR = 3
 
 
@@ -279,7 +279,7 @@ def email_suspension_failure():
 
 
 def probe():
-    """Probes the service, returning one of SUCCESS, FAILURE or ERROR
+    """Probes the service, returning one of SAFE, AT_RISK or ERROR
     if the response was OK, not OK or there were problems getting a response.
 
     :return: The probe result
@@ -298,19 +298,20 @@ def probe():
         pass
 
     # Assume an error
+    # (could not get a response)
     ret_val = ProbeResult.ERROR
     if resp and resp.status_code == 200:
 
         # If successful, check the content.
         # the 'count' must be '0'
         if 'count' in resp.json():
-            # It's either going to be SUCCESS or FAILURE...
+            # It's either going to be SAFE or AT_RISK...
             count = resp.json()['count']
             if count:
-                ret_val = ProbeResult.FAILURE
-                warning('Received probe "count" value of %d' % count)
+                ret_val = ProbeResult.AT_RISK
+                warning('At risk - probe "count" value of %d' % count)
             else:
-                ret_val = ProbeResult.SUCCESS
+                ret_val = ProbeResult.SAFE
         else:
             # Count not in the response. Odd?
             warning('"count" not in the response')
@@ -391,19 +392,19 @@ while not time_to_suspend:
     # Probe
     # If success then reset any accumulated failure
     probe_result = probe()
-    if probe_result == ProbeResult.FAILURE:
+    if probe_result == ProbeResult.AT_RISK:
 
         failure_count += 1
-        message('Probe failed (%d/%d)'
+        message('Service at risk (%d/%d)'
                 % (failure_count, threshold_int))
         if failure_count == 1:
             email_warning()
 
-    elif probe_result == ProbeResult.SUCCESS:
+    elif probe_result == ProbeResult.SAFE:
 
         if failure_count:
             failure_count = 0
-            message('Probe succeeded (reset)')
+            message('Service is safe (reset)')
             email_recovery()
 
     elif probe_result == ProbeResult.ERROR:
@@ -418,7 +419,7 @@ while not time_to_suspend:
     # Have we seen sufficient failures
     # to warrant suspending the service?
     if failure_count >= threshold_int:
-        message('Reached failure threshold')
+        message('Reached at-risk threshold')
         time_to_suspend = True
 
     # If not failed,
@@ -482,7 +483,7 @@ else:
             waited_s = 0
             waited_long_enough = False
             while not waited_long_enough:
-                if probe() != ProbeResult.FAILURE:
+                if probe() != ProbeResult.AT_RISK:
                     suspended = True
                     waited_long_enough = True
                     message('Terminated')
