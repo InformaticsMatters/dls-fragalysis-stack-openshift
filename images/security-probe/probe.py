@@ -369,6 +369,11 @@ if threshold_int < 2:
 # Log startup conditions, pause for a moment
 # then enter the probe/sleep loop
 
+# Normalise the list of email addresses.
+# Split and join with a comma
+if RECIPIENTS:
+    RECIPIENTS = ','.join(RECIPIENTS.split())
+
 message('LOCATION="%s"' % LOCATION)
 message('RECIPIENTS="%s"' % RECIPIENTS)
 message('PERIOD_M=%s' % PERIOD_M)
