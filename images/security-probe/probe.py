@@ -17,9 +17,9 @@ PROBE_LOCATION          The rest location to probe.
 
 PROBE_OC_PASSWORD       The OpenShift user's password
 
-PROBE_MAILGUBN_LOGIN    The Mailgun account login.
+PROBE_MAILGUN_LOGIN     The Mailgun account login.
 
-PROBE_MAILGUBN_PASSWORD The Mailgun account password.
+PROBE_MAILGUN_PASSWORD  The Mailgun account password.
 
 PROBE_NAMESPACE         The name of the deployment's namespace.
 
