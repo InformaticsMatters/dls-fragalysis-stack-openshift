@@ -5,31 +5,60 @@
 # This us used by the Jenkins CI/CD framework to delete and launch
 # security probe Jobs that run alongside the development Stack.
 #
-# oc process -f fs-security-probe.yaml | oc create -f -
-# oc delete job --selector template=fs-security-probe
+# In early development you can force the monitored application
+# to fail by setting the following environment variable on deployment: -
+#
+#   - name: TEST_SECURITY_FLAG
+#     value: ANYTHING
+#
+# oc process -f fs-dev-security-probe.yaml | oc create -f -
+# oc delete job --selector template=fs-dev-security-probe
 
 kind: Template
 apiVersion: v1
 metadata:
-  name: fs-security-probe
+  name: fs-dev-security-probe
 labels:
-  template: fs-security-probe
+  template: fs-dev-security-probe
 
 parameters:
+
+- name: PROBE_LOCATION
+  value: https://fragalysis.apps.xchem.diamond.ac.uk
 
 - name: PROBE_NAMESPACE
   value: fragalysis-cicd
 
 - name: PROBE_NAMESPACE_H
   value: Development
-- name: PROBE_LOCATION
-  value: web.fragalysis-cicd.svc
+  description: >
+    A human-friendly name for the the namespace housing the
+    service being monitored. This is used in the email
+    communications
+
 - name: PROBE_DEPLOYMENT
   value: web
+  description: >
+    The name of the DeploymentConfig used to deploy the
+    service being monitored. This configuration will be scaled
+    to zero when the service is considered at risk
+
+- name: PROBE_RECIPIENTS
+  value: >
+    rachael.skyner@diamond.ac.uk
+    anthony.bradley@diamond.ac.uk
+    richard.gillams@diamond.ac.uk
+  description: >
+    A white-space-delimited list of emails for recipients of
+    security emails
+
 - name: PROBE_REGISTRY
   value: docker-registry.default.svc:5000
+
 - name: PROBE_IMAGE
   value: fragalysis-cicd/probe-stream:latest
+  description: >
+    The container image for the security probe implementation
 
 objects:
 
@@ -40,16 +69,16 @@ objects:
 - kind: Job
   apiVersion: batch/v1
   metadata:
-    name: fs-security-probe
+    name: fs-dev-security-probe
     namespace: ${PROBE_NAMESPACE}
   spec:
     template:
       metadata:
-        name: fs-security-probe
+        name: fs-dev-security-probe
       spec:
         containers:
         - image: ${PROBE_REGISTRY}/${PROBE_IMAGE}
-          name: fs-security-probe
+          name: fs-dev-security-probe
           imagePullPolicy: Always
           env:
           - name: PROBE_LOCATION
@@ -60,6 +89,8 @@ objects:
             value: ${PROBE_NAMESPACE}
           - name: PROBE_NAMESPACE_H
             value: ${PROBE_NAMESPACE_H}
+          - name: PROBE_RECIPIENTS
+            value: ${PROBE_RECIPIENTS}
           - name: PROBE_OC_USER
             valueFrom:
               secretKeyRef:
