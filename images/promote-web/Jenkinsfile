@@ -78,9 +78,9 @@ pipeline {
           // It must not if we are to continue.
           script {
             String VERSION_TAG = sh(script: "oc describe is ${STREAM_NAME} | grep ^${AS_VERSION}\$ || true", returnStdout: true).trim()
-            if (VERSION_TAG.length() != 0) {
-              error("Unable to promote the build - version '${AS_VERSION}' already exists")
-            }
+//            if (VERSION_TAG.length() != 0) {
+//              error("Unable to promote the build - version '${AS_VERSION}' already exists")
+//            }
             // Does AS_VERSION look like a version number (Major.Minor.Patch)?
             // Basically we need 3 numbers separated by a period and it must be an exact match.
             // i.e. 0.0.0 or 1.70.5
