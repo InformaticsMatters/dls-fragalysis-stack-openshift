@@ -45,6 +45,7 @@ parameters:
 
 - name: PROBE_RECIPIENTS
   value: >
+    frank.von-delft@diamond.ac.uk
     rachael.skyner@diamond.ac.uk
     anthony.bradley@diamond.ac.uk
     ric.gillams@gmail.com
