@@ -45,7 +45,7 @@ parameters:
 
 - name: PROBE_RECIPIENTS
   value: >
-    alan@kaitak.co.uk
+    tdudgeon@informaticsmatters.com
     achristie@informaticsmatters.com
   description: >
     A white-space-delimited list of emails for recipients of
