@@ -126,6 +126,29 @@ pipeline {
       }
     }
 
+    // With regard to the security probe
+    // we must: -
+    //
+    //  - check for the presence of a probe and stop it (and pause)
+    //  - push the new image
+    //  - set deployment replicas to 1 (they may have been set to 0 by the probe)
+    //  - deploy a new security probe
+
+    stage('Stop Probe') {
+      steps {
+
+          script {
+            PROBE_COUNT = sh(script: 'oc get jobs | grep prod-security-probe | wc -l', returnStdout: true).trim()
+            if (PROBE_COUNT != '0') {
+              sh "oc delete job/fs-prod-security-probe"
+              sleep 4
+            }
+          }
+
+        }
+      }
+    }
+
     // Promote the newly created image from the local registry
     // to a 'stable' image that will trigger a deployment of the
     // production image.
@@ -135,6 +158,9 @@ pipeline {
         // Tag 'latest-NNN' as 'stable'
         // forcing a re-deploy in the production project
         sh "oc tag ${SRC_STREAM_IMAGE}:${AS_VERSION} ${TGT_STREAM_IMAGE}"
+
+        // Restore replicas
+        sh "oc scale dc web-prod --replicas=1"
 
       }
     }
@@ -147,6 +173,16 @@ pipeline {
 //        sh "buildah push --tls-verify localhost/${SRC_STREAM_IMAGE}:${AS_VERSION} docker://${ARCHIVE_REGISTRY}/${ARCHIVE_NAME}:${AS_VERSION}"
         sh "podman logout docker.io"
 
+      }
+    }
+
+    stage('Deploy Probe') {
+      steps {
+        dir('images/promote-web') {
+
+          sh "oc process -f fs-prod-security-probe.yaml | oc create -f -"
+
+        }
       }
     }
 
