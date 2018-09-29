@@ -15,7 +15,7 @@
 - name: Create Fraglysis Project
   shell: >
     oc new-project {{ namespace }}
-    --display-name='Fragalysis'
+    --display-name='Fragalysis (Development)'
     --description='The Fragalysis CI/CD Project (Development Deployment)'
   when: namespace not in projects_result.stdout
 
