@@ -15,6 +15,9 @@ PROBE_LOCATION          The rest location to probe.
                         This is typically a path and service
                         (rather than a route) endpoint.
 
+PROBE_DEPLOYMENT        The name of the deployment that should be scaled-down
+                        on probe failure.
+
 PROBE_OC_PASSWORD       The OpenShift user's password
 
 PROBE_MAILGUN_LOGIN     The Mailgun account login.
@@ -28,10 +31,6 @@ PROBE_NAMESPACE_H       The human name of the deployment's namespace.
 
 And a number of 'optional' environment variables: -
 
-PROBE_DEPLOYMENT        The name of the deployment that should be scaled-down
-                        on probe failure.
-                        (default 'web')
-
 PROBE_OC_HOST           A valid OpenShift host
                         (default 'openshift.xchem.diamond.ac.uk')
 
@@ -39,15 +38,19 @@ PROBE_OC_USER           A valid OpenShift host user
                         (default 'admin')
 
 PROBE_PERIOD_M          The period between probes (minutes)
-                        (default 5)
+                        (default '5')
 
 PROBE_RECIPIENTS        A comma-separated list of email recipients.
                         This is optional, if not provided no email will be
                         sent.
+                        (default None)
 
 PROBE_THRESHOLD         The number of failures after which
                         the service will be suspended.
-                        (default 2)
+                        (default '2')
+
+PROBE_MAILGUN_SMTP_ADDR The Mailgun SMTP address.
+                        (default 'smtp.eu.mailgun.org')
 
 This Job may also terminate if there in an unrecoverable
 error condition whereby it will log the condition but exit with
@@ -64,15 +67,19 @@ import sys
 import subprocess
 import time
 
+# The probe version
+# (update on every change)
+VERSION = '1.0.0'
+
 # Required environment variables
 
+DEPLOYMENT = os.environ.get('PROBE_DEPLOYMENT')
 LOCATION = os.environ.get('PROBE_LOCATION')
-DEPLOYMENT = os.environ.get('PROBE_DEPLOYMENT', 'web')
+MAILGUN_LOGIN = os.environ.get('PROBE_MAILGUN_LOGIN')
+MAILGUN_PASSWORD = os.environ.get('PROBE_MAILGUN_PASSWORD')
 NAMESPACE = os.environ.get('PROBE_NAMESPACE')
 NAMESPACE_H = os.environ.get('PROBE_NAMESPACE_H')
 OC_PASSWORD = os.environ.get('PROBE_OC_PASSWORD')
-MAILGUN_LOGIN = os.environ.get('PROBE_MAILGUN_LOGIN')
-MAILGUN_PASSWORD = os.environ.get('PROBE_MAILGUN_PASSWORD')
 
 # Optional environment variables
 
@@ -84,12 +91,16 @@ OC_HOST = os.environ.get('PROBE_OC_HOST', 'openshift.xchem.diamond.ac.uk')
 OC_USER = os.environ.get('PROBE_OC_USER', 'admin')
 
 # SMTP (Mailgun) details...
-MAILGUN_ADDR = 'smtp.eu.mailgun.org'
+MAILGUN_ADDR = os.environ.get('PROBE_MAILGUN_SMTP_ADDR', 'smtp.eu.mailgun.org')
 MAILGUN_PORT = 587
 
 # The email address of the Security Probe.
 # The email 'from' value.
 PROBE_EMAIL = 'Security Probe <dls.security.probe@informaticsmatters.com>'
+# The cluster administrators
+# (effectively the BCC of each email message)
+PROBE_EMAIL_BCC = ['achristie@informaticsmatters.com',
+                   'tdudgeon@informaticsmatters.com']
 
 # The period of time to pause
 # prior to entering the probe loop
@@ -99,7 +110,9 @@ PRE_PROBE_DELAY_S = 90.0
 PROBE_TIMEOUT_S = 3.0
 
 # The time (in seconds) to wait after suspending the
-# service to wait for a loss of response.
+# service to wait for suspension. If the service
+# continues to look 'at risk' after this period of time
+# an alert email is sent.
 POST_TERMINATE_PERIOD_S = 120
 # The polling period during this phase.
 POST_TERMINATE_PROBE_PERIOD_S = 5
@@ -145,18 +158,27 @@ def sendmail(msg):
 
     :param msg: The message to send
     :type msg: ``MIMEText``
+    :return: True if mail sent
+    :rtype: ``Bool``
     """
 
+    sent_mail = False
     try:
         smtp = smtplib.SMTP(MAILGUN_ADDR, MAILGUN_PORT)
         rv = smtp.login(MAILGUN_LOGIN, MAILGUN_PASSWORD)
         if rv[0] == 235:
             smtp.sendmail(PROBE_EMAIL,
-                          RECIPIENTS.split(','),
+                          RECIPIENTS.split(',') + PROBE_EMAIL_BCC,
                           msg.as_string())
+            sent_mail = True
+        else:
+            warning('Received %d from sendmail()' % rv[0])
         smtp.quit()
     except:
-        warning('Email transmission failed')
+        warning('Exception from smtp (sent_mail=%s)' % sent_mail)
+
+    if not sent_mail:
+        warning('Failed to send mail')
         return False
 
     return True
@@ -387,6 +409,7 @@ if RECIPIENTS:
 # - pause for a moment
 # - then enter the probe/sleep loop
 
+message('VERSION="%s"' % VERSION)
 message('LOCATION="%s"' % LOCATION)
 message('RECIPIENTS="%s"' % RECIPIENTS)
 message('PERIOD_M=%s' % PERIOD_M)

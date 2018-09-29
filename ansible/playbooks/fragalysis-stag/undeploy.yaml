@@ -1,6 +1,7 @@
 ---
 
 - hosts: localhost
+  gather_facts: No
 
   tasks:
   - name: Run the Fragalysis Staging Undeploy Tasks
