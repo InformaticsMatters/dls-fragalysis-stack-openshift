@@ -28,9 +28,6 @@ pipeline {
                            string(credentialsId: 'ocUser', variable: 'OC_USER'),
                            string(credentialsId: 'ocUserPassword', variable: 'OC_USER_PASSWORD')]) {
 
-            slackSend channel: "#${SLACK_BUILD_CHANNEL}",
-                      message: "${JOB_NAME} session ${BUILD_NUMBER} - starting"
-
             sh "./prune.sh"
 
           }
@@ -44,12 +41,6 @@ pipeline {
   // Post-job actions.
   // See https://jenkins.io/doc/book/pipeline/syntax/#post
   post {
-
-    success {
-      slackSend channel: "#${SLACK_BUILD_CHANNEL}",
-                color: 'good',
-                message: "${JOB_NAME} session ${BUILD_NUMBER} - complete"
-    }
 
     failure {
       slackSend channel: "#${SLACK_BUILD_CHANNEL}",
