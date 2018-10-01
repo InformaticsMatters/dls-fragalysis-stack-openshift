@@ -61,6 +61,9 @@ parameters:
   description: >
     The container image for the security probe implementation
 
+- name: PROBE_NODE_SIZE_SELECTOR
+  value: small
+
 objects:
 
 # -----------------------------------------------------------------------------
@@ -77,7 +80,10 @@ objects:
       metadata:
         name: fs-dev-security-probe
       spec:
+        nodeSelector:
+          size: ${PROBE_NODE_SIZE_SELECTOR}
         serviceAccountName: diamond
+
         containers:
         - image: ${PROBE_REGISTRY}/${PROBE_IMAGE}
           name: fs-dev-security-probe
