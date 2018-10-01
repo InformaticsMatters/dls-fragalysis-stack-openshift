@@ -51,7 +51,7 @@ objects:
       spec:
         nodeSelector:
           size: ${LOADER_NODE_SIZE_SELECTOR}
-#        serviceAccountName: diamond
+        serviceAccountName: diamond
 
         # Init Containers
         initContainers:
