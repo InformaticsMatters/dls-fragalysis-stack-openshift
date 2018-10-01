@@ -2,7 +2,7 @@
 
 # The Fragalysis Stack Loader Job Template.
 #
-# This us used by the Jenkins CI/CD framework to delete and launch
+# This us used by the Jenkins CI/CD framework when deleting and launching
 # loader Jobs.
 #
 # oc process -f fs-loader.yaml | oc create -f -
