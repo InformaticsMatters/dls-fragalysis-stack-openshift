@@ -81,6 +81,7 @@ pipeline {
           sh "oc login ${CLUSTER_URL} -u ${OC_USER} -p ${OC_USER_PASSWORD}"
           sh "oc project ${DESTINATION_NS}"
           script {
+            RESTORE_EXISTS = sh(script: 'oc get jobs | grep fs-recovery | wc -l', returnStdout: true).trim()
             RESTORE_RUNNING = sh(script: 'oc get jobs | grep fs-recovery | grep Running | wc -l', returnStdout: true).trim()
           }
           echo "RESTORE_RUNNING=${RESTORE_RUNNING}"
@@ -95,8 +96,12 @@ pipeline {
       }
       steps {
         dir('images/database-restore') {
-          sh "oc delete job/fs-restore"
-          sleep 4
+          script {
+            if (RESTORE_EXISTS == '1') {
+              sh "oc delete job/fs-restore"
+              sleep 4
+            }
+          }
           echo "oc process -f fs-recovery.yaml -p RECOVERY_FROM_BACKUP=${BACKUP_NAME} -p RECOVERY_CLAIM_NAME=${SOURCE_CLAIM} | oc create -n ${DESTINATION_NS} -f -"
 
 //          slackSend channel: "#${SLACK_BUILD_CHANNEL}",
