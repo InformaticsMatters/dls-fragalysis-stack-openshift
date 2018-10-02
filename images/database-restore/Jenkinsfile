@@ -38,8 +38,9 @@ pipeline {
             // the the SOURCE backup files.
 
             // Skip if a backup is running
+            env.SOURCE_NS = ""
+            env.DESTINATION_NS = ""
             script {
-              String SOURCE_NS = ""
               String SOURCE_PROJECT_LC = SOURCE_PROJECT.toLowerCase()
               if (SOURCE_PROJECT_LC == "development") {
                 SOURCE_NS = "fragalysis-cicd"
@@ -51,7 +52,6 @@ pipeline {
                 error("Unable to recover - unknown source project ${SOURCE_PROJECT}")
               }
 
-              String DESTINATION_NS = ''
               String DESTINATION_PROJECT_LC = DESTINATION_PROJECT.toLowerCase()
               if (DESTINATION_PROJECT_LC == "development") {
                 DESTINATION_NS = 'fragalysis-cicd'
