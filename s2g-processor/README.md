@@ -250,8 +250,7 @@ Login to the instance and, armed with AWS credentials,
 you can get the CSV files from S3: -
 
     $ ssh -i ~/.ssh/abc-im ec2-user@<ip>
-    $ mkdir loaded-data
-    $ mkdir data-loader
+    $ mkdir loaded-data data-loader logs
     $ cd data-loader
     $ aws configure
     [...]
@@ -268,10 +267,13 @@ you can start the neo4j container and import the data with this command: -
 
     $ docker run -d --publish=7474:7474 --publish=7687:7687 \
         -v $HOME/data-loader:/data-loader \
-        -v $HOME/loaded-data:/data \
+        -v $HOME/loaded-data:/loaded-data \
+        -v $HOME/logs:/graph-logs \
         -e NEO4J_dbms_memory_pagecache_size=16g \
         -e NEO4J_dbms_memory_heap_initial__size=8g \
         -e NEO4J_dbms_memory_heap_max__size=8g \
+        -e NEO4J_dbms_directories_data=/loaded-data \
+        -e NEO4J_dbms_directories_logs=/graph-logs \
         -e NEO4H_AUTH=${N_USER}:${N_PASSWORD} \
         -e NEO4J_EDITION=community \
         -e EXTENSION_SCRIPT=/data-loader/load_neo4j.sh \

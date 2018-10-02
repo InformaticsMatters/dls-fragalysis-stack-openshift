@@ -57,5 +57,5 @@ variable "efs_ec2_sgid" {
 
 variable "root_size" {
   description = "The size (GiB) of the graph root volumes"
-  default = 800
+  default = 1200
 }

@@ -36,6 +36,9 @@ parameters:
 - name: NEO4J_DATA_DIR
   value: '/loaded-data'
 
+- name: NEO4J_LOG_DIR
+  value: '/graph-logs'
+
 - name: NEO4J_DATA_LOADER_DIR
   value: '/data-loader'
 
@@ -73,6 +76,8 @@ objects:
             value: ${NEO4J_HEAP}
           - name: NEO4J_dbms_directories_data
             value: ${NEO4J_DATA_DIR}
+          - name: NEO4J_dbms_directories_logs
+            value: ${NEO4J_LOG_DIR}
           - name: NEO4J_EDITION
             value: community
           - name: EXTENSION_SCRIPT
