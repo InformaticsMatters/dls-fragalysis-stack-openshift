@@ -95,8 +95,8 @@ pipeline {
       }
       steps {
         dir('images/database-restore') {
-//          sh "oc delete job/fs-restore"
-//          sleep 10
+          sh "oc delete job/fs-restore"
+          sleep 4
           echo "oc process -f fs-recovery.yaml -p RECOVERY_FROM_BACKUP=${BACKUP_NAME} -p RECOVERY_CLAIM_NAME=${SOURCE_CLAIM} | oc create -n ${DESTINATION_NS} -f -"
 
 //          slackSend channel: "#${SLACK_BUILD_CHANNEL}",
