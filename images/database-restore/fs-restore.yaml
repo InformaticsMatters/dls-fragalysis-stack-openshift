@@ -1,21 +1,21 @@
 ---
 
 # Used in conjunction with a backup this `Job` template
-# recovers a backup against a chosen database.
+# restores a backup against a chosen database.
 #
-# oc process -f fs-recovery.yaml | oc create -f -
-# oc delete job --selector template=fs-recovery
+# oc process -f fs-restore.yaml | oc create -f -
+# oc delete job --selector template=fs-restore
 
 kind: Template
 apiVersion: v1
 metadata:
-  name: fs-recovery
+  name: fs-restore
   annotations:
     description: MySQL Revovery Template
-    tags: mysql,backup,recovery
+    tags: mysql,backup,restore
 labels:
-  template: fs-recovery
-  app: fs-recovery
+  template: fs-restore
+  app: fs-restore
 
 parameters:
 
@@ -34,15 +34,15 @@ objects:
 - kind: Job
   apiVersion: batch/v1
   metadata:
-    name: fs-recovery
+    name: fs-restore
   spec:
     replicas: 1
     selector:
-      name: fs-recovery
+      name: fs-restore
     template:
       metadata:
         labels:
-          name: fs-recovery
+          name: fs-restore
       spec:
         nodeSelector:
           size: ${RECOVERY_NODE_SIZE_SELECTOR}
@@ -50,7 +50,7 @@ objects:
 
         containers:
         - image: ${RECOVERY_IMAGE}
-          name: fs-recovery
+          name: fs-restore
           volumeMounts:
           - name: backup-data
             mountPath: /backup
