@@ -48,7 +48,7 @@ pipeline {
               } else if (SOURCE_PROJECT_LC == "staging") {
                 env.SOURCE_NS = "fragalysis-stag"
               } else {
-                error("Unable to recover - unknown source project ${SOURCE_PROJECT}")
+                error("Unable to recover - unknown source project name '${SOURCE_PROJECT}'")
               }
 
               env.DESTINATION_NS = ""
@@ -60,12 +60,12 @@ pipeline {
               } else if (DESTINATION_PROJECT_LC == "staging") {
                 env.DESTINATION_NS = 'fragalysis-stag'
               } else {
-                error("Unable to recover - unknown destination project ${DESTINATION_PROJECT}")
+                error("Unable to recover - unknown destination project name '${DESTINATION_PROJECT}'")
               }
 
             }
 
-            echo "Restoring ''${BACKUP_NAME}' from ${SOURCE_NS} to ${DESTINATION_NS}"
+            echo "Restoring '${BACKUP_NAME}' from '${SOURCE_NS}' to '${DESTINATION_NS}'"
 
             sh "oc login ${CLUSTER_URL} -u ${OC_USER} -p ${OC_USER_PASSWORD}"
             sh "oc project ${DESTINATION_NS}"

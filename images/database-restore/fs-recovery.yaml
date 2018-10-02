@@ -1,0 +1,81 @@
+---
+
+# Used in conjunction with a backup this `Job` template
+# recovers a backup against a chosen database.
+#
+# oc process -f fs-recovery.yaml | oc create -f -
+# oc delete job --selector template=fs-recovery
+
+kind: Template
+apiVersion: v1
+metadata:
+  name: fs-recovery
+  annotations:
+    description: MySQL Revovery Template
+    tags: mysql,backup,recovery
+labels:
+  template: fs-recovery
+  app: fs-recovery
+
+parameters:
+
+- name: RECOVERY_FROM_BACKUP
+  value: latest
+
+- name: RECOVERY_IMAGE
+  value: informaticsmatters/sql-recovery:stable
+- name: RECOVERY_NODE_SIZE_SELECTOR
+  value: small
+
+objects:
+
+- kind: Job
+  apiVersion: batch/v1
+  metadata:
+    name: fs-recovery
+  spec:
+    replicas: 1
+    selector:
+      name: fs-recovery
+    template:
+      metadata:
+        labels:
+          name: fs-recovery
+      spec:
+        nodeSelector:
+          size: ${RECOVERY_NODE_SIZE_SELECTOR}
+        serviceAccountName: diamond
+
+        containers:
+        - image: ${RECOVERY_IMAGE}
+          name: fs-recovery
+          volumeMounts:
+          - name: backup-data
+            mountPath: /backup
+
+          env:
+          - name: FROM_BACKUP
+            value: ${FROM_BACKUP}
+          - name: MSHOST
+            valueFrom:
+              secretKeyRef:
+                name: fs-mysql-secrets
+                key: database-host
+          - name: MSPORT
+            valueFrom:
+              secretKeyRef:
+                name: fs-mysql-secrets
+                key: database-port
+          - name: MSUSER
+            value: root
+          - name: MSPASS
+            valueFrom:
+              secretKeyRef:
+                name: fs-mysql-secrets
+                key: database-root-password
+
+        volumes:
+        - name: backup-data
+          persistentVolumeClaim:
+            claimName: fs-db-backup-claim
+        restartPolicy: Never
