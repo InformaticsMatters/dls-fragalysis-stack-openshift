@@ -26,7 +26,7 @@
   loop: "{{ lookup('dict', recovery_volumes) }}"
   when:
   - use_nfs
-  - item.value.volume_name not in r_pv.stdout
+  - not r_pv.stdout | regex_search('^%s\s' % item.value.volume_name, multiline=True)
 
 # Create the Recovery PVCs.
 # Each in a different namespace.

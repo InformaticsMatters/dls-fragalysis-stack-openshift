@@ -37,7 +37,7 @@ recovery_volumes:
   # Recovering from here (prod) to prod
   dev:
     dir: pv-fs-p-mysql-data-backup
-    volume_name: fs-p-db-recovery
+    volume_name: fs-p-db-recovery-prod
     volume_claim: fs-db-recovery-prod-claim
     namespace: fragalysis-prod
   # Recovering from here to staging
