@@ -29,7 +29,7 @@ recovery_volumes:
   dev:
     dir: pv-fs-mysql-data-backup
     volume_name: fs-db-recovery
-    volume_claim: fs-db-recovery-claim
+    volume_claim: fs-db-recovery-dev-claim
     namespace: fragalysis-cicd
   # Recovering from here to staging
   stag:
