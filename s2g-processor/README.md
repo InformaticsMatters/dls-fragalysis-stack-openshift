@@ -250,12 +250,15 @@ Login to the instance and, armed with AWS credentials,
 you can get the CSV files from S3: -
 
     $ ssh -i ~/.ssh/abc-im ec2-user@<ip>
+    $ mkdir loaded-data
+    $ mkdir logs
     $ mkdir data-loader
     $ cd data-loader
     $ aws configure
     [...]
     $ aws s3 sync s3://dls-fragalysis/analysis/Jun2018_FINAL_plus/graph .
     $ gzip -d nodes.csv.gz edges.csv.gz
+    $ chmod +x *.sh
  
 Allow sufficient time for the final `gzip` decompression stage,
 this can take a few minutes.
@@ -266,6 +269,8 @@ you can start the neo4j container and import the data with this command: -
 
     $ docker run -d --publish=7474:7474 --publish=7687:7687 \
         -v $HOME/data-loader:/data-loader \
+        -v $HOME/loaded-data:/data \
+        -v $HOME/logs:/logs \
         -e NEO4J_dbms_memory_pagecache_size=16g \
         -e NEO4J_dbms_memory_heap_initial__size=8g \
         -e NEO4J_dbms_memory_heap_max__size=8g \
