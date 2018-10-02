@@ -58,7 +58,7 @@ objects:
             containers:
             - image: ${BACKUP_REGISTRY}/${BACKUP_IMAGE}:${BACKUP_TAG}
               name: backup
-              imagePullPolicy: IfNotPresent
+              imagePullPolicy: Always
               volumeMounts:
               - name: fs-data-backup
                 mountPath: /backup
