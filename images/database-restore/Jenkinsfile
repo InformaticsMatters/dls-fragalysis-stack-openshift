@@ -107,7 +107,7 @@ pipeline {
             }
           }
 
-          echo "oc process -f fs-recovery.yaml -p RECOVERY_FROM_BACKUP=${BACKUP_NAME} -p RECOVERY_CLAIM_NAME=${SOURCE_CLAIM} | oc create -n ${DESTINATION_NS} -f -"
+          sh "oc process -f fs-recovery.yaml -p RECOVERY_FROM_BACKUP=${BACKUP_NAME} -p RECOVERY_CLAIM_NAME=${SOURCE_CLAIM} | oc create -n ${DESTINATION_NS} -f -"
 
 //          slackSend channel: "#${SLACK_BUILD_CHANNEL}",
 //                    color: 'good',
