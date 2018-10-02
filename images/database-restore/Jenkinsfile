@@ -1,0 +1,107 @@
+#!groovy​
+
+// The Production Fragalysis Stack (database recovery).
+//
+// This pipeline is executed in order to restore a database backup.
+// We can restore backups from one project to another.
+// The build is parameterised and we expect the following environment
+// variables to have been set: -
+//
+//  SOURCE_PROJECT
+//  DESTINATION_PROJECT
+//  BACKUP_NAME
+
+pipeline {
+
+  agent { label 'buildah-slave' }
+
+  environment {
+    // Slack channel for all notifications
+    SLACK_BUILD_CHANNEL = 'dls-builds'
+    // Slack channel to be used for errors/failures
+    // (which also go to the CI/CD channel)
+    SLACK_ALERT_CHANNEL = 'dls-alerts'
+  }
+
+  stages {
+
+    stage('Restore') {
+      steps {
+        dir('images/database-restore') {
+          withCredentials([string(credentialsId: 'clusterUrl', variable: 'CLUSTER_URL'),
+                           string(credentialsId: 'ocUser', variable: 'OC_USER'),
+                           string(credentialsId: 'ocUserPassword', variable: 'OC_USER_PASSWORD')]) {
+
+            // We launch the restore container in the
+            // DESTINATION project (where the database secrets are defined)
+            // and provide the PVC (within that project) that connects it
+            // the the SOURCE backup files.
+
+            // Skip if a backup is running
+            script {
+              String SOURCE_NS = ""
+              String SOURCE_PROJECT_LC = SOURCE_PROJECT.toLowerCase()
+              if (SOURCE_PROJECT_LC == "development") {
+                SOURCE_NS = "fragalysis-cicd"
+              } else if (SOURCE_PROJECT_LC == "production") {
+                SOURCE_NS = "fragalysis-prod"
+              } else if (SOURCE_PROJECT_LC == "staging") {
+                SOURCE_NS = "fragalysis-stag"
+              } else {
+                error("Unable to recover - unknown source project ${SOURCE_PROJECT}")
+              }
+
+              String DESTINATION_NS = ''
+              String DESTINATION_PROJECT_LC = DESTINATION_PROJECT.toLowerCase()
+              if (DESTINATION_PROJECT_LC == "development") {
+                DESTINATION_NS = 'fragalysis-cicd'
+              } else if (DESTINATION_PROJECT_LC == "production") {
+                DESTINATION_NS = 'fragalysis-prod'
+              } else if (DESTINATION_PROJECT_LC == "staging") {
+                DESTINATION_NS = 'fragalysis-stag'
+              } else {
+                error("Unable to recover - unknown destination project ${DESTINATION_PROJECT}")
+              }
+
+            }
+
+            echo "Restoring ''${BACKUP_NAME}' from ${SOURCE_NS} to ${DESTINATION_NS}"
+
+            sh "oc login ${CLUSTER_URL} -u ${OC_USER} -p ${OC_USER_PASSWORD}"
+            sh "oc project ${DESTINATION_NS}"
+
+          }
+        }
+      }
+    }
+
+  }
+
+  // Post-job actions.
+  // See https://jenkins.io/doc/book/pipeline/syntax/#post
+  post {
+
+    failure {
+      slackSend channel: "#${SLACK_BUILD_CHANNEL}",
+                color: 'danger',
+                message: "${JOB_NAME} session ${BUILD_NUMBER} - failed (${BUILD_URL})"
+      slackSend channel: "#${SLACK_ALERT_CHANNEL}",
+                color: 'danger',
+                message: "${JOB_NAME} session ${BUILD_NUMBER} - failed (${BUILD_URL})"
+    }
+
+    unstable {
+      slackSend channel: "#${SLACK_BUILD_CHANNEL}",
+                color: 'warning',
+                message: "${JOB_NAME} session ${BUILD_NUMBER} - complete (unstable)"
+    }
+
+    fixed {
+      slackSend channel: "#${SLACK_ALERT_CHANNEL}",
+                color: 'good',
+                message: "${JOB_NAME} - fixed"
+    }
+
+  }
+
+}
