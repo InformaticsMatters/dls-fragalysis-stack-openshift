@@ -265,6 +265,8 @@ this can take a few minutes.
 Assuming you have a valid `N_USER` and `N_PASSWORD` environment variables
 you can start the neo4j container and import the data with this command: -
 
+    $ export N_USER=<user>
+    $ export N_PASSWORD=<password>
     $ docker run -d --publish=7474:7474 --publish=7687:7687 \
         -v $HOME/data-loader:/data-loader \
         -v $HOME/loaded-data:/loaded-data \
