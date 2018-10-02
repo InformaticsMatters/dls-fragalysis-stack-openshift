@@ -7,3 +7,5 @@
 - import_tasks: fs-p-web.yaml
 - import_tasks: fs-p-backup.yaml
   when: deploy_backup
+- import_tasks: fs-p-recovery.yaml
+  when: deploy_backup

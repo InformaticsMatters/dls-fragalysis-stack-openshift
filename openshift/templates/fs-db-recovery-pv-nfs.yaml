@@ -1,0 +1,62 @@
+---
+
+# The Application's CI/CD Persistent Volumes (NFS).
+#
+# This expects these volumes:
+#
+#   ${NFS_PATH}/pv-fs-db-recovery
+#
+# oc process -f fs-db-recovery-pv-nfs.yaml | oc create -f -
+# oc delete pv --selector template=fs-db-recovery-nfs
+
+kind: Template
+apiVersion: v1
+metadata:
+  name: fs-db-recovery-nfs
+  annotations:
+    description: Fragalysis Stack's Persistent Volumes (using NFS)
+    tags: fragalysis,jenkins
+labels:
+  template: fs-db-recovery-nfs
+
+parameters:
+
+- name: NFS_SERVER
+  value: bastion.novalocal
+- name: NFS_PATH
+  value: /data
+
+- name: RECOVERY_NAMESPACE
+  value: fragalysis-cicd
+
+- name: RECOVERY_PV_DIR
+  value: pv-fs-mysql-data-backup
+- name: RECOVERY_VOLUME_NAME
+  value: fs-db-recovery
+- name: RECOVERY_VOLUME_CLAIM_NAME
+  value: fs-db-recovery-claim
+- name: RECOVERY_PV_SIZE
+  value: 100Gi
+
+objects:
+
+# ----------------
+# Recovery Volumes
+# ----------------
+
+- kind: PersistentVolume
+  apiVersion: v1
+  metadata:
+    name: ${RECOVERY_VOLUME_NAME}
+  spec:
+    capacity:
+      storage: ${RECOVERY_PV_SIZE}
+    accessModes:
+    - ReadWriteMany
+    persistentVolumeReclaimPolicy: Retain
+    nfs:
+      server: ${NFS_SERVER}
+      path: ${NFS_PATH}/${RECOVERY_PV_DIR}
+    claimRef:
+      name: ${RECOVERY_VOLUME_CLAIM_NAME}
+      namespace: ${RECOVERY_NAMESPACE}

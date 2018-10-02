@@ -26,3 +26,29 @@ web_hostname: fragalysis.diamond.ac.uk
 web_name: web-prod
 web_nfs_dir: pv-fs-p-web-media
 web_vol_name: fs-p-web-media
+
+# Recovery PVs and PVCs - used when deploy_backup is 'yes'.
+#
+# There is an entry here for each namespace that we want to recover to.
+# The first one is our own namespace, others are for the namespaces
+# of others, like staging and dev. Each shares an (NFS) 'directory'
+# but has its own 'name', 'claim' and 'namespace'
+recovery_volumes:
+  # Recovering from here (prod) to prod
+  dev:
+    dir: pv-fs-p-mysql-data-backup
+    volume_name: fs-p-db-recovery
+    volume_claim: fs-db-recovery-claim
+    namespace: fragalysis-prod
+  # Recovering from here to staging
+  stag:
+    dir: pv-fs-p-mysql-data-backup
+    volume_name: fs-p-db-recovery-stag
+    volume_claim: fs-db-recovery-prod-claim
+    namespace: fragalysis-stag
+  # Recovering from here to development
+  prod:
+    dir: pv-fs-p-mysql-data-backup
+    volume_name: fs-p-db-recovery-dev
+    volume_claim: fs-db-recovery-prod-claim
+    namespace: fragalysis-cicd

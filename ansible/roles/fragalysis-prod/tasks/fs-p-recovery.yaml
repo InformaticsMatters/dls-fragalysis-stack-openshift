@@ -1,0 +1,55 @@
+---
+
+# Recovery PV and PVC definitions.
+# Used when deploying a backup.
+#
+# There's a recovery PV and PVC for each project
+# (defined in the 'recovery_volumes' dictionary variable)
+# that we want to recover this project's database backup into.
+
+- name: Check Recovery PVs
+  shell: oc get pv
+  register: r_pv
+  when: use_nfs
+  changed_when: False
+
+# Create the PVs
+
+- name: Create Recovery PVs
+  shell: >
+    oc process -f {{ role_path }}/{{ t_dir }}/fs-db-recovery-pv-nfs.yaml
+    -p RECOVERY_PV_DIR={{ item.value.dir }}
+    -p RECOVERY_VOLUME_NAME={{ item.value.volume_name }}
+    -p RECOVERY_VOLUME_CLAIM_NAME={{ item.value.volume_claim }}
+    -p RECOVERY_NAMESPACE={{ item.value.namespace }}
+    | oc create -f -
+  loop: "{{ lookup('dict', recovery_volumes) }}"
+  when:
+  - use_nfs
+  - item.value.volume_name not in r_pv.stdout
+
+# Create the Recovery PVCs.
+# Each in a different namespace.
+
+- name: Check Recovery PVCs
+  shell: oc get pvc --all-namespaces
+  register: r_pvc
+  changed_when: False
+
+- name: Create Recovery PVCs
+  shell: >
+    oc process -f {{ role_path }}/{{ t_dir }}/fs-db-recovery-pvc.yaml
+    -p RECOVERY_VOLUME_NAME={{ item.value.volume_name }}
+    -p RECOVERY_VOLUME_CLAIM_NAME={{ item.value.volume_claim }}
+    | oc create -n {{ item.value.namespace }} -f -
+  loop: "{{ lookup('dict', recovery_volumes) }}"
+  when: not r_pvc.stdout | regex_search('^%s\s+%s\s' % (item.value.namespace, item.value.volume_claim), multiline=True)
+
+- name: Wait for Recovery PVCs to become Bound
+  shell: oc get pvc/{{ item.value.volume_claim }} -n {{ item.value.namespace }} | grep Bound
+  retries: 12
+  delay: 5
+  register: result
+  until: result.rc == 0
+  loop: "{{ lookup('dict', recovery_volumes) }}"
+  changed_when: False

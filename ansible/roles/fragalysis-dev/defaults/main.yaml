@@ -18,6 +18,32 @@ use_nfs: yes
 wait_for_mysql: yes
 web_vol_name: fs-web-media
 
+# Recovery PVs and PVCs - used when deploy_backup is 'yes'.
+#
+# There is an entry here for each namespace that we want to recover to.
+# The first one is our own namespace, others are for the namespaces
+# of others, like staging and production. Each shares a 'volume'
+# but has its own 'name', 'claim' and 'namespace'
+recovery_volumes:
+  # Recovering from here (development) to dev
+  dev:
+    dir: pv-fs-mysql-data-backup
+    volume_name: fs-db-recovery
+    volume_claim: fs-db-recovery-claim
+    namespace: fragalysis-cicd
+  # Recovering from here to staging
+  stag:
+    dir: pv-fs-mysql-data-backup
+    volume_name: fs-db-recovery-stag
+    volume_claim: fs-db-recovery-dev-claim
+    namespace: fragalysis-stag
+  # Recovering from here to production
+  prod:
+    dir: pv-fs-mysql-data-backup
+    volume_name: fs-db-recovery-prod
+    volume_claim: fs-db-recovery-dev-claim
+    namespace: fragalysis-prod
+
 # If set ansible will attempt to configure Jenkins
 # by running our configure-cicd.py module.
 # This will require the environment variables to have been set.

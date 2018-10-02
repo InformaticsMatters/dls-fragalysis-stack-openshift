@@ -9,3 +9,5 @@
 - import_tasks: fs-web.yaml
 - import_tasks: fs-backup.yaml
   when: deploy_backup
+- import_tasks: fs-recovery.yaml
+  when: deploy_backup

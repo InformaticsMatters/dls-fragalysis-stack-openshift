@@ -5,9 +5,7 @@
 - name: Check Backup PV
   shell: oc get pv
   register: bu_pv
-  when:
-  - deploy_backup
-  - use_nfs
+  when: use_nfs
   changed_when: False
 
 - name: Create Backup PV
@@ -18,7 +16,6 @@
     -p BACKUP_VOLUME_NAME={{ backup_vol_name }}
     | oc create -f -
   when:
-  - deploy_backup
   - use_nfs
   - backup_vol_name not in bu_pv.stdout
 
@@ -27,8 +24,6 @@
 - name: Check Backup PVC
   shell: oc get pvc
   register: bu_pvc
-  when:
-  - deploy_backup
   changed_when: False
 
 - name: Create Backup PVC
@@ -36,16 +31,13 @@
     oc process -f {{ role_path }}/{{ t_dir }}/fs-db-backup-pvc.yaml
     -p BACKUP_VOLUME_NAME={{ backup_vol_name }}
     | oc create -f -
-  when:
-  - deploy_backup
-  - '"fs-db-backup-claim" not in bu_pvc.stdout'
+  when: '"fs-db-backup-claim" not in bu_pvc.stdout'
 
 # Create the Backup Deployment
 
 - name: Check Backup Deployment
   shell: oc get cronjobs
   register: bu_cj
-  when: deploy_backup
   changed_when: False
 
 - name: Create Backup Deployment (H)
@@ -53,7 +45,6 @@
     oc process -f {{ role_path }}/{{ t_dir }}/fs-db-backup-h.yaml
     | oc create -f -
   when:
-  - deploy_backup
   - not enable_rsync_in_backup
   - '"db-backup-hourly" not in bu_cj.stdout'
 
@@ -62,7 +53,6 @@
     oc process -f {{ role_path }}/{{ t_dir }}/fs-db-backup-h-plus-rsync.yaml
     | oc create -f -
   when:
-  - deploy_backup
   - enable_rsync_in_backup
   - '"db-backup-hourly" not in bu_cj.stdout'
 
@@ -70,9 +60,7 @@
   shell: >
     oc process -f {{ role_path }}/{{ t_dir }}/fs-db-backup-dwm.yaml
     | oc create -f -
-  when:
-  - deploy_backup
-  - '"db-backup-daily" not in bu_cj.stdout'
+  when: '"db-backup-daily" not in bu_cj.stdout'
 
 # We don't wait for this job,
 # its deployment is controlled by Cron.
