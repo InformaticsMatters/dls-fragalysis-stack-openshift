@@ -21,6 +21,8 @@ parameters:
 
 - name: RECOVERY_FROM_BACKUP
   value: latest
+- name: RECOVERY_CLAIM_NAME
+  value:
 
 - name: RECOVERY_IMAGE
   value: informaticsmatters/sql-recovery:stable
@@ -55,7 +57,7 @@ objects:
 
           env:
           - name: FROM_BACKUP
-            value: ${FROM_BACKUP}
+            value: ${RECOVERY_FROM_BACKUP}
           - name: MSHOST
             valueFrom:
               secretKeyRef:
@@ -77,5 +79,5 @@ objects:
         volumes:
         - name: backup-data
           persistentVolumeClaim:
-            claimName: fs-db-backup-claim
+            claimName: ${RECOVERY_CLAIM_NAME}
         restartPolicy: Never

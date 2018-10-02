@@ -25,52 +25,102 @@ pipeline {
 
   stages {
 
-    stage('Restore') {
+    stage('Inspect') {
       steps {
-        dir('images/database-restore') {
-          withCredentials([string(credentialsId: 'clusterUrl', variable: 'CLUSTER_URL'),
+        withCredentials([string(credentialsId: 'clusterUrl', variable: 'CLUSTER_URL'),
                            string(credentialsId: 'ocUser', variable: 'OC_USER'),
                            string(credentialsId: 'ocUserPassword', variable: 'OC_USER_PASSWORD')]) {
 
-            // We launch the restore container in the
-            // DESTINATION project (where the database secrets are defined)
-            // and provide the PVC (within that project) that connects it
-            // the the SOURCE backup files.
+          // We launch the restore container in the
+          // DESTINATION project (where the database secrets are defined)
+          // and provide the PVC (within that project) that connects it
+          // the the SOURCE backup files.
 
-            // Skip if a backup is running
-            script {
-              env.SOURCE_NS = ""
-              String SOURCE_PROJECT_LC = SOURCE_PROJECT.toLowerCase()
-              if (SOURCE_PROJECT_LC == "development") {
-                env.SOURCE_NS = "fragalysis-cicd"
-              } else if (SOURCE_PROJECT_LC == "production") {
-                env.SOURCE_NS = "fragalysis-prod"
-              } else if (SOURCE_PROJECT_LC == "staging") {
-                env.SOURCE_NS = "fragalysis-stag"
-              } else {
-                error("Unable to recover - unknown source project name '${SOURCE_PROJECT}'")
-              }
-
-              env.DESTINATION_NS = ""
-              String DESTINATION_PROJECT_LC = DESTINATION_PROJECT.toLowerCase()
-              if (DESTINATION_PROJECT_LC == "development") {
-                env.DESTINATION_NS = 'fragalysis-cicd'
-              } else if (DESTINATION_PROJECT_LC == "production") {
-                env.DESTINATION_NS = 'fragalysis-prod'
-              } else if (DESTINATION_PROJECT_LC == "staging") {
-                env.DESTINATION_NS = 'fragalysis-stag'
-              } else {
-                error("Unable to recover - unknown destination project name '${DESTINATION_PROJECT}'")
-              }
-
+          // Inspect & translate variables.
+          // - We convert the human-readable 'Project' to a namespace key
+          // - We generate the name of the PVC claim name from the source project
+          //
+          script {
+            env.SOURCE_NS = ""
+            env.SOURCE_CLAIM = ""
+            String SOURCE_PROJECT_LC = SOURCE_PROJECT.toLowerCase()
+            if (SOURCE_PROJECT_LC == "development") {
+              env.SOURCE_NS = "fragalysis-cicd"
+              env.SOURCE_CLAIM = "fs-db-recovery-dev-claim"
+            } else if (SOURCE_PROJECT_LC == "production") {
+              env.SOURCE_NS = "fragalysis-prod"
+              env.SOURCE_CLAIM = "fs-db-recovery-prod-claim"
+            } else if (SOURCE_PROJECT_LC == "staging") {
+              env.SOURCE_NS = "fragalysis-stag"
+              env.SOURCE_CLAIM = "fs-db-recovery-stag-claim"
+            } else {
+              error("Unable to recover - unknown source project name '${SOURCE_PROJECT}'")
             }
 
-            echo "Restoring '${BACKUP_NAME}' from '${SOURCE_NS}' to '${DESTINATION_NS}'"
-
-            sh "oc login ${CLUSTER_URL} -u ${OC_USER} -p ${OC_USER_PASSWORD}"
-            sh "oc project ${DESTINATION_NS}"
+            env.DESTINATION_NS = ""
+            String DESTINATION_PROJECT_LC = DESTINATION_PROJECT.toLowerCase()
+            if (DESTINATION_PROJECT_LC == "development") {
+              env.DESTINATION_NS = 'fragalysis-cicd'
+            } else if (DESTINATION_PROJECT_LC == "production") {
+              env.DESTINATION_NS = 'fragalysis-prod'
+            } else if (DESTINATION_PROJECT_LC == "staging") {
+              env.DESTINATION_NS = 'fragalysis-stag'
+            } else {
+              error("Unable to recover - unknown destination project name '${DESTINATION_PROJECT}'")
+            }
 
           }
+
+          echo "Attempting to restore '${BACKUP_NAME}'"
+          echo "...from '${SOURCE_NS}' to '${DESTINATION_NS}'"
+          echo "...using claim '${SOURCE_CLAIM}'"
+
+          // Set a variable to reflect the running state of
+          // any existing restore process in the destination project...
+
+          sh "oc login ${CLUSTER_URL} -u ${OC_USER} -p ${OC_USER_PASSWORD}"
+          sh "oc project ${DESTINATION_NS}"
+          script {
+            RESTORE_RUNNING = sh(script: 'oc get jobs | grep fs-recovery | grep Running | wc -l', returnStdout: true).trim()
+          }
+          echo "RESTORE_RUNNING=${RESTORE_RUNNING}"
+
+        }
+      }
+    }
+
+    stage('Restore') {
+      when {
+        expression { RESTORE_RUNNING == '0' }
+      }
+      steps {
+        dir('images/database-restore') {
+//          sh "oc delete job/fs-restore"
+//          sleep 10
+          echo "oc process -f fs-recovery.yaml -p RECOVERY_FROM_BACKUP=${BACKUP_NAME} -p RECOVERY_CLAIM_NAME=${SOURCE_CLAIM} | oc create -f -"
+
+//          slackSend channel: "#${SLACK_BUILD_CHANNEL}",
+//                    color: 'good',
+//                    message: "${JOB_NAME} build ${BUILD_NUMBER} - complete (restore in progress)"
+        }
+      }
+    }
+
+    stage('Blocked Restore') {
+      when {
+        expression { RESTORE_RUNNING != '0' }
+      }
+      steps {
+        echo "A prior restore is still running (deployment is blocked)"
+        script {
+          slackSend channel: "#${SLACK_BUILD_CHANNEL}",
+                    color: 'warning',
+                    message: "${JOB_NAME} build ${BUILD_NUMBER} - complete (restore blocked)"
+
+          // Everything's OK but we were blocked from deploying it
+          // as it appears a prior Job instance is running.
+          // Here we just set the build status to UNSTABLE.
+          currentBuild.result = 'UNSTABLE'
         }
       }
     }
