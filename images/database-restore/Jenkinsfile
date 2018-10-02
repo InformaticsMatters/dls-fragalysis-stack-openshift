@@ -96,17 +96,23 @@ pipeline {
       }
       steps {
         dir('images/database-restore') {
+
           script {
             if (RESTORE_EXISTS == '1') {
+              echo "Deleting prior restore Job..."
               sh "oc delete job/fs-restore"
               sleep 4
+            } else {
+              echo "No prior restore Job, nothing to delete"
             }
           }
+
           echo "oc process -f fs-recovery.yaml -p RECOVERY_FROM_BACKUP=${BACKUP_NAME} -p RECOVERY_CLAIM_NAME=${SOURCE_CLAIM} | oc create -n ${DESTINATION_NS} -f -"
 
 //          slackSend channel: "#${SLACK_BUILD_CHANNEL}",
 //                    color: 'good',
 //                    message: "${JOB_NAME} build ${BUILD_NUMBER} - complete (restore in progress)"
+
         }
       }
     }

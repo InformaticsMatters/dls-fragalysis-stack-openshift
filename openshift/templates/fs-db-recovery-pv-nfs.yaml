@@ -52,7 +52,7 @@ objects:
     capacity:
       storage: ${RECOVERY_PV_SIZE}
     accessModes:
-    - ReadWriteMany
+    - ReadOnlyMany
     persistentVolumeReclaimPolicy: Retain
     nfs:
       server: ${NFS_SERVER}
