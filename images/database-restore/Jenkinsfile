@@ -38,27 +38,27 @@ pipeline {
             // the the SOURCE backup files.
 
             // Skip if a backup is running
-            env.SOURCE_NS = ""
-            env.DESTINATION_NS = ""
             script {
+              env.SOURCE_NS = ""
               String SOURCE_PROJECT_LC = SOURCE_PROJECT.toLowerCase()
               if (SOURCE_PROJECT_LC == "development") {
-                SOURCE_NS = "fragalysis-cicd"
+                env.SOURCE_NS = "fragalysis-cicd"
               } else if (SOURCE_PROJECT_LC == "production") {
-                SOURCE_NS = "fragalysis-prod"
+                env.SOURCE_NS = "fragalysis-prod"
               } else if (SOURCE_PROJECT_LC == "staging") {
-                SOURCE_NS = "fragalysis-stag"
+                env.SOURCE_NS = "fragalysis-stag"
               } else {
                 error("Unable to recover - unknown source project ${SOURCE_PROJECT}")
               }
 
+              env.DESTINATION_NS = ""
               String DESTINATION_PROJECT_LC = DESTINATION_PROJECT.toLowerCase()
               if (DESTINATION_PROJECT_LC == "development") {
-                DESTINATION_NS = 'fragalysis-cicd'
+                env.DESTINATION_NS = 'fragalysis-cicd'
               } else if (DESTINATION_PROJECT_LC == "production") {
-                DESTINATION_NS = 'fragalysis-prod'
+                env.DESTINATION_NS = 'fragalysis-prod'
               } else if (DESTINATION_PROJECT_LC == "staging") {
-                DESTINATION_NS = 'fragalysis-stag'
+                env.DESTINATION_NS = 'fragalysis-stag'
               } else {
                 error("Unable to recover - unknown destination project ${DESTINATION_PROJECT}")
               }
