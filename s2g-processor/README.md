@@ -312,7 +312,7 @@ Warm-up the cache using the APOC tools...
     # cypher-shell
     [...]
     neo4j> RETURN apoc.version();
-    neo4j> CALL apoc.warmup.run();              <- Nodes and relationshipd
+    neo4j> CALL apoc.warmup.run();              <- Just nodes and relationships
     neo4j> CALL apoc.warmup.run(true);          <- Include properties
     neo4j> CALL apoc.warmup.run(true, true);    <- Include dynamic properties
     neo4j> :exit
