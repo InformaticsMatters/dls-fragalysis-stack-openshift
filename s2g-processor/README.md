@@ -257,37 +257,69 @@ you can get the CSV files from S3: -
     $ aws s3 sync s3://dls-fragalysis/analysis/Jun2018_FINAL_plus/graph .
     $ gzip -d nodes.csv.gz edges.csv.gz
     $ chmod +x *.sh
- 
-Allow sufficient time for the final `gzip` decompression stage,
-this can take a few minutes.
-   
-### Launch neo4j
-Assuming you have a valid `N_USER` and `N_PASSWORD` environment variables
-you can start the neo4j container and import the data with this command: -
 
-    $ export N_USER=<user>
-    $ export N_PASSWORD=<password>
-    $ docker run -d --publish=7474:7474 --publish=7687:7687 \
+>   Allow sufficient time for the final `gzip` decompression stage,
+    this can take a few minutes.
+   
+Adding the APOC tools (for neo4j 3.4.5)...
+
+>   See https://github.com/neo4j-contrib/neo4j-apoc-procedures
+    
+    $ mkdir plugins
+    $ pushd plugins
+    $ wget https://github.com/neo4j-contrib/neo4j-apoc-procedures/releases/download/3.4.0.2/apoc-3.4.0.2-all.jar
+    $ popd
+ 
+### Launch neo4j
+You can start the neo4j container and import the data with this command: -
+
+    $ docker run -d --rm --ulimit nofile=40000:40000 \
+        -p 7474:7474 -p 7687:7687 \
         -v $HOME/data-loader:/data-loader \
-        -v $HOME/loaded-data:/loaded-data \
-        -v $HOME/logs:/graph-logs \
-        -e NEO4J_dbms_memory_pagecache_size=16g \
+        -v $HOME/loaded-data:/data \
+        -v $HOME/plugins:/plugins \
+        -e NEO4J_dbms_memory_pagecache_size=360g \
         -e NEO4J_dbms_memory_heap_initial__size=8g \
         -e NEO4J_dbms_memory_heap_max__size=8g \
-        -e NEO4J_dbms_directories_data=/loaded-data \
-        -e NEO4J_dbms_directories_logs=/graph-logs \
-        -e NEO4H_AUTH=${N_USER}:${N_PASSWORD} \
+        -e NEO4J_dbms_directories_data=/data \
+        -e NEO4J_dbms_directories_plugins=/plugins \
+        -e NEO4H_AUTH=none \
+        -e NEO4J_dbms_security_procedures_unrestricted=apoc.\\\* \
         -e NEO4J_EDITION=community \
         -e EXTENSION_SCRIPT=/data-loader/load_neo4j.sh \
         neo4j:3.4.5
 
->   The demo instance uses the Diamond cluster developer credentials
-    as neo4j authentication.
-
 >   It is safe to restart the container once started as the `load-neo4j.sh`
     script detects the presence of  an imported database and therefore does
-    not try to import once restarted.
+    not try to import again.
 
+Creating the index...
+
+    # cypher-shell
+    neo4j> CREATE INDEX ON :F2(smiles);
+    neo4j> :exit
+
+Diplsaying indices....
+
+    # cypher-shell
+    neo4j> CALL db.indexes;
+    neo4j> :exit
+    
+Warm-up the cache using the APOC tools...
+
+>   CALL apoc.warmup.run([loadProperties],[loadDynamicProperties])
+
+    # cypher-shell
+    [...]
+    neo4j> RETURN apoc.version();
+    neo4j> CALL apoc.warmup.run();              <- Nodes and relationshipd
+    neo4j> CALL apoc.warmup.run(true);          <- Include properties
+    neo4j> CALL apoc.warmup.run(true, true);    <- Include dynamic properties
+    neo4j> :exit
+
+The full warm-up 9properties and dynamic properties
+will take about 45 minutes to complete.
+    
 ---
 
 [article]: https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ebs-using-volumes.html
