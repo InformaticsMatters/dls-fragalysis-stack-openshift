@@ -79,16 +79,15 @@ pipeline {
     stage('Stop Probe') {
       steps {
 
-          script {
-            sh "oc project ${TGT_PROJECT}"
-            PROBE_COUNT = sh(script: 'oc get jobs | grep prod-security-probe | wc -l', returnStdout: true).trim()
-            if (PROBE_COUNT != '0') {
-              sh "oc delete job/fs-prod-security-probe"
-              sleep 4
-            }
+        script {
+          sh "oc project ${TGT_PROJECT}"
+          PROBE_COUNT = sh(script: 'oc get jobs | grep prod-security-probe | wc -l', returnStdout: true).trim()
+          if (PROBE_COUNT != '0') {
+            sh "oc delete job/fs-prod-security-probe"
+            sleep 4
           }
-
         }
+
       }
     }
 
