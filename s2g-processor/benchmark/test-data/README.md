@@ -1,4 +1,5 @@
 # Test Data
+Test data suitable fo ruse with the `benchmark-neo4j.py` module.
 
 ## jun2018-plus-random-100.smiles
 100 randomly selected (and shuffled) molecules from the jun2018-plus data set
@@ -7,5 +8,8 @@ stereo-chemistry symbol `@`). Prepared in order to test
 the performance of a neo4j graph database holding the whole set.
 
 There are 27,460,242 such lines in the original `nodes.csv`.
+
+## dsi-poised-library.smiles
+A standard library.
 
 ---

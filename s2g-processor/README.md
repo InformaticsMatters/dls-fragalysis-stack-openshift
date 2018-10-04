@@ -304,6 +304,10 @@ Diplsaying indices....
     # cypher-shell
     neo4j> CALL db.indexes;
     neo4j> :exit
+
+Clearing the unix filesystem cache...
+
+    $ sudo sh -c 'free && sync && echo 3 > /proc/sys/vm/drop_caches && free'
     
 Warm-up the cache using the APOC tools...
 
