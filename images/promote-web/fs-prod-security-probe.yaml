@@ -87,6 +87,13 @@ objects:
         - image: ${PROBE_REGISTRY}/${PROBE_IMAGE}
           name: fs-prod-security-probe
           imagePullPolicy: Always
+          resources:
+            requests:
+              cpu: 1m
+              memory: 16Mi
+            limits:
+              cpu: 10m
+              memory: 32Mi
           env:
           - name: PROBE_LOCATION
             value: ${PROBE_LOCATION}/api/targets/?title=private_dummy_target
