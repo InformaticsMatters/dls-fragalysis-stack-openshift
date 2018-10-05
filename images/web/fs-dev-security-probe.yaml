@@ -93,7 +93,7 @@ objects:
               cpu: 1m
               memory: 16Mi
             limits:
-              cpu: 10m
+              cpu: 50m
               memory: 32Mi
           env:
           - name: PROBE_LOCATION
