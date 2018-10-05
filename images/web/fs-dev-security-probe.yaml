@@ -89,9 +89,11 @@ objects:
           name: fs-dev-security-probe
           imagePullPolicy: Always
           resources:
+            # Burstable CPU
+            # Guaranteed Memory
             requests:
               cpu: 1m
-              memory: 16Mi
+              memory: 32Mi
             limits:
               cpu: 50m
               memory: 32Mi
