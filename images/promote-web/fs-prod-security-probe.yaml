@@ -92,10 +92,10 @@ objects:
             # Guaranteed Memory
             requests:
               cpu: 1m
-              memory: 32Mi
+              memory: 64Mi
             limits:
               cpu: 50m
-              memory: 32Mi
+              memory: 64Mi
           env:
           - name: PROBE_LOCATION
             value: ${PROBE_LOCATION}/api/targets/?title=private_dummy_target
