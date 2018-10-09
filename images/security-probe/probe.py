@@ -195,17 +195,25 @@ def email_warning():
         warning('Skipping warning email (no recipients)')
         return
 
-    msg = MIMEText("The Fragalysis %s Project's Security Probe"
-                   " has detected that the Stack service is 'at risk'.\n\n"
-                   "The Security Probe will run again in approximately %s minutes.\n\n"
-                   "After %s consecutive failures (this counts as one)"
-                   " the %s service will be suspended."
-                   % (NAMESPACE_H, PERIOD_M, THRESHOLD, NAMESPACE_H),
-                   _charset='utf-8')
+    body_template = "This is an automated email" \
+                    " from the Fragalysis {project} Project's security probe.\n\n" \
+                    "The role of the {project} probe is to monitor the following location" \
+                    " at regular intervals for 'risk': -\n\n" \
+                    "    {location}\n\n" \
+                    "The location is 'AT RISK' when a GET is presented with a" \
+                    " payload body where the numeric 'count' property is non-zero.\n\n" \
+                    "This has now happened.\n\n" \
+                    "No action has been taken but if the service continues to be at risk," \
+                    " i.e. after {threshold} consecutive failures" \
+                    " where this counts as one, the {project} service will be suspended.\n\n" \
+                    "The Security Probe will run again in approximately {period} minutes."
+    body_values = {'project': NAMESPACE_H,
+                   'location': LOCATION,
+                   'threshold': THRESHOLD,
+                   'period': PERIOD_M}
 
-    msg['Subject'] = 'Service AT RISK' \
-                     ' - Fragalysis %s Project' \
-                     ' - First Event' % NAMESPACE_H
+    msg = MIMEText(body_template.format(**body_values), _charset='utf-8')
+    msg['Subject'] = 'Service AT RISK: Fragalysis %s Project' % NAMESPACE_H
     msg['From'] = PROBE_EMAIL
     msg['To'] = RECIPIENTS
 
@@ -227,16 +235,18 @@ def email_recovery():
         warning('Skipping recovery email (no recipients)')
         return
 
-    msg = MIMEText("The Fragalysis %s Project's Security Probe"
-                   " has detected that the Stack service is now 'safe'.\n\n"
-                   "The Security Probe has been reset and will run again"
-                   " in approximately %s minutes."
-                   % (NAMESPACE_H, PERIOD_M),
-                   _charset='utf-8')
+    body_template = "This is an automated email" \
+                    " from the Fragalysis {project} Project's security probe.\n\n" \
+                    "The {project} application was 'AT RISK'" \
+                    " but it now appears to be 'SAFE', with the numeric 'count'" \
+                    " property now returning the expected zero value.\n\n" \
+                    "The security probe has been reset and will run again" \
+                    " in approximately {period} minutes."
+    body_values = {'project': NAMESPACE_H,
+                   'period': PERIOD_M}
 
-    msg['Subject'] = 'Service SAFE' \
-                     ' - Fragalysis %s Project' \
-                     % NAMESPACE_H
+    msg = MIMEText(body_template.format(**body_values), _charset='utf-8')
+    msg['Subject'] = 'Service now SAFE: Fragalysis %s Project' % NAMESPACE_H
     msg['From'] = PROBE_EMAIL
     msg['To'] = RECIPIENTS
 
@@ -257,17 +267,24 @@ def email_suspension():
         warning('Skipping suspension email (no recipients)')
         return
 
-    msg = MIMEText("The Fragalysis %s Project's Security Probe"
-                   " has found that the Stack has been 'at risk' for too long.\n\n"
-                   "The service has been suspended.\n\n"
-                   "You should check the service implementation"
-                   " and deploy a new image."
-                   % NAMESPACE_H,
-                   _charset='utf-8')
+    body_template = "This is an automated email" \
+                    " from the Fragalysis {project} Project's security probe.\n\n" \
+                    "The service at: -\n\n" \
+                    "    {location}\n\n" \
+                    "has been suspended as it has remained 'AT RISK' for" \
+                    " too long ({threshold} consecutive monitoring" \
+                    " periods at an interval of {period} minutes).\n\n" \
+                    "The service has been stopped in now unavailable to users.\n\n" \
+                    "You need to investigate the root-cause of the exposed" \
+                    " risk and either deploy an application that resolves" \
+                    " the problem or revert to an earlier working version."
+    body_values = {'project': NAMESPACE_H,
+                  'location': LOCATION,
+                  'threshold': THRESHOLD,
+                  'period': PERIOD_M}
 
-    msg['Subject'] = 'Service SUSPENDED' \
-                     ' - Fragalysis %s Project' \
-                     % NAMESPACE_H
+    msg = MIMEText(body_template.format(**body_values), _charset='utf-8')
+    msg['Subject'] = 'Service SUSPENDED: Fragalysis %s Project' % NAMESPACE_H
     msg['From'] = PROBE_EMAIL
     msg['To'] = RECIPIENTS
 
@@ -289,18 +306,18 @@ def email_suspension_failure():
         warning('Skipping suspension failure email (no recipients)')
         return
 
-    msg = MIMEText("The Fragalysis %s Project's Stack service"
-                   " has failed to respond to a suspension request."
-                   " This is unexpected and leaves the service deployed"
-                   " and potentially at risk.\n\n"
-                   "Please seek the urgent advice of a"
-                   " cluster administrator."
-                   % NAMESPACE_H,
-                   _charset='utf-8')
+    body_template = "This is an automated email" \
+                    " from the Fragalysis {project} Project's security probe.\n\n" \
+                    "The Fragalysis {project} Project's service" \
+                    " has failed to respond to a suspension request." \
+                    " This is unexpected and leaves the service deployed" \
+                    " and potentially 'AT RISK'.\n\n" \
+                    "Please seek the urgent advice of a" \
+                    " cluster administrator to investigate the problem."
+    body_values = {'project': NAMESPACE_H}
 
-    msg['Subject'] = 'Service ERROR' \
-                     ' - Fragalysis %s Project' \
-                     ' - Service Suspension Failure' % NAMESPACE_H
+    msg = MIMEText(body_template.format(**body_values), _charset='utf-8')
+    msg['Subject'] = 'Service internal ERROR: Fragalysis %s Project' % NAMESPACE_H
     msg['From'] = PROBE_EMAIL
     msg['To'] = RECIPIENTS
 
