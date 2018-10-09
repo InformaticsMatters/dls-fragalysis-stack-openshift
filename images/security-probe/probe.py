@@ -69,7 +69,10 @@ import time
 
 # The probe version
 # (update on every change)
-VERSION = '1.0.0'
+#
+# 1.0.1 - Adjusted email content
+# 1.0.0 - First formal release
+VERSION = '1.0.1'
 
 # Required environment variables
 
