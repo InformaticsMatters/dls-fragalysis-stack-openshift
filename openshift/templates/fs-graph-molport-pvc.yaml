@@ -40,7 +40,7 @@ objects:
 - apiVersion: v1
   kind: PersistentVolumeClaim
   metadata:
-    name: fs-graph-molport-loader-claim
+    name: fs-graph-molport-data-loader-claim
   spec:
     accessModes:
     - ReadWriteMany

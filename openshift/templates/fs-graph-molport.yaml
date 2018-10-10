@@ -18,7 +18,7 @@ labels:
 parameters:
 
 - name: GRAPH_TAG
-  value: '3.4.5'
+  value: '3.3.3'
 - name: NEO4J_AUTH
   value: none
 - name: NEO4J_PAGECACHE
