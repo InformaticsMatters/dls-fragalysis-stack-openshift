@@ -1,0 +1,125 @@
+---
+
+# The Molport Graph database deployment.
+#
+# oc process -f fs-graph-molport.yaml | oc create -f -
+# oc delete all --selector template=fs-graph-molport
+
+kind: Template
+apiVersion: v1
+metadata:
+  name: fs-graph-molport
+  annotations:
+    description: Fragalysis Stack's Neo4J Definition
+    tags: fragalysis,graph,neo4j,molport
+labels:
+  template: fs-graph-molport
+
+parameters:
+
+- name: GRAPH_TAG
+  value: '3.4.5'
+- name: NEO4J_AUTH
+  value: none
+- name: NEO4J_PAGECACHE
+  value: 12g
+- name: NEO4J_HEAP
+  value: 8g
+- name: NEO4J_REPLICAS
+  value: '1'
+- name: NEO4J_NODE_SIZE_SELECTOR
+  value: 'big'
+
+  # Do not mount '/data' in v3.4.x.
+  # Neo4J expects to own '/data' changing the permissions of this directory.
+  # See https://github.com/neo4j/docker-neo4j/blob/master/src/3.4/docker-entrypoint.sh
+- name: NEO4J_DATA_DIR
+  value: '/loaded-data'
+
+- name: NEO4J_LOG_DIR
+  value: '/graph-logs'
+
+- name: NEO4J_DATA_LOADER_DIR
+  value: '/data-loader'
+
+objects:
+
+- kind: DeploymentConfig
+  apiVersion: v1
+  metadata:
+    name: graph-molport
+  spec:
+    replicas: ${NEO4J_REPLICAS}
+    selector:
+      name: graph-molport
+    template:
+      metadata:
+        labels:
+          name: graph-molport
+      spec:
+        nodeSelector:
+          size: ${NEO4J_NODE_SIZE_SELECTOR}
+        serviceAccountName: diamond
+
+        # Application containers
+        containers:
+        - image: neo4j:${GRAPH_TAG}
+          name: graph-molport
+          env:
+          - name: NEO4J_AUTH
+            value: ${NEO4J_AUTH}
+          - name: NEO4J_dbms_memory_pagecache_size
+            value: ${NEO4J_PAGECACHE}
+          - name: NEO4J_dbms_memory_heap_initial__size
+            value: ${NEO4J_HEAP}
+          - name: NEO4J_dbms_memory_heap_max__size
+            value: ${NEO4J_HEAP}
+          - name: NEO4J_dbms_directories_data
+            value: ${NEO4J_DATA_DIR}
+          - name: NEO4J_dbms_directories_logs
+            value: ${NEO4J_LOG_DIR}
+          - name: NEO4J_EDITION
+            value: community
+          - name: EXTENSION_SCRIPT
+            value: "${NEO4J_DATA_LOADER_DIR}/load_neo4j.sh"
+          ports:
+          - containerPort: 7474
+          - containerPort: 7687
+          volumeMounts:
+          - name: fs-graph-data-loader
+            mountPath: ${NEO4J_DATA_LOADER_DIR}
+          - name: fs-graph-data
+            mountPath: ${NEO4J_DATA_DIR}
+          - name: fs-graph-logs
+            mountPath: ${NEO4J_LOG_DIR}
+
+        volumes:
+        - name: fs-graph-data-loader
+          persistentVolumeClaim:
+            claimName: fs-graph-molport-data-loader-claim
+        - name: fs-graph-data
+          persistentVolumeClaim:
+            claimName: fs-graph-molport-data-claim
+        - name: fs-graph-logs
+          persistentVolumeClaim:
+            claimName: fs-graph-molport-logs-claim
+
+        restartPolicy: Always
+
+    triggers:
+     - type: ConfigChange
+
+- kind: Service
+  apiVersion: v1
+  metadata:
+    name: neo4j-molport
+  spec:
+    ports:
+    - name: http
+      port: 7474
+      targetPort: 7474
+    - name: bolt
+      port: 7687
+      targetPort: 7687
+    selector:
+      name: graph-molport

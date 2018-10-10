@@ -2,25 +2,25 @@
 
 # The Graph Database Persistent Volume Claims.
 #
-# oc process -f fs-graph-jun2018-pvc.yaml | oc create -f -
-# oc delete pvc --selector template=fs-graph-jun2018-pvc
+# oc process -f fs-graph-molport-pvc.yaml | oc create -f -
+# oc delete pvc --selector template=fs-graph-molport-pvc
 
 kind: Template
 apiVersion: v1
 metadata:
-  name: fs-graph-jun2018-pvc
+  name: fs-graph-molport-pvc
   annotations:
     description: Fragalysis Stack's Persistent Volume Claims
-    tags: fragalysis,db,postgres
+    tags: fragalysis,graph,neo4j,molport
 labels:
-  template: fs-graph-jun2018-pvc
+  template: fs-graph-molport-pvc
 
 parameters:
 
 - name: GRAPH_DATA_SIZE
   value: 500Gi
 - name: GRAPH_DATA_LOADER_SIZE
-  value: 300Gi
+  value: 50Gi
 - name: GRAPH_LOGS_SIZE
   value: 2Gi
 
@@ -29,7 +29,7 @@ objects:
 - apiVersion: v1
   kind: PersistentVolumeClaim
   metadata:
-    name: fs-graph-jun2018-data-claim
+    name: fs-graph-molport-data-claim
   spec:
     accessModes:
     - ReadWriteMany
@@ -40,7 +40,7 @@ objects:
 - apiVersion: v1
   kind: PersistentVolumeClaim
   metadata:
-    name: fs-graph-jun2018-data-loader-claim
+    name: fs-graph-molport-loader-claim
   spec:
     accessModes:
     - ReadWriteMany
@@ -51,7 +51,7 @@ objects:
 - apiVersion: v1
   kind: PersistentVolumeClaim
   metadata:
-    name: fs-graph-jun2018-logs-claim
+    name: fs-graph-molport-logs-claim
   spec:
     accessModes:
     - ReadWriteMany

@@ -1,0 +1,103 @@
+---
+
+# The Graph Database's Persistent Volumes (NFS).
+#
+# This expects these volumes:
+#
+#   ${NFS_PATH}/pv-fs-graph-molport-data
+#   ${NFS_PATH}/pv-fs-graph-molport-data-loader
+#
+# oc process -f fs-graph-molport-pv-nfs.yaml | oc create -f -
+# oc delete pv --selector template=fs-graph-molport-pv-nfs
+
+kind: Template
+apiVersion: v1
+metadata:
+  name: fs-graph-molport-pv-nfs
+  annotations:
+    description: Fragalysis Stack's Graph Volumes (using NFS)
+    tags: fragalysis,graph,neo4j,molport
+labels:
+  template: fs-graph-molport-pv-nfs
+
+parameters:
+
+- name: NFS_SERVER
+  value: bastion.novalocal
+- name: NFS_PATH
+  value: /data
+
+- name: GRAPH_NAMESPACE
+  value: fragalysis-cicd
+
+- name: DATA_PV_DIR
+  value: pv-fs-molport-enamine-data
+- name: DATA_PV_SIZE
+  value: 500Gi
+
+- name: DATA_LOADER_PV_DIR
+  value: pv-fs-molport-enamine-data-loader
+- name: DATA_LOADER_PV_SIZE
+  value: 50Gi
+
+- name: LOGS_PV_DIR
+  value: pv-fs-molport-logs
+- name: LOGS_PV_SIZE
+  value: 2Gi
+
+objects:
+
+# ------------------------
+# Fragalysis Graph Volumes
+# ------------------------
+
+- kind: PersistentVolume
+  apiVersion: v1
+  metadata:
+    name: fs-graph-molport-data
+  spec:
+    capacity:
+      storage: ${DATA_PV_SIZE}
+    accessModes:
+    - ReadWriteMany
+    persistentVolumeReclaimPolicy: Retain
+    nfs:
+      server: ${NFS_SERVER}
+      path: ${NFS_PATH}/${DATA_PV_DIR}
+    claimRef:
+      name: fs-graph-molport-data-claim
+      namespace: ${GRAPH_NAMESPACE}
+
+- kind: PersistentVolume
+  apiVersion: v1
+  metadata:
+    name: fs-graph-molport-data-loader
+  spec:
+    capacity:
+      storage: ${DATA_LOADER_PV_SIZE}
+    accessModes:
+    - ReadWriteMany
+    persistentVolumeReclaimPolicy: Retain
+    nfs:
+      server: ${NFS_SERVER}
+      path: ${NFS_PATH}/${DATA_LOADER_PV_DIR}
+    claimRef:
+      name: fs-graph-molport-data-loader-claim
+      namespace: ${GRAPH_NAMESPACE}
+
+- kind: PersistentVolume
+  apiVersion: v1
+  metadata:
+    name: fs-graph-molport-logs
+  spec:
+    capacity:
+      storage: ${LOGS_PV_SIZE}
+    accessModes:
+    - ReadWriteMany
+    persistentVolumeReclaimPolicy: Retain
+    nfs:
+      server: ${NFS_SERVER}
+      path: ${NFS_PATH}/${LOGS_PV_DIR}
+    claimRef:
+      name: fs-graph-molport-logs-claim
+      namespace: ${GRAPH_NAMESPACE}
