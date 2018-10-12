@@ -30,7 +30,7 @@ parameters:
   value: fragalysis-prod
 
 - name: PROBE_NAMESPACE_H
-  value: Production
+  value: Prod
   description: >
     A human-friendly name for the the namespace housing the
     service being monitored. This is used in the email

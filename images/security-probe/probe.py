@@ -70,9 +70,10 @@ import time
 # The probe version
 # (update on every change)
 #
+# 1.0.2 - Adjusted email Subject lines
 # 1.0.1 - Adjusted email content
 # 1.0.0 - First formal release
-VERSION = '1.0.1'
+VERSION = '1.0.2'
 
 # Required environment variables
 
@@ -216,7 +217,9 @@ def email_warning():
                    'period': PERIOD_M}
 
     msg = MIMEText(body_template.format(**body_values), _charset='utf-8')
-    msg['Subject'] = 'Service AT RISK: Fragalysis %s Project' % NAMESPACE_H
+    msg['Subject'] = 'Fragalysis (%s) CRITICAL ISSUE' \
+                     ' - data security compromised' \
+                     ' - SUSPENSION IN %smins' % (NAMESPACE_H.lower(), PERIOD_M)
     msg['From'] = PROBE_EMAIL
     msg['To'] = RECIPIENTS
 
@@ -249,7 +252,10 @@ def email_recovery():
                    'period': PERIOD_M}
 
     msg = MIMEText(body_template.format(**body_values), _charset='utf-8')
-    msg['Subject'] = 'Service now SAFE: Fragalysis %s Project' % NAMESPACE_H
+    msg['Subject'] = 'Fragalysis (%s) CRITICAL ISSUE RESOLVED' \
+                     ' - data security restored' \
+                     ' - service back up' % NAMESPACE_H.lower()
+
     msg['From'] = PROBE_EMAIL
     msg['To'] = RECIPIENTS
 
@@ -287,7 +293,9 @@ def email_suspension():
                   'period': PERIOD_M}
 
     msg = MIMEText(body_template.format(**body_values), _charset='utf-8')
-    msg['Subject'] = 'Service SUSPENDED: Fragalysis %s Project' % NAMESPACE_H
+    msg['Subject'] = 'Fragalysis (%s) CRITICAL ISSUE' \
+                     ' - data security compromised' \
+                     ' - SERVICE SUSPENDED' % NAMESPACE_H.lower()
     msg['From'] = PROBE_EMAIL
     msg['To'] = RECIPIENTS
 
@@ -320,7 +328,9 @@ def email_suspension_failure():
     body_values = {'project': NAMESPACE_H}
 
     msg = MIMEText(body_template.format(**body_values), _charset='utf-8')
-    msg['Subject'] = 'Service internal ERROR: Fragalysis %s Project' % NAMESPACE_H
+    msg['Subject'] = 'Fragalysis (%s) CRITICAL ACTION REQUIRED' \
+                     ' - data security compromised' \
+                     ' - SERVICE SUSPENSION FAILED' % NAMESPACE_H.lower()
     msg['From'] = PROBE_EMAIL
     msg['To'] = RECIPIENTS
 

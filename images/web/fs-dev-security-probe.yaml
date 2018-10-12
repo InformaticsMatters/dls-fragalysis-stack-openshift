@@ -30,7 +30,7 @@ parameters:
   value: fragalysis-cicd
 
 - name: PROBE_NAMESPACE_H
-  value: Development
+  value: Dev
   description: >
     A human-friendly name for the the namespace housing the
     service being monitored. This is used in the email
