@@ -229,7 +229,7 @@ if __name__ == '__main__':
     # Write the new nodes and relationships
     # and augment the original nodes file.
     if vendor_map:
-        write_vendor_nodes(args.output, vendor_map)
+        write_vendor_nodes(args.output, vendor_nodes)
         augment_original_nodes(args.output, args.nodes, has_header=args.nodes_has_header)
 
     # Summary
