@@ -87,7 +87,7 @@ def extract_vendor(gzip_filename):
             fields = line.split()
 
             smiles = fields[0]
-            compound_id = fields[1].split('Z')[1]
+            compound_id = fields[1]
             vendor_node = VendorNode(next_vendor_id, compound_id, smiles)
             vendor_nodes.add(vendor_node)
             vendor_map[compound_id] = vendor_node
