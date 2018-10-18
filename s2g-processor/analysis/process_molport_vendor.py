@@ -318,8 +318,8 @@ def augment_original_nodes(directory, filename, has_header):
                         if compound_id in costed_vendor_map:
                             # Now add vendor relationships to this row
                             frag_id = line.split(',')[0]
-                            gzip_cr_file.write('{},{},HAS_VENDOR\n'.format(frag_id,
-                                                                           costed_vendor_map[compound_id].uuid))
+                            gzip_cr_file.write('"{}",{},HAS_VENDOR\n'.format(frag_id,
+                                                                             costed_vendor_map[compound_id].uuid))
                             num_vendor_relationships += 1
 
             if not augmented:
