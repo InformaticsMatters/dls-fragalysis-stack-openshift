@@ -18,18 +18,18 @@ not exist in the original data set.
 
 The files generated (in a named output directory) are:
 
--   "molport_cost_nodes.csv.gz"
+-   "molport-cost-nodes.csv.gz"
     containing nodes that define the unique set of costs.
 
--   "molport_compound_nodes.csv.gz"
+-   "molport-compound-nodes.csv.gz"
     containing all the nodes for the vendor compounds
     (that have at least one set of pricing information).
 
--   "molport_compound_cost_edges.csv.gz"
+-   "molport-compound-cost-edges.csv.gz"
     containing the "Compound" to "Cost"
     relationships using the the type of "COSTS".
 
--   "molport_molecule_compound_edges.csv.gz"
+-   "molport-molecule-compound-edges.csv.gz"
     containing the relationships between the original node entries and
     the "Compound" nodes. There is a relationship for every MolPort
     compound that was found in the earlier processing.
@@ -39,7 +39,8 @@ The module augments the original nodes by adding the label
 to the augmented copy of the original node file that it creates.
 
 If the original nodes file is "nodes.csv.gz" the augmented copy
-(in the named output directory) will be called "molport_augmented_nodes.csv.gz".
+(in the named output directory) will be called
+"molport-augmented-nodes.csv.gz".
 
 Alan Christie
 October 2018
@@ -49,12 +50,34 @@ import argparse
 from collections import namedtuple
 import glob
 import gzip
+import logging
 import os
 import re
 import sys
 
-# The minimum number of columns and
-# and a map of expected column names indexed by column number
+# Configure basic logging
+logger = logging.getLogger('molport')
+out_hdlr = logging.StreamHandler(sys.stdout)
+formatter = logging.Formatter('%(asctime)s %(levelname)s # %(message)s',
+                              '%Y-%m-%dT%H:%M:%S')
+out_hdlr.setFormatter(formatter)
+out_hdlr.setLevel(logging.INFO)
+logger.addHandler(out_hdlr)
+logger.setLevel(logging.INFO)
+
+# The minimum number of columns in the input data and
+# a map of expected column names indexed by column number.
+#
+# SMILES                0
+# SMILES_CANONICAL      1
+# MOLPORTID             2
+# STANDARD_INCHI        3
+# INCHIKEY              4
+# PRICERANGE_1MG        5
+# PRICERANGE_5MG        6
+# PRICERANGE_50MG       7
+# BEST_LEAD_TIME        8
+
 expected_min_num_cols = 9
 smiles_col = 0
 compound_col = 2
@@ -71,12 +94,12 @@ expected_input_cols = {smiles_col: 'SMILES',
 
 # The Vendor Compound node has...
 # a compound id (unique for a given vendor)
-# a smiles string
+# a SMILES string
 # a best lead time
 CompoundNode = namedtuple('CompoundNode', 'c s blt')
 # The Cost node has...
 # a unique id (assigned after collection)
-# a pack size
+# a pack size (mg)
 # a minimum price
 # a maximum price
 CostNode = namedtuple('CostNode', 'ps min max')
@@ -93,7 +116,7 @@ vendor_compounds = set()
 output_filename_prefix = 'molport'
 # The namespaces of the various indices
 smiles_namespace = 'F2'
-vendor_namespace = 'VMP'
+compound_namespace = 'VMP'
 cost_namespace = 'CMP'
 
 # Regular expression to find
@@ -113,7 +136,7 @@ def error(msg):
 
     :param msg: The message to print
     """
-    print('ERROR: {}'.format(msg))
+    logger.error('ERROR: {}'.format(msg))
     sys.exit(1)
 
 
@@ -168,22 +191,14 @@ def extract_vendor_compounds(gzip_filename):
     global costed_compounds
     global num_compounds_without_costs
 
-    print('Processing {}...'.format(gzip_filename))
+    logger.info('Processing {}...'.format(gzip_filename))
 
     num_lines = 0
     with gzip.open(gzip_filename, 'rt') as gzip_file:
 
-        # Check first line (a tab-delimited header).
-        #
-        # SMILES                0
-        # SMILES_CANONICAL      1
-        # MOLPORTID             2
-        # STANDARD_INCHI        3
-        # INCHIKEY              4
-        # PRICERANGE_1MG        5
-        # PRICERANGE_5MG        6
-        # PRICERANGE_50MG       7
-        # BEST_LEAD_TIME        8
+        # Check first line (a space-delimited header).
+        # This is a basic sanity-check to make sure the important column
+        # names are what we expect.
 
         hdr = gzip_file.readline()
         field_names = hdr.split('\t')
@@ -251,9 +266,9 @@ def write_cost_nodes(directory, costs):
     """
 
     filename = os.path.join(directory,
-                            '{}_cost_nodes.csv.gz'.
+                            '{}-cost-nodes.csv.gz'.
                             format(output_filename_prefix))
-    print('Writing {}...'.format(filename))
+    logger.info('Writing {}...'.format(filename))
 
     with gzip.open(filename, 'wb') as gzip_file:
         gzip_file.write(':ID({}),'
@@ -285,15 +300,15 @@ def write_compound_nodes(directory, compound_cost_map):
     """
 
     filename = os.path.join(directory,
-                            '{}_compound_nodes.csv.gz'.
+                            '{}-compound-nodes.csv.gz'.
                             format(output_filename_prefix))
-    print('Writing {}...'.format(filename))
+    logger.info('Writing {}...'.format(filename))
 
     with gzip.open(filename, 'wb') as gzip_file:
         gzip_file.write('cmpd_id:ID({}),'
                         'smiles,'
                         'best_lead_time:INT,'
-                        ':LABEL\n'.format(vendor_namespace))
+                        ':LABEL\n'.format(compound_namespace))
         for compound in compound_cost_map:
             gzip_file.write('{},"{}",{},Vendor;MolPort\n'.
                             format(compound.c,
@@ -314,14 +329,14 @@ def write_compound_cost_relationships(directory, compound_cost_map, cost_map):
     global num_compound_cost_relationships
 
     filename = os.path.join(directory,
-                            '{}_compound_cost_edges.csv.gz'.
+                            '{}-compound-cost-edges.csv.gz'.
                             format(output_filename_prefix))
-    print('Writing {}...'.format(filename))
+    logger.info('Writing {}...'.format(filename))
 
     with gzip.open(filename, 'wb') as gzip_file:
         gzip_file.write(':START_ID({}),'
                         ':END_ID({}),'
-                        ':TYPE\n'.format(vendor_namespace, cost_namespace))
+                        ':TYPE\n'.format(compound_namespace, cost_namespace))
         for compound in compound_cost_map:
             # Generate a relationship for each cost for the compound.
             # The source is the vendor compound
@@ -341,25 +356,26 @@ def augment_original_nodes(directory, filename, has_header):
     global num_nodes_augmented
     global num_compound_relationships
 
-    print('Augmenting {} as...'.format(filename))
+    logger.info('Augmenting {} as...'.format(filename))
 
     # Augmented file
     augmented_filename = \
         os.path.join(directory,
-                     '{}_augmented_{}'.format(output_filename_prefix,
+                     '{}-augmented-{}'.format(output_filename_prefix,
                                               os.path.basename(filename)))
     gzip_ai_file = gzip.open(augmented_filename, 'wt')
     # Frag to Vendor Compound relationships file
     augmented_relationships_filename = \
         os.path.join(directory,
-                     '{}_molecule_compound_edges.csv.gz'.format(output_filename_prefix))
+                     '{}-molecule-compound-edges.csv.gz'.
+                     format(output_filename_prefix))
     gzip_cr_file = gzip.open(augmented_relationships_filename, 'wt')
     gzip_cr_file.write(':START_ID({}),'
                        ':END_ID({}),'
-                       ':TYPE\n'.format(smiles_namespace, vendor_namespace))
+                       ':TYPE\n'.format(smiles_namespace, compound_namespace))
 
-    print(' {}'.format(augmented_filename))
-    print(' {}'.format(augmented_relationships_filename))
+    logger.info(' {}'.format(augmented_filename))
+    logger.info(' {}'.format(augmented_relationships_filename))
 
     with gzip.open(filename, 'rt') as gzip_i_file:
 
@@ -458,10 +474,10 @@ if __name__ == '__main__':
         augment_original_nodes(args.output, args.nodes, has_header=args.nodes_has_header)
 
     # Summary
-    print('{} costs'.format(len(cost_uuid_map)))
-    print('{} compounds with costs'.format(len(compound_cost_map)))
-    print('{} compounds without any costs'.format(num_compounds_without_costs))
-    print('{} compound cost relationships'.format(num_compound_cost_relationships))
-    print('{} nodes'.format(num_nodes))
-    print('{} augmented nodes'.format(num_nodes_augmented))
-    print('{} node compound relationships'.format(num_compound_relationships))
+    logger.info('{} costs'.format(len(cost_uuid_map)))
+    logger.info('{} compounds with costs'.format(len(compound_cost_map)))
+    logger.info('{} compounds without any costs'.format(num_compounds_without_costs))
+    logger.info('{} compound cost relationships'.format(num_compound_cost_relationships))
+    logger.info('{} nodes'.format(num_nodes))
+    logger.info('{} augmented nodes'.format(num_nodes_augmented))
+    logger.info('{} node compound relationships'.format(num_compound_relationships))
