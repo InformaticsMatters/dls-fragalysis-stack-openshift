@@ -8,16 +8,16 @@ a "V_E" label.
 
 The files generated (in the designated output directory) are:
 
--   "vendor_nodes.csv.gz"
+-   "enamine_vendor_nodes.csv.gz"
     containing all the nodes for the vendor compounds.
 
--   "molecule_vendor_relationships.csv.gz"
+-   "enamine_molecule_vendor_relationships.csv.gz"
     containing the relationships between the original node entries and
     the "Vendor" nodes. There is a relationship for every Enamine
     compound that was found in the earlier processing.
 
 The module also augments the original nodes by adding the label
-"V_E".
+"V_E" to the augmented copy that it creates.
 
 Alan Christie
 October 2018
@@ -48,10 +48,11 @@ vendor_nodes = set()
 # The index is the compound ID, the value is the VendorNode
 vendor_map = {}
 
-# Prefixes for the neo4j node IDs.
-vendor_uuid_prefix = 'vne'
 # Prefix for output files
 output_filename_prefix = 'enamine'
+# The namespaces of the various indices
+smiles_namespace = 'F2'
+vendor_namespace = 'VE'
 
 # The next unique ID for a vendor node.
 next_vendor_id = 1
@@ -104,15 +105,14 @@ def write_vendor_nodes(directory, vendor_nodes):
     print('Writing {}...'.format(filename))
 
     with gzip.open(filename, 'wb') as gzip_file:
-        gzip_file.write(':ID,'
+        gzip_file.write(':ID({}),'
                         'vendor,'
                         'cmpd_id,'
                         'smiles,'
-                        ':LABEL\n')
+                        ':LABEL\n'.format(vendor_namespace))
         for vendor_node in vendor_nodes:
             gzip_file.write(
-                '{}{},{},{},{},Vendor\n'.format(vendor_uuid_prefix,
-                                                vendor_node.uuid,
+                '{},{},{},"{}",Vendor\n'.format(vendor_node.uuid,
                                                 "Enamine",
                                                 vendor_node.c,
                                                 vendor_node.s))
@@ -140,9 +140,9 @@ def augment_original_nodes(directory, filename, has_header):
         os.path.join(directory,
                      '{}_molecule_vendor_relationships.csv.gz'.format(output_filename_prefix))
     gzip_cr_file = gzip.open(augmented_relationships_filename, 'wt')
-    gzip_cr_file.write(':START_ID,'
-                       ':END_ID,'
-                       ':TYPE\n')
+    gzip_cr_file.write(':START_ID({}),'
+                       ':END_ID({}),'
+                       ':TYPE\n'.format(smiles_namespace, vendor_namespace))
 
     print(' {}'.format(augmented_filename))
     print(' {}'.format(augmented_relationships_filename))
@@ -180,8 +180,7 @@ def augment_original_nodes(directory, filename, has_header):
                         if compound_id in vendor_map:
                             # Now add vendor relationships to this row
                             frag_id = line.split(',')[0]
-                            gzip_cr_file.write('{},{}{},HAS_VENDOR\n'.format(frag_id,
-                                                                             vendor_uuid_prefix,
+                            gzip_cr_file.write('"{}",{},HAS_VENDOR\n'.format(frag_id,
                                                                              vendor_map[compound_id].uuid))
                             num_vendor_relationships += 1
 
