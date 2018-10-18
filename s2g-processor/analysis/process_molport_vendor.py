@@ -8,24 +8,24 @@ a "V_MP" label.
 
 The files generated are:
 
--   "cost_nodes.csv.gz"
+-   "molport_cost_nodes.csv.gz"
     containing nodes that define the unique set of costs.
 
--   "vendor_nodes.csv.gz"
+-   "molport_vendor_nodes.csv.gz"
     containing all the nodes for the vendor compounds
     (that have at least one set of pricing information).
 
--   "vendor_cost_relationships.csv.gz"
+-   "molport_vendor_cost_relationships.csv.gz"
     containing the "Vendor" to "Cost"
     relationships using the the type of "COSTS".
 
--   "molecule_vendor_relationships.csv.gz"
+-   "molport_molecule_vendor_relationships.csv.gz"
     containing the relationships between the original node entries and
     the "Vendor" nodes. There is a relationship for every MolPort
     compound that was found in the earlier processing.
 
 The module also augments the original nodes by adding the label
-"V_MP".
+"V_MP" to the augmented copy that it creates.
 
 Alan Christie
 October 2018
@@ -69,11 +69,12 @@ vendor_map = {}
 # The vendor compound IDs that have pricing information
 costed_vendor_map = {}
 
-# Prefixes for the vendor and cost node IDs.
-vendor_uuid_prefix = 'vnm'
-cost_uuid_prefix = 'cnm'
 # Prefix for output files
 output_filename_prefix = 'molport'
+# The namespaces of the various indices
+smiles_namespace = 'F2'
+vendor_namespace = 'VMP'
+cost_namespace = 'CMP'
 
 # The next unique ID for a vendor node.
 next_vendor_id = 1
@@ -128,8 +129,8 @@ def create_cost_node(pack_size, field_value):
     return c_node
 
 
-def extract_costs(gzip_filename):
-    """Process the given file and extract vendor and pricing information.
+def extract_vendor_info(gzip_filename):
+    """Process the given file and extract vendor (and pricing) information.
     Vendor nodes are only created when there is at least one
     column of pricing information.
     """
@@ -176,7 +177,7 @@ def extract_costs(gzip_filename):
                 num_compounds_without_costs += 1
 
 
-def write_cost_nodes(directory, cost_map):
+def write_cost_nodes(directory, costs):
     """Writes the CostNodes to a node file, including a header.
     """
 
@@ -185,25 +186,25 @@ def write_cost_nodes(directory, cost_map):
     print('Writing {}...'.format(filename))
 
     with gzip.open(filename, 'wb') as gzip_file:
-        gzip_file.write(':ID,'
+        gzip_file.write(':ID({}),'
                         'currency,'
                         'pack_size:INT,'
                         'min_price:FLOAT,'
                         'max_price:FLOAT,'
-                        ':LABEL\n')
-        for cost in cost_map:
+                        ':LABEL\n'.format(cost_namespace))
+        for cost in costs:
+            # Handle no value (None) in min and max
+            # to an empty string...
             min = ''
             if cost.min:
-                min = cost_node.min
+                min = cost.min
             max = ''
             if cost.max:
-                max = cost_node.max
-            uuid = cost_map[cost_node]
-            gzip_file.write('{}{},USD,{},{},{},Cost\n'.format(cost_uuid_prefix,
-                                                              uuid,
-                                                              cost.ps,
-                                                              min,
-                                                              max))
+                max = cost.max
+            gzip_file.write('{},USD,{},{},{},Cost\n'.format(cost_map[cost],
+                                                            cost.ps,
+                                                            min,
+                                                            max))
 
 
 def write_vendor_nodes(directory, vendor_map):
@@ -215,16 +216,15 @@ def write_vendor_nodes(directory, vendor_map):
     print('Writing {}...'.format(filename))
 
     with gzip.open(filename, 'wb') as gzip_file:
-        gzip_file.write(':ID,'
+        gzip_file.write(':ID({}),'
                         'vendor,'
                         'cmpd_id,'
                         'smiles,'
                         'best_lead_time:INT,'
-                        ':LABEL\n')
+                        ':LABEL\n'.format(vendor_namespace))
         for vendor in vendor_map:
             gzip_file.write(
-                '{}{},{},{},{},{},Vendor\n'.format(vendor_uuid_prefix,
-                                                   vendor.uuid,
+                '{},{},{},"{}",{},Vendor\n'.format(vendor.uuid,
                                                    "MolPort",
                                                    vendor.c,
                                                    vendor.s,
@@ -242,24 +242,18 @@ def write_vendor_cost_relationships(directory, vendor_map, cost_map):
     print('Writing {}...'.format(filename))
 
     with gzip.open(filename, 'wb') as gzip_file:
-        gzip_file.write(':START_ID,'
-                        ':END_ID,'
-                        ':TYPE\n')
+        gzip_file.write(':START_ID({}),'
+                        ':END_ID({}),'
+                        ':TYPE\n'.format(vendor_namespace, cost_namespace))
         for vendor in vendor_map:
-            # Generate a relationship for each cost.
+            # Generate a relationship for each cost for the vendor.
             # The source is the vendor UUID (with a prefix)
             # and the destination is the Code UUID (with a prefix)
             for cost in vendor_map[vendor]:
-                if cost:
-                    cost_uuid = cost_map[cost]
-                    gzip_file.write(
-                        '{}{},{}{},COSTS\n'.format(vendor_uuid_prefix,
-                                                   vendor.uuid,
-                                                   cost_uuid_prefix,
-                                                   cost_uuid))
-                    num_vendor_cost_relationships += 1
-                else:
-                    print(' No cost node for {}'.format(vendor.c))
+                cost_uuid = cost_map[cost]
+                gzip_file.write(
+                    '{},{},COSTS\n'.format(vendor.uuid, cost_uuid))
+                num_vendor_cost_relationships += 1
 
 
 def augment_original_nodes(directory, filename, has_header):
@@ -284,9 +278,9 @@ def augment_original_nodes(directory, filename, has_header):
         os.path.join(directory,
                      '{}_molecule_vendor_relationships.csv.gz'.format(output_filename_prefix))
     gzip_cr_file = gzip.open(augmented_relationships_filename, 'wt')
-    gzip_cr_file.write(':START_ID,'
-                       ':END_ID,'
-                       ':TYPE\n')
+    gzip_cr_file.write(':START_ID({}),'
+                       ':END_ID({}),'
+                       ':TYPE\n'.format(smiles_namespace, vendor_namespace))
 
     print(' {}'.format(augmented_filename))
     print(' {}'.format(augmented_relationships_filename))
@@ -324,9 +318,8 @@ def augment_original_nodes(directory, filename, has_header):
                         if compound_id in costed_vendor_map:
                             # Now add vendor relationships to this row
                             frag_id = line.split(',')[0]
-                            gzip_cr_file.write('{},{}{},HAS_VENDOR\n'.format(frag_id,
-                                                                             vendor_uuid_prefix,
-                                                                             costed_vendor_map[compound_id].uuid))
+                            gzip_cr_file.write('{},{},HAS_VENDOR\n'.format(frag_id,
+                                                                           costed_vendor_map[compound_id].uuid))
                             num_vendor_relationships += 1
 
             if not augmented:
@@ -368,7 +361,7 @@ if __name__ == '__main__':
     # Process all the files...
     molport_files = glob.glob('{}/*.gz'.format(args.dir))
     for molport_file in molport_files:
-        extract_costs(molport_file)
+        extract_vendor_info(molport_file)
 
     # Assign unique identities to the collected Cost nodes
     # using a map of cost node against the assigned ID.
@@ -377,8 +370,9 @@ if __name__ == '__main__':
     cost_map = {}
     next_cost_node_uuid = 1
     for cost_node in cost_nodes:
-        cost_map[cost_node] = '{}'.format(next_cost_node_uuid)
+        cost_map[cost_node] = next_cost_node_uuid
         next_cost_node_uuid += 1
+    print(cost_map)
 
     # Write the new nodes and relationships
     # and augment the original nodes file.
