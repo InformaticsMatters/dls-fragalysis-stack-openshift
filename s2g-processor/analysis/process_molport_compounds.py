@@ -6,7 +6,17 @@ Processes MolPort vendor compound files, expected to contain pricing
 information. Four new files are generated and the original nodes file
 augmented with a "V_MP" label.
 
-The files generated are:
+The purpose of this module is to create "Vendor" Compound and "Cost" nodes
+and relationships to augment the DLS fragment database.
+Every fragment line that has a MolPort identifier in the original data set
+is labelled and a relationship created between it and the Vendor's compound(s).
+The compounds are also related to purchasing costs for those compounds in
+various "pack sizes".
+
+Some vendor compound nodes may have no defined costs and some compounds may
+not exist in the original data set.
+
+The files generated (in a named output directory) are:
 
 -   "molport_cost_nodes.csv.gz"
     containing nodes that define the unique set of costs.
@@ -24,8 +34,12 @@ The files generated are:
     the "Compound" nodes. There is a relationship for every MolPort
     compound that was found in the earlier processing.
 
-The module also augments the original nodes by adding the label
-"V_MP" to the augmented copy of the original file that it creates.
+The module augments the original nodes by adding the label
+"V_MP" for all MolPort compounds that have been found
+to the augmented copy of the original node file that it creates.
+
+If the original nodes file is "nodes.csv.gz" the augmented copy
+(in the named output directory) will be called "molport_augmented_nodes.csv.gz".
 
 Alan Christie
 October 2018
