@@ -1,31 +1,31 @@
 #!/usr/bin/env python
 
-"""process_molport_vendor.py
+"""process_molport_compounds.py
 
-Processes MolPort vendor files, expected to contain pricing information.
-Four new files are generated and the original nodes file augmented with
-a "V_MP" label.
+Processes MolPort vendor compound files, expected to contain pricing
+information. Four new files are generated and the original nodes file
+augmented with a "V_MP" label.
 
 The files generated are:
 
 -   "molport_cost_nodes.csv.gz"
     containing nodes that define the unique set of costs.
 
--   "molport_vendor_nodes.csv.gz"
+-   "molport_compound_nodes.csv.gz"
     containing all the nodes for the vendor compounds
     (that have at least one set of pricing information).
 
--   "molport_vendor_cost_relationships.csv.gz"
-    containing the "Vendor" to "Cost"
+-   "molport_compound_cost_edges.csv.gz"
+    containing the "Compound" to "Cost"
     relationships using the the type of "COSTS".
 
--   "molport_molecule_vendor_relationships.csv.gz"
+-   "molport_molecule_compound_edges.csv.gz"
     containing the relationships between the original node entries and
-    the "Vendor" nodes. There is a relationship for every MolPort
+    the "Compound" nodes. There is a relationship for every MolPort
     compound that was found in the earlier processing.
 
 The module also augments the original nodes by adding the label
-"V_MP" to the augmented copy that it creates.
+"V_MP" to the augmented copy of the original file that it creates.
 
 Alan Christie
 October 2018
@@ -37,25 +37,29 @@ import glob
 import gzip
 import os
 import re
+import sys
 
-# MolPort Columns (tab-separated)
-#
-# SMILES                0
-# SMILES_CANONICAL      1
-# MOLPORTID             2
-# STANDARD_INCHI        3
-# INCHIKEY              4
-# PRICERANGE_1MG        5
-# PRICERANGE_5MG        6
-# PRICERANGE_50MG       7
-# BEST_LEAD_TIME        8
+# The minimum number of columns and
+# and a map of expected column names indexed by column number
+expected_min_num_cols = 9
+smiles_col = 0
+compound_col = 2
+cost_1mg_col = 5
+cost_5mg_col = 6
+cost_50mg_col = 7
+blt_col = 8
+expected_input_cols = {smiles_col: 'SMILES',
+                       compound_col: 'MOLPORTID',
+                       cost_1mg_col: 'PRICERANGE_1MG',
+                       cost_5mg_col: 'PRICERANGE_5MG',
+                       cost_50mg_col: 'PRICERANGE_50MG',
+                       blt_col: 'BEST_LEAD_TIME'}
 
-# The Vendor node has...
-# a UUID
-# a compound id
+# The Vendor Compound node has...
+# a compound id (unique for a given vendor)
 # a smiles string
 # a best lead time
-VendorNode = namedtuple('VendorNode', 'uuid c s blt')
+CompoundNode = namedtuple('CompoundNode', 'c s blt')
 # The Cost node has...
 # a unique id (assigned after collection)
 # a pack size
@@ -64,10 +68,12 @@ VendorNode = namedtuple('VendorNode', 'uuid c s blt')
 CostNode = namedtuple('CostNode', 'ps min max')
 # A unique set of cost nodes
 cost_nodes = set()
-# The set of Vendor nodes (and a list of their cost nodes)
-vendor_map = {}
+# The map of Vendor Compound nodes against an array of Cost nodes
+compound_cost_map = {}
 # The vendor compound IDs that have pricing information
-costed_vendor_map = {}
+costed_compounds = set()
+# All the vendor compound IDs
+vendor_compounds = set()
 
 # Prefix for output files
 output_filename_prefix = 'molport'
@@ -76,28 +82,35 @@ smiles_namespace = 'F2'
 vendor_namespace = 'VMP'
 cost_namespace = 'CMP'
 
-# The next unique ID for a vendor node.
-next_vendor_id = 1
-
 # Regular expression to find
-# MolPort compound IDs in the original nodes file.
+# MolPort compound IDs (in the original nodes file).
 molport_re = re.compile(r'MolPort:(\d+-\d+-\d+)[^\d]')
 
 # Various diagnostic counts
 num_compounds_without_costs = 0
-num_vendor_cost_relationships = 0
+num_compound_cost_relationships = 0
 num_nodes = 0
 num_nodes_augmented = 0
-num_vendor_relationships = 0
+num_compound_relationships = 0
+
+
+def error(msg):
+    """Prints an error message and exists.
+
+    :param msg: The message to print
+    """
+    print('ERROR: {}'.format(msg))
+    sys.exit(1)
 
 
 def create_cost_node(pack_size, field_value):
     """Creates a CostNode namedtuple for the provided pack size
-    and corresponding pricing field. The pricing field
-    may be empty.
+    and corresponding pricing field. If the pricing field
+    is empty or does not correspond to a recognised format
+    or has no min or max value no CostNode is created.
 
     :param pack_size: The pack size (mg). Typically 1, 5, 50 etc.
-    :param field_value: The pricing field value, e.g. '100 - 500'
+    :param field_value: The pricing field value, e.g. "100 - 500"
     :returns: A CostNode namedtuple (or None if no pricing). The global
               set (cost_nodes) is also added to.
     """
@@ -107,9 +120,9 @@ def create_cost_node(pack_size, field_value):
     # The cost/pricing field value
     # has a value that is one of:
     #
-    # "min - max"
-    # "< max"
-    # "> min"
+    # "min - max"   e.g. "50 - 100"
+    # "< max"       e.g. "< 1000"
+    # "> min"       e.g. "> 50"
 
     min_val = None
     max_val = None
@@ -122,22 +135,23 @@ def create_cost_node(pack_size, field_value):
         min_val = float(field_value.split(' - ')[0])
         max_val = float(field_value.split(' - ')[1])
 
-    if min_val or max_val:
+    if min_val is not None or max_val is not None:
         c_node = CostNode(pack_size, min_val, max_val)
         cost_nodes.add(c_node)
 
     return c_node
 
 
-def extract_vendor_info(gzip_filename):
+def extract_vendor_compounds(gzip_filename):
     """Process the given file and extract vendor (and pricing) information.
     Vendor nodes are only created when there is at least one
     column of pricing information.
+
+    :param gzip_filename: The compressed file to process
     """
 
-    global vendor_map
-    global costed_vendor_map
-    global next_vendor_id
+    global compound_cost_map
+    global costed_compounds
     global num_compounds_without_costs
 
     print('Processing {}...'.format(gzip_filename))
@@ -145,23 +159,55 @@ def extract_vendor_info(gzip_filename):
     num_lines = 0
     with gzip.open(gzip_filename, 'rt') as gzip_file:
 
-        # Dump first line (header)
+        # Check first line (a tab-delimited header).
+        #
+        # SMILES                0
+        # SMILES_CANONICAL      1
+        # MOLPORTID             2
+        # STANDARD_INCHI        3
+        # INCHIKEY              4
+        # PRICERANGE_1MG        5
+        # PRICERANGE_5MG        6
+        # PRICERANGE_50MG       7
+        # BEST_LEAD_TIME        8
+
         hdr = gzip_file.readline()
+        field_names = hdr.split('\t')
+        # Expected minimum number of columns...
+        if len(field_names) < expected_min_num_cols:
+            errro('expected at least {} columns found {}'.
+                  format(expected_input_cols, len(field_names)))
+        # Check salient columns...
+        for col_num in expected_input_cols:
+            if field_names[col_num].strip() != expected_input_cols[col_num]:
+                error('expected "{}" in column {} found "{}"'.
+                      format(expected_input_cols[col_num],
+                             col_num,
+                             field_names[col_num]))
+
+        # Columns look right...
 
         for line in gzip_file:
 
             num_lines += 1
             fields = line.split('\t')
 
-            smiles = fields[0]
-            compound_id = fields[2].split('MolPort-')[1]
-            blt = int(fields[8].strip())
-            vendor_node = VendorNode(next_vendor_id, compound_id, smiles, blt)
-            next_vendor_id += 1
+            smiles = fields[smiles_col]
+            compound_id = fields[compound_col].split('MolPort-')[1]
+            blt = int(fields[blt_col].strip())
 
-            cost_node_1 = create_cost_node(1, fields[5])
-            cost_node_5 = create_cost_node(5, fields[5])
-            cost_node_50 = create_cost_node(50, fields[5])
+            # Add the compound (a UUID) to our set of all compounds.
+            # The compound ID has to be unique
+            if compound_id in vendor_compounds:
+                error('Duplicate compound ID ({})'.format(compound_id))
+            vendor_compounds.add(compound_id)
+
+            # Create a vendor node for this compound
+            compound_node = CompoundNode(compound_id, smiles, blt)
+            # Collect costs (there may be none)
+            cost_node_1 = create_cost_node(1, fields[cost_1mg_col])
+            cost_node_5 = create_cost_node(5, fields[cost_5mg_col])
+            cost_node_50 = create_cost_node(50, fields[cost_50mg_col])
 
             costs = []
             if cost_node_1:
@@ -170,90 +216,106 @@ def extract_vendor_info(gzip_filename):
                 costs.append(cost_node_5)
             if cost_node_50:
                 costs.append(cost_node_50)
+
+            # The compound cost map is a map of all compounds
+            # with associated costs (which might be empty)
+            compound_cost_map[compound_node] = costs
+
             if costs:
-                vendor_map[vendor_node] = costs
-                costed_vendor_map[compound_id] = vendor_node
+                # This compound has some costs,
+                # add it to the costed compounds set for fast lookup later.
+                costed_compounds.add(compound_id)
             else:
                 num_compounds_without_costs += 1
 
 
 def write_cost_nodes(directory, costs):
     """Writes the CostNodes to a node file, including a header.
+
+    :param directory: The sub-directory to write to
+    :param costs: The map of costs against their assigned UUID
     """
 
     filename = os.path.join(directory,
-                            '{}_cost_nodes.csv.gz'.format(output_filename_prefix))
+                            '{}_cost_nodes.csv.gz'.
+                            format(output_filename_prefix))
     print('Writing {}...'.format(filename))
 
     with gzip.open(filename, 'wb') as gzip_file:
         gzip_file.write(':ID({}),'
                         'currency,'
-                        'pack_size:INT,'
+                        'pack_size_mg:INT,'
                         'min_price:FLOAT,'
                         'max_price:FLOAT,'
                         ':LABEL\n'.format(cost_namespace))
         for cost in costs:
-            # Handle no value (None) in min and max
-            # to an empty string...
+            # Handle no value (None) in min and max,
+            # replacing with an empty string...
             min = ''
-            if cost.min:
+            if cost.min is not None:
                 min = cost.min
             max = ''
-            if cost.max:
+            if cost.max is not None:
                 max = cost.max
-            gzip_file.write('{},USD,{},{},{},Cost\n'.format(cost_map[cost],
+            gzip_file.write('{},USD,{},{},{},Cost\n'.format(costs[cost],
                                                             cost.ps,
                                                             min,
                                                             max))
 
 
-def write_vendor_nodes(directory, vendor_map):
-    """Writes the VendorNodes to a node file, including a header.
+def write_compound_nodes(directory, compound_cost_map):
+    """Writes the CompoundNodes to a node file, including a header.
+
+    :param directory: The sub-directory to write to
+    :param compound_cost_map: The map of costs (against any available costs)
     """
 
     filename = os.path.join(directory,
-                            '{}_vendor_nodes.csv.gz'.format(output_filename_prefix))
+                            '{}_compound_nodes.csv.gz'.
+                            format(output_filename_prefix))
     print('Writing {}...'.format(filename))
 
     with gzip.open(filename, 'wb') as gzip_file:
-        gzip_file.write(':ID({}),'
-                        'vendor,'
-                        'cmpd_id,'
+        gzip_file.write('cmpd_id:ID({}),'
                         'smiles,'
                         'best_lead_time:INT,'
                         ':LABEL\n'.format(vendor_namespace))
-        for vendor in vendor_map:
-            gzip_file.write(
-                '{},{},{},"{}",{},Vendor\n'.format(vendor.uuid,
-                                                   "MolPort",
-                                                   vendor.c,
-                                                   vendor.s,
-                                                   vendor.blt))
+        for compound in compound_cost_map:
+            gzip_file.write('{},"{}",{},Vendor;MolPort\n'.
+                            format(compound.c,
+                                   compound.s,
+                                   compound.blt))
 
 
-def write_vendor_cost_relationships(directory, vendor_map, cost_map):
-    """Writes the Vendor to Costs relationships.
+def write_compound_cost_relationships(directory, compound_cost_map, cost_map):
+    """Writes the Vendor Compound to Costs relationships.
+
+    :param directory: The output directory to write to
+    :param compound_cost_map: A map of CompoundNodes
+                              against an array of CostNodes
+                              (which might be empty)
+    :param cost_map: A map of CostNode to its assigned unique ID
     """
 
-    global num_vendor_cost_relationships
+    global num_compound_cost_relationships
 
     filename = os.path.join(directory,
-                            '{}_vendor_cost_relationships.csv.gz'.format(output_filename_prefix))
+                            '{}_compound_cost_edges.csv.gz'.
+                            format(output_filename_prefix))
     print('Writing {}...'.format(filename))
 
     with gzip.open(filename, 'wb') as gzip_file:
         gzip_file.write(':START_ID({}),'
                         ':END_ID({}),'
                         ':TYPE\n'.format(vendor_namespace, cost_namespace))
-        for vendor in vendor_map:
-            # Generate a relationship for each cost for the vendor.
-            # The source is the vendor UUID (with a prefix)
-            # and the destination is the Code UUID (with a prefix)
-            for cost in vendor_map[vendor]:
+        for compound in compound_cost_map:
+            # Generate a relationship for each cost for the compound.
+            # The source is the vendor compound
+            # and the destination is the Cost UUID (auto-assigned)
+            for cost in compound_cost_map[compound]:
                 cost_uuid = cost_map[cost]
-                gzip_file.write(
-                    '{},{},COSTS\n'.format(vendor.uuid, cost_uuid))
-                num_vendor_cost_relationships += 1
+                gzip_file.write('{},{},COSTS\n'.format(compound.c, cost_uuid))
+                num_compound_cost_relationships += 1
 
 
 def augment_original_nodes(directory, filename, has_header):
@@ -263,7 +325,7 @@ def augment_original_nodes(directory, filename, has_header):
 
     global num_nodes
     global num_nodes_augmented
-    global num_vendor_relationships
+    global num_compound_relationships
 
     print('Augmenting {} as...'.format(filename))
 
@@ -276,7 +338,7 @@ def augment_original_nodes(directory, filename, has_header):
     # Frag to Vendor Compound relationships file
     augmented_relationships_filename = \
         os.path.join(directory,
-                     '{}_molecule_vendor_relationships.csv.gz'.format(output_filename_prefix))
+                     '{}_molecule_compound_edges.csv.gz'.format(output_filename_prefix))
     gzip_cr_file = gzip.open(augmented_relationships_filename, 'wt')
     gzip_cr_file.write(':START_ID({}),'
                        ':END_ID({}),'
@@ -304,7 +366,7 @@ def augment_original_nodes(directory, filename, has_header):
                 # Look for compounds where we have a costed vendor.
                 # If there is one, add the "V_MP" label.
                 for compound_id in match_ob:
-                    if compound_id in costed_vendor_map:
+                    if compound_id in costed_compounds:
                         new_line = line.strip() + ';V_MP\n'
                         gzip_ai_file.write(new_line)
                         augmented = True
@@ -315,12 +377,12 @@ def augment_original_nodes(directory, filename, has_header):
                     # append a relationship to the relationships file
                     # for each compound that was found...
                     for compound_id in match_ob:
-                        if compound_id in costed_vendor_map:
+                        if compound_id in costed_compounds:
                             # Now add vendor relationships to this row
                             frag_id = line.split(',')[0]
                             gzip_cr_file.write('"{}",{},HAS_VENDOR\n'.format(frag_id,
-                                                                             costed_vendor_map[compound_id].uuid))
-                            num_vendor_relationships += 1
+                                                                             compound_id))
+                            num_compound_relationships += 1
 
             if not augmented:
                 # No vendor for this line,
@@ -334,7 +396,7 @@ def augment_original_nodes(directory, filename, has_header):
 
 if __name__ == '__main__':
 
-    parser = argparse.ArgumentParser('Vendor Processor (MolPort)')
+    parser = argparse.ArgumentParser('Vendor Compound Processor (MolPort)')
     parser.add_argument('dir',
                         help='The MolPort vendor directory,'
                              ' containing the ".gz" files to be processed.'
@@ -355,38 +417,37 @@ if __name__ == '__main__':
     if not os.path.exists(args.output):
         os.mkdir(args.output)
     if not os.path.isdir(args.output):
-        print('ERROR: output ({}) is not a directory'.format(args.output))
-        sys.exit(1)
+        error('output ({}) is not a directory'.format(args.output))
 
     # Process all the files...
     molport_files = glob.glob('{}/*.gz'.format(args.dir))
     for molport_file in molport_files:
-        extract_vendor_info(molport_file)
+        extract_vendor_compounds(molport_file)
 
     # Assign unique identities to the collected Cost nodes
     # using a map of cost node against the assigned ID.
     # We have to do this now because namedtuples are immutable,
     # so we collect Cost nodes first and then create unique IDs.
-    cost_map = {}
+    cost_uuid_map = {}
     next_cost_node_uuid = 1
     for cost_node in cost_nodes:
-        cost_map[cost_node] = next_cost_node_uuid
+        cost_uuid_map[cost_node] = next_cost_node_uuid
         next_cost_node_uuid += 1
-    print(cost_map)
 
     # Write the new nodes and relationships
     # and augment the original nodes file.
-    if cost_map:
-        write_cost_nodes(args.output, cost_map)
-        write_vendor_nodes(args.output, vendor_map)
-        write_vendor_cost_relationships(args.output, vendor_map, cost_map)
+    if cost_uuid_map:
+        write_cost_nodes(args.output, cost_uuid_map)
+    if compound_cost_map:
+        write_compound_nodes(args.output, compound_cost_map)
+        write_compound_cost_relationships(args.output, compound_cost_map, cost_uuid_map)
         augment_original_nodes(args.output, args.nodes, has_header=args.nodes_has_header)
 
     # Summary
-    print('{} costs'.format(len(cost_map)))
-    print('{} vendor compounds with costs'.format(len(vendor_map)))
-    print('{} vendor compounds without any costs'.format(num_compounds_without_costs))
-    print('{} vendor compound cost relationships'.format(num_vendor_cost_relationships))
+    print('{} costs'.format(len(cost_uuid_map)))
+    print('{} compounds with costs'.format(len(compound_cost_map)))
+    print('{} compounds without any costs'.format(num_compounds_without_costs))
+    print('{} compound cost relationships'.format(num_compound_cost_relationships))
     print('{} nodes'.format(num_nodes))
     print('{} augmented nodes'.format(num_nodes_augmented))
-    print('{} node vendor relationships'.format(num_vendor_relationships))
+    print('{} node compound relationships'.format(num_compound_relationships))
