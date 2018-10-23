@@ -23,6 +23,12 @@ And, to also install the Jun2018 Graph database...
         --vault-password-file vault-pass.txt \
         --extra-vars "deploy_jun2018_graph=true"
 
+And, to also install the MolPort/Enamine Graph database...
+
+    ansible-playbook playbooks/fragalysis-dev/deploy-molport.yaml \
+        --vault-password-file vault-pass.txt \
+        --extra-vars "deploy_molport_graph=true"
+
 ## Prerequisites
 Before running the playbook: -
 

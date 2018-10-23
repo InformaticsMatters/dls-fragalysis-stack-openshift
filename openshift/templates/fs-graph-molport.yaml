@@ -92,9 +92,6 @@ objects:
             mountPath: ${NEO4J_DATA_DIR}
           - name: fs-graph-logs
             mountPath: ${NEO4J_LOG_DIR}
-          - name: docker-entrypoint
-            mountPath: /docker-entrypoint.sh
-            subPath: docker-entrypoint.sh
 
         volumes:
         - name: fs-graph-data-loader
@@ -106,9 +103,6 @@ objects:
         - name: fs-graph-logs
           persistentVolumeClaim:
             claimName: fs-graph-molport-logs-claim
-        - name: docker-entrypoint
-          configMap:
-            name: neo4j-docker-entrypoint
 
         restartPolicy: Always
 
