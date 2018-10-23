@@ -8,6 +8,7 @@ backup_nfs_dir: pv-fs-mysql-data-backup
 backup_vol_name: fs-db-backup
 deploy_backup: yes
 deploy_jun2018_graph: no
+deploy_molport_graph: no
 graph_data_vol_name: fs-graph-data
 graph_loader_vol_name: fs-graph-data-loader
 graph_logs_vol_name: fs-graph-logs

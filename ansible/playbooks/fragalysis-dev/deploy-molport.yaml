@@ -1,0 +1,10 @@
+---
+
+- hosts: localhost
+  gather_facts: No
+
+  tasks:
+  - name: Run the Fragalysis MolPort Graph Deploy Tasks
+    include_role:
+      name: fragalysis-dev
+      tasks_from: fs-graph-molport.yaml
