@@ -17,8 +17,8 @@ labels:
 
 parameters:
 
-- name: GRAPH_TAG
-  value: '3.4.9'
+- name: GRAPH_IMAGE
+  value: 'informaticsmatters/neo4j:3.4.9'
 - name: NEO4J_AUTH
   value: none
 - name: NEO4J_PAGECACHE
@@ -63,7 +63,7 @@ objects:
 
         # Application containers
         containers:
-        - image: neo4j:${GRAPH_TAG}
+        - image: ${GRAPH_IMAGE}
           name: graph-molport
           env:
           - name: NEO4J_AUTH
