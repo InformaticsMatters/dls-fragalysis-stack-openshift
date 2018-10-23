@@ -1,5 +1,13 @@
 ---
 
+- name: Login (admin)
+  shell: oc login {{ cluster_url }} -u admin -p {{ admin_password }}
+  changed_when: False
+
+- name: Move to Fragalysis Project
+  shell: oc project {{ namespace }}
+  changed_when: False
+
 # Create the Graph PV
 
 - name: Check MolPort Graph PV
