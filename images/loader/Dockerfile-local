@@ -1,0 +1,48 @@
+# A dockerfile to build the Image Loader using the latest xchem backend code.
+#
+# Build, when the backend code has changed, with something like: -
+#
+#   docker build . -f Dockerfile-local -t loader:latest
+#
+# Then to load the '2018-10-24T18' stack media data run with: -
+#
+#   docker run
+#     -e DATA_ORIGIN=2018-10-24T18
+#     -e MYSQL_HOST=<host>
+#     -e MYSQL_PORT=<port>
+#     -e MYSQL_USER=<user>
+#     -e MYSQL_PASSWORD=<password>
+#     -e MYSQL_DATABASE=<db>
+#     -e MYSQL_ROOT_PASSWORD=<root password>
+#     -v <path to media data>:/fragalysis
+#     -v <path to stack media>:/code/media
+#     loader:latest
+#
+
+FROM xchem/fragalysis-loader:latest
+
+ENV APP_ROOT /code
+
+# The image build number.
+# This should be different and ideally incrementing for each build.
+# It's probably just the Jenkins BUILD_ID.
+ARG BUILD_NUMBER
+LABEL build.number=${BUILD_NUMBER}
+
+# Label the image with the origin of the selected data.
+# Passed to the build process using "--build-arg DATA_ORIGIN=<value>".
+ARG DATA_ORIGIN
+ENV DATA_ORIGIN ${DATA_ORIGIN}
+LABEL data.origin=${DATA_ORIGIN}
+
+COPY docker-entrypoint.sh ${APP_ROOT}/
+RUN chmod 755 *.sh && \
+    chmod 755 *.py
+
+WORKDIR ${APP_ROOT}
+
+# Echo upstream Git commits
+RUN git log --pretty=format:'%h' -n 1
+
+# Set entrypont
+CMD [ "./docker-entrypoint.sh" ]
