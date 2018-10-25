@@ -26,10 +26,8 @@ FROM xchem/fragalysis-loader:latest
 ENV APP_ROOT /code
 
 COPY docker-entrypoint.sh ${APP_ROOT}/
-RUN chmod 755 *.sh && \
-    chmod 755 *.py
+RUN chmod 755 *.sh
 
 WORKDIR ${APP_ROOT}
 
-# Set entrypont
 CMD [ "./docker-entrypoint.sh" ]
