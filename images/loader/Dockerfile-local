@@ -4,9 +4,11 @@
 #
 #   docker build . -f Dockerfile-local -t loader:latest
 #
-# Then to load the '2018-10-24T18' stack media data run with: -
+# Then, to load the 2018-10-24T18 stack media data from the directory
+# /input (that contains a 'django_media' directory) to the directory /output,
+# run with: -
 #
-#   docker run
+#   docker run --rm
 #     -e DATA_ORIGIN=2018-10-24T18
 #     -e MYSQL_HOST=<host>
 #     -e MYSQL_PORT=<port>
@@ -14,8 +16,8 @@
 #     -e MYSQL_PASSWORD=<password>
 #     -e MYSQL_DATABASE=<db>
 #     -e MYSQL_ROOT_PASSWORD=<root password>
-#     -v <path to media data>:/fragalysis
-#     -v <path to stack media>:/code/media
+#     -v /input:/fragalysis
+#     -v /output:/code/media
 #     loader:latest
 #
 
