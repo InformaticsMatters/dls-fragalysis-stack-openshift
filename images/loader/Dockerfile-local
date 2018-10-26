@@ -1,25 +1,31 @@
 # A dockerfile to build the Image Loader using the latest xchem backend code.
 #
-# Build, when the backend code has changed, with something like: -
+# You can build and deploy the loader using docker-compose.
+# To load the 2018-10-24T18 stack media data from the directory ../input
+# (that contains a 'django_media' directory) to the directory ../output,
+# you could add this to your docker-compose.yml file where your stack services
+# are defined: -
 #
-#   docker build . -f Dockerfile-local -t loader:latest
+#  loader:
+#    build:
+#      context: .
+#      dockerfile: Dockerfile-local
+#    image: loader:latest
+#    volumes:
+#      - ../input:/fragalysis
+#      - ../output:/code/media
+#    environment:
+#      DATA_ORIGIN: 2018-10-24T18
+#      MYSQL_ROOT_PASSWORD: password
+#      MYSQL_DATABASE: django_db
+#      MYSQL_PASSWORD: django_password
+#      MYSQL_USER: django
+#    depends_on:
+#      - mysql
 #
-# Then, to load the 2018-10-24T18 stack media data from the directory
-# /input (that contains a 'django_media' directory) to the directory /output,
-# run with: -
+# And then to build and run (in detached mode): -
 #
-#   docker run --rm
-#     -e DATA_ORIGIN=2018-10-24T18
-#     -e MYSQL_HOST=<host>
-#     -e MYSQL_PORT=<port>
-#     -e MYSQL_USER=<user>
-#     -e MYSQL_PASSWORD=<password>
-#     -e MYSQL_DATABASE=<db>
-#     -e MYSQL_ROOT_PASSWORD=<root password>
-#     -v /input:/fragalysis
-#     -v /output:/code/media
-#     loader:latest
-#
+#   docker-compose up --build -d
 
 FROM xchem/fragalysis-loader:latest
 
