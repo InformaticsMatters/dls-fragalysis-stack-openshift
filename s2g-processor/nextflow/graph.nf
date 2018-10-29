@@ -1,15 +1,10 @@
 // Fragalysis Graph Processing
 
-params.origin = 'origin.smi'
+params.origin = 'origin.smi.gz'
 params.shredSize = 1000
 params.chunkSize = 25
-params.sLimit = 0
+params.sLimit = 10000
 params.sMaxHac = 36
-
-// Environment variables,
-// exported to the system environment
-// where pipeline processes need to be executed...
-env.LC_ALL = C
 
 origin = file(params.origin)
 
@@ -17,7 +12,7 @@ origin = file(params.origin)
 // (replicating the header)
 process headShred {
 
-    container 'informaticsmatters/fragalysis:0.0.9'
+    container 'informaticsmatters/fragalysis:0.0.10'
 
     input:
     file origin
@@ -25,12 +20,12 @@ process headShred {
     output:
     file 'origin_part_*.smi' into origin_parts mode flatten
 
-    '''
-    python /usr/local/fragalysis/frag/network/scripts/standardize.py \
-        --max-hac $params.sMaxHac --limit $params.sLimit $params.origin
+    """
+    python /usr/local/fragalysis/frag/network/scripts/standardizer.py \
+        --max-hac ${params.sMaxHac} --limit ${params.sLimit} ${params.origin}
     python /usr/local/fragalysis/frag/network/scripts/header_shred.py \
-        -i !{params.origin}_1.smi -o origin_part -s $params.shredSize
-    '''
+        -i output_1.smi -o origin_part -s ${params.shredSize}
+    """
 
 }
 
@@ -63,7 +58,7 @@ process headShred {
 // and then clean-up.
 process cgd {
 
-    container 'informaticsmatters/fragalysis:0.0.9'
+    container 'informaticsmatters/fragalysis:0.0.10'
     publishDir 'results/', mode: 'copy'
     errorStrategy 'retry'
     maxRetries 3
@@ -80,6 +75,7 @@ process cgd {
     shell:
     '''
     echo doing-!{part},$(date +"%d/%m/%Y %H:%M:%S") > timing
+    export LC_ALL=C
     python /usr/local/fragalysis/frag/network/scripts/split_input.py \
         --input !{part} --chunk_size !{params.chunkSize} --output ligands_part
     for chunk in ligands_part*.smi; do
