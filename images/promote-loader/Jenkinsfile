@@ -5,14 +5,6 @@
 // This pipeline is executed in order to promote
 // the most recent 'latest' image (in the Developer project)
 // to the 'stable' image in the Production project.
-//
-// You can start this job externally using curl with something like...
-// assuming you have a <user> and <token>
-//
-// curl -X POST https://jenkins-fragalysis-cicd.apps.xchem.diamond.ac.uk/job/Promote%20Loader%20Image/build \
-//       --user <user>:<token> \
-//       --data-urlencode json='{"parameter": [{"name":"PROMOTE_BUILD", "value":"32"}, {"name":"AS_VERSION", "value":"1.2.0"}]}'
-
 
 pipeline {
 
@@ -49,98 +41,27 @@ pipeline {
 
   stages {
 
-    stage('Inspect') {
+    stage('Promote Image') {
       steps {
         withCredentials([string(credentialsId: 'clusterUrl', variable: 'CLUSTER_URL'),
                          string(credentialsId: 'ocUser', variable: 'OC_USER'),
                          string(credentialsId: 'ocUserPassword', variable: 'OC_USER_PASSWORD')]) {
 
-          slackSend channel: "#${SLACK_BUILD_CHANNEL}",
-                    message: "${JOB_NAME} - promoting build ${PROMOTE_BUILD} as version ${AS_VERSION}"
-
-          // Expose the supplied parameters...
-          echo "PROMOTE_BUILD is '${PROMOTE_BUILD}'"
-          echo "AS_VERSION is '${AS_VERSION}'"
-
-          // Does the build exist as a tagged image?
-          // It must if we are to continue.
-          //
+          // Tag 'latest' as 'stable'.
+          // But, as it's used in a Job this does not result in a re-deployment.
+          // Instead we need to check that a prior instance is not running
+          // before we launch the image as a new job using the OC CLI.
           sh "oc login ${CLUSTER_URL} -u ${OC_USER} -p ${OC_USER_PASSWORD}"
           sh "oc project ${SRC_PROJECT}"
-          script {
-            IMAGE_TAG = sh(script: "oc describe is ${STREAM_NAME} | grep latest-${PROMOTE_BUILD}\$ || true", returnStdout: true).trim()
-            if (IMAGE_TAG.length() == 0) {
-              error("Unable to promote the build -  build '${PROMOTE_BUILD}' does not exist")
-            }
-          }
-          echo "IMAGE_TAG is '${IMAGE_TAG}'"
+          sh "oc tag ${SRC_STREAM_IMAGE}:latest ${TGT_STREAM_IMAGE}"
 
-          // Does the build exist as a versioned image?
-          // It must not if we are to continue.
+          sh "oc project ${TGT_PROJECT}"
           script {
-            String VERSION_TAG = sh(script: "oc describe is ${STREAM_NAME} | grep ^${AS_VERSION}\$ || true", returnStdout: true).trim()
-            if (VERSION_TAG.length() != 0) {
-              error("Unable to promote the build - version '${AS_VERSION}' already exists")
-            }
-            // Does AS_VERSION look like a version number (Major.Minor.Patch)?
-            // Basically we need 3 numbers separated by a period and it must be an exact match.
-            // i.e. 0.0.0 or 1.70.5
-            // but not 01.005.1
-            def re = /(0|[1-9]\d*)[.](0|[1-9]\d*)[.](0|[1-9]\d*)/
-            if (!(AS_VERSION =~ /$re/)) {
-              error("Unable to promote the build - incorrect version format '${AS_VERSION}'")
-            }
-            echo "Version '${AS_VERSION}' format looks good"
+            LOADER_RUNNING = sh(script: 'oc get jobs | grep loader | grep Running | wc -l', returnStdout: true).trim()
           }
+          echo "RUNNING=${LOADER_RUNNING}"
 
         }
-      }
-    }
-
-    stage('Build Versioned Image') {
-      steps {
-        dir('images/promote-loader') {
-
-          // Builds a new production image using the PROMOTE_BUILD image.
-          // The build stage is simply used to add addition tags.
-          // To do this (as ARG-before-FROM is not supported in buildah 1.3)
-          // we first have to re-tag the image as 'latest-0' (the FROM in our Dockerfile)
-          script {
-            TOKEN = sh(script: 'oc whoami -t', returnStdout: true).trim()
-          }
-          sh "podman login --tls-verify=false --username ${REGISTRY_USER} --password ${TOKEN} ${REGISTRY}"
-          sh "buildah pull --tls-verify=false docker://${REGISTRY}/${SRC_STREAM_IMAGE}:latest-${PROMOTE_BUILD}"
-          sh "buildah tag ${REGISTRY}/${SRC_STREAM_IMAGE}:latest-${PROMOTE_BUILD} ${SRC_STREAM_IMAGE}:latest-0"
-          sh "buildah bud --format docker --build-arg VERSION_NUMBER=${AS_VERSION} -f Dockerfile -t ${SRC_STREAM_IMAGE}:${AS_VERSION} ."
-
-        }
-      }
-    }
-
-    // Push the versioned image into our local registry
-    stage('Push Image') {
-      steps {
-
-        sh "buildah push --tls-verify=false ${SRC_STREAM_IMAGE}:${AS_VERSION} docker://${REGISTRY}/${SRC_STREAM_IMAGE}:${AS_VERSION}"
-        sh "podman logout ${REGISTRY}"
-
-      }
-    }
-
-    stage('Promote Image') {
-      steps {
-
-        // Tag 'latest-NNN' as 'stable'.
-        // But, as it's used in a Job this does not result in a re-deployment.
-        // Instead we need to check that a prior instance is not running
-        // before we launch the image as a new job using the OC CLI.
-        sh "oc tag ${SRC_STREAM_IMAGE}:${AS_VERSION} ${TGT_STREAM_IMAGE}"
-        sh "oc project ${TGT_PROJECT}"
-        script {
-          LOADER_RUNNING = sh(script: 'oc get jobs | grep loader | grep Running | wc -l', returnStdout: true).trim()
-        }
-        echo "RUNNING=${LOADER_RUNNING}"
-
       }
     }
 
@@ -177,18 +98,6 @@ pipeline {
           // Here we just set the build status to UNSTABLE.
           currentBuild.result = 'UNSTABLE'
         }
-      }
-    }
-
-    // Archive the versioned image (to DockerHub)
-    stage('Archive Image') {
-      steps {
-
-        echo "Archiving the image..."
-        sh "podman login --username ${DOCKER_USER} --password ${DOCKER_PASSWORD} docker.io"
-//        sh "buildah push --tls-verify localhost/${SRC_STREAM_IMAGE}:${AS_VERSION} docker://${ARCHIVE_REGISTRY}/${ARCHIVE_NAME}:${AS_VERSION}"
-        sh "podman logout docker.io"
-
       }
     }
 
