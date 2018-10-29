@@ -3,7 +3,7 @@
 params.origin = 'origin.smi.gz'
 params.shredSize = 1000
 params.chunkSize = 25
-params.sLimit = 10000
+params.sLimit = 0 // zero means process all
 params.sMaxHac = 36
 
 origin = file(params.origin)
@@ -13,18 +13,22 @@ origin = file(params.origin)
 process headShred {
 
     container 'informaticsmatters/fragalysis:0.0.10'
+    publishDir 'results/', mode: 'copy', pattern: 'standardized_input.smi.gz'
 
     input:
     file origin
 
     output:
     file 'origin_part_*.smi' into origin_parts mode flatten
+    file 'standardized_input.smi.gz'
 
     """
     python /usr/local/fragalysis/frag/network/scripts/standardizer.py \
         --max-hac ${params.sMaxHac} --limit ${params.sLimit} ${params.origin}
     python /usr/local/fragalysis/frag/network/scripts/header_shred.py \
         -i output_1.smi -o origin_part -s ${params.shredSize}
+    mv output_1.smi standardized_input.smi
+    gzip standardized_input.smi
     """
 
 }
