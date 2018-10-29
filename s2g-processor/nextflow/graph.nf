@@ -1,15 +1,23 @@
 // Fragalysis Graph Processing
 
 params.origin = 'origin.smi'
-params.shredSize = 2000
-params.chunkSize = 10
+params.shredSize = 1000
+params.chunkSize = 25
+params.sLimit = 0
+params.sMaxHac = 36
+
+// Environment variables,
+// exported to the system environment
+// where pipeline processes need to be executed...
+env.LC_ALL = C
 
 origin = file(params.origin)
 
-// Shreds a file into smaller parts (keeping the header)
+// Standardize and shreds a file into smaller parts
+// (replicating the header)
 process headShred {
 
-    container 'xchem/fragalysis:0.0.7'
+    container 'informaticsmatters/fragalysis:0.0.9'
 
     input:
     file origin
@@ -17,10 +25,12 @@ process headShred {
     output:
     file 'origin_part_*.smi' into origin_parts mode flatten
 
-    """
+    '''
+    python /usr/local/fragalysis/frag/network/scripts/standardize.py \
+        --max-hac $params.sMaxHac --limit $params.sLimit $params.origin
     python /usr/local/fragalysis/frag/network/scripts/header_shred.py \
-        -i $origin -o origin_part -s $params.shredSize
-    """
+        -i !{params.origin}_1.smi -o origin_part -s $params.shredSize
+    '''
 
 }
 
@@ -53,7 +63,7 @@ process headShred {
 // and then clean-up.
 process cgd {
 
-    container 'xchem/fragalysis:0.0.7'
+    container 'informaticsmatters/fragalysis:0.0.9'
     publishDir 'results/', mode: 'copy'
     errorStrategy 'retry'
     maxRetries 3
@@ -62,10 +72,10 @@ process cgd {
     file part from origin_parts
 
     output:
-    file '*.nodes'
-    file '*.edges'
-    file '*.attributes'
-    file '*.timing'
+    file '*.nodes.gz'
+    file '*.edges.gz'
+    file '*.attributes.gz'
+    file '*.timing.gz'
 
     shell:
     '''
@@ -75,17 +85,18 @@ process cgd {
     for chunk in ligands_part*.smi; do
         echo ${chunk},$(date +"%d/%m/%Y %H:%M:%S") >> timing
         python /usr/local/fragalysis/frag/network/scripts/build_db.py \
-            --input ${chunk} --base_dir output_${chunk%.*}
+            --input ${chunk} --base_dir output_${chunk%.*} --non_isomeric
     done
     echo deduplicating,$(date +"%d/%m/%Y %H:%M:%S") >> timing
-    find . -name nodes.txt -print | xargs awk '!x[$0]++' > !{part}.nodes
-    find . -name edges.txt -print | xargs awk '!x[$0]++' > !{part}.edges
-    find . -name attributes.txt -print | xargs awk '!x[$0]++' > !{part}.attributes
+    find . -name nodes.txt -print | sort --temporary-directory=$HOME/tmp -u | gzip > !{part}.nodes.gz
+    find . -name edges.txt -print | sort --temporary-directory=$HOME/tmp -u | gzip > !{part}.edges.gz
+    find . -name attributes.txt -print | sort --temporary-directory=$HOME/tmp -u | gzip > !{part}.attributes.gz
     echo removing-output,$(date +"%d/%m/%Y %H:%M:%S") >> timing
-    #rm !{part}
-    #rm ligands_part*.smi
+    rm !{part}
+    rm ligands_part*.smi
     echo done-!{part},$(date +"%d/%m/%Y %H:%M:%S") >> timing
-    mv timing !{part}.timing
+    gzip timing
+    mv timing.gz !{part}.timing.gz
     '''
 
 }
