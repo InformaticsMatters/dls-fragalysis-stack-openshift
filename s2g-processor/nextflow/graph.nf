@@ -12,7 +12,7 @@ origin = file(params.origin)
 // (replicating the header)
 process headShred {
 
-    container 'informaticsmatters/fragalysis:0.0.10'
+    container 'informaticsmatters/fragalysis:0.0.11'
     publishDir 'results/', mode: 'copy', pattern: 'standardized_input.smi.gz'
 
     input:
@@ -62,7 +62,7 @@ process headShred {
 // and then clean-up.
 process cgd {
 
-    container 'informaticsmatters/fragalysis:0.0.10'
+    container 'informaticsmatters/fragalysis:0.0.11'
     publishDir 'results/', mode: 'copy'
     errorStrategy 'retry'
     maxRetries 3
@@ -88,9 +88,9 @@ process cgd {
             --input ${chunk} --base_dir output_${chunk%.*} --non_isomeric
     done
     echo deduplicating,$(date +"%d/%m/%Y %H:%M:%S") >> timing
-    find . -name nodes.txt -print | sort --temporary-directory=$HOME/tmp -u | gzip > !{part}.nodes.gz
-    find . -name edges.txt -print | sort --temporary-directory=$HOME/tmp -u | gzip > !{part}.edges.gz
-    find . -name attributes.txt -print | sort --temporary-directory=$HOME/tmp -u | gzip > !{part}.attributes.gz
+    find . -name nodes.txt | xargs cat | sort --temporary-directory=$HOME/tmp -u | gzip > !{part}.nodes.gz
+    find . -name edges.txt | xargs cat | sort --temporary-directory=$HOME/tmp -u | gzip > !{part}.edges.gz
+    find . -name attributes.txt | xargs cat | sort --temporary-directory=$HOME/tmp -u | gzip > !{part}.attributes.gz
     echo removing-output,$(date +"%d/%m/%Y %H:%M:%S") >> timing
     rm !{part}
     rm ligands_part*.smi
