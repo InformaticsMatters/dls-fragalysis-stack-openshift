@@ -25,7 +25,7 @@ process headShred {
     """
     python /usr/local/fragalysis/frag/network/scripts/standardizer.py \
         --max-hac ${params.sMaxHac} --limit ${params.sLimit} \
-        --id-column 2 --id-prefix REAL ${params.origin}
+        --id-column -4 --id-prefix REAL ${params.origin}
     python /usr/local/fragalysis/frag/network/scripts/header_shred.py \
         -i output_1.smi -o origin_part -s ${params.shredSize}
     mv output_1.smi standardized_input.smi
