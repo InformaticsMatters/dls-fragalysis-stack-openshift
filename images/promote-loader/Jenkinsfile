@@ -47,6 +47,9 @@ pipeline {
                          string(credentialsId: 'ocUser', variable: 'OC_USER'),
                          string(credentialsId: 'ocUserPassword', variable: 'OC_USER_PASSWORD')]) {
 
+          slackSend channel: "#${SLACK_BUILD_CHANNEL}",
+                    message: "${JOB_NAME} - promoting latest"
+
           // Tag 'latest' as 'stable'.
           // But, as it's used in a Job this does not result in a re-deployment.
           // Instead we need to check that a prior instance is not running
