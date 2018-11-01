@@ -1,5 +1,9 @@
 ---
 
+- name: Move to Fragalysis Project (MySQL)
+  shell: oc project {{ namespace }}
+  changed_when: False
+
 # Create the MySQL PV
 
 - name: Check MySQL PV

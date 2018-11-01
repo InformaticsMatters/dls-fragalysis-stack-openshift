@@ -3,6 +3,10 @@
 # Deploy the Web image.
 # Which consists of a PV, image stream, PVC and deployment configuration.
 
+- name: Move to Fragalysis Project (Web)
+  shell: oc project {{ namespace }}
+  changed_when: False
+
 # Create the Web PV
 
 - name: Check Web PV
@@ -73,7 +77,7 @@
     -p WEB_GRAPH_SERVICE={{ graph_svc }}
     -p WEB_MYSQL_SERVICE={{ mysql_name }}
     -p WEB_NAME={{ web_name }}
-    -p WEB_TAG=stable
+    -p WEB_TAG={{ web_image_tag }}
     | oc create -f -
   when: web_name not in w_dc.stdout
 

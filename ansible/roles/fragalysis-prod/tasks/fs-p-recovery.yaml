@@ -7,6 +7,10 @@
 # (defined in the 'recovery_volumes' dictionary variable)
 # that we want to recover this project's database backup into.
 
+- name: Move to Fragalysis Project (Recovery)
+  shell: oc project {{ namespace }}
+  changed_when: False
+
 - name: Check Recovery PVs
   shell: oc get pv
   register: r_pv

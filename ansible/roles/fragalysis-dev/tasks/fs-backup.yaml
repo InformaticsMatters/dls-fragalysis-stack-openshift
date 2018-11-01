@@ -2,6 +2,10 @@
 
 # Create the Backup PV
 
+- name: Move to Fragalysis Project (MySQL)
+  shell: oc project {{ namespace }}
+  changed_when: False
+
 - name: Check Backup PV
   shell: oc get pv
   register: bu_pv

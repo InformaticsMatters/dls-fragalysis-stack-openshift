@@ -49,7 +49,7 @@ objects:
     name: ${INPUT_VOLUME_NAME}
   spec:
     capacity:
-      storage: ${INPUT_VOLUME_NAME}
+      storage: ${INPUT_PV_SIZE}
     accessModes:
     - ReadWriteMany
     persistentVolumeReclaimPolicy: Retain

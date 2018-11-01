@@ -32,7 +32,7 @@ parameters:
     A short phrase used as the display name for the image
 
 - name: TAG
-  value: '3.9'
+  value: 'latest'
   description: >
     The image tag
 

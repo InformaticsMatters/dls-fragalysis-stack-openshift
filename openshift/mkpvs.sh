@@ -12,6 +12,7 @@ echo /dev/vdc ${EXPORT_DIR} ext4 defaults 0 0 >> /etc/fstab
 # Creating NFS mounts
 
 cd ${EXPORT_DIR}
+# Dev/common
 mkdir pv-fs-mysql-data
 mkdir pv-fs-mysql-data-backup
 mkdir pv-fs-jenkins
@@ -23,10 +24,16 @@ mkdir pv-fs-molport-enamine-data
 mkdir pv-fs-molport-enamine-data-loader
 mkdir pv-fs-molport-logs
 mkdir pv-fs-web-media
+# Production-specific
 mkdir pv-fs-p-mysql-data
 mkdir pv-fs-p-mysql-data-backup
 mkdir pv-fs-p-web-media
+# For Ric Gillams' project
+mkdir pv-fs-rg-mysql-data
+mkdir pv-fs-rg-web-media
+# Staging
 mkdir pv-fs-s-mysql-data
+
 chmod -R 777 pv-*
 chown -R nfsnobody.nfsnobody pv-*
 
@@ -45,10 +52,12 @@ echo ${EXPORT_DIR}/pv-fs-graph-logs *(rw,root_squash) >> frag.exports
 echo ${EXPORT_DIR}/pv-fs-molport-enamine-data *(rw,root_squash) >> frag.exports
 echo ${EXPORT_DIR}/pv-fs-molport-enamine-data-loader *(rw,root_squash) >> frag.exports
 echo ${EXPORT_DIR}/pv-fs-molport-logs *(rw,root_squash) >> frag.exports
-echo ${EXPORT_DIR}/pv-fs-p-mysql-data *(rw,no_subtree_check,no_root_squash)
+echo ${EXPORT_DIR}/pv-fs-p-mysql-data *(rw,no_subtree_check,no_root_squash) >> frag.exports
 echo ${EXPORT_DIR}/pv-fs-p-mysql-data-backup *(rw,root_squash) >> frag.exports
 echo ${EXPORT_DIR}/pv-fs-p-web-media *(rw,root_squash) >> frag.exports
-echo ${EXPORT_DIR}/pv-fs-s-mysql-data *(rw,no_subtree_check,no_root_squash)
+echo ${EXPORT_DIR}/pv-fs-rg-mysql-data *(rw,no_subtree_check,no_root_squash) >> frag.exports
+echo ${EXPORT_DIR}/pv-fs-rg-web-media *(rw,root_squash) >> frag.exports
+echo ${EXPORT_DIR}/pv-fs-s-mysql-data *(rw,no_subtree_check,no_root_squash) >> frag.exports
 echo ${EXPORT_DIR}/pv-fs-web-media *(rw,root_squash) >> frag.exports
 
 systemctl restart nfs-server

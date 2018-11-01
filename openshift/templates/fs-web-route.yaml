@@ -20,7 +20,7 @@ parameters:
 - name: WEB_HOSTNAME
   value: fragalysis.apps.xchem.diamond.ac.uk
 - name: WEB_SERVICE_NAME
-  valeu: web
+  value: web
 
 objects:
 

@@ -3,6 +3,10 @@
 # Deploy the Web image.
 # Which consists of an image stream, PV, PVC and deployment configuration.
 
+- name: Move to Fragalysis Project (MySQL)
+  shell: oc project {{ namespace }}
+  changed_when: False
+
 # Create the Web PV
 
 - name: Check Web PV
@@ -18,7 +22,7 @@
     | oc create -f -
   when:
   - use_nfs
-  - '"fs-web-media" not in w_pv.stdout'
+  - not w_pv.stdout | regex_search('^fs-web-media\s', multiline=True)
 
 # Crete the PVC, Image Stream, Deployment and Route...
 
@@ -50,10 +54,9 @@
   register: w_is
   changed_when: False
 
-- name: Create ImageStream
+- name: Create Web ImageStream
   shell: >
     oc process -f {{ role_path }}/{{ t_dir }}/fs-web-is.yaml
-    -p WEB_NAMESPACE={{ namespace }}
     | oc create -f -
   when: '"web-stream" not in w_is.stdout'
 

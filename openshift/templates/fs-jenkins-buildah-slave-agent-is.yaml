@@ -33,7 +33,7 @@ parameters:
     A short phrase used as the display name for the image
 
 - name: TAG
-  value: '3.9'
+  value: 'latest'
   description: >
     The image tag
 
@@ -50,7 +50,7 @@ objects:
         slave-label: ${SLAVE_LABEL}
       from:
         kind: DockerImage
-        name:  docker.io/informaticsmatters/jenkins-slave-buildah-centos7::${TAG}
+        name:  docker.io/informaticsmatters/jenkins-slave-buildah-centos7:${TAG}
       name: ${TAG}
       importPolicy:
         scheduled: false

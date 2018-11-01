@@ -1,5 +1,9 @@
 ---
 
+- name: Move to Fragalysis Project (MySQL)
+  shell: oc project {{ namespace }}
+  changed_when: False
+
 # Check and create the Jenkins user roles
 
 - name: Check Jenkins Role
