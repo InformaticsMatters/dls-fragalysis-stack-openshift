@@ -21,7 +21,7 @@
     | oc create -f -
   when:
   - use_nfs
-  - backup_vol_name not in bu_pv.stdout
+  - not bu_pv.stdout | regex_search('^%s\s' % backup_vol_name, multiline=True)
 
 # Create the Backup PVCs
 
