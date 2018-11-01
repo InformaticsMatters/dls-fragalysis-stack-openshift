@@ -53,11 +53,11 @@
   shell: >
     oc process -f {{ role_path }}/{{ t_dir }}/fs-input-pv-nfs.yaml
     -p INPUT_NAMESPACE={{ namespace }}
-    -p INPUT_PV_NAME={{ input_vol_name }}
+    -p INPUT_VOLUME_NAME={{ input_vol_name }}
     | oc create -f -
   when:
   - use_nfs
-  - input_vol_name not in jenkins_pv.stdout
+  - not jenkins_pv.stdout | regex_search('^%s\s' % input_vol_name, multiline=True)
 
 # Create the Input PVC
 
@@ -69,7 +69,6 @@
 - name: Create Input PVC
   shell: >
     oc process -f {{ role_path }}/{{ t_dir }}/fs-input-pvc.yaml
-    -p INPUT_NAMESPACE={{ namespace }}
     -p INPUT_VOLUME_NAME={{ input_vol_name }}
     | oc create -f -
   when: '"fs-input-claim" not in input_pvc.stdout'

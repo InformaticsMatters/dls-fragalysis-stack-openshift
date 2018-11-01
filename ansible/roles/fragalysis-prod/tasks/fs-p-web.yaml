@@ -24,7 +24,7 @@
     | oc create -f -
   when:
   - use_nfs
-  - web_vol_name not in w_pv.stdout
+  - not w_pv.stdout | regex_search('^%s\s' % web_vol_name, multiline=True)
 
 # Crete the PVC, Image Stream, Deployment and Route...
 
