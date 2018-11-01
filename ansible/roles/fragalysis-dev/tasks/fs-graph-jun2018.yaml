@@ -14,7 +14,7 @@
   shell: >
     oc process -f {{ role_path }}/{{ t_dir }}/fs-graph-jun2018-pv-nfs.yaml
     -p GRAPH_NAMESPACE={{ namespace }}
-    | c create -f -
+    | oc create -f -
   when:
   - use_nfs
   - deploy_jun2018_graph
