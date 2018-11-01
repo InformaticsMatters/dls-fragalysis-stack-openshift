@@ -22,7 +22,7 @@
   shell: >
     oc process -f {{ role_path }}/{{ t_dir }}/fs-graph-molport-pv-nfs.yaml
     -p GRAPH_NAMESPACE={{ namespace }}
-    | c create -f -
+    | oc create -f -
   when:
   - use_nfs
   - deploy_molport_graph
