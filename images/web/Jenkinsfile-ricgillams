@@ -1,0 +1,137 @@
+#!groovy​
+
+// The Fragalysis Stack (Django application) Builder.
+
+pipeline {
+
+  agent { label 'buildah-slave' }
+
+  environment {
+    // Registry details
+    REGISTRY_USER = 'jenkins'
+    REGISTRY = 'docker-registry.default.svc:5000'
+    PROJECT_IMAGE = "${PROJECT}/web-stream:latest"
+    STREAM_IMAGE = "${REGISTRY}/${PROJECT_IMAGE}"
+
+    // For the get_unbuilt_data_directory environment...
+    TARGET_IMAGE = "${PROJECT}/web-stream"
+
+    // Slack channel for all notifications
+    SLACK_BUILD_CHANNEL = 'dls-builds'
+    // Slack channel to be used for errors/failures
+    // (which also go to the CI/CD channel)
+    SLACK_ALERT_CHANNEL = 'dls-alerts'
+  }
+
+  stages {
+
+    stage('Build Image') {
+      steps {
+        dir('images/web') {
+          slackSend channel: "#${SLACK_BUILD_CHANNEL}",
+                    message: "${JOB_NAME} build ${BUILD_NUMBER} - starting"
+
+          // Display some tool versions
+          sh "buildah -v"
+          sh "podman -v"
+          sh "skopeo -v"
+          // Build
+          sh "buildah bud --format docker --build-arg BUILD_NUMBER=${BUILD_NUMBER} -f Dockerfile-ricgillams -t ${STREAM_IMAGE} ."
+
+        }
+
+      }
+    }
+
+    // With regard to the security probe
+    // we must: -
+    //
+    //  - check for the presence of a probe and stop it (and pause)
+    //  - push the new image
+    //  - set deployment replicas to 1 (they may have been set to 0 by the probe)
+    //  - deploy a new security probe
+
+    stage('Stop Probe') {
+      steps {
+        withCredentials([string(credentialsId: 'clusterUrl', variable: 'CLUSTER_URL'),
+                         string(credentialsId: 'ocUser', variable: 'OC_USER'),
+                         string(credentialsId: 'ocUserPassword', variable: 'OC_USER_PASSWORD')]) {
+
+          sh "oc login ${CLUSTER_URL} -u ${OC_USER} -p ${OC_USER_PASSWORD}"
+          sh "oc project ${PROJECT}"
+          script {
+            PROBE_COUNT = sh(script: 'oc get jobs | grep dev-security-probe | wc -l', returnStdout: true).trim()
+            if (PROBE_COUNT != '0') {
+              sh "oc delete job/fs-dev-security-probe"
+              sleep 4
+            }
+          }
+
+        }
+      }
+    }
+
+    stage('Push Image') {
+      steps {
+
+        script {
+          TOKEN = sh(script: 'oc whoami -t', returnStdout: true).trim()
+        }
+        // Pushing the image will resul tin it being deployed...
+        sh "podman login --tls-verify=false --username ${REGISTRY_USER} --password ${TOKEN} ${REGISTRY}"
+        sh "buildah push --tls-verify=false ${STREAM_IMAGE} docker://${STREAM_IMAGE}"
+        // Done with buildah/podman
+        sh "podman logout ${REGISTRY}"
+        sh "buildah images"
+
+        // Restore replicas
+        sh "oc scale dc web --replicas=1"
+
+        // Each build pushes a 'latest' image (done above)
+        // but we also create a 'latest-${BUILD_NUMBER}'
+        // for use when promoting the image to production.
+        sh "oc tag ${PROJECT_IMAGE} ${PROJECT_IMAGE}-${BUILD_NUMBER}"
+
+      }
+    }
+
+    stage('Deploy Probe') {
+      steps {
+        dir('images/web') {
+
+          sh "oc process -f fs-dev-security-probe.yaml -p PROBE_NAMESPACE=${PROJECT} -p PROBE_NAMESPACE_H="Dev /RIC/"| oc create -f -"
+
+        }
+      }
+    }
+
+  }
+
+  // Post-job actions.
+  // See https://jenkins.io/doc/book/pipeline/syntax/#post
+  post {
+
+    success {
+      slackSend channel: "#${SLACK_BUILD_CHANNEL}",
+                color: 'good',
+                message: "${JOB_NAME} build ${BUILD_NUMBER} - complete"
+    }
+
+    failure {
+      slackSend channel: "#${SLACK_BUILD_CHANNEL}",
+                color: 'danger',
+                message: "${JOB_NAME} build ${env.BUILD_NUMBER} - failed (${BUILD_URL})"
+      slackSend channel: "#${SLACK_ALERT_CHANNEL}",
+                color: 'danger',
+                message: "${JOB_NAME} build ${BUILD_NUMBER} - failed (${BUILD_URL})"
+    }
+
+    fixed {
+      slackSend channel: "#${SLACK_ALERT_CHANNEL}",
+                color: 'good',
+                message: "${JOB_NAME} build - fixed"
+    }
+
+  }
+
+}
