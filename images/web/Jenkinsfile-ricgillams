@@ -99,7 +99,7 @@ pipeline {
       steps {
         dir('images/web') {
 
-          sh "oc process -f fs-dev-security-probe.yaml -p PROBE_NAMESPACE=${PROJECT} -p PROBE_NAMESPACE_H="Dev /RIC/"| oc create -f -"
+          sh "oc process -f fs-dev-security-probe.yaml -p PROBE_NAMESPACE=${PROJECT} -p PROBE_NAMESPACE_H='${PROJECT_H}'| oc create -f -"
 
         }
       }
