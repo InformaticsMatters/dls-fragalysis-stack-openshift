@@ -85,7 +85,7 @@ pipeline {
         sh "buildah images"
 
         // Restore replicas
-        sh "oc scale dc web --replicas=1"
+        sh "oc scale dc ${STACK_DC} --replicas=1"
 
         // Each build pushes a 'latest' image (done above)
         // but we also create a 'latest-${BUILD_NUMBER}'
@@ -99,7 +99,7 @@ pipeline {
       steps {
         dir('images/web') {
 
-          sh "oc process -f fs-dev-security-probe.yaml -p PROBE_NAMESPACE=${PROJECT} -p PROBE_NAMESPACE_H='${PROJECT_H}'| oc create -f -"
+          sh "oc process -f fs-dev-security-probe.yaml -p PROBE_NAMESPACE=${PROJECT} -p PROBE_NAMESPACE_H='${PROJECT_H}' -p PROBE_DEPLOYMENT=${STACK_DC} | oc create -f -"
 
         }
       }
