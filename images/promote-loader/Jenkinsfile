@@ -24,10 +24,6 @@ pipeline {
     TGT_PROJECT = 'fragalysis-prod'
     TGT_STREAM_IMAGE = "${TGT_PROJECT}/${STREAM_NAME}:stable"
 
-    // Archive registry (on DockerHub)
-    ARCHIVE_REGISTRY = 'docker.io/xchem'
-    ARCHIVE_NAME = 'loader-image'
-
     // Slack channel for all notifications
     SLACK_BUILD_CHANNEL = 'dls-builds'
     // Slack channel to be used for errors/failures
