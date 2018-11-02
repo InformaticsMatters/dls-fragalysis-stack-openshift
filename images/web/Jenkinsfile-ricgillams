@@ -6,6 +6,13 @@ pipeline {
 
   agent { label 'buildah-slave' }
 
+  // The Jenkins Job is expected to provide the following variables: -
+  //
+  // PROJECT        The project (namespace for the web deployment)
+  // PROJECT_H      A human-readable name for the deployment project
+  // STACK_DC       The name of the Stack's DeploymentConfig
+  // PROBE_LOCATION The URL location to use as a base for the security probe
+
   environment {
     // Registry details
     REGISTRY_USER = 'jenkins'
@@ -99,7 +106,7 @@ pipeline {
       steps {
         dir('images/web') {
 
-          sh "oc process -f fs-dev-security-probe.yaml -p PROBE_NAMESPACE=${PROJECT} -p PROBE_NAMESPACE_H='${PROJECT_H}' -p PROBE_DEPLOYMENT=${STACK_DC} | oc create -f -"
+          sh "oc process -f fs-dev-security-probe.yaml -p PROBE_LOCATION=${PROBE_LOCATION} -p PROBE_NAMESPACE=${PROJECT} -p PROBE_NAMESPACE_H='${PROJECT_H}' -p PROBE_DEPLOYMENT=${STACK_DC} | oc create -f -"
 
         }
       }
