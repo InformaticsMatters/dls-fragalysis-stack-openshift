@@ -58,48 +58,28 @@ pipeline {
           sh "oc project ${SRC_PROJECT}"
           sh "oc tag ${SRC_STREAM_IMAGE}:latest ${TGT_STREAM_IMAGE}"
 
+          // If a loader exists, delete it.
           sh "oc project ${TGT_PROJECT}"
           script {
-            LOADER_RUNNING = sh(script: 'oc get jobs | grep loader | grep Running | wc -l', returnStdout: true).trim()
+            LOADER_COUNT = sh(script: 'oc get jobs | grep loader | wc -l', returnStdout: true).trim()
+            if (LOADER_COUNT != '0') {
+              sh "oc delete job/fs-loader"
+              sleep 4
+            }
           }
-          echo "RUNNING=${LOADER_RUNNING}"
 
         }
       }
     }
 
     stage('Deploy Image') {
-      when {
-        expression { LOADER_RUNNING == '0' }
-      }
       steps {
         dir('images/loader') {
-          sh "oc delete job/fs-loader"
-          sleep 4
           sh "oc process -p LOADER_NAMESPACE=${TGT_PROJECT} -p LOADER_IMAGE=${TGT_STREAM_IMAGE} -f fs-loader.yaml | oc create -f -"
 
           slackSend channel: "#${SLACK_BUILD_CHANNEL}",
                     color: 'good',
                     message: "${JOB_NAME} - complete"
-        }
-      }
-    }
-
-    stage('Blocked Image') {
-      when {
-        expression { LOADER_RUNNING != '0' }
-      }
-      steps {
-        echo "A prior loader is still running (deployment is blocked)"
-        script {
-          slackSend channel: "#${SLACK_BUILD_CHANNEL}",
-                    color: 'warning',
-                    message: "${JOB_NAME} - deployment blocked"
-
-          // Everything's OK but we were blocked from deploying it
-          // as it appears a prior Job instance is running.
-          // Here we just set the build status to UNSTABLE.
-          currentBuild.result = 'UNSTABLE'
         }
       }
     }
