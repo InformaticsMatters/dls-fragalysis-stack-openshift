@@ -12,6 +12,8 @@ pipeline {
   // PROJECT_H      A human-readable name for the deployment project
   // STACK_DC       The name of the Stack's DeploymentConfig
   // PROBE_LOCATION The URL location to use as a base for the security probe
+  // DOCKERFILE     The Dockerfile to use for the image build,
+  //                typically 'Dockerifle'
 
   environment {
     // Registry details
@@ -43,7 +45,7 @@ pipeline {
           sh "podman -v"
           sh "skopeo -v"
           // Build
-          sh "buildah bud --format docker --build-arg BUILD_NUMBER=${BUILD_NUMBER} -f Dockerfile-ricgillams -t ${STREAM_IMAGE} ."
+          sh "buildah bud --format docker --build-arg BUILD_NUMBER=${BUILD_NUMBER} -f ${DOCKERFILE} -t ${STREAM_IMAGE} ."
 
         }
 
