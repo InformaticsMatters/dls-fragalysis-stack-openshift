@@ -1,6 +1,17 @@
 #!groovy​
 
 // The Fragalysis Stack (Django application) Builder.
+//
+// The Jenkins Job that uses this Jenkinsfile is expected to provide the
+// following variables: -
+//
+// PROJECT        The project (namespace for the web deployment)
+// PROJECT_H      A human-readable name for the deployment project
+// STACK_DC       The name of the Stack's DeploymentConfig
+// PROBE_LOCATION The URL location to use as a base for the security probe
+// DOCKERFILE     The Dockerfile to use for the image build,
+//                typically 'Dockerifle'
+
 
 pipeline {
 
@@ -8,7 +19,6 @@ pipeline {
 
   environment {
     // Registry details
-    PROJECT = 'fragalysis-cicd'
     REGISTRY_USER = 'jenkins'
     REGISTRY = 'docker-registry.default.svc:5000'
     PROJECT_IMAGE = "${PROJECT}/web-stream:latest"
@@ -37,7 +47,7 @@ pipeline {
           sh "podman -v"
           sh "skopeo -v"
           // Build
-          sh "buildah bud --format docker --build-arg BUILD_NUMBER=${BUILD_NUMBER} -f Dockerfile -t ${STREAM_IMAGE} ."
+          sh "buildah bud --format docker --build-arg BUILD_NUMBER=${BUILD_NUMBER} -f ${DOCKERFILE} -t ${STREAM_IMAGE} ."
 
         }
 
@@ -86,7 +96,7 @@ pipeline {
         sh "buildah images"
 
         // Restore replicas
-        sh "oc scale dc web --replicas=1"
+        sh "oc scale dc ${STACK_DC} --replicas=1"
 
         // Each build pushes a 'latest' image (done above)
         // but we also create a 'latest-${BUILD_NUMBER}'
@@ -100,7 +110,7 @@ pipeline {
       steps {
         dir('images/web') {
 
-          sh "oc process -f fs-dev-security-probe.yaml | oc create -f -"
+          sh "oc process -f fs-dev-security-probe.yaml -p PROBE_LOCATION=${PROBE_LOCATION} -p PROBE_NAMESPACE=${PROJECT} -p PROBE_NAMESPACE_H='${PROJECT_H}' -p PROBE_DEPLOYMENT=${STACK_DC} | oc create -f -"
 
         }
       }
