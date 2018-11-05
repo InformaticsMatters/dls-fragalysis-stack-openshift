@@ -1,36 +1,7 @@
 # Fragalysis Ansible OpenShift Deployment
-Automation for the Test (cicd), Production (prod) and Staging (stag)
-projects.
-
-To run the playbook you will need to create a `vault-pass.txt` file that
-contains the password used to create the vault secrets used in this project.
-
-Ideally, you'd deploy DEV and then PROD.    
-Run the playbooks to deploy the projects with the command: -
-
-    ansible-playbook playbooks/fragalysis-dev/deploy.yaml \
-        --vault-password-file vault-pass.txt
-
-    ansible-playbook playbooks/fragalysis-prod/deploy.yaml \
-        --vault-password-file vault-pass.txt
-
-    ansible-playbook playbooks/fragalysis-stag/deploy.yaml \
-        --vault-password-file vault-pass.txt
-
-And, to also install the Jun2018 Graph database...
-
-    ansible-playbook playbooks/fragalysis-dev/deploy.yaml \
-        --vault-password-file vault-pass.txt \
-        --extra-vars "deploy_jun2018_graph=true"
-
-And, to also install the MolPort/Enamine Graph database...
-
-    ansible-playbook playbooks/fragalysis-dev/deploy-molport.yaml \
-        --vault-password-file vault-pass.txt \
-        --extra-vars "deploy_molport_graph=true"
 
 ## Prerequisites
-Before running the playbook: -
+Before running any playbook: -
 
 1.  The `oc` command-set is available to you as a user
 1.  An OpenShift cluster has been installed
@@ -39,7 +10,7 @@ Before running the playbook: -
 1.  You have created a `vault-pass.txt` file in this directory
 
 If using NFS make sure you've configured it with all the appropriate mounts.
-The playbook will create the PVs and pVCs: -
+The playbook will create the PVs and PVCs: -
 
 You will need to accommodate at least 1,420Gi of disk space. Check the
 various `pvc` templates for details.

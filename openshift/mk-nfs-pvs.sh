@@ -1,15 +1,4 @@
-sudo -i
-
-export EXPORT_DIR=/exports
-
-# Mounting the Cinder volume for NFS storage
-
-mkfs -t ext4 /dev/vdc
-mkdir ${EXPORT_DIR}
-mount /dev/vdc ${EXPORT_DIR}
-echo /dev/vdc ${EXPORT_DIR} ext4 defaults 0 0 >> /etc/fstab
-
-# Creating NFS mounts
+export EXPORT_DIR=/data
 
 cd ${EXPORT_DIR}
 # Dev/common
