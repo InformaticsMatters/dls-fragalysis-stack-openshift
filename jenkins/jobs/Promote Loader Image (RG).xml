@@ -67,7 +67,7 @@
       <submoduleCfg class="list"/>
       <extensions/>
     </scm>
-    <scriptPath>images/promote-loader/Jenkinsfile-ricgillams</scriptPath>
+    <scriptPath>images/promote-loader/Jenkinsfile</scriptPath>
     <lightweight>true</lightweight>
   </definition>
   <triggers/>
