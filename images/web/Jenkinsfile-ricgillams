@@ -1,19 +1,21 @@
 #!groovy​
 
 // The Fragalysis Stack (Django application) Builder.
+//
+// The Jenkins Job that uses this Jenkinsfile is expected to provide the
+// following variables: -
+//
+// PROJECT        The project (namespace for the web deployment)
+// PROJECT_H      A human-readable name for the deployment project
+// STACK_DC       The name of the Stack's DeploymentConfig
+// PROBE_LOCATION The URL location to use as a base for the security probe
+// DOCKERFILE     The Dockerfile to use for the image build,
+//                typically 'Dockerifle'
+
 
 pipeline {
 
   agent { label 'buildah-slave' }
-
-  // The Jenkins Job is expected to provide the following variables: -
-  //
-  // PROJECT        The project (namespace for the web deployment)
-  // PROJECT_H      A human-readable name for the deployment project
-  // STACK_DC       The name of the Stack's DeploymentConfig
-  // PROBE_LOCATION The URL location to use as a base for the security probe
-  // DOCKERFILE     The Dockerfile to use for the image build,
-  //                typically 'Dockerifle'
 
   environment {
     // Registry details
