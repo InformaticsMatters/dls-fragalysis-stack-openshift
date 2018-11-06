@@ -1,5 +1,5 @@
 # Building the cluster
-Requirements: -
+Prerequisites: -
 
 1.  This guide assumes that you have a working OpenShift deployment
 1.  The cluster has a suitable  `admin` user
