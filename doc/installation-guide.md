@@ -57,6 +57,14 @@ Fragalysis Development project) run...
         --vault-password-file vault-pass.txt \
         --extra-vars "deploy_molport_graph=true"
 
+>   The **Routes** generated for the Django applications are not
+    (at the moment) automatically secured. Once each stack has been deployed
+    you will need to adjust the corresponding route definition in OpenShift.
+    Navigate to the pod's route and select `Edit YAML` from thw `Actions`
+    drop-down menu. Chcnage the `kubernetes.io/tls-acme` property from
+    `false` to `true` and `Save` it. After a few moments your route should be
+    secure.
+
 ## Step 3 - Install and configure the Jenkins CI/CD framework
 To install and configure the CI/CD framework, follow the instructions in the
 document `installing-and-configuring-jenkins.pdf`, which can be found
