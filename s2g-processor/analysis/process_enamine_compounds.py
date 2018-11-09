@@ -32,7 +32,7 @@ If the original nodes file is "nodes.csv.gz" the augmented copy
 "enamine-augmented-nodes.csv.gz".
 
 Alan Christie
-October 2018
+November 2018
 """
 
 import argparse
@@ -116,7 +116,7 @@ def extract_vendor(gzip_filename):
         field_names = hdr.split()
         # Expected minimum number of columns...
         if len(field_names) < expected_min_num_cols:
-            errro('expected at least {} columns found {}'.
+            error('expected at least {} columns found {}'.
                   format(expected_input_cols, len(field_names)))
         # Check salient columns...
         for col_num in expected_input_cols:
@@ -164,7 +164,7 @@ def write_compound_nodes(directory, compounds):
                         'smiles,'
                         ':LABEL\n'.format(compound_namespace))
         for compound in compounds:
-            gzip_file.write('{},"{}",Vendor;REAL\n'.
+            gzip_file.write('{},"{}",VENDOR;REAL\n'.
                             format(compound.c, compound.s))
 
 

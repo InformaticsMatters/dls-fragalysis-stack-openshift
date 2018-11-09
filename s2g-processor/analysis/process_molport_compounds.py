@@ -43,7 +43,7 @@ If the original nodes file is "nodes.csv.gz" the augmented copy
 "molport-augmented-nodes.csv.gz".
 
 Alan Christie
-October 2018
+November 2018
 """
 
 import argparse
@@ -204,7 +204,7 @@ def extract_vendor_compounds(gzip_filename):
         field_names = hdr.split('\t')
         # Expected minimum number of columns...
         if len(field_names) < expected_min_num_cols:
-            errro('expected at least {} columns found {}'.
+            error('expected at least {} columns found {}'.
                   format(expected_input_cols, len(field_names)))
         # Check salient columns...
         for col_num in expected_input_cols:
@@ -286,7 +286,7 @@ def write_cost_nodes(directory, costs):
             max = ''
             if cost.max is not None:
                 max = cost.max
-            gzip_file.write('{},USD,{},{},{},Cost\n'.format(costs[cost],
+            gzip_file.write('{},USD,{},{},{},COST\n'.format(costs[cost],
                                                             cost.ps,
                                                             min,
                                                             max))
@@ -310,7 +310,7 @@ def write_compound_nodes(directory, compound_cost_map):
                         'best_lead_time:INT,'
                         ':LABEL\n'.format(compound_namespace))
         for compound in compound_cost_map:
-            gzip_file.write('{},"{}",{},Vendor;MolPort\n'.
+            gzip_file.write('{},"{}",{},VENDOR;MOLPORT\n'.
                             format(compound.c,
                                    compound.s,
                                    compound.blt))
