@@ -44,10 +44,12 @@ print('Builing id_map...')
 id_map = {}
 with gzip.open(standardizer_file_name, 'rb') as s_file:
 
+    line_num = 1
     for line in s_file:
         line_items = line.strip().split()
-        if len(line_items) == 3:
+        if line_num > 1 and len(line_items) == 3:
             id_map[line_items[1]] = line_items[2]
+        line_num += 1
 
 print('Built id_map (%d)' % len(id_map))
 
