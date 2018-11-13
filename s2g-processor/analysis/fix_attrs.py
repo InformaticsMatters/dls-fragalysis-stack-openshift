@@ -22,6 +22,9 @@ import gzip
 import os
 import sys
 
+# If set, lines without a corresponding ID are not written.
+ONLY_WRITE_LINES_WITH_ID = False
+
 if len(sys.argv) != 3:
     print('Usage: fix_attrs.py <attrs_file> <standardise_file>')
     sys.exit(1)
@@ -56,7 +59,7 @@ print('Built id_map (%d)' % len(id_map))
 # Read original attrs, writing to the fixed file
 print('Writing "%s"...' % fixed_attrs_file_name)
 num_lines_written = 0
-num_lines_without_id = 0
+num_lines_with_id = 0
 fixed_file = open(fixed_attrs_file_name, 'w')
 with open(attrs_file_name) as a_file:
 
@@ -67,10 +70,11 @@ with open(attrs_file_name) as a_file:
         if real_id_value:
             fixed_file.write(" ".join(line_items[:-1]))
             fixed_file.write(" %s\n" % real_id_value)
-        else:
+            num_lines_with_id += 1
+            num_lines_written += 1
+        elif not ONLY_WRITE_LINES_WITH_ID:
             fixed_file.write(" ".join(line_items[:-1]))
             fixed_file.write("\n")
-            num_lines_without_id += 1
-        num_lines_written += 1
+            num_lines_written += 1
 
-print('Written (%d/%d)' % (num_lines_without_id, num_lines_written))
+print('Written (%d/%d)' % (num_lines_with_id, num_lines_written))
