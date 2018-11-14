@@ -10,7 +10,8 @@
 # We need: -
 #
 # -     the broken attributes file
-# -     the original standardizer file (gzipped)
+# -     the standardizer directory
+#       (expected to contain files named "standardized_*")
 #
 # Usage: fix_attrs.py attrs_file standardizer_file
 #
@@ -26,35 +27,42 @@ import sys
 ONLY_WRITE_LINES_WITH_ID = False
 
 if len(sys.argv) != 3:
-    print('Usage: fix_attrs.py <attrs_file> <standardise_file>')
+    print('Usage: fix_attrs.py <attrs_file> <standardise_dir>')
     sys.exit(1)
 
 attrs_file_name = sys.argv[1]
-standardizer_file_name = sys.argv[2]
+standardizer_dir = sys.argv[2]
 fixed_attrs_file_name = attrs_file_name + '.fixed'
 
 # Input files must exist
 if not os.path.isfile(attrs_file_name):
     print('Attributes file (%s) does not exist.' % attrs_file_name)
     sys.exit(1)
-if not os.path.isfile(standardizer_file_name):
-    print('Standardizer file (%s) does not exist.' % standardizer_file_name)
+if not os.path.isdir(standardizer_dir):
+    print('Standardizer directory (%s) does not exist.' % standardizer_dir)
     sys.exit(1)
 
 # Read the OSMILES to map ID from the standardized file
 # into memory...
-print('Builing id_map...')
+print('Builing id_map from...')
 id_map = {}
-with gzip.open(standardizer_file_name, 'rb') as s_file:
+# Get all the stardardize files
+files = os.listdir(standardizer_dir)
+for file in files:
 
-    line_num = 1
-    for line in s_file:
-        line_items = line.strip().split()
-        if line_num > 1 and len(line_items) == 3:
-            id_map[line_items[1]] = line_items[2]
-        line_num += 1
+    if file.startswith('standardized_'):
+        standardizer_file_name = os.path.join(standardizer_dir, file)
+        print(' %s', file)
+        with gzip.open(standardizer_file_name, 'rb') as s_file:
 
-print('Built id_map (%d)' % len(id_map))
+            line_num = 1
+            for line in s_file:
+                line_items = line.strip().split()
+                if line_num > 1 and len(line_items) == 3:
+                    id_map[line_items[1]] = line_items[2]
+                line_num += 1
+
+print('Built id_map (%d records)' % len(id_map))
 
 # Read original attrs, writing to the fixed file
 print('Writing "%s"...' % fixed_attrs_file_name)
