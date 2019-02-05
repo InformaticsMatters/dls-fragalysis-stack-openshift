@@ -12,7 +12,7 @@ origin = file(params.origin)
 // (replicating the header)
 process headShred {
 
-    container 'informaticsmatters/fragalysis:0.0.14'
+    container 'informaticsmatters/fragalysis:0.0.17'
     publishDir 'results/', mode: 'copy', pattern: 'standardized_input.smi.gz'
 
     input:
@@ -54,7 +54,7 @@ process headShred {
 // take around 30 minutes (on average) to process.
 //
 // We could remove the individual 10-sample 'fragment' files at the end of the
-// process by running 'rm -rf output_*' along wiht the other clean-up operations
+// process by running 'rm -rf output_*' along with the other clean-up operations
 // keeping them will be valuable for any further analysis on 'interesting'
 // (especially fast or especially slow) steps.
 //
@@ -63,7 +63,7 @@ process headShred {
 // and then clean-up.
 process cgd {
 
-    container 'informaticsmatters/fragalysis:0.0.14'
+    container 'informaticsmatters/fragalysis:0.0.17'
     publishDir 'results/', mode: 'copy'
     errorStrategy 'retry'
     maxRetries 3
