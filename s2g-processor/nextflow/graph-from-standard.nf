@@ -1,9 +1,9 @@
 // Fragalysis Graph Processing
-// Processing data from Informatics Matters 'standard' files.
+// Compilation of graph files from Informatics Matters 'standard' files.
 
-params.origin = 'origin.smi.gz'
-params.shredSize = 1000
-params.chunkSize = 25
+params.origin = 'standardised-compounds.tab.gz'
+params.shredSize = 250
+params.chunkSize = 12
 
 origin = file(params.origin)
 
@@ -11,7 +11,7 @@ origin = file(params.origin)
 // (replicating the header)
 process headShred {
 
-    container 'informaticsmatters/fragalysis:0.0.18'
+    container 'informaticsmatters/fragalysis:0.0.19'
     publishDir 'results/', mode: 'copy', pattern: 'standardized_input.smi.gz'
 
     input:
@@ -19,13 +19,10 @@ process headShred {
 
     output:
     file 'origin_part_*.smi' into origin_parts mode flatten
-    file 'standardized_input.smi.gz'
 
     """
     python /usr/local/fragalysis/frag/network/scripts/header_shred.py \
-        -i output_1.smi -o origin_part -s ${params.shredSize}
-    mv output_1.smi standardized_input.smi
-    gzip standardized_input.smi
+        -i ${params.origin} -o origin_part -s ${params.shredSize}
     """
 
 }
@@ -33,7 +30,7 @@ process headShred {
 // CGD ... Chunk/Graph/Deduplicate.
 //
 // This process...
-// - Splits (and canonicalises the input SMILES) file into 'chunks'.
+// - Splits file into 'chunks'.
 // - Runs graph processing on each chunk to generate node/edges/attributes.
 // - Deduplicates the nodes/edges/attributes
 //   (and finally removes the original graph files).
@@ -45,9 +42,7 @@ process headShred {
 // too many tasks starting and stopping. The sweet-spot for graph analysis
 // (at the moment) is a chunk size of 10 molecules which
 // is fast (per molecule) but not enough make the container live long enough
-// to optimise the CPU. So here we do 200 10-molecule chunks in succession
-// so it looks like a very efficient 2000-chunk process which should
-// take around 30 minutes (on average) to process.
+// to optimise the CPU.
 //
 // We could remove the individual 10-sample 'fragment' files at the end of the
 // process by running 'rm -rf output_*' along with the other clean-up operations
@@ -59,7 +54,7 @@ process headShred {
 // and then clean-up.
 process cgd {
 
-    container 'informaticsmatters/fragalysis:0.0.18'
+    container 'informaticsmatters/fragalysis:0.0.19'
     publishDir 'results/', mode: 'copy'
     errorStrategy 'retry'
     maxRetries 3
