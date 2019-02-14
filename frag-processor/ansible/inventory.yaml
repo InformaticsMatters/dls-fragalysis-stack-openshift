@@ -1,0 +1,8 @@
+---
+
+# Provide details of one of the compute cluster nodes
+# to act as the 'master'. Ansible will use this to
+# deploy the nextflow files...
+master:
+  hosts:
+    130.246.215.41:

@@ -1,0 +1,8 @@
+---
+
+- name: Clone Fragalysis
+  git:
+    repo: https://github.com/InformaticsMatters/fragalysis
+    version: "{{ fragalysis_version }}"
+    dest: "{{ home }}/fragalysis"
+
