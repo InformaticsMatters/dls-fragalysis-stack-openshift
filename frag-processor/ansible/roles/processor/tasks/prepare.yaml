@@ -1,8 +1,15 @@
 ---
 
+- name: Make directories
+  file:
+    path: "{{ item }"
+    state: directory
+  loop:
+  - "{{ lookup('env','HOME') }}/github"
+
 - name: Clone Fragalysis
   git:
     repo: https://github.com/InformaticsMatters/fragalysis
     version: "{{ fragalysis_version }}"
-    dest: "{{ home }}/github/fragalysis"
+    dest: "{{ lookup('env','HOME') }}/github/fragalysis"
 
