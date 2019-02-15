@@ -1,0 +1,10 @@
+---
+
+# Runs fragalysis fragment processing to generate neo4j graph files.
+# Processing starts with a standard file downloaded from S3
+# followed by a nextflow process omn that file.
+
+- hosts: localhost
+
+  roles:
+  - graph-processor

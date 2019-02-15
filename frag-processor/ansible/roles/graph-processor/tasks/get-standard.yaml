@@ -16,7 +16,7 @@
     - aws_secret_access_key|length > 0
     msg: Have you defined all the required environment variables?
 
-- name: Get standard
+- name: Get standard file
   shell: >-
     {{ scripts }}/graph_get_standard_file.py
     {{ fragalysis_standard }}
