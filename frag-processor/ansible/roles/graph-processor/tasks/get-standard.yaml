@@ -10,10 +10,10 @@
     - fragalysis_bucket|length > 0
     - fragalysis_standard is defined
     - fragalysis_standard|length > 0
-    - aws_access_key is defined
-    - aws_access_key|length > 0
-    - aws_secret_key is defined
-    - aws_secret_key|length > 0
+    - aws_access_key_id is defined
+    - aws_access_key_id|length > 0
+    - aws_secret_access_key is defined
+    - aws_secret_access_key|length > 0
     msg: Have you defined all the required environment variables?
 
 - name: Get standard
