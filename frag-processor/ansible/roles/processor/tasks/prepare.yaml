@@ -2,7 +2,7 @@
 
 - name: Make directories
   file:
-    path: "{{ item }"
+    path: "{{ item }}"
     state: directory
   loop:
   - "{{ lookup('env','HOME') }}/github"
