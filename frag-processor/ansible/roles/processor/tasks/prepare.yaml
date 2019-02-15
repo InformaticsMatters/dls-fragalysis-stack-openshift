@@ -4,5 +4,5 @@
   git:
     repo: https://github.com/InformaticsMatters/fragalysis
     version: "{{ fragalysis_version }}"
-    dest: "{{ home }}/fragalysis"
+    dest: "{{ home }}/github/fragalysis"
 

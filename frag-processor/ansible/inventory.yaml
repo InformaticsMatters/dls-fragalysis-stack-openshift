@@ -5,4 +5,4 @@
 # deploy the nextflow files...
 master:
   hosts:
-    130.246.215.41:
+    localhost:
