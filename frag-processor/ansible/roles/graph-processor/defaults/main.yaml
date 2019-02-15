@@ -1,9 +1,11 @@
 ---
 
-aws_access_key: "{{ ansible_env.AWS_ACCESS_KEY }}"
-aws_secret_key: "{{ ansible_env.AWS_SECRET_KEY }}"
+aws_access_key: "{{ lookup('env', 'AWS_ACCESS_KEY') }}"
+aws_secret_key: "{{ lookup('env', 'AWS_SECRET_KEY') }}"
 
 fragalysis_bucket: im-fragnet
 fragalysis_standard: activity/senp7/standard-2
 
 process_dir: process
+
+scripts: "{{ lookup('env','HOME') }}/github/fragalysis/frag/network/scripts"

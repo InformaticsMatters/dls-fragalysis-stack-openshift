@@ -12,3 +12,7 @@
     repo: https://github.com/InformaticsMatters/fragalysis
     version: "{{ fragalysis_version }}"
     dest: "{{ lookup('env','HOME') }}/github/fragalysis"
+
+- name: Install Python requirments
+  pip:
+    requirements: "{{ lookup('env','HOME') }}/github/fragalysis/requirements.txt"

@@ -3,9 +3,6 @@
 # Gets the standard file from the S3 bucket.
 # This uses the script (a Python module) in the fragalysis repo.
 
-vars:
-  scripts: "{{ lookup('env','HOME') }}/github/fragalysis/frag/network/scripts"
-
 - name: Check variables
   assert:
     that:
