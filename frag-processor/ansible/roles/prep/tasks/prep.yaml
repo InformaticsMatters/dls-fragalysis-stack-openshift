@@ -13,6 +13,7 @@
     version: "{{ fragalysis_version }}"
     dest: "{{ lookup('env','HOME') }}/github/fragalysis"
 
-- name: Install Python requirments
+- name: Install Python requirements
   pip:
     requirements: "{{ lookup('env','HOME') }}/github/fragalysis/requirements.txt"
+  become: yes

@@ -3,7 +3,7 @@
 aws_access_key: "{{ lookup('env', 'AWS_ACCESS_KEY') }}"
 aws_secret_key: "{{ lookup('env', 'AWS_SECRET_KEY') }}"
 
-fragalysis_bucket: im-fragnet
+fragalysis_bucket: "{{ lookup('env', 'FRAGALYSIS_S3_BUCKET') }}"
 fragalysis_standard: activity/senp7/standard-2
 
 process_dir: process
