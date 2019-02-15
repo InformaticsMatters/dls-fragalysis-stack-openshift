@@ -12,4 +12,3 @@
     repo: https://github.com/InformaticsMatters/fragalysis
     version: "{{ fragalysis_version }}"
     dest: "{{ lookup('env','HOME') }}/github/fragalysis"
-

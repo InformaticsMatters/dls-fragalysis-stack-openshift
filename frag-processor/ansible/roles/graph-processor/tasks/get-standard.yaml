@@ -1,0 +1,31 @@
+---
+
+# Gets the standard file from the S3 bucket.
+# This uses the script (a Python module) in the fragalysis repo.
+
+vars:
+  scripts: "{{ lookup('env','HOME') }}/github/fragalysis/frag/network/scripts"
+
+- name: Check variables
+  assert:
+    that:
+    - fragalysis_bucket is defined
+    - fragalysis_standard is defined
+    - aws_access_key is defined
+    - aws_secret_key is defined
+
+- name: Create process directory
+  file:
+    path: "{{ lookup('env','HOME') }}/{{ process_dir }}"
+    state: directory
+
+- name: Get standard
+  shell: >-
+    {{ scripts }}/graph_get_standard_file.py
+    {{ fragalysis_standard }}
+    {{ lookup('env','HOME') }}/{{ process_dir }}
+
+- name: Install nextflow files
+  copy:
+    src: ../../s2g-processor/nextflow/graph-from-standard.nf
+    dest: "{{ lookup('env','HOME') }}/{{ process_dir }}"

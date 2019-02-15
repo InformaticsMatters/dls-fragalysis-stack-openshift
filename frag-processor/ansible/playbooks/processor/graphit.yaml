@@ -1,0 +1,9 @@
+---
+
+# Runs fragalysis fragment processing to generate a neo4j graph files.
+# Processing starts with a standard file.
+
+- hosts: localhost
+
+  roles:
+  - graph-processor
