@@ -5,11 +5,7 @@ params.origin = 'standardised-compounds.tab.gz'
 params.shredSize = 200
 params.chunkSize = 10
 
-// By setting ENABLE_BUILD_NETWORK_LOG (to anything)
-// we get detailed graph building log
-env.ENABLE_BUILD_NETWORK_LOG = 'yes'
-
-origin = file(params.origin)
+/origin = file(params.origin)
 
 // Shreds a standard file into smaller parts
 // (replicating the header)
@@ -76,6 +72,7 @@ process cgd {
     shell:
     '''
     echo doing-!{part},$(date +"%d/%m/%Y %H:%M:%S") > timing
+    export ENABLE_BUILD_NETWORK_LOG=1
     export LC_ALL=C
     python /usr/local/fragalysis/frag/network/scripts/header_shred.py \
         -i !{part} -o ligands_part -s !{params.chunkSize}
