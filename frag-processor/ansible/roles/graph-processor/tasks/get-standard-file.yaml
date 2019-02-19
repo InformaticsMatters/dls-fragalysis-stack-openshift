@@ -1,0 +1,28 @@
+---
+
+# Gets the standard file from the S3 bucket.
+# This uses the script (a Python module) in the fragalysis repo.
+
+- name: Check variables
+  assert:
+    that:
+      - fragalysis_bucket is defined
+      - fragalysis_bucket|length > 0
+      - fragalysis_standard is defined
+      - fragalysis_standard|length > 0
+      - aws_access_key_id is defined
+      - aws_access_key_id|length > 0
+      - aws_secret_access_key is defined
+      - aws_secret_access_key|length > 0
+    msg: Have you defined all the required environment variables?
+
+- name: Check nextflow
+  shell: ps -aef | grep nextflow | grep -v grep
+  register: nextflow_result
+
+- name: Get standard file
+  shell: >-
+    {{ scripts }}/graph_get_standard_file.py
+    {{ fragalysis_standard }}
+    {{ lookup('env','HOME') }}/{{ process_dir }}
+  when: '"nextflow" not in nextflow_result.stdout'

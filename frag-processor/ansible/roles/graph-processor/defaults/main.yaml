@@ -6,6 +6,14 @@ aws_secret_access_key: "{{ lookup('env', 'AWS_SECRET_ACCESS_KEY') }}"
 fragalysis_bucket: "{{ lookup('env', 'FRAGALYSIS_S3_BUCKET') }}"
 fragalysis_standard: activity/senp7/standard-2
 
+# Nextflow config.
+# Timeouts:  2880 (2 days)
+#           10080 (7 days)
+nextflow_extra_args: -process.scratch
+nextflow_queue_size: 16
+nextflow_timeout_minutes: 10080
+nextflow_wait: no
+
 process_dir: process
 
 scripts: "{{ lookup('env','HOME') }}/github/fragalysis/frag/network/scripts"

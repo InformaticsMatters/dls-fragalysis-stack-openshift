@@ -1,0 +1,11 @@
+---
+
+- name: Check nextflow
+  shell: ps -aef | grep nextflow | grep -v grep
+  register: nextflow_result
+
+- name: Install nextflow files
+  copy:
+    src: graph-from-standard.nf
+    dest: "{{ lookup('env','HOME') }}/{{ process_dir }}"
+  when: '"nextflow" not in nextflow_result.stdout'
