@@ -80,14 +80,6 @@ would be, for a cluster with up to 128 cores: -
         -with-report \
         -with-trace \
         -with-timeline &
-
-nextflow run graph-from-standard.nf \
-        -executor.queueSize 16 \
-        -process.scratch \
-        -with-docker busybox \
-        -with-report \
-        -with-trace \
-        -with-timeline
         
 >   The above is executed on the designated master node from the EFS mount
     directory (i.e. `/mnt/efs`).
