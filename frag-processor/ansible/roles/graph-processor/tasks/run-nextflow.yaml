@@ -15,7 +15,7 @@
     -with-timeline
     </dev/null >/dev/null 2>&1 &
   args:
-    chdir: "{{ lookup('env','HOME') }}"
+    chdir: "{{ lookup('env','HOME') }}/{{ process_dir }}"
   when: nextflow_result.stdout|length == 0
 
 # Optionally wait for nextflow, polling at 15-minute intervals...
@@ -26,9 +26,9 @@
   when: nextflow_wait
 
 - name: Wait for nextflow
-  shell: nextflow_result.stdout|length > 0
+  shell: echo -n $(pgrep java)
   args:
-    chdir: "{{ lookup('env','HOME') }}"
+    chdir: "{{ lookup('env','HOME') }}/{{ process_dir }}"
   delay: 900
   retries: "{{ nextflow_timeout_minutes | int }}"
   register: result
