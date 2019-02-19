@@ -2,8 +2,8 @@
 // Compilation of graph files from Informatics Matters 'standard' files.
 
 params.origin = 'standardised-compounds.tab.gz'
-params.shredSize = 250
-params.chunkSize = 12
+params.shredSize = 200
+params.chunkSize = 10
 
 origin = file(params.origin)
 
@@ -11,7 +11,7 @@ origin = file(params.origin)
 // (replicating the header)
 process headShred {
 
-    container 'informaticsmatters/fragalysis:0.0.20'
+    container 'informaticsmatters/fragalysis:0.0.21'
     publishDir 'results/', mode: 'copy', pattern: 'standardized_input.smi.gz'
 
     input:
@@ -54,7 +54,7 @@ process headShred {
 // and then clean-up.
 process cgd {
 
-    container 'informaticsmatters/fragalysis:0.0.20'
+    container 'informaticsmatters/fragalysis:0.0.21'
     publishDir 'results/', mode: 'copy'
     errorStrategy 'retry'
     maxRetries 3
@@ -77,7 +77,7 @@ process cgd {
     for chunk in ligands_part*.smi; do
         echo ${chunk},$(date +"%d/%m/%Y %H:%M:%S") >> timing
         python /usr/local/fragalysis/frag/network/scripts/build_db_from_standard.py \
-            --input ${chunk} --base_dir output_${chunk%.*}
+            --input ${chunk} --base_dir output_${chunk%.*} --non_isomeric
     done
     echo deduplicating,$(date +"%d/%m/%Y %H:%M:%S") >> timing
     find . -name nodes.txt | xargs cat | sort --temporary-directory=$HOME/tmp -u | gzip > !{part}.nodes.gz
