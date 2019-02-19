@@ -17,7 +17,7 @@
     msg: Have you defined all the required environment variables?
 
 - name: Check nextflow
-  shell: echo -n $(pgrep nextflow)
+  shell: echo -n $(pgrep java)
   register: nextflow_result
 
 - name: Get standard file

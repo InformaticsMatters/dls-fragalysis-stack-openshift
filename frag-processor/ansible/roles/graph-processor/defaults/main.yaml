@@ -12,7 +12,8 @@ fragalysis_standard: activity/senp7/standard-2
 nextflow_extra_args: -process.scratch
 nextflow_queue_size: 16
 nextflow_timeout_minutes: 10080
-nextflow_wait: no
+nextflow_run: yes
+nextflow_wait: yes
 
 process_dir: process
 

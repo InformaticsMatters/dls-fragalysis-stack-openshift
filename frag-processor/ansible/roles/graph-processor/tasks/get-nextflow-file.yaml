@@ -1,7 +1,7 @@
 ---
 
 - name: Check nextflow
-  shell: echo -n $(pgrep nextflow)
+  shell: echo -n $(pgrep java)
   register: nextflow_result
 
 - name: Install nextflow files

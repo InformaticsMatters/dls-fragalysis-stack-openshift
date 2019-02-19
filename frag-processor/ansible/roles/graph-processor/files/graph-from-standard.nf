@@ -5,7 +5,7 @@ params.origin = 'standardised-compounds.tab.gz'
 params.shredSize = 200
 params.chunkSize = 10
 
-/origin = file(params.origin)
+origin = file(params.origin)
 
 // Shreds a standard file into smaller parts
 // (replicating the header)
