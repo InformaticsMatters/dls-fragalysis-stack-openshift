@@ -6,19 +6,24 @@
 
 - name: Run nextflow (nohup)
   shell: >-
-    nohup nextflow run graph-from-standard.nf -with-docker busybox
+    nohup nextflow run graph-from-standard.nf
+    -with-docker busybox
     -executor.queueSize {{ nextflow_queue_size }}
     {{ nextflow_extra_args }}
     -with-report
     -with-trace
     -with-timeline
     </dev/null >/dev/null 2>&1 &
+  args:
+    chdir: "{{ lookup('env','HOME') }}"
   when: '"nextflow" not in nextflow_result.stdout'
 
 # Optionally wait for nextflow, polling at 15-minute intervals...
 
 - name: Wait for nextflow
   shell: grep Success .nextflow.log
+  args:
+    chdir: "{{ lookup('env','HOME') }}"
   delay: 900
   retries: "{{ nextflow_timeout_minutes | int }}"
   register: result
