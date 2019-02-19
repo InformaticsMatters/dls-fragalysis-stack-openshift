@@ -1,7 +1,7 @@
 ---
 
 - name: Check nextflow
-  shell: ps -aef | grep nextflow | grep -v grep
+  shell: echo -n $(pgrep nextflow)
   register: nextflow_result
 
 - name: Run nextflow (nohup)
@@ -16,16 +16,21 @@
     </dev/null >/dev/null 2>&1 &
   args:
     chdir: "{{ lookup('env','HOME') }}"
-  when: '"nextflow" not in nextflow_result.stdout'
+  when: nextflow_result.stdout|length == 0
 
 # Optionally wait for nextflow, polling at 15-minute intervals...
 
+- name: Pre-exit pause
+  pause:
+    seconds: 10
+  when: nextflow_wait
+
 - name: Wait for nextflow
-  shell: grep Success .nextflow.log
+  shell: nextflow_result.stdout|length > 0
   args:
     chdir: "{{ lookup('env','HOME') }}"
   delay: 900
   retries: "{{ nextflow_timeout_minutes | int }}"
   register: result
-  until: result.rc == 0
+  until: result|length == 0
   when: nextflow_wait
