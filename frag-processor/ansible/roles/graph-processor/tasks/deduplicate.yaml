@@ -22,3 +22,75 @@
   - attributes
   - nodes
   - edges
+
+# Analyse attributes...
+
+- name: Check attributes.txt
+  stat:
+    path: "{{ lookup('env','HOME') }}/attributes.txt"
+  register: attributes_file
+
+- name: Collect attribute count
+  shell: wc -l {{ lookup('env','HOME') }}/attributes.txt
+  register: attr_lines
+  environment:
+    LC_ALL: C
+  when: attributes_file.stat.exists
+
+- name: Dsiaply edge count
+  debug:
+    var: attr_lines
+  when: attributes_file.stat.exists
+
+# Analyse nodes...
+
+- name: Check nodes.txt
+  stat:
+    path: "{{ lookup('env','HOME') }}/nodes.txt"
+  register: nodes_file
+
+- name: Collect node count
+  shell: wc -l {{ lookup('env','HOME') }}/nodes.txt
+  register: node_lines
+  environment:
+    LC_ALL: C
+  when: nodes_file.stat.exists
+
+- name: Dsiaply node count
+  debug:
+    var: nodes_lines
+  when: nodes_file.stat.exists
+
+# Analyse edges...
+
+- name: Check edges.txt
+  stat:
+    path: "{{ lookup('env','HOME') }}/edges.txt"
+  register: attributes_file
+
+- name: Collect edge count
+  shell: wc -l {{ lookup('env','HOME') }}/edges.txt
+  register: edges_lines
+  environment:
+    LC_ALL: C
+  when: edges_file.stat.exists
+
+- name: Dsiaply edge count
+  debug:
+    var: edges_lines
+  when: edges_file.stat.exists
+
+# Compress ...
+
+- name: Compress
+  shell: gzip {{ tgt }}
+  environment:
+    LC_ALL: C
+  args:
+    creates: "{{ tgt }}.gz"
+  vars:
+    tgt: "{{ lookup('env','HOME') }}/{{ item }}.txt"
+  loop:
+    - attributes
+    - nodes
+    - edges
