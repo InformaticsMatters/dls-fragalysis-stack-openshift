@@ -1,0 +1,9 @@
+---
+
+- hosts: localhost
+
+  tasks:
+  - name: Run the Deduplication Tasks
+    include_role:
+      name: graph-processor
+      tasks_from: process-senp7.yaml
