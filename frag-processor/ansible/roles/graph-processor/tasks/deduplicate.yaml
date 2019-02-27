@@ -1,6 +1,10 @@
 ---
 
-# Deduplicate results
+# Deduplicate results.
+#
+# This play attempts to de-duplicates attributes, nodes and edges
+# (unless they're already de-duplicated). It them reports on the
+# respective file sizes and then compresses the resultant txt files.
 
 - name: Create temporary directory
   file:
@@ -11,7 +15,7 @@
 
 - name: Check compressed Attributes
   stat:
-    path: "{{ lookup('env','HOME') }}/attributes.txt.gz"
+    path: "{{ lookup('env', 'HOME') }}/attributes.txt.gz"
   register: attributes_gz_file
 
 - name: Deduplicate Attributes
@@ -22,9 +26,9 @@
     LC_ALL: C
   args:
     creates: "{{ tgt }}"
-    chdir: "{{ lookup('env','HOME') }}/{{ process_dir }}/results"
+    chdir: "{{ lookup('env', 'HOME') }}/{{ process_dir }}/results"
   vars:
-    tgt: "{{ lookup('env','HOME') }}/attributes.txt"
+    tgt: "{{ lookup('env', 'HOME') }}/attributes.txt"
   when: not attributes_gz_file.stat.exists
 
 - name: Collect attribute count
@@ -43,7 +47,7 @@
 
 - name: Check compressed Nodes
   stat:
-    path: "{{ lookup('env','HOME') }}/nodes.txt.gz"
+    path: "{{ lookup('env', 'HOME') }}/nodes.txt.gz"
   register: nodes_gz_file
 
 - name: Deduplicate Nodes
@@ -56,7 +60,7 @@
     creates: "{{ tgt }}"
     chdir: "{{ lookup('env','HOME') }}/{{ process_dir }}/results"
   vars:
-    tgt: "{{ lookup('env','HOME') }}/nodes.txt"
+    tgt: "{{ lookup('env', 'HOME') }}/nodes.txt"
   when: not nodes_gz_file.stat.exists
 
 - name: Collect node count
@@ -75,7 +79,7 @@
 
 - name: Check compressed Edges
   stat:
-    path: "{{ lookup('env','HOME') }}/edges.txt.gz"
+    path: "{{ lookup('env', 'HOME') }}/edges.txt.gz"
   register: edges_gz_file
 
 - name: Deduplicate Edges
@@ -86,9 +90,9 @@
     LC_ALL: C
   args:
     creates: "{{ tgt }}"
-    chdir: "{{ lookup('env','HOME') }}/{{ process_dir }}/results"
+    chdir: "{{ lookup('env', 'HOME') }}/{{ process_dir }}/results"
   vars:
-    tgt: "{{ lookup('env','HOME') }}/edges.txt"
+    tgt: "{{ lookup('env', 'HOME') }}/edges.txt"
   when: not edges_gz_file.stat.exists
 
 - name: Collect edge count
@@ -112,7 +116,7 @@
   args:
     creates: "{{ tgt }}.gz"
   vars:
-    tgt: "{{ lookup('env','HOME') }}/{{ item }}.txt"
+    tgt: "{{ lookup('env', 'HOME') }}/{{ item }}.txt"
   loop:
   - attributes
   - nodes

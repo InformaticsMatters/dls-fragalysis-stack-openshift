@@ -1,0 +1,33 @@
+---
+
+# Processes de-duplicated senp7 data files.
+# Graph process and de-duplication is expected to have taken place.
+#
+# Here we create a directory (where the processed files will be placed)
+# and then do some pre-processing (turning .txt.gz into .csv.gz)
+# followed by the final processing, which creates neo4j compliant files.
+
+- name: Create output directory
+  file:
+    path: "{{ lookup('env','HOME') }}/{{ output_dir }}"
+    state: directory
+
+- name: Process Preparation (senp7)
+  shell: process_prep.py {{ input }} {{ output }}
+  args:
+    chdir: "{{ scripts }}"
+  vars:
+    input: "{{ lookup('env', 'HOME') }}"
+    output: "{{ lookup('env', 'HOME') }}"
+
+- name: Process (senp7)
+  shell: >-
+    process_senp7_compounds.py {{ vendor_file }} {{ nodes_file }} {{ output }}
+    --limit {{ process_limit }}
+  args:
+    creates: "{{ output }}/senp7-suppliermol-nodes.csv.gz"
+    chdir: "{{ scripts }}"
+  vars:
+    vendor_file: "{{ lookup('env', 'HOME') }}/{{ process_dir }}/standardised-compounds.tab.gz"
+    nodes_file: "{{ lookup('env', 'HOME') }}/nodes.csv.gz"
+    output: "{{ lookup('env', 'HOME') }}/{{ output_dir }}"
