@@ -32,14 +32,14 @@
 
 - name: Collect attribute count
   shell: wc -l {{ lookup('env','HOME') }}/attributes.txt
-  register: attr_lines
+  register: attributes_lines
   environment:
     LC_ALL: C
   when: attributes_file.stat.exists
 
 - name: Dsiaply edge count
   debug:
-    var: attr_lines
+    var: attributes_lines
   when: attributes_file.stat.exists
 
 # Analyse nodes...
@@ -51,7 +51,7 @@
 
 - name: Collect node count
   shell: wc -l {{ lookup('env','HOME') }}/nodes.txt
-  register: node_lines
+  register: nodes_lines
   environment:
     LC_ALL: C
   when: nodes_file.stat.exists
@@ -66,7 +66,7 @@
 - name: Check edges.txt
   stat:
     path: "{{ lookup('env','HOME') }}/edges.txt"
-  register: attributes_file
+  register: edges_file
 
 - name: Collect edge count
   shell: wc -l {{ lookup('env','HOME') }}/edges.txt
