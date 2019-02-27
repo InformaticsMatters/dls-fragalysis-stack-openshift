@@ -1,0 +1,21 @@
+---
+
+# Tasks that run prior to any graph processing.
+#
+# The commit reference of the dls_fragalysis_stack_openshift repo
+# (from where ansible is executed) is written to 'dls-commit-ref'
+# in the process directory. This is used to keep a record of precisely
+# what was executed.
+
+- name: Get DLS commit reference
+  shell: git log --pretty=format:'%h' -n 1
+  register: commit_result
+
+- name: Set salient facts
+  set_fact:
+    dls_commit_ref: "{{ commit_result.stdout }}"
+
+- name: Write commit reference (to process directory)
+  copy:
+    content: "{{ dls_commit_ref }}"
+    dest: "{{ lookup('env','HOME') }}/{{ process_dir }}/dls-commit-ref"

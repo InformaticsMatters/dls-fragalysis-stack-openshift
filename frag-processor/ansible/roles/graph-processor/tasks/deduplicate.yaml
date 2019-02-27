@@ -1,0 +1,19 @@
+---
+
+# Deduplicate results
+
+- name: Create temporary directory
+  file:
+    path: /tmp
+    state: directory
+
+- name: Deduplicate Attributes
+  shell: >-
+    zcat *.attributes.gz
+    | sort -S16G --parallel=16 --temporary-directory=/tmp -u > {{ tgt }}
+  environment:
+    LC_ALL: C
+  args:
+    chdir: "{{ lookup('env','HOME') }}/{{ process_dir }}/results"
+  vars:
+    tgt: "{{ lookup('env','HOME') }}/attributes.txt"

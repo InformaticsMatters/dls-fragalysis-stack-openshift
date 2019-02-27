@@ -18,7 +18,8 @@
     chdir: "{{ lookup('env','HOME') }}/{{ process_dir }}"
   when: nextflow_result.stdout|length == 0
 
-# Optionally wait for nextflow, polling at 15-minute intervals...
+# Optionally wait for nextflow, polling at 15-minute intervals.
+# After pausing for a short time to give nextflow a chance to run.
 
 - name: Pre-exit pause
   pause:
