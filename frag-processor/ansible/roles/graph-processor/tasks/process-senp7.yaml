@@ -23,13 +23,9 @@
 
 - name: Process (senp7)
   shell: >-
-    ./frag/network/scripts/process_senp7_compounds.py
-    {{ vendor_file }}
-    {{ nodes_file }}
-    {{ output }}
+    ./process_senp7_compounds.py
+    {{ vendor_file }}  {{ nodes_file }} {{ output }}
     --limit {{ process_limit }}
-  environment:
-    PYTHONPATH: pythonpath
   args:
     creates: "{{ output }}/senp7-suppliermol-nodes.csv.gz"
     chdir: "{{ scripts }}"
