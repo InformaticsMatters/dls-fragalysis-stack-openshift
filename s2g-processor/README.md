@@ -145,8 +145,6 @@ To collect and de-duplicate the calculated results: -
     time (export LC_ALL=C; zcat *.attributes.gz | ${SORT} -S16G --parallel=16 --temporary-directory=/data1/tmp -u  > ../attributes.${RUN}.txt)
     time (export LC_ALL=C; zcat *.nodes.gz | ${SORT} -S16G --parallel=16 --temporary-directory=/data1/tmp -u  > ../nodes.${RUN}.txt)
 
-     time (export LC_ALL=C; zcat *.attributes.gz | ${SORT} -S16G --parallel=16 --temporary-directory=/tmp/data -u  > ../attributes.txt)
-
 Deduplicating the files in 5 attempts, the following typically takes about 3-4 minutes per item...
 
     time (export LC_ALL=C; zcat *.edges.gz | ${SORT} -S16G --parallel=16 --temporary-directory=/data1/tmp -u > ../edges.${RUN}.txt)
