@@ -13,7 +13,7 @@
     state: directory
 
 - name: Process Preparation (senp7)
-  shell: process_prep.py {{ input }} {{ output }}
+  shell: ./process_prep.py {{ input }} {{ output }}
   args:
     chdir: "{{ scripts }}"
   vars:
@@ -22,7 +22,7 @@
 
 - name: Process (senp7)
   shell: >-
-    process_senp7_compounds.py {{ vendor_file }} {{ nodes_file }} {{ output }}
+    ./process_senp7_compounds.py {{ vendor_file }} {{ nodes_file }} {{ output }}
     --limit {{ process_limit }}
   args:
     creates: "{{ output }}/senp7-suppliermol-nodes.csv.gz"
