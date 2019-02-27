@@ -7,9 +7,9 @@
     path: /tmp
     state: directory
 
-- name: Deduplicate Attributes
+- name: Deduplicate
   shell: >-
-    zcat *.attributes.gz
+    zcat *.{{ item }}.gz
     | sort -S16G --parallel=16 --temporary-directory=/tmp -u > {{ tgt }}
   environment:
     LC_ALL: C
@@ -17,4 +17,7 @@
     creates: "{{ tgt }}"
     chdir: "{{ lookup('env','HOME') }}/{{ process_dir }}/results"
   vars:
-    tgt: "{{ lookup('env','HOME') }}/attributes.txt"
+    tgt: "{{ lookup('env','HOME') }}/{{ item }}.txt"
+  loop:
+  - attributes
+  - nodes
