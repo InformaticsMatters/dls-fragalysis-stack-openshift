@@ -22,4 +22,4 @@ output_dir: output
 process_limit: 0
 
 scripts: "{{ lookup('env','HOME') }}/github/fragalysis/frag/network/scripts"
-fragalysis: "{{ lookup('env','HOME') }}/github/fragalysis"
+pythonpath: "{{ lookup('env','HOME') }}/github/fragalysis"

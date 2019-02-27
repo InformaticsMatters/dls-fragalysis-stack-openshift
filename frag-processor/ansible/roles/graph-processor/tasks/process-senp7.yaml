@@ -28,9 +28,11 @@
     {{ nodes_file }}
     {{ output }}
     --limit {{ process_limit }}
+  environment:
+    PYTHONPATH: pythonpath
   args:
     creates: "{{ output }}/senp7-suppliermol-nodes.csv.gz"
-    chdir: "{{ fragalysis }}"
+    chdir: "{{ scripts }}"
   vars:
     vendor_file: "{{ lookup('env', 'HOME') }}/{{ process_dir }}/standardised-compounds.tab.gz"
     nodes_file: "{{ lookup('env', 'HOME') }}/nodes.csv.gz"
