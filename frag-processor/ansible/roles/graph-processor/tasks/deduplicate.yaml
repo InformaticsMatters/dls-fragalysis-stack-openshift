@@ -7,7 +7,14 @@
     path: /tmp
     state: directory
 
-- name: Deduplicate
+# Deduplicate Attributes
+
+- name: Check compressed Attributes
+  stat:
+    path: "{{ lookup('env','HOME') }}/attributes.txt.gz"
+  register: attributes_gz_file
+
+- name: Deduplicate Attributes
   shell: >-
     zcat *.{{ item }}.gz
     | sort -S16G --parallel=16 --temporary-directory=/tmp -u > {{ tgt }}
@@ -17,68 +24,84 @@
     creates: "{{ tgt }}"
     chdir: "{{ lookup('env','HOME') }}/{{ process_dir }}/results"
   vars:
-    tgt: "{{ lookup('env','HOME') }}/{{ item }}.txt"
-  loop:
-  - attributes
-  - nodes
-  - edges
-
-# Analyse attributes...
-
-- name: Check attributes.txt
-  stat:
-    path: "{{ lookup('env','HOME') }}/attributes.txt"
-  register: attributes_file
+    tgt: "{{ lookup('env','HOME') }}/attributes.txt"
+  when: not attributes_gz_file.stat.exists
 
 - name: Collect attribute count
   shell: wc -l {{ lookup('env','HOME') }}/attributes.txt
   register: attributes_lines
   environment:
     LC_ALL: C
-  when: attributes_file.stat.exists
+  when: not attributes_gz_file.stat.exists
 
 - name: Dsiaply edge count
   debug:
-    var: attributes_lines
-  when: attributes_file.stat.exists
+    var: attributes_lines.stdout
+  when: not attributes_gz_file.stat.exists
 
-# Analyse nodes...
+# Deduplicate Nodes
 
-- name: Check nodes.txt
+- name: Check compressed Nodes
   stat:
-    path: "{{ lookup('env','HOME') }}/nodes.txt"
-  register: nodes_file
+    path: "{{ lookup('env','HOME') }}/nodes.txt.gz"
+  register: nodes_gz_file
+
+- name: Deduplicate Nodes
+  shell: >-
+    zcat *.{{ item }}.gz
+    | sort -S16G --parallel=16 --temporary-directory=/tmp -u > {{ tgt }}
+  environment:
+    LC_ALL: C
+  args:
+    creates: "{{ tgt }}"
+    chdir: "{{ lookup('env','HOME') }}/{{ process_dir }}/results"
+  vars:
+    tgt: "{{ lookup('env','HOME') }}/nodes.txt"
+  when: not nodes_gz_file.stat.exists
 
 - name: Collect node count
   shell: wc -l {{ lookup('env','HOME') }}/nodes.txt
   register: nodes_lines
   environment:
     LC_ALL: C
-  when: nodes_file.stat.exists
+  when: not nodes_gz_file.stat.exists
 
 - name: Dsiaply node count
   debug:
-    var: nodes_lines
-  when: nodes_file.stat.exists
+    var: nodes_lines.stdout
+  when: not nodes_gz_file.stat.exists
 
-# Analyse edges...
+# Deduplicate Edges
 
-- name: Check edges.txt
+- name: Check compressed Edges
   stat:
-    path: "{{ lookup('env','HOME') }}/edges.txt"
-  register: edges_file
+    path: "{{ lookup('env','HOME') }}/edges.txt.gz"
+  register: edges_gz_file
+
+- name: Deduplicate Edges
+  shell: >-
+    zcat *.{{ item }}.gz
+    | sort -S16G --parallel=16 --temporary-directory=/tmp -u > {{ tgt }}
+  environment:
+    LC_ALL: C
+  args:
+    creates: "{{ tgt }}"
+    chdir: "{{ lookup('env','HOME') }}/{{ process_dir }}/results"
+  vars:
+    tgt: "{{ lookup('env','HOME') }}/edges.txt"
+  when: not edges_gz_file.stat.exists
 
 - name: Collect edge count
   shell: wc -l {{ lookup('env','HOME') }}/edges.txt
   register: edges_lines
   environment:
     LC_ALL: C
-  when: edges_file.stat.exists
+  when: not edges_gz_file.stat.exists
 
 - name: Dsiaply edge count
   debug:
-    var: edges_lines
-  when: edges_file.stat.exists
+    var: edges_lines.stdout
+  when: not edges_gz_file.stat.exists
 
 # Compress ...
 
@@ -91,6 +114,6 @@
   vars:
     tgt: "{{ lookup('env','HOME') }}/{{ item }}.txt"
   loop:
-    - attributes
-    - nodes
-    - edges
+  - attributes
+  - nodes
+  - edges
