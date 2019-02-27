@@ -21,3 +21,4 @@
   loop:
   - attributes
   - nodes
+  - edges
