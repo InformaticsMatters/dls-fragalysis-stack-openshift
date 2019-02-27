@@ -16,7 +16,7 @@
 
 - name: Deduplicate Attributes
   shell: >-
-    zcat *.{{ item }}.gz
+    zcat *.attributes.gz
     | sort -S16G --parallel=16 --temporary-directory=/tmp -u > {{ tgt }}
   environment:
     LC_ALL: C
@@ -48,7 +48,7 @@
 
 - name: Deduplicate Nodes
   shell: >-
-    zcat *.{{ item }}.gz
+    zcat *.nodes.gz
     | sort -S16G --parallel=16 --temporary-directory=/tmp -u > {{ tgt }}
   environment:
     LC_ALL: C
@@ -80,7 +80,7 @@
 
 - name: Deduplicate Edges
   shell: >-
-    zcat *.{{ item }}.gz
+    zcat *.edges.gz
     | sort -S16G --parallel=16 --temporary-directory=/tmp -u > {{ tgt }}
   environment:
     LC_ALL: C
