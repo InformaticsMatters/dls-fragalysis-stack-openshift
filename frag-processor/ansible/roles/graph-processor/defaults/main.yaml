@@ -16,7 +16,7 @@ nextflow_run: yes
 nextflow_wait: yes
 
 process_dir: process
-ouptut_dir: output
+output_dir: output
 
 # Limit processing (0 implies no limit)
 process_limit: 0
