@@ -11,6 +11,7 @@
   shell: >-
     zcat *.attributes.gz
     | sort -S16G --parallel=16 --temporary-directory=/tmp -u > {{ tgt }}
+  creates: "{{ tgt }}"
   environment:
     LC_ALL: C
   args:
