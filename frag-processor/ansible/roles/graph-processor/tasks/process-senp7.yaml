@@ -15,11 +15,15 @@
 - name: Process Preparation (senp7)
   shell: ./process_prep.py {{ input }} {{ output }}
   args:
-    creates: "{{ output }}/nodes.csv.gz"
     chdir: "{{ scripts }}"
   vars:
     input: "{{ lookup('env', 'HOME') }}"
     output: "{{ lookup('env', 'HOME') }}"
+
+- name: Check Process Done File (senp7)
+  stat:
+    path: "{{ lookup('env', 'HOME') }}/{{ output }}/done"
+  register: done_file
 
 - name: Process (senp7)
   shell: >-
@@ -27,9 +31,9 @@
     {{ vendor_file }}  {{ nodes_file }} {{ output }}
     --limit {{ process_limit }}
   args:
-    creates: "{{ output }}/senp7-suppliermol-nodes.csv.gz"
     chdir: "{{ scripts }}"
   vars:
     vendor_file: "{{ lookup('env', 'HOME') }}/{{ process_dir }}/standardised-compounds.tab.gz"
     nodes_file: "{{ lookup('env', 'HOME') }}/nodes.csv.gz"
     output: "{{ lookup('env', 'HOME') }}/{{ output_dir }}"
+  when: not done_file.stat.exists
