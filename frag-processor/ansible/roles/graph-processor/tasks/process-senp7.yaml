@@ -15,6 +15,7 @@
 - name: Process Preparation (senp7)
   shell: ./process_prep.py {{ input }} {{ output }}
   args:
+    creates: "{{ output }}/nodes.csv.gz"
     chdir: "{{ scripts }}"
   vars:
     input: "{{ lookup('env', 'HOME') }}"
@@ -22,11 +23,14 @@
 
 - name: Process (senp7)
   shell: >-
-    ./process_senp7_compounds.py {{ vendor_file }} {{ nodes_file }} {{ output }}
+    ./frag/network/scripts/process_senp7_compounds.py
+    {{ vendor_file }}
+    {{ nodes_file }}
+    {{ output }}
     --limit {{ process_limit }}
   args:
     creates: "{{ output }}/senp7-suppliermol-nodes.csv.gz"
-    chdir: "{{ scripts }}"
+    chdir: "{{ fragalysis }}"
   vars:
     vendor_file: "{{ lookup('env', 'HOME') }}/{{ process_dir }}/standardised-compounds.tab.gz"
     nodes_file: "{{ lookup('env', 'HOME') }}/nodes.csv.gz"
