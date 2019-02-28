@@ -7,7 +7,7 @@
 # and then do some pre-processing (turning .txt.gz into .csv.gz)
 # followed by the final processing, which creates neo4j compliant files.
 
-- import_tasks: "{{ role_path }}/tasks/sanity-check.yaml"
+- import_tasks: sanity-check.yaml
 
 - name: Create output directory
   file:

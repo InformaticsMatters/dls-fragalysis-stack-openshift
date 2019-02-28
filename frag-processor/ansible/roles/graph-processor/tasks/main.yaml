@@ -10,3 +10,4 @@
 - import_tasks: get-nextflow-file.yaml
 - import_tasks: run-nextflow.yaml
   when: nextflow_run
+- import_tasks: deduplicate.yaml
