@@ -2,7 +2,7 @@
 
 # Just run these plays...
 
-- import_tasks: check_variables.yaml
+- import_tasks: sanity-check.yaml
 
 - import_tasks: preamble.yaml
 
