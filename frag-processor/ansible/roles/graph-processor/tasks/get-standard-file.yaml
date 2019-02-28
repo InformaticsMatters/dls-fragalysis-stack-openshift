@@ -3,19 +3,6 @@
 # Gets the standard file from the S3 bucket.
 # This uses the script (a Python module) in the fragalysis repo.
 
-- name: Check variables
-  assert:
-    that:
-      - fragalysis_bucket is defined
-      - fragalysis_bucket|length > 0
-      - fragalysis_standard_number is defined
-      - fragalysis_standard_number > 0
-      - aws_access_key_id is defined
-      - aws_access_key_id|length > 0
-      - aws_secret_access_key is defined
-      - aws_secret_access_key|length > 0
-    msg: Have you defined all the required environment variables?
-
 - name: Check nextflow
   shell: echo -n $(pgrep java)
   register: nextflow_result

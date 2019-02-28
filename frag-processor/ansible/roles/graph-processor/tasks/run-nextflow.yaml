@@ -30,7 +30,7 @@
   shell: echo -n $(pgrep java)
   args:
     chdir: "{{ lookup('env','HOME') }}/{{ process_dir }}"
-  delay: 900
+  delay: 60
   retries: "{{ nextflow_timeout_minutes | int }}"
   register: result
   until: result|length == 0
