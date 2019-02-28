@@ -18,6 +18,7 @@ nextflow_run: yes
 nextflow_wait: yes
 
 process_dir: process
+dedupe_dir: dedupe
 output_dir: output
 
 # Skip and Limit processing (0 implies ignore)

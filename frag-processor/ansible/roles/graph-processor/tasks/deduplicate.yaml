@@ -15,7 +15,7 @@
 
 - name: Check compressed Attributes
   stat:
-    path: "{{ lookup('env', 'HOME') }}/attributes.txt.gz"
+    path: "{{ lookup('env', 'HOME') }}/{{ dedupe_dir }}/attributes.txt.gz"
   register: attributes_gz_file
 
 - name: Deduplicate Attributes
@@ -27,11 +27,11 @@
   args:
     chdir: "{{ lookup('env', 'HOME') }}/{{ process_dir }}/results"
   vars:
-    tgt: "{{ lookup('env', 'HOME') }}"
+    tgt: "{{ lookup('env', 'HOME') }}/{{ dedupe_dir }}"
   when: not attributes_gz_file.stat.exists
 
 - name: Collect attribute count
-  shell: wc -l {{ lookup('env','HOME') }}/attributes.txt
+  shell: wc -l {{ lookup('env','HOME') }}/{{ dedupe_dir }}/attributes.txt
   register: attributes_lines
   environment:
     LC_ALL: C
@@ -46,7 +46,7 @@
 
 - name: Check compressed Nodes
   stat:
-    path: "{{ lookup('env', 'HOME') }}/nodes.txt.gz"
+    path: "{{ lookup('env', 'HOME') }}/{{ dedupe_dir }}/nodes.txt.gz"
   register: nodes_gz_file
 
 - name: Deduplicate Nodes
@@ -58,11 +58,11 @@
   args:
     chdir: "{{ lookup('env','HOME') }}/{{ process_dir }}/results"
   vars:
-    tgt: "{{ lookup('env', 'HOME') }}"
+    tgt: "{{ lookup('env', 'HOME') }}/{{ dedupe_dir }}"
   when: not nodes_gz_file.stat.exists
 
 - name: Collect node count
-  shell: wc -l {{ lookup('env','HOME') }}/nodes.txt
+  shell: wc -l {{ lookup('env','HOME') }}/{{ dedupe_dir }}/nodes.txt
   register: nodes_lines
   environment:
     LC_ALL: C
@@ -77,7 +77,7 @@
 
 - name: Check compressed Edges
   stat:
-    path: "{{ lookup('env', 'HOME') }}/edges.txt.gz"
+    path: "{{ lookup('env', 'HOME') }}/{{ dedupe_dir }}/edges.txt.gz"
   register: edges_gz_file
 
 - name: Deduplicate Edges
@@ -89,11 +89,11 @@
   args:
     chdir: "{{ lookup('env', 'HOME') }}/{{ process_dir }}/results"
   vars:
-    tgt: "{{ lookup('env', 'HOME') }}"
+    tgt: "{{ lookup('env', 'HOME') }}/{{ dedupe_dir }}"
   when: not edges_gz_file.stat.exists
 
 - name: Collect edge count
-  shell: wc -l {{ lookup('env','HOME') }}/edges.txt
+  shell: wc -l {{ lookup('env','HOME') }}/{{ dedupe_dir }}/edges.txt
   register: edges_lines
   environment:
     LC_ALL: C
@@ -113,7 +113,7 @@
   args:
     creates: "{{ tgt }}.gz"
   vars:
-    tgt: "{{ lookup('env', 'HOME') }}/{{ item }}.txt"
+    tgt: "{{ lookup('env', 'HOME') }}/{{ dedupe_dir }}/{{ item }}.txt"
   loop:
   - attributes
   - nodes

@@ -25,6 +25,6 @@
     chdir: "{{ scripts }}"
   vars:
     vendor_file: "{{ lookup('env', 'HOME') }}/{{ process_dir }}/standardised-compounds.tab.gz"
-    nodes_file: "{{ lookup('env', 'HOME') }}/nodes.csv.gz"
+    nodes_file: "{{ lookup('env', 'HOME') }}/{{ dedupe_dir }}/nodes.csv.gz"
     output: "{{ lookup('env', 'HOME') }}/{{ output_dir }}"
   when: not p_done_file.stat.exists or not pp_done_file.stat.exists
