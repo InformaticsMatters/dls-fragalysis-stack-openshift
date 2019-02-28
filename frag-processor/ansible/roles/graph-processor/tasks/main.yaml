@@ -9,6 +9,6 @@
 - import_tasks: get-standard-file.yaml
 - import_tasks: get-nextflow-file.yaml
 - import_tasks: run-nextflow.yaml
-  when: nextflow_run
+  when: nextflow_run|bool
 - import_tasks: deduplicate.yaml
 - import_tasks: txt-to-csv.yaml
