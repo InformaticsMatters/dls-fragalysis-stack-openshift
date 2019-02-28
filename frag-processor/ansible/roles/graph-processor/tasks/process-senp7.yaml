@@ -28,6 +28,19 @@
     output: "{{ lookup('env', 'HOME') }}"
   when: not pp_done_file.stat.exists
 
+# Commit build files to the S3 bucket
+# But only run if the prior step ran
+# (i.e. if the done file did not initially exist)
+
+- name: Save Preparation (senp7)
+  shell: ./graph_put_build_files.py {{ input }} {{ output }}
+  args:
+    chdir: "{{ scripts }}"
+  vars:
+    input: "{{ lookup('env', 'HOME') }}"
+    output: "{{ fragalysis_path }}/build-{{ fragalysis_build_number }}"
+  when: not pp_done_file.stat.exists
+
 # Processing (csv -> graph)
 
 - name: Check Process Done File (senp7)

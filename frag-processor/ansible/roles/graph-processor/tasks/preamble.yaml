@@ -18,4 +18,9 @@
 - name: Write commit reference (to process directory)
   copy:
     content: "{{ dls_commit_ref }}"
-    dest: "{{ lookup('env','HOME') }}/{{ process_dir }}/dls-commit-ref"
+    dest: "{{ lookup('env','HOME') }}/{{ process_dir }}/dls-commit.ref"
+
+- name: Write standard (to process directory)
+  copy:
+    content: "{{fragalysis_path }}/standard-{{ fragalysis_standard_number }}"
+    dest: "{{ lookup('env','HOME') }}/{{ process_dir }}/standard.ref"
