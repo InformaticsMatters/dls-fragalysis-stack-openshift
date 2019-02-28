@@ -12,8 +12,8 @@
     path: "{{ lookup('env','HOME') }}/{{ item }}"
     state: directory
   loop:
-  - output_dir
-  - process_dir
+  - "{{ output_dir }}"
+  - "{{ process_dir }}"
 
 - name: Get DLS commit reference
   shell: git log --pretty=format:'%h' -n 1
