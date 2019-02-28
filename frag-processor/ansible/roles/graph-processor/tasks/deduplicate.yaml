@@ -25,7 +25,6 @@
   environment:
     LC_ALL: C
   args:
-    creates: "{{ tgt }}"
     chdir: "{{ lookup('env', 'HOME') }}/{{ process_dir }}/results"
   vars:
     tgt: "{{ lookup('env', 'HOME') }}"
@@ -57,7 +56,6 @@
   environment:
     LC_ALL: C
   args:
-    creates: "{{ tgt }}"
     chdir: "{{ lookup('env','HOME') }}/{{ process_dir }}/results"
   vars:
     tgt: "{{ lookup('env', 'HOME') }}"
@@ -89,7 +87,6 @@
   environment:
     LC_ALL: C
   args:
-    creates: "{{ tgt }}"
     chdir: "{{ lookup('env', 'HOME') }}/{{ process_dir }}/results"
   vars:
     tgt: "{{ lookup('env', 'HOME') }}"
