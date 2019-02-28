@@ -4,6 +4,7 @@
 params.origin = 'standardised-compounds.tab.gz'
 params.shredSize = 200
 params.chunkSize = 10
+params.limit = 0
 
 origin = file(params.origin)
 
@@ -11,7 +12,7 @@ origin = file(params.origin)
 // (replicating the header)
 process headShred {
 
-    container 'informaticsmatters/fragalysis:0.0.21'
+    container 'informaticsmatters/fragalysis:0.0.22'
     publishDir 'results/', mode: 'copy', pattern: 'standardized_input.smi.gz'
 
     input:
@@ -22,7 +23,8 @@ process headShred {
 
     """
     python /usr/local/fragalysis/frag/network/scripts/header_shred.py \
-        -i ${params.origin} -o origin_part -s ${params.shredSize}
+        -i ${params.origin} -o origin_part -s ${params.shredSize} \
+        -l ${params.limit}
     """
 
 }
@@ -54,7 +56,7 @@ process headShred {
 // and then clean-up.
 process cgd {
 
-    container 'informaticsmatters/fragalysis:0.0.21'
+    container 'informaticsmatters/fragalysis:0.0.22'
     publishDir 'results/', mode: 'copy'
     errorStrategy 'retry'
     maxRetries 3

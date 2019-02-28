@@ -11,3 +11,4 @@
 - import_tasks: run-nextflow.yaml
   when: nextflow_run
 - import_tasks: deduplicate.yaml
+- import_tasks: txt-to-csv.yaml

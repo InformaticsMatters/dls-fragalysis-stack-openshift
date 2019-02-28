@@ -8,6 +8,7 @@
   shell: >-
     nohup nextflow run graph-from-standard.nf
     -with-docker busybox
+    --limit {{ process_limit }}
     -executor.queueSize {{ nextflow_queue_size }}
     {{ nextflow_extra_args }}
     -with-report

@@ -21,14 +21,14 @@
 - name: Deduplicate Attributes
   shell: >-
     zcat *.attributes.gz
-    | sort -S16G --parallel=16 --temporary-directory=/tmp -u > {{ tgt }}
+    | sort -S16G --parallel=16 --temporary-directory=/tmp -u > {{ tgt }}/attributes.txt
   environment:
     LC_ALL: C
   args:
     creates: "{{ tgt }}"
     chdir: "{{ lookup('env', 'HOME') }}/{{ process_dir }}/results"
   vars:
-    tgt: "{{ lookup('env', 'HOME') }}/attributes.txt"
+    tgt: "{{ lookup('env', 'HOME') }}"
   when: not attributes_gz_file.stat.exists
 
 - name: Collect attribute count
@@ -38,7 +38,7 @@
     LC_ALL: C
   when: not attributes_gz_file.stat.exists
 
-- name: Dsiaply edge count
+- name: Display attribute count
   debug:
     var: attributes_lines.stdout
   when: not attributes_gz_file.stat.exists
@@ -53,14 +53,14 @@
 - name: Deduplicate Nodes
   shell: >-
     zcat *.nodes.gz
-    | sort -S16G --parallel=16 --temporary-directory=/tmp -u > {{ tgt }}
+    | sort -S16G --parallel=16 --temporary-directory=/tmp -u > {{ tgt }}/nodes.txt
   environment:
     LC_ALL: C
   args:
     creates: "{{ tgt }}"
     chdir: "{{ lookup('env','HOME') }}/{{ process_dir }}/results"
   vars:
-    tgt: "{{ lookup('env', 'HOME') }}/nodes.txt"
+    tgt: "{{ lookup('env', 'HOME') }}"
   when: not nodes_gz_file.stat.exists
 
 - name: Collect node count
@@ -70,7 +70,7 @@
     LC_ALL: C
   when: not nodes_gz_file.stat.exists
 
-- name: Dsiaply node count
+- name: Display node count
   debug:
     var: nodes_lines.stdout
   when: not nodes_gz_file.stat.exists
@@ -85,14 +85,14 @@
 - name: Deduplicate Edges
   shell: >-
     zcat *.edges.gz
-    | sort -S16G --parallel=16 --temporary-directory=/tmp -u > {{ tgt }}
+    | sort -S16G --parallel=16 --temporary-directory=/tmp -u > {{ tgt }}/edges.txt
   environment:
     LC_ALL: C
   args:
     creates: "{{ tgt }}"
     chdir: "{{ lookup('env', 'HOME') }}/{{ process_dir }}/results"
   vars:
-    tgt: "{{ lookup('env', 'HOME') }}/edges.txt"
+    tgt: "{{ lookup('env', 'HOME') }}"
   when: not edges_gz_file.stat.exists
 
 - name: Collect edge count
@@ -102,7 +102,7 @@
     LC_ALL: C
   when: not edges_gz_file.stat.exists
 
-- name: Dsiaply edge count
+- name: Display edge count
   debug:
     var: edges_lines.stdout
   when: not edges_gz_file.stat.exists

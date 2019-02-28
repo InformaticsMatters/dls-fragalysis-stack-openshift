@@ -6,4 +6,4 @@
   - name: Run the Deduplication Tasks
     include_role:
       name: graph-processor
-      tasks_from: process-senp7.yaml
+      tasks_from: txt-to-csv.yaml

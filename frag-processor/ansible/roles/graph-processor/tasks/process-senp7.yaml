@@ -1,47 +1,13 @@
 ---
 
 # Processes de-duplicated senp7 data files.
-# Graph process and de-duplication is expected to have taken place.
+# Graph process, de-duplication and txt-to-csv is expected to have taken place.
 #
 # Here we create a directory (where the processed files will be placed)
-# and then do some pre-processing (turning .txt.gz into .csv.gz)
-# followed by the final processing, which creates neo4j compliant files.
+# followed by the graph file format processing,
+# which creates neo4j compliant files.
 
 - import_tasks: sanity-check.yaml
-
-- name: Create output directory
-  file:
-    path: "{{ lookup('env','HOME') }}/{{ output_dir }}"
-    state: directory
-
-# Process preparation (txt -> csv)
-
-- name: Check Process-Prep Done File (senp7)
-  stat:
-    path: "{{ lookup('env', 'HOME') }}/done"
-  register: pp_done_file
-
-- name: Process Preparation (senp7)
-  shell: ./process_prep.py {{ input }} {{ output }}
-  args:
-    chdir: "{{ scripts }}"
-  vars:
-    input: "{{ lookup('env', 'HOME') }}"
-    output: "{{ lookup('env', 'HOME') }}"
-  when: not pp_done_file.stat.exists
-
-# Commit build files to the S3 bucket
-# But only run if the prior step ran
-# (i.e. if the done file did not initially exist)
-
-- name: Save Preparation (senp7)
-  shell: ./graph_put_build_files.py {{ input }} {{ output }}
-  args:
-    chdir: "{{ scripts }}"
-  vars:
-    input: "{{ lookup('env', 'HOME') }}"
-    output: "{{ fragalysis_path }}/build-{{ fragalysis_build_number }}"
-  when: not pp_done_file.stat.exists
 
 # Processing (csv -> graph)
 
