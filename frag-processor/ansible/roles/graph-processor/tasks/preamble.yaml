@@ -14,6 +14,7 @@
   loop:
   - "{{ output_dir }}"
   - "{{ process_dir }}"
+  - tmp
 
 - name: Get DLS commit reference
   shell: git log --pretty=format:'%h' -n 1

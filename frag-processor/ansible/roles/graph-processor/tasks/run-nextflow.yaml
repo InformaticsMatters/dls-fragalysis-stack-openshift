@@ -20,7 +20,7 @@
     chdir: "{{ lookup('env','HOME') }}/{{ process_dir }}"
   when: nextflow_result.stdout|length == 0
 
-# Optionally wait for nextflow, polling at 15-minute intervals.
+# Optionally wait for nextflow, polling at 10-minute intervals.
 # After pausing for a short time to give nextflow a chance to run.
 
 - name: Pre-exit pause
@@ -32,8 +32,8 @@
   shell: echo -n $(pgrep java)
   args:
     chdir: "{{ lookup('env','HOME') }}/{{ process_dir }}"
-  delay: 60
-  retries: "{{ nextflow_timeout_minutes | int }}"
+  delay: 600
+  retries: "{{ (nextflow_timeout_minutes|int / 10)|int }}"
   register: result
-  until: result|length == 0
+  until: result.stdout|length == 0
   when: nextflow_wait
