@@ -5,15 +5,15 @@
 
 - name: Check variables
   assert:
-  that:
-  - fragalysis_bucket is defined
-  - fragalysis_bucket|length > 0
-  - fragalysis_standard_number is defined
-  - fragalysis_standard_number|int > 0
-  - fragalysis_build_number is defined
-  - fragalysis_build_number|int > 0
-  - aws_access_key_id is defined
-  - aws_access_key_id|length > 0
-  - aws_secret_access_key is defined
-  - aws_secret_access_key|length > 0
-  msg: Have you defined all the required environment variables?
+    that:
+    - fragalysis_bucket is defined
+    - fragalysis_bucket|length > 0
+    - fragalysis_standard_number is defined
+    - fragalysis_standard_number|int > 0
+    - fragalysis_build_number is defined
+    - fragalysis_build_number|int > 0
+    - aws_access_key_id is defined
+    - aws_access_key_id|length > 0
+    - aws_secret_access_key is defined
+    - aws_secret_access_key|length > 0
+    msg: Have you defined all the required environment variables?
