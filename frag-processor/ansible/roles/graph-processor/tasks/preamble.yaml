@@ -14,6 +14,7 @@
   loop:
   - "{{ output_dir }}"
   - "{{ process_dir }}"
+  - "{{ dedupe_dir }}"
   - tmp
 
 - name: Get DLS commit reference
