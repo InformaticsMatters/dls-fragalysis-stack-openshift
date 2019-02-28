@@ -9,11 +9,6 @@
 
 - import_tasks: sanity-check.yaml
 
-- name: Create output directory
-  file:
-    path: "{{ lookup('env','HOME') }}/{{ output_dir }}"
-    state: directory
-
 # Process preparation (txt -> csv)
 
 - name: Check Process-Prep Done File (senp7)

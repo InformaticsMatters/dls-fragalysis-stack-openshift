@@ -7,6 +7,11 @@
 # in the process directory. This is used to keep a record of precisely
 # what was executed.
 
+- name: Create output directory
+  file:
+    path: "{{ lookup('env','HOME') }}/{{ output_dir }}"
+    state: directory
+
 - name: Get DLS commit reference
   shell: git log --pretty=format:'%h' -n 1
   register: commit_result
