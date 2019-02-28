@@ -5,6 +5,7 @@ params.origin = 'standardised-compounds.tab.gz'
 params.shredSize = 200
 params.chunkSize = 10
 params.limit = 0
+params.skip = 0
 
 origin = file(params.origin)
 
@@ -24,7 +25,7 @@ process headShred {
     """
     python /usr/local/fragalysis/frag/network/scripts/header_shred.py \
         -i ${params.origin} -o origin_part -s ${params.shredSize} \
-        -l ${params.limit}
+        --skip ${params.skip} --limit ${params.limit}
     """
 
 }

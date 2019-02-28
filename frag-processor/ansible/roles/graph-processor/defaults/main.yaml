@@ -20,7 +20,8 @@ nextflow_wait: yes
 process_dir: process
 output_dir: output
 
-# Limit processing (0 implies no limit)
+# Skip and Limit processing (0 implies ignore)
+process_skip: 0
 process_limit: 0
 
 scripts: "{{ lookup('env','HOME') }}/github/fragalysis/frag/network/scripts"
