@@ -6,11 +6,6 @@
 # (unless they're already de-duplicated). It them reports on the
 # respective file sizes and then compresses the resultant txt files.
 
-- name: Create temporary directory
-  file:
-    path: /tmp
-    state: directory
-
 # Deduplicate Attributes
 
 - name: Check compressed Attributes
@@ -21,13 +16,14 @@
 - name: Deduplicate Attributes
   shell: >-
     zcat *.attributes.gz
-    | sort -S16G --parallel=16 --temporary-directory=/tmp -u > {{ tgt }}/attributes.txt
+    | sort -S16G --parallel=16 --temporary-directory={{ tmp }} -u > {{ tgt }}/attributes.txt
   environment:
     LC_ALL: C
   args:
     chdir: "{{ lookup('env', 'HOME') }}/{{ process_dir }}/results"
   vars:
     tgt: "{{ lookup('env', 'HOME') }}/{{ dedupe_dir }}"
+    tmp: "{{ lookup('env', 'HOME') }}/tmp"
   when: not attributes_gz_file.stat.exists
 
 - name: Collect attribute count
@@ -52,13 +48,14 @@
 - name: Deduplicate Nodes
   shell: >-
     zcat *.nodes.gz
-    | sort -S16G --parallel=16 --temporary-directory=/tmp -u > {{ tgt }}/nodes.txt
+    | sort -S16G --parallel=16 --temporary-directory={{ tmp }} -u > {{ tgt }}/nodes.txt
   environment:
     LC_ALL: C
   args:
     chdir: "{{ lookup('env','HOME') }}/{{ process_dir }}/results"
   vars:
     tgt: "{{ lookup('env', 'HOME') }}/{{ dedupe_dir }}"
+    tmp: "{{ lookup('env', 'HOME') }}/tmp"
   when: not nodes_gz_file.stat.exists
 
 - name: Collect node count
@@ -83,13 +80,14 @@
 - name: Deduplicate Edges
   shell: >-
     zcat *.edges.gz
-    | sort -S16G --parallel=16 --temporary-directory=/tmp -u > {{ tgt }}/edges.txt
+    | sort -S16G --parallel=16 --temporary-directory={{ tmp }} -u > {{ tgt }}/edges.txt
   environment:
     LC_ALL: C
   args:
     chdir: "{{ lookup('env', 'HOME') }}/{{ process_dir }}/results"
   vars:
     tgt: "{{ lookup('env', 'HOME') }}/{{ dedupe_dir }}"
+    tmp: "{{ lookup('env', 'HOME') }}/tmp"
   when: not edges_gz_file.stat.exists
 
 - name: Collect edge count
