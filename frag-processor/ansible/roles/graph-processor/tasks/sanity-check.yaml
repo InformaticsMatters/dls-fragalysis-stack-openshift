@@ -20,21 +20,25 @@
     - aws_secret_access_key|length > 0
     msg: Have you defined all the required environment variables?
 
-# The 'check' utility returns a string ('present' or 'absent')
+# The build we're doing must be a new build.
+# So the S3 build path (build/...) must not exist.
+# The 'check' utility, which is given the proposed build path,
+# returns a string ('present' or 'absent')
 
 - name: Check build target
   shell: ./graph_check_path.py {{ build_path }}
   args:
     chdir: "{{ scripts }}"
   vars:
-    build_path: build/{{ fragalysis_path }}/build-{{ fragalysis_build_numbe }}
+    build_path: "build/{{ fragalysis_path }}/build-{{ fragalysis_build_number }}"
   register: build_check_result
 
-- name : echo
+- name: Dump check result
   debug:
     msg: "{{ build_check_result }}"
-- name: Assert build target is free
+
+- name: Assert build is free
   assert:
     that:
     - build_check_result.stdout == 'absent'
-  msg: The build already exists, you need to use a new build number
+    msg: The build already exists, you need to use a new build number
