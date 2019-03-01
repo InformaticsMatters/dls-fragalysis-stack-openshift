@@ -31,6 +31,10 @@
     LC_ALL: C
   when: not nodes_gz_file.stat.exists
 
+- name: Report node count
+  debug:
+    msg: "{{ nodes_lines.stdout }}"
+
 - name: Assert we have nodes
   assert:
     that:
@@ -61,6 +65,10 @@
   environment:
     LC_ALL: C
   when: not edges_gz_file.stat.exists
+
+- name: Report edge count
+  debug:
+    msg: "{{ edges_lines.stdout }}"
 
 - name: Assert we have edges
   assert:
