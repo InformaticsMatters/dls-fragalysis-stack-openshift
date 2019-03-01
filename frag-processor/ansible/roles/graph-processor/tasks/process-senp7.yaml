@@ -13,7 +13,7 @@
 
 - name: Check Process Done File (senp7)
   stat:
-    path: "{{ lookup('env', 'HOME') }}/{{ output_dir }}/done"
+    path: "{{ output_path }}/done"
   register: p_done_file
 
 - name: Process (senp7)
@@ -24,7 +24,7 @@
   args:
     chdir: "{{ scripts }}"
   vars:
-    vendor_file: "{{ lookup('env', 'HOME') }}/{{ process_dir }}/standardised-compounds.tab.gz"
+    vendor_file: "{{ process_path }}/standardised-compounds.tab.gz"
     nodes_file: "{{ dedupe_path }}/nodes.csv.gz"
-    output: "{{ lookup('env', 'HOME') }}/{{ output_dir }}"
+    output: "{{ output_path }}"
   when: not p_done_file.stat.exists or not pp_done_file.stat.exists

@@ -17,5 +17,5 @@
   shell: >-
     {{ scripts }}/graph_get_standard_file.py
     {{ fragalysis_path }}/standard-{{ fragalysis_standard_number }}
-    {{ lookup('env','HOME') }}/{{ process_dir }}
+    {{ process_path }}
     --force

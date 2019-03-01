@@ -4,10 +4,10 @@
 
 - name: Remove process directory
   file:
-    path: "{{ lookup('env','HOME') }}/{{ process_dir }}"
+    path: "{{ process_path }}"
     state: absent
 
 - name: Remove de-dupications
   file:
-    path: "{{ lookup('env', 'HOME') }}/{{ dedupe_dir }}"
+    path: "{{ dedupe_path }}"
     state: absent

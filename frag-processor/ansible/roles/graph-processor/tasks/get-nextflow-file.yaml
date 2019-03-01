@@ -7,5 +7,5 @@
 - name: Install nextflow files
   copy:
     src: graph-from-standard.nf
-    dest: "{{ lookup('env','HOME') }}/{{ process_dir }}"
+    dest: "{{ process_path }}"
   when: nextflow_result.stdout|length == 0

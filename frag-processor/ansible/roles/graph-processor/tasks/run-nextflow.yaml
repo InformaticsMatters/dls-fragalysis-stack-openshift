@@ -24,13 +24,13 @@
 - name: Run nextflow (nohup)
   shell: nohup {{ nextflow_cmd }} </dev/null >/dev/null 2>&1 &
   args:
-    chdir: "{{ lookup('env','HOME') }}/{{ process_dir }}"
+    chdir: "{{ process_path }}"
   when: nextflow_result.stdout|length == 0
 
 # Optionally wait for nextflow, polling at 10-minute intervals.
 # After pausing for a short time to give nextflow a chance to run.
 
-- name: Pre-poll pause
+- name: Pre-wait pause
   pause:
     seconds: 10
   when: nextflow_wait
@@ -38,7 +38,7 @@
 - name: Wait for nextflow
   shell: echo -n $(pgrep java)
   args:
-    chdir: "{{ lookup('env','HOME') }}/{{ process_dir }}"
+    chdir: "{{ process_path }}"
   delay: "{{ nextflow_poll_period_minutes|int * 60 }}"
   retries: "{{ (nextflow_timeout_minutes|int / nextflow_poll_period_minutes|int)|int }}"
   register: result
