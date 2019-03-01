@@ -68,7 +68,6 @@ process cgd {
     output:
     file '*.nodes.gz'
     file '*.edges.gz'
-    file '*.attributes.gz'
     file '*.build-network.log.gz'
     file '*.timing.gz'
 
@@ -86,9 +85,8 @@ process cgd {
             --input ${chunk} --base_dir output_${chunk%.*} --non_isomeric
     done
     echo deduplicating,$(date +"%d/%m/%Y %H:%M:%S") >> timing
-    find . -name nodes.txt | xargs cat | sort --temporary-directory=$HOME/tmp -u | gzip > !{part}.nodes.gz
     find . -name edges.txt | xargs cat | sort --temporary-directory=$HOME/tmp -u | gzip > !{part}.edges.gz
-    find . -name attributes.txt | xargs cat | sort --temporary-directory=$HOME/tmp -u | gzip > !{part}.attributes.gz
+    find . -name nodes.txt | xargs cat | sort --temporary-directory=$HOME/tmp -u | gzip > !{part}.nodes.gz
     find . -name build-network.log | xargs cat | gzip > !{part}.build-network.log.gz
     echo removing-output,$(date +"%d/%m/%Y %H:%M:%S") >> timing
     rm !{part}
