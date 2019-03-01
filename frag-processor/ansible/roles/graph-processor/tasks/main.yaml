@@ -13,4 +13,4 @@
 - import_tasks: deduplicate.yaml
 - import_tasks: txt-to-csv.yaml
 - import_tasks: cleanup.yaml
-  when: clean_up:|bool
+  when: clean_up|bool
