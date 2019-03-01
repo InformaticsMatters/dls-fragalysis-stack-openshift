@@ -25,7 +25,7 @@
   command: "{{ nextflow_cmd }}"
   args:
     chdir: "{{ process_path }}"
-  async: "{{ (nextflow_timeout_minutes|int * 60 }}"
+  async: "{{ nextflow_timeout_minutes|int * 60 }}"
   poll: 0
   register: nextflow_async
   when: nextflow_result.stdout|length == 0
