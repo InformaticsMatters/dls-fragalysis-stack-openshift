@@ -9,7 +9,12 @@
 
 - name: Check nextflow
   shell: nextflow -version
+  register: nf_v_result
   changed_when: false
+
+- name: Display nextflow version
+  debug:
+    var: nf_v_resault
 
 - name: Get DLS commit reference
   shell: git log --pretty=format:'%h' -n 1
