@@ -21,10 +21,13 @@
   debug:
     var: nextflow_cmd
 
-- name: Run nextflow (nohup)
-  shell: nohup {{ nextflow_cmd }} </dev/null >/dev/null 2>&1 &
+- name: Run nextflow (async)
+  command: "{{ nextflow_cmd }}"
   args:
     chdir: "{{ process_path }}"
+  async: "{{ (nextflow_timeout_minutes|int * 60 }}"
+  poll: 0
+  register: nextflow_async
   when: nextflow_result.stdout|length == 0
 
 # Optionally wait for nextflow, polling at 10-minute intervals.
@@ -36,11 +39,9 @@
   when: nextflow_wait
 
 - name: Wait for nextflow
-  shell: echo -n $(pgrep java)
-  args:
-    chdir: "{{ process_path }}"
-  delay: "{{ nextflow_poll_period_minutes|int * 60 }}"
+  async_status:
+    jid: "{{ nextflow_async.ansible_job_id }}"
+  register: nextflow_result
+  until: nextflow_result.finished
   retries: "{{ (nextflow_timeout_minutes|int / nextflow_poll_period_minutes|int)|int }}"
-  register: result
-  until: result.stdout|length == 0
   when: nextflow_wait
