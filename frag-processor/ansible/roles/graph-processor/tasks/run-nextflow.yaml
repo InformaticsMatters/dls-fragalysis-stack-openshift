@@ -23,7 +23,7 @@
 # Optionally wait for nextflow, polling at 10-minute intervals.
 # After pausing for a short time to give nextflow a chance to run.
 
-- name: Pre-exit pause
+- name: Pre-poll pause
   pause:
     seconds: 10
   when: nextflow_wait
