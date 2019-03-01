@@ -1,0 +1,21 @@
+---
+
+- name: Create directries
+  file:
+  path: "{{ lookup('env','HOME') }}/{{ item }}"
+  state: directory
+  loop:
+  - "{{ output_dir }}"
+  - "{{ process_dir }}"
+  - "{{ dedupe_dir }}"
+  - tmp
+
+- name: Write commit reference (to process directory)
+  copy:
+  content: "{{ dls_commit_ref }}"
+  dest: "{{ process_path }}/dls-commit.ref"
+
+- name: Write standard (to process directory)
+  copy:
+  content: "{{fragalysis_path }}/standard-{{ fragalysis_standard_number }}"
+  dest: "{{ process_path }}/standard.ref"
