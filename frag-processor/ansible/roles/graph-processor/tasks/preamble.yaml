@@ -19,11 +19,11 @@
     process_path: "{{ lookup('env','HOME') }}/{{ process_dir }}"
     tmp_path: "{{ lookup('env', 'HOME') }}/tmp"
 
-# Clean-iup after the run's complete.
+# Clean-up before the run (excluding the tmp directory)...
 
 - name: Remove existing directories
   file:
-    path: "{{ process_path }}"
+    path: "{{ item }}"
     state: absent
   loop:
   - "{{ dedupe_path }}"
