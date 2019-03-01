@@ -4,18 +4,25 @@
   shell: echo -n $(pgrep java)
   register: nextflow_result
 
+- name: Set nextflow command
+  set_fact:
+    nextflow_cmd: >-
+      nextflow run graph-from-standard.nf
+      -with-docker busybox
+      --limit {{ process_limit }}
+      --skip {{ process_skip }}
+      -executor.queueSize {{ nextflow_queue_size }}
+      {{ nextflow_extra_args }}
+      -with-report
+      -with-trace
+      -with-timeline
+
+- name: Display nextflow command
+  debug:
+    var: nextflow_cmd
+
 - name: Run nextflow (nohup)
-  shell: >-
-    nohup nextflow run graph-from-standard.nf
-    -with-docker busybox
-    --limit {{ process_limit }}
-    --skip {{ process_skip }}
-    -executor.queueSize {{ nextflow_queue_size }}
-    {{ nextflow_extra_args }}
-    -with-report
-    -with-trace
-    -with-timeline
-    </dev/null >/dev/null 2>&1 &
+  shell: nohup {{ nextflow_cmd }} </dev/null >/dev/null 2>&1 &
   args:
     chdir: "{{ lookup('env','HOME') }}/{{ process_dir }}"
   when: nextflow_result.stdout|length == 0
