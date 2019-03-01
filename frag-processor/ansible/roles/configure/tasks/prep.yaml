@@ -17,3 +17,17 @@
   pip:
     requirements: "{{ lookup('env','HOME') }}/github/fragalysis/requirements.txt"
   become: yes
+
+- name: Get nextflow
+  uri:
+    url: "{{ download }}/v{{ nextflow_version }}/nextflow"
+    dest: "{{ lookup('env','HOME') }}/bin/nextflow"
+  vars:
+    download: https://github.com/nextflow-io/nextflow/releases/download
+  become: yes
+
+- name: Allowing nextflow execution
+  file:
+    dest: "{{ lookup('env','HOME') }}/bin/nextflow"
+    mode: a+x
+  become: yes
