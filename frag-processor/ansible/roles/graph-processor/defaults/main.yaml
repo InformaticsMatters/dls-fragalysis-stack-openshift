@@ -7,6 +7,7 @@ fragalysis_bucket: "{{ lookup('env', 'FRAGALYSIS_S3_BUCKET') }}"
 fragalysis_path: activity/senp7
 fragalysis_standard_number: 2
 fragalysis_build_number: 2
+fragalysis_write: yes
 
 # Nextflow config.
 # Timeouts:  2880 (2 days)
