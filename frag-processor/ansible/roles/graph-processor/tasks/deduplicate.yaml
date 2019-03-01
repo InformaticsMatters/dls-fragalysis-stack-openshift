@@ -6,36 +6,6 @@
 # (unless they're already de-duplicated). It them reports on the
 # respective file sizes and then compresses the resultant txt files.
 
-# Deduplicate Attributes
-
-- name: Check compressed Attributes
-  stat:
-    path: "{{ dedupe_path }}/attributes.txt.gz"
-  register: attributes_gz_file
-
-- name: Deduplicate Attributes
-  shell: >-
-    zcat *.attributes.gz
-    | sort -S16G --parallel=16 --temporary-directory={{ tmp_path }} -u
-    > {{ dedupe_path }}/attributes.txt
-  environment:
-    LC_ALL: C
-  args:
-    chdir: "{{ process_path }}/results"
-  when: not attributes_gz_file.stat.exists
-
-- name: Collect attribute count
-  shell: wc -l {{ dedupe_path }}/attributes.txt
-  register: attributes_lines
-  environment:
-    LC_ALL: C
-  when: not attributes_gz_file.stat.exists
-
-- name: Display attribute count
-  debug:
-    var: attributes_lines.stdout
-  when: not attributes_gz_file.stat.exists
-
 # Deduplicate Nodes
 
 - name: Check compressed Nodes
