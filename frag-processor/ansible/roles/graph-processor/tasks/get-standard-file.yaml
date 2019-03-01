@@ -7,10 +7,15 @@
   shell: echo -n $(pgrep java)
   register: nextflow_result
 
+- name: Assert nextflow is not running
+  assert:
+    that:
+    - nextflow_result.stdout|length == 0
+    msg: Nextflow appears to be running!
+
 - name: Get standard file
   shell: >-
     {{ scripts }}/graph_get_standard_file.py
     {{ fragalysis_path }}/standard-{{ fragalysis_standard_number }}
     {{ lookup('env','HOME') }}/{{ process_dir }}
     --force
-  when: nextflow_result.stdout|length == 0

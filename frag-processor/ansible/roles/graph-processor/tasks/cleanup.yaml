@@ -2,9 +2,9 @@
 
 # Clean-iup after the run's complete.
 
-- name: Remove standard file
+- name: Remove process directory
   file:
-    path: "{{ lookup('env','HOME') }}/{{ process_dir }}/standardised-compunds.tag.gz"
+    path: "{{ lookup('env','HOME') }}/{{ process_dir }}"
     state: absent
 
 - name: Remove de-dupications
