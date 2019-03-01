@@ -25,16 +25,16 @@
   when: not nodes_gz_file.stat.exists
 
 - name: Collect node count
-  shell: wc -l {{ dedupe_path }}/nodes.txt
+  shell: cat {{ dedupe_path }}/nodes.txt | wc -l
   register: nodes_lines
   environment:
     LC_ALL: C
   when: not nodes_gz_file.stat.exists
 
-- name: Display node count
-  debug:
-    var: nodes_lines.stdout
-  when: not nodes_gz_file.stat.exists
+- name: Assert we have nodes
+  assert:
+    that:
+    - nodes_lines.stdout|int > 0
 
 # Deduplicate Edges
 
@@ -55,16 +55,16 @@
   when: not edges_gz_file.stat.exists
 
 - name: Collect edge count
-  shell: wc -l {{ dedupe_path }}/edges.txt
+  shell: cat {{ dedupe_path }}/edges.txt | wc -l
   register: edges_lines
   environment:
     LC_ALL: C
   when: not edges_gz_file.stat.exists
 
-- name: Display edge count
-  debug:
-    var: edges_lines.stdout
-  when: not edges_gz_file.stat.exists
+- name: Assert we have edges
+  assert:
+    that:
+    - edges_lines.stdout|int > 0
 
 # Compress ...
 
@@ -77,6 +77,5 @@
   vars:
     tgt: "{{ dedupe_path }}/{{ item }}.txt"
   loop:
-  - attributes
   - nodes
   - edges
