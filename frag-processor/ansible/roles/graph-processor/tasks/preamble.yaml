@@ -14,7 +14,7 @@
 
 - name: Display nextflow version
   debug:
-    var: nf_v_result
+    msg: "{{ nf_v_result.stdout_lines }}"
 
 - name: Get DLS commit reference
   shell: git log --pretty=format:'%h' -n 1

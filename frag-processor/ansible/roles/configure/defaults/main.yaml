@@ -1,4 +1,10 @@
 ---
 
+# The version of the fragalysis repo to clone.
+# This can be the literal string HEAD, a branch name, a tag name.
 fragalysis_version: 1-fragnet
+
+# The nextflow version to install.
+# This must be the nextflow repo release tag
+# (excluding the initial 'v')
 nextflow_version: 19.01.0
