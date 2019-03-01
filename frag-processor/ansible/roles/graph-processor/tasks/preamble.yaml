@@ -7,6 +7,10 @@
 # in the process directory. This is used to keep a record of precisely
 # what was executed.
 
+- name: Check nextflow
+  shell: nextflow -version
+  changed_when: false
+
 - name: Get DLS commit reference
   shell: git log --pretty=format:'%h' -n 1
   register: commit_result
@@ -29,4 +33,5 @@
   - "{{ dedupe_path }}"
   - "{{ process_path }}"
   - "{{ output_path }}"
+  become: yes
   when: clean_up|bool

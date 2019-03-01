@@ -30,13 +30,7 @@
   register: nextflow_async
   when: nextflow_result.stdout|length == 0
 
-# Optionally wait for nextflow, polling at 10-minute intervals.
-# After pausing for a short time to give nextflow a chance to run.
-
-- name: Pre-wait pause
-  pause:
-    seconds: 10
-  when: nextflow_wait
+# Optionally wait for nextflow, polling at a user-defined interval...
 
 - name: Wait for nextflow
   async_status:
