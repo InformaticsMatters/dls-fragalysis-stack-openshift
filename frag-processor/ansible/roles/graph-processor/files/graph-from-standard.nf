@@ -74,6 +74,7 @@ process cgd {
 
     shell:
     '''
+    set -e
     echo doing-!{part},$(date +"%d/%m/%Y %H:%M:%S") > timing
     export ENABLE_BUILD_NETWORK_LOG=1
     export LC_ALL=C
