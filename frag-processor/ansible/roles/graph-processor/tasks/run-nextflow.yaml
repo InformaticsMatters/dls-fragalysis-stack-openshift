@@ -32,8 +32,8 @@
   shell: echo -n $(pgrep java)
   args:
     chdir: "{{ lookup('env','HOME') }}/{{ process_dir }}"
-  delay: 600
-  retries: "{{ (nextflow_timeout_minutes|int / 10)|int }}"
+  delay: "{{ nextflow_poll_period_minutes|int * 60 }}"
+  retries: "{{ (nextflow_timeout_minutes|int / nextflow_poll_period_minutes|int)|int }}"
   register: result
   until: result.stdout|length == 0
   when: nextflow_wait

@@ -15,6 +15,7 @@ fragalysis_write: yes
 nextflow_extra_args: -process.scratch
 nextflow_queue_size: 16
 nextflow_timeout_minutes: 10080
+nextflow_poll_period_minutes: 10
 nextflow_run: yes
 nextflow_wait: yes
 
