@@ -33,7 +33,7 @@
 
 - name: Report node count
   debug:
-    msg: "{{ nodes_lines.stdout }}"
+    msg: Node count is {{ nodes_lines.stdout }}
 
 - name: Assert we have nodes
   assert:
@@ -68,7 +68,7 @@
 
 - name: Report edge count
   debug:
-    msg: "{{ edges_lines.stdout }}"
+    msg: Edge Count is {{ edges_lines.stdout }}
 
 - name: Assert we have edges
   assert:
