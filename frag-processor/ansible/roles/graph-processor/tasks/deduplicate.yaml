@@ -8,22 +8,25 @@
 
 # Deduplicate Attributes
 
+- name: Set facts
+  set_fact:
+    dedupe_path: "{{ lookup('env', 'HOME') }}/{{ dedupe_dir }}"
+    tmp_path: "{{ lookup('env', 'HOME') }}/tmp"
+
 - name: Check compressed Attributes
   stat:
-    path: "{{ lookup('env', 'HOME') }}/{{ dedupe_dir }}/attributes.txt.gz"
+    path: "{{ dedupe_path }}/attributes.txt.gz"
   register: attributes_gz_file
 
 - name: Deduplicate Attributes
   shell: >-
     zcat *.attributes.gz
-    | sort -S16G --parallel=16 --temporary-directory={{ tmp }} -u > {{ tgt }}/attributes.txt
+    | sort -S16G --parallel=16 --temporary-directory={{ tmp_path }} -u
+    > {{ dedupe_path }}/attributes.txt
   environment:
     LC_ALL: C
   args:
     chdir: "{{ lookup('env', 'HOME') }}/{{ process_dir }}/results"
-  vars:
-    tgt: "{{ lookup('env', 'HOME') }}/{{ dedupe_dir }}"
-    tmp: "{{ lookup('env', 'HOME') }}/tmp"
   when: not attributes_gz_file.stat.exists
 
 - name: Collect attribute count
@@ -42,24 +45,22 @@
 
 - name: Check compressed Nodes
   stat:
-    path: "{{ lookup('env', 'HOME') }}/{{ dedupe_dir }}/nodes.txt.gz"
+    path: "{{ dedupe_path }}/nodes.txt.gz"
   register: nodes_gz_file
 
 - name: Deduplicate Nodes
   shell: >-
     zcat *.nodes.gz
-    | sort -S16G --parallel=16 --temporary-directory={{ tmp }} -u > {{ tgt }}/nodes.txt
+    | sort -S16G --parallel=16 --temporary-directory={{ tmp_path }} -u
+    > {{ dedupe_path }}/nodes.txt
   environment:
     LC_ALL: C
   args:
     chdir: "{{ lookup('env','HOME') }}/{{ process_dir }}/results"
-  vars:
-    tgt: "{{ lookup('env', 'HOME') }}/{{ dedupe_dir }}"
-    tmp: "{{ lookup('env', 'HOME') }}/tmp"
   when: not nodes_gz_file.stat.exists
 
 - name: Collect node count
-  shell: wc -l {{ lookup('env','HOME') }}/{{ dedupe_dir }}/nodes.txt
+  shell: wc -l {{ dedupe_path }}/nodes.txt
   register: nodes_lines
   environment:
     LC_ALL: C
@@ -74,24 +75,22 @@
 
 - name: Check compressed Edges
   stat:
-    path: "{{ lookup('env', 'HOME') }}/{{ dedupe_dir }}/edges.txt.gz"
+    path: "{{ dedupe_path }}/edges.txt.gz"
   register: edges_gz_file
 
 - name: Deduplicate Edges
   shell: >-
     zcat *.edges.gz
-    | sort -S16G --parallel=16 --temporary-directory={{ tmp }} -u > {{ tgt }}/edges.txt
+    | sort -S16G --parallel=16 --temporary-directory={{ tmp_path }} -u
+    > {{ dedupe_path }}/edges.txt
   environment:
     LC_ALL: C
   args:
     chdir: "{{ lookup('env', 'HOME') }}/{{ process_dir }}/results"
-  vars:
-    tgt: "{{ lookup('env', 'HOME') }}/{{ dedupe_dir }}"
-    tmp: "{{ lookup('env', 'HOME') }}/tmp"
   when: not edges_gz_file.stat.exists
 
 - name: Collect edge count
-  shell: wc -l {{ lookup('env','HOME') }}/{{ dedupe_dir }}/edges.txt
+  shell: wc -l {{ dedupe_path }}/edges.txt
   register: edges_lines
   environment:
     LC_ALL: C
@@ -111,7 +110,7 @@
   args:
     creates: "{{ tgt }}.gz"
   vars:
-    tgt: "{{ lookup('env', 'HOME') }}/{{ dedupe_dir }}/{{ item }}.txt"
+    tgt: "{{ dedupe_path }}/{{ item }}.txt"
   loop:
   - attributes
   - nodes

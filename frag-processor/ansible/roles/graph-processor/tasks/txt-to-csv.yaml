@@ -13,7 +13,7 @@
 
 - name: Check Process-Prep Done File (senp7)
   stat:
-    path: "{{ lookup('env', 'HOME') }}/done"
+    path: "{{ dedupe_path }}/done"
   register: pp_done_file
 
 - name: Process Preparation (senp7)
@@ -21,8 +21,8 @@
   args:
     chdir: "{{ scripts }}"
   vars:
-    input: "{{ lookup('env', 'HOME') }}/{{ dedupe_dir }}"
-    output: "{{ lookup('env', 'HOME') }}/{{ dedupe_dir }}"
+    input: "{{ dedupe_path }}"
+    output: "{{ dedupe_path }}"
   when: not pp_done_file.stat.exists
 
 # Commit build files to the S3 bucket
@@ -34,7 +34,7 @@
   args:
     chdir: "{{ scripts }}"
   vars:
-    input: "{{ lookup('env', 'HOME') }}/{{ dedupe_dir }}"
+    input: "{{ dedupe_path }}"
     output: "{{ fragalysis_path }}/build-{{ fragalysis_build_number }}"
   when:
   - not pp_done_file.stat.exists
