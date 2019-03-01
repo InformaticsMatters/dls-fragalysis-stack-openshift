@@ -18,6 +18,12 @@
     requirements: "{{ lookup('env','HOME') }}/github/fragalysis/requirements.txt"
   become: yes
 
+- name: Remove nextflow
+  file:
+    path: "{{ lookup('env','HOME') }}/bin/nextflow"
+    state: absent
+  become: yes
+
 - name: Get nextflow
   uri:
     url: "{{ download }}/v{{ nextflow_version }}/nextflow"
@@ -30,4 +36,5 @@
   file:
     dest: "{{ lookup('env','HOME') }}/bin/nextflow"
     mode: a+x
+    owner: "{{ ansible_user }}"
   become: yes
