@@ -5,8 +5,6 @@
 - import_tasks: sanity-check.yaml
 - import_tasks: preamble.yaml
 - import_tasks: setup.yaml
-- import_tasks: get-standard-file.yaml
-- import_tasks: get-nextflow-file.yaml
 
 # Graph-rocessing consists of...
 #
