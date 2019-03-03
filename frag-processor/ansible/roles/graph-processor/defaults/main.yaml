@@ -22,8 +22,8 @@ process_dir: process
 dedupe_dir: dedupe
 output_dir: output
 
-# Cleanup?
-clean_up: no
+# Clean start-up?
+clean_start: no
 
 # Skip and Limit processing (0 implies ignore)
 process_skip: 0

@@ -4,7 +4,7 @@ dedupe_dir: dedupe
 process_dir: process
 output_dir: output
 
-clean_up: yes
+clean_start: yes
 
 process_type: senp7
 process_skip: 0

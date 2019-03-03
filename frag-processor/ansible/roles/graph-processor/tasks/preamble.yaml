@@ -50,4 +50,4 @@
   - "{{ process_path }}"
   - "{{ output_path }}"
   become: yes
-  when: clean_up|bool
+  when: clean_start|bool
