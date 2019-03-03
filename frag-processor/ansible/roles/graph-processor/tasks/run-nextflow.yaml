@@ -12,7 +12,7 @@
 - name: Check nextflow
   shell: echo -n $(pgrep java)
   register: nextflow_result
-  when: not pp_done_file.stat.exists
+  when: not dedupe_done_file.stat.exists
 
 - name: Set nextflow command
   set_fact:
@@ -26,12 +26,12 @@
       -with-report
       -with-trace
       -with-timeline
-  when: not pp_done_file.stat.exists
+  when: not dedupe_done_file.stat.exists
 
 - name: Display nextflow command
   debug:
     var: nextflow_cmd
-  when: not pp_done_file.stat.exists
+  when: not dedupe_done_file.stat.exists
 
 - name: Run nextflow (async)
   command: "{{ nextflow_cmd }}"
@@ -42,7 +42,7 @@
   register: nextflow_async
   when:
   - nextflow_result.stdout|length == 0
-  - not pp_done_file.stat.exists
+  - not dedupe_done_file.stat.exists
 
 # Optionally wait for nextflow, polling at a user-defined interval...
 
@@ -55,4 +55,4 @@
   retries: "{{ (nextflow_timeout_minutes|int / nextflow_poll_period_minutes|int)|int }}"
   when:
   - nextflow_wait
-  - not pp_done_file.stat.exists
+  - not dedupe_done_file.stat.exists
