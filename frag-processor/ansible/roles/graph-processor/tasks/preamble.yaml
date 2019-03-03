@@ -20,6 +20,11 @@
   shell: git log --pretty=format:'%h' -n 1
   register: commit_result
 
+- name: Get a build number
+  shell: ./graph_get_unused_build_number.py
+  register: build_no_result
+  changed_when: false
+
 - name: Set salient facts
   set_fact:
     dls_commit_ref: "{{ commit_result.stdout }}"
@@ -27,6 +32,7 @@
     output_path: "{{ lookup('env', 'HOME') }}/{{ output_dir }}"
     process_path: "{{ lookup('env','HOME') }}/{{ process_dir }}"
     tmp_path: "{{ lookup('env', 'HOME') }}/tmp"
+    build_number: "{{ build_no_result.stdout|int }}"
 
 # Clean-up before the run (excluding the tmp directory)...
 

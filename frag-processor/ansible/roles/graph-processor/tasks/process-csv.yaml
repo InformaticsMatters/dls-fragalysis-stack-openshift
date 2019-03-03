@@ -1,24 +1,26 @@
 ---
 
-# Processes de-duplicated senp7 data files.
+# Processes de-duplicated data files.
 # Graph process, de-duplication and txt-to-csv is expected to have taken place.
 #
 # Here we create a directory (where the processed files will be placed)
 # followed by the graph file format processing,
-# which creates neo4j compliant files.
+# which creates neo4j compliant files based on the
+# define 'process_type'.
 
 - import_tasks: sanity-check.yaml
 
 # Processing (csv -> graph)
+# But skip if a 'done' file exists in the output directory.
 
-- name: Check Process Done File (senp7)
+- name: Check Process Done File
   stat:
     path: "{{ output_path }}/done"
   register: p_done_file
 
-- name: Process (senp7)
+- name: Process
   shell: >-
-    ./process_senp7_compounds.py
+    ./process_{{ process_type }}_compounds.py
     {{ vendor_file }}  {{ nodes_file }} {{ output }}
     --limit {{ process_limit }}
   args:

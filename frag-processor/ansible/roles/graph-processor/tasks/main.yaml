@@ -3,14 +3,20 @@
 # Just run these plays...
 
 - import_tasks: sanity-check.yaml
-
 - import_tasks: preamble.yaml
-
 - import_tasks: setup.yaml
 - import_tasks: get-standard-file.yaml
 - import_tasks: get-nextflow-file.yaml
+
+# Graph-rocessing consists of...
+#
+# - Running nextflow
+# - De-duplicating the collection of results
+# - Creating CSV files
+# - Processing (to grpah files)
+
 - import_tasks: run-nextflow.yaml
   when: nextflow_run|bool
 - import_tasks: deduplicate.yaml
 - import_tasks: txt-to-csv.yaml
-
+- import_tasks: process-csv.yaml

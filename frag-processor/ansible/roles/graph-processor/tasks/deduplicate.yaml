@@ -2,9 +2,10 @@
 
 # Deduplicate results.
 #
-# This play attempts to de-duplicates attributes, nodes and edges
-# (unless they're already de-duplicated). It them reports on the
+# This play attempts to de-duplicates nodes and edges
+# (unless they're already de-duplicated). It then reports on the
 # respective file sizes and then compresses the resultant txt files.
+# It is an error if there are no nodes or edges.
 
 # Deduplicate Nodes
 

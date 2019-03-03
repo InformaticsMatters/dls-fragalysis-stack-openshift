@@ -11,12 +11,12 @@
 
 # Process preparation (txt -> csv)
 
-- name: Check Process-Prep Done File (senp7)
+- name: Check TXT-CSV Done File
   stat:
     path: "{{ dedupe_path }}/done"
   register: pp_done_file
 
-- name: Process Preparation (senp7)
+- name: TXT to CSV
   shell: ./process_prep.py {{ input }} {{ output }}
   args:
     chdir: "{{ scripts }}"
@@ -29,13 +29,13 @@
 # But only run if the prior step ran
 # (i.e. if the done file did not initially exist)
 
-- name: Save Preparation (senp7)
+- name: Save TXT and CSV
   shell: ./graph_put_build_files.py {{ input }} {{ output }}
   args:
     chdir: "{{ scripts }}"
   vars:
     input: "{{ dedupe_path }}"
-    output: "{{ fragalysis_path }}/build-{{ fragalysis_build_number }}"
+    output: "{{ fragalysis_path }}/build-{{ build_number }}"
   when:
   - not pp_done_file.stat.exists
   - fragalysis_write|bool
