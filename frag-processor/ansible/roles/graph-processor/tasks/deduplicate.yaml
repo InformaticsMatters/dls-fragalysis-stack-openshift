@@ -35,12 +35,14 @@
 - name: Report node count
   debug:
     msg: Node count is {{ nodes_lines.stdout }}
+  when: not nodes_gz_file.stat.exists
 
 - name: Assert we have nodes
   assert:
     that:
     - nodes_lines.stdout|int > 0
     msg: There are no NODES in the compressed file
+  when: not nodes_gz_file.stat.exists
 
 # Deduplicate Edges
 
@@ -70,12 +72,14 @@
 - name: Report edge count
   debug:
     msg: Edge Count is {{ edges_lines.stdout }}
+  when: not edges_gz_file.stat.exists
 
 - name: Assert we have edges
   assert:
     that:
     - edges_lines.stdout|int > 0
     msg: There are no EDGES in the compressed file
+  when: not edges_gz_file.stat.exists
 
 # Compress ...
 
