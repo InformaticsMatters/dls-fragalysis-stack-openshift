@@ -8,7 +8,6 @@
   - "{{ output_path }}"
   - "{{ process_path }}"
   - "{{ dedupe_path }}"
-  - "{{ tmp_path }}"
 
 - name: Write commit reference (to process directory)
   copy:

@@ -17,7 +17,7 @@
 - name: Deduplicate Nodes
   shell: >-
     zcat *.nodes.gz
-    | sort -S16G --parallel=16 --temporary-directory={{ tmp_path }} -u
+    | sort -S16G --parallel=16 --temporary-directory=. -u
     > {{ dedupe_path }}/nodes.txt
   environment:
     LC_ALL: C
@@ -52,7 +52,7 @@
 - name: Deduplicate Edges
   shell: >-
     zcat *.edges.gz
-    | sort -S16G --parallel=16 --temporary-directory={{ tmp_path }} -u
+    | sort -S16G --parallel=16 --temporary-directory=. -u
     > {{ dedupe_path }}/edges.txt
   environment:
     LC_ALL: C

@@ -37,7 +37,6 @@
     dedupe_path: "{{ lookup('env', 'HOME') }}/{{ dedupe_dir }}"
     output_path: "{{ lookup('env', 'HOME') }}/{{ output_dir }}"
     process_path: "{{ lookup('env','HOME') }}/{{ process_dir }}"
-    tmp_path: "{{ lookup('env', 'HOME') }}/tmp"
     build_number: "{{ build_no_result.stdout|int }}"
 
 # Clean-up before the run (excluding the tmp directory)...
