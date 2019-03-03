@@ -41,8 +41,8 @@
   poll: 0
   register: nextflow_async
   when:
-  - nextflow_result.stdout|length == 0
   - not dedupe_done_file.stat.exists
+  - nextflow_result.stdout|length == 0
 
 # Optionally wait for nextflow, polling at a user-defined interval...
 
@@ -54,5 +54,5 @@
   delay: "{{ nextflow_poll_period_minutes|int * 60 }}"
   retries: "{{ (nextflow_timeout_minutes|int / nextflow_poll_period_minutes|int)|int }}"
   when:
-  - nextflow_wait
   - not dedupe_done_file.stat.exists
+  - nextflow_wait
