@@ -1,0 +1,13 @@
+# Processing directories.
+# Set different names to each.
+dedupe_dir: dedupe
+process_dir: process
+output_dir: output
+
+clean_up: yes
+
+process_type: senp7
+process_skip: 0
+process_limit: 0
+
+nextflow_poll_period_minutes: 2

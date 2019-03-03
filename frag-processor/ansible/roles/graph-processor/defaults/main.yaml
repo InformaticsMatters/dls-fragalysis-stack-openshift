@@ -29,6 +29,7 @@ clean_up: no
 # Skip and Limit processing (0 implies ignore)
 process_skip: 0
 process_limit: 0
+# The process type (the processing script to run)
+process_type: senp7
 
 scripts: "{{ lookup('env','HOME') }}/github/fragalysis/frag/network/scripts"
-pythonpath: "{{ lookup('env','HOME') }}/github/fragalysis"
