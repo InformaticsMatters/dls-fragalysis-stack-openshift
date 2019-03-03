@@ -21,7 +21,7 @@
 - name: Process
   shell: >-
     ./process_{{ process_type }}_compounds.py
-    {{ vendor_file }}  {{ nodes_file }} {{ output }}
+    {{ vendor_file }} {{ nodes_file }} {{ output }}
     --limit {{ process_limit }}
   args:
     chdir: "{{ scripts }}"
