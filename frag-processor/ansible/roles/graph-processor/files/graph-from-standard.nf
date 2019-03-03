@@ -85,8 +85,8 @@ process cgd {
             --input ${chunk} --base_dir output_${chunk%.*} --non_isomeric
     done
     echo deduplicating,$(date +"%d/%m/%Y %H:%M:%S") >> timing
-    find . -name edges.txt | xargs cat | sort -u | gzip > !{part}.edges.gz
-    find . -name nodes.txt | xargs cat | sort -u | gzip > !{part}.nodes.gz
+    find . -name edges.txt | xargs cat | sort --temporary-directory=. -u | gzip > !{part}.edges.gz
+    find . -name nodes.txt | xargs cat | sort --temporary-directory=. -u | gzip > !{part}.nodes.gz
     find . -name build-network.log | xargs cat | gzip > !{part}.build-network.log.gz
     echo removing-output,$(date +"%d/%m/%Y %H:%M:%S") >> timing
     rm !{part}
