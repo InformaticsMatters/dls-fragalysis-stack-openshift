@@ -2,6 +2,7 @@
 .idea/
 
 ansible/vault-pass.txt
+frag-processor/ansible/parameters
 images/get_unbuilt_data_directory.log
 jenkins/configure-cicd.log
 jenkins/setenv.sh
