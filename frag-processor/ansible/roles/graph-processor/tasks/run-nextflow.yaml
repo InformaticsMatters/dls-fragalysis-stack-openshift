@@ -1,8 +1,18 @@
 ---
 
+# If there's a 'done' file in the de-duplication directory
+# then we skip nextflow processing. This happens
+# if we're re-running and do not want to 'clean-up'.
+
+- name: Check de-duplciation directory.
+  stat:
+    path: "{{ dedupe_path }}/done"
+  register: dedupe_done_file
+
 - name: Check nextflow
   shell: echo -n $(pgrep java)
   register: nextflow_result
+  when: not pp_done_file.stat.exists
 
 - name: Set nextflow command
   set_fact:
@@ -16,10 +26,12 @@
       -with-report
       -with-trace
       -with-timeline
+  when: not pp_done_file.stat.exists
 
 - name: Display nextflow command
   debug:
     var: nextflow_cmd
+  when: not pp_done_file.stat.exists
 
 - name: Run nextflow (async)
   command: "{{ nextflow_cmd }}"
@@ -28,7 +40,9 @@
   async: "{{ nextflow_timeout_minutes|int * 60 }}"
   poll: 0
   register: nextflow_async
-  when: nextflow_result.stdout|length == 0
+  when:
+  - nextflow_result.stdout|length == 0
+  - not pp_done_file.stat.exists
 
 # Optionally wait for nextflow, polling at a user-defined interval...
 
@@ -39,4 +53,6 @@
   until: nextflow_result.finished
   delay: "{{ nextflow_poll_period_minutes|int * 60 }}"
   retries: "{{ (nextflow_timeout_minutes|int / nextflow_poll_period_minutes|int)|int }}"
-  when: nextflow_wait
+  when:
+  - nextflow_wait
+  - not pp_done_file.stat.exists

@@ -27,6 +27,10 @@
   register: build_no_result
   changed_when: false
 
+- name: Show build number
+  debug:
+    msg: {{ build_no_result.stdout }}
+
 - name: Set salient facts
   set_fact:
     dls_commit_ref: "{{ commit_result.stdout }}"
