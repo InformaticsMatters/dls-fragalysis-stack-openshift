@@ -21,7 +21,7 @@
   register: commit_result
 
 - name: Get a build number
-  shell: ./graph_get_unused_build_number.py
+  shell: ./graph_get_unused_build_number.py {{ fragalysis_path }}
   args:
     chdir: "{{ scripts }}"
   register: build_no_result
