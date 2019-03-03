@@ -29,7 +29,7 @@
 
 - name: Show build number
   debug:
-    msg: {{ build_no_result.stdout }}
+    msg: "{{ build_no_result.stdout }}"
 
 - name: Set salient facts
   set_fact:
