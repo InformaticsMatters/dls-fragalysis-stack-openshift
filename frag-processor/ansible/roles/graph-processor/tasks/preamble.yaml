@@ -22,6 +22,8 @@
 
 - name: Get a build number
   shell: ./graph_get_unused_build_number.py
+  args:
+    chdir: "{{ scripts }}"
   register: build_no_result
   changed_when: false
 
