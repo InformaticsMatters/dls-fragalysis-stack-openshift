@@ -5,9 +5,9 @@
     path: "{{ item }}"
     state: directory
   loop:
-  - "{{ output_path }}"
   - "{{ workflow_path }}"
   - "{{ dedupe_path }}"
+  - "{{ graph_path }}"
 
 - name: Write commit reference (to process directory)
   copy:
