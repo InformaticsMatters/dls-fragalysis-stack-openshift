@@ -21,7 +21,7 @@
 
 - name: Set Fragalysis Facts
   set_fact:
-    fragalysis_commit_ref: fragalysis_commit_result.stdout
+    fragalysis_commit_ref: "{{ fragalysis_commit_result.stdout }}"
 
 - name: Install Python requirements
   pip:
