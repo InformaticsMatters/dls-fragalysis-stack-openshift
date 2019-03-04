@@ -14,4 +14,4 @@ nextflow_install: no
 
 # Path to a directory we can use to checkout/clone to.
 # This is a directory relative to the user's account.
-github_dir: github
+github_dir: git
