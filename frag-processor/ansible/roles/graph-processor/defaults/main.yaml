@@ -4,31 +4,47 @@ aws_access_key_id: "{{ lookup('env', 'AWS_ACCESS_KEY_ID') }}"
 aws_secret_access_key: "{{ lookup('env', 'AWS_SECRET_ACCESS_KEY') }}"
 
 fragalysis_bucket: "{{ lookup('env', 'FRAGALYSIS_S3_BUCKET') }}"
-fragalysis_path: activity/senp7
-fragalysis_standard_number: 2
 fragalysis_write: yes
+
+scripts: "{{ lookup('env','HOME') }}/github/fragalysis/frag/network/scripts"
 
 # Nextflow config.
 # Timeouts:  2880 (2 days)
 #           10080 (7 days)
-nextflow_extra_args: -process.scratch
+nextflow_extra_args:
 nextflow_queue_size: 16
 nextflow_timeout_minutes: 10080
 nextflow_poll_period_minutes: 20
 nextflow_run: yes
 nextflow_wait: yes
 
-process_dir: process
+# The processing directories (they must be different).
+# Directories exist for the nextflow 'workflow'
+# The grand de-duplication of the node/edge files.
+# The graph files.
+workflow_dir: workflow
 dedupe_dir: dedupe
-output_dir: output
+graph_dir: graph
 
 # Clean start-up?
 clean_start: no
 
-# Skip and Limit processing (0 implies ignore)
+# The (S3) path to data for processing.
+# The standard file is expected on this path
+# and the build results are written back to it.
+process_path: activity/senp7
+# The standard file number to use as a source.
+# This standards file is expected to exist for the process path as: -
+# '<bucket>/standard/<process_path/standard-<number>/standardised-compounds.tab.gz'
+process_standard_number: 2
+# Skip and Limit processing (0 implies no skip/limit)
 process_skip: 0
 process_limit: 0
-# The process type (the processing script to run)
+# The graph processing type (i.e. vendor).
+# This is the name of the fragalysis process script to execute on the
+# nextflow processing results. It creates the graph-compliant files
+# using the generated nodes.gz/edges.gz files. The scripts are called
+# `proc ess_<type>_compounds.py and, at the time of writing script
+# types are 'enamine', 'molport' and 'senp7'.
 process_type: senp7
 
-scripts: "{{ lookup('env','HOME') }}/github/fragalysis/frag/network/scripts"

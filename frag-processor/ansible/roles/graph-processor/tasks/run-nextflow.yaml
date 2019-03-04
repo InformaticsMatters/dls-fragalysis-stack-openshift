@@ -17,8 +17,8 @@
 - name: Get standard file
   shell: >-
     {{ scripts }}/graph_get_standard_file.py
-    {{ fragalysis_path }}/standard-{{ fragalysis_standard_number }}
-    {{ process_path }}
+    {{ workflow_path }}/standard-{{ process_standard_number }}
+    {{ workflow_path }}
     --force
   when:
   - not dedupe_done_file.stat.exists
@@ -27,7 +27,7 @@
 - name: Get nextflow workflow
   copy:
     src: graph-from-standard.nf
-    dest: "{{ process_path }}"
+    dest: "{{ workflow_path }}"
   when:
   - not dedupe_done_file.stat.exists
   - nextflow_result.stdout|length == 0
@@ -58,7 +58,7 @@
 - name: Run nextflow (async)
   command: "{{ nextflow_cmd }}"
   args:
-    chdir: "{{ process_path }}"
+    chdir: "{{ workflow_path }}"
   async: "{{ nextflow_timeout_minutes|int * 60 }}"
   poll: 0
   register: nextflow_async

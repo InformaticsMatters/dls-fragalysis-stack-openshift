@@ -22,7 +22,7 @@
   environment:
     LC_ALL: C
   args:
-    chdir: "{{ process_path }}/results"
+    chdir: "{{ workflow_path }}/results"
   when: not nodes_gz_file.stat.exists
 
 - name: Collect node count
@@ -59,7 +59,7 @@
   environment:
     LC_ALL: C
   args:
-    chdir: "{{ process_path }}/results"
+    chdir: "{{ workflow_path }}/results"
   when: not edges_gz_file.stat.exists
 
 - name: Collect edge count

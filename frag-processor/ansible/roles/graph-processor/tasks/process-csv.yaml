@@ -15,8 +15,8 @@
 
 - name: Check Process Done File
   stat:
-    path: "{{ output_path }}/done"
-  register: p_done_file
+    path: "{{ graph_path }}/done"
+  register: graph_done_file
 
 - name: Process
   shell: >-
@@ -26,7 +26,7 @@
   args:
     chdir: "{{ scripts }}"
   vars:
-    vendor_file: "{{ process_path }}/standardised-compounds.tab.gz"
+    vendor_file: "{{ workflow_path }}/standardised-compounds.tab.gz"
     nodes_file: "{{ dedupe_path }}/nodes.csv.gz"
-    output: "{{ output_path }}"
-  when: not p_done_file.stat.exists or not pp_done_file.stat.exists
+    output: "{{ graph_path }}"
+  when: not graph_done_file.stat.exists or not dedupe_done_file.stat.exists

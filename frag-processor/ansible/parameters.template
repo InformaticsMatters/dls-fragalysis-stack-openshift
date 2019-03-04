@@ -1,13 +1,11 @@
-# Processing directories.
-# Set different names to each.
+workflow_dir: workflow
 dedupe_dir: dedupe
-process_dir: process
-output_dir: output
+graph_dir: graph
 
 clean_start: yes
 
 process_type: senp7
-process_skip: 0
-process_limit: 0
+process_skip: 200
+process_limit: 50
 
 nextflow_poll_period_minutes: 2

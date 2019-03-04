@@ -21,7 +21,7 @@
   register: commit_result
 
 - name: Get a build number
-  shell: ./graph_get_unused_build_number.py {{ fragalysis_path }}
+  shell: ./graph_get_unused_build_number.py {{ workflow_path }}
   args:
     chdir: "{{ scripts }}"
   register: build_no_result
@@ -35,8 +35,8 @@
   set_fact:
     dls_commit_ref: "{{ commit_result.stdout }}"
     dedupe_path: "{{ lookup('env', 'HOME') }}/{{ dedupe_dir }}"
-    output_path: "{{ lookup('env', 'HOME') }}/{{ output_dir }}"
-    process_path: "{{ lookup('env','HOME') }}/{{ process_dir }}"
+    graph_path: "{{ lookup('env', 'HOME') }}/{{ graph_dir }}"
+    workflow_path: "{{ lookup('env','HOME') }}/{{ workflow_dir }}"
     build_number: "{{ build_no_result.stdout|int }}"
 
 # Clean-up before the run (excluding the tmp directory)...
@@ -47,7 +47,7 @@
     state: absent
   loop:
   - "{{ dedupe_path }}"
-  - "{{ process_path }}"
-  - "{{ output_path }}"
+  - "{{ workflow_path }}"
+  - "{{ graph_path }}"
   become: yes
   when: clean_start|bool

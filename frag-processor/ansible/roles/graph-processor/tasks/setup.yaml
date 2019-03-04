@@ -6,7 +6,7 @@
     state: directory
   loop:
   - "{{ output_path }}"
-  - "{{ process_path }}"
+  - "{{ workflow_path }}"
   - "{{ dedupe_path }}"
 
 - name: Write commit reference (to process directory)
@@ -14,7 +14,7 @@
     content: "{{ dls_commit_ref }}"
     dest: "{{ process_path }}/dls-commit.ref"
 
-- name: Write standard (to process directory)
+- name: Write standard rewference (to workflow directory)
   copy:
-    content: "{{fragalysis_path }}/standard-{{ fragalysis_standard_number }}"
-    dest: "{{ process_path }}/standard.ref"
+    content: "{{ process_path }}/standard-{{ process_standard_number }}"
+    dest: "{{ workflow_path }}/standard.ref"

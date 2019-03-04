@@ -1,8 +1,31 @@
 ---
 
 # Runs fragalysis fragment processing to generate neo4j graph files.
-# Processing starts with a standard file downloaded from S3
-# followed by a nextflow process omn that file.
+# Here, the basic steps that take place are: -
+#
+# - clean-up (removal) of working directories
+#   Separate directories are created for 'processing' (nextflow),
+#   Grand 'de-duplication' and then an 'output' for graph files.
+# - Download of a 'standard' file to the 'process' directory
+# - Copy of the nextflow workflow to the 'process' directory
+#
+# Prior to any of this the 'configure' role is executed.
+# This ensures that fragalysis is cloned and the required
+# nextflow is installed.
+#
+# A number of variables control execution. The most common are illustrated
+# below, but you can always refer to each role's 'defaults/main.yaml'
+# where you'll find all the variables.
+#
+# - fragalysis_version (Defined/Used in the configure role)
+# - nextflow_version (Defined/Used in the configure role)
+# - process_type (the name of the processing script to run)
+# 
+# Before you start create a 'parameters' file (using 'parameters.template'
+# as an example) and place your variable values in there and then run this
+# role with the command: -
+#
+#   $ ./process.sh
 
 - hosts: localhost
 

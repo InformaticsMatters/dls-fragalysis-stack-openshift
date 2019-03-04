@@ -34,6 +34,9 @@ set and then run: -
 
     $ ./process.sh
 
+>   For up-to-date documentation refer to the documentation in the
+    Ansible playbook `playbook/graph-processor.yaml`.
+
 ## Combination
 
 ---

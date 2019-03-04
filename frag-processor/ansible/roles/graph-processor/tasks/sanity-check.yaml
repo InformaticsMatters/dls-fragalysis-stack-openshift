@@ -8,10 +8,10 @@
     that:
     - fragalysis_bucket is defined
     - fragalysis_bucket|length > 0
-    - fragalysis_path is defined
-    - fragalysis_path|length > 0
-    - fragalysis_standard_number is defined
-    - fragalysis_standard_number|int > 0
+    - process_path is defined
+    - process_path|length > 0
+    - process_standard_number is defined
+    - process_standard_number|int > 0
     - aws_access_key_id is defined
     - aws_access_key_id|length > 0
     - aws_secret_access_key is defined

@@ -14,7 +14,7 @@
 - name: Check TXT-CSV Done File
   stat:
     path: "{{ dedupe_path }}/done"
-  register: pp_done_file
+  register: dedupe_done_file
 
 - name: TXT to CSV
   shell: ./process_prep.py {{ input }} {{ output }}
@@ -23,7 +23,7 @@
   vars:
     input: "{{ dedupe_path }}"
     output: "{{ dedupe_path }}"
-  when: not pp_done_file.stat.exists
+  when: not dedupe_done_file.stat.exists
 
 # Commit build files to the S3 bucket
 # But only run if the prior step ran
@@ -35,7 +35,7 @@
     chdir: "{{ scripts }}"
   vars:
     input: "{{ dedupe_path }}"
-    output: "{{ fragalysis_path }}/build-{{ build_number }}"
+    output: "{{ process_path }}/build-{{ build_number }}"
   when:
-  - not pp_done_file.stat.exists
+  - not dedupe_done_file.stat.exists
   - fragalysis_write|bool
