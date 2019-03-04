@@ -1,3 +1,7 @@
+---
+
+github-dir: git
+
 workflow_dir: workflow
 dedupe_dir: dedupe
 graph_dir: graph
