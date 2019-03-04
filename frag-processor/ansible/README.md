@@ -32,12 +32,14 @@ directory, typically into something like `~/github`: -
 ## Processing
 Create a `parameters` file from the template (`parameters.template`),
 set suitable values from its examples and any other variables you want to
-set and then run: -
+set and then run the following, and inspect the progress with
+`tail`: -
 
-    $ ./process.sh
+    $ nohup ./process.sh &
+    $ tail -f nohup.out
 
 >   For up-to-date documentation refer to the documentation in the
-    Ansible playbook `playbook/graph-processor.yaml`.
+    Ansible playbook `playbooks/processor/graph-processor.yaml`.
 
 ## Combination
 

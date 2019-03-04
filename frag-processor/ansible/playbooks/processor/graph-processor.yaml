@@ -25,7 +25,7 @@
 # as an example) and place your variable values in there and then run this
 # role with the command: -
 #
-#   $ ./process.sh
+#   $ hohup ./process.sh &
 
 - hosts: localhost
 

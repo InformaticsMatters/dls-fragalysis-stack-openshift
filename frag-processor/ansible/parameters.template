@@ -9,7 +9,7 @@ graph_dir: agp-graph
 clean_start: yes
 
 process_type: senp7
-process_skip: 200
-process_limit: 50
+process_skip: 0
+process_limit: 0
 
-nextflow_poll_period_minutes: 2
+nextflow_poll_period_minutes: 20
