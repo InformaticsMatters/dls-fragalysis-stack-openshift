@@ -8,7 +8,7 @@
 
 - name: Preserve graph provenance
   aws_s3:
-    bucket: "{{ fragalysis_bucket }}"
+    bucket: "{{ s3_bucket }}"
     object: "build/{{ process_path }}/build-{{ build_number }}/{{ item }}"
     src: "{{ graph_path }}/{{ item }}"
     mode: put

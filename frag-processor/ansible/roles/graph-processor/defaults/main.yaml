@@ -3,34 +3,38 @@
 # Secrets (from the environment)
 aws_access_key_id: "{{ lookup('env', 'AWS_ACCESS_KEY_ID') }}"
 aws_secret_access_key: "{{ lookup('env', 'AWS_SECRET_ACCESS_KEY') }}"
-fragalysis_bucket: "{{ lookup('env', 'FRAGALYSIS_S3_BUCKET') }}"
+s3_bucket: "{{ lookup('env', 'FRAGALYSIS_S3_BUCKET') }}"
 
-# Writew results to S3 when done (at each stage)
-fragalysis_write: yes
+# Write results to S3 when done (at each stage)
+s3_write: yes
 
 scripts: "{{ lookup('env','HOME') }}/{{ github_dir }}/fragalysis/frag/network/scripts"
 
 # Nextflow config.
-# Timeouts:  2880 (2 days)
-#           10080 (7 days)
+# Timeouts (minutes):  2880 (2 days)
+#                     10080 (7 days)
 nextflow_extra_args:
-nextflow_queue_size: 16
+nextflow_debug_args: -with-report -with-trace -with-timeline
 nextflow_timeout_minutes: 10080
 nextflow_poll_period_minutes: 20
-nextflow_run: yes
-nextflow_wait: yes
 nextflow_executor: "{{ lookup('env', 'NXF_EXECUTOR') }}"
 nextflow_mode: "{{ lookup('env', 'NXF_MODE') }}"
 
-# The processing directories (they must be different).
-# Directories exist for the nextflow 'workflow'
-# The grand de-duplication of the node/edge files.
-# The graph files.
+# The graph processing directorie,
+# they must be different as processes create a 'done' file
+# in the corresponding directories (for dedupe and graph).
+#
+# Directories are used for the nextflow 'workflow'
+# The grand 'de-duplication' of the node/edge files.
+# The final 'graph' files.
 workflow_dir: workflow
 dedupe_dir: dedupe
 graph_dir: graph
 
 # Clean start-up?
+# If yes then all the working directories are erased when the playbook begin.
+# If you simply want to restart an existing playbook
+# then you probably want to set this to 'no'.
 clean_start: no
 
 # The (S3) path to data for processing.
@@ -51,4 +55,3 @@ process_limit: 0
 # `proc ess_<type>_compounds.py and, at the time of writing script
 # types are 'enamine', 'molport' and 'senp7'.
 process_type: senp7
-

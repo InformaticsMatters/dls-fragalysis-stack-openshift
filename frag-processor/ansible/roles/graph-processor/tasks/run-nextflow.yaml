@@ -36,14 +36,10 @@
   set_fact:
     nextflow_cmd: >-
       nextflow run graph-from-standard.nf
-      -with-docker busybox
       --limit {{ process_limit }}
       --skip {{ process_skip }}
-      -executor.queueSize {{ nextflow_queue_size }}
       {{ nextflow_extra_args }}
-      -with-report
-      -with-trace
-      -with-timeline
+      {{ nextflow_debug_args }}
   when:
   - not dedupe_done_file.stat.exists
   - nextflow_result.stdout|length == 0
@@ -78,4 +74,3 @@
   retries: "{{ (nextflow_timeout_minutes|int / nextflow_poll_period_minutes|int)|int }}"
   when:
   - not dedupe_done_file.stat.exists
-  - nextflow_wait

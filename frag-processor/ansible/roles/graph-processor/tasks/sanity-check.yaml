@@ -6,8 +6,8 @@
 - name: Check variables
   assert:
     that:
-    - fragalysis_bucket is defined
-    - fragalysis_bucket|length > 0
+    - s3_bucket is defined
+    - s3_bucket|length > 0
     - process_path is defined
     - process_path|length > 0
     - process_standard_number is defined

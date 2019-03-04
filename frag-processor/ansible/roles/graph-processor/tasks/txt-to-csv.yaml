@@ -38,4 +38,4 @@
     output: "{{ process_path }}/build-{{ build_number }}"
   when:
   - not dedupe_done_file.stat.exists
-  - fragalysis_write|bool
+  - s3_write|bool
