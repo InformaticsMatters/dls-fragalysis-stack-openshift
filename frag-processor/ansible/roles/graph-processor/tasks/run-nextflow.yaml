@@ -24,10 +24,13 @@
   - not dedupe_done_file.stat.exists
   - nextflow_result.stdout|length == 0
 
-- name: Get nextflow workflow
+- name: Copy nextflow files
   copy:
-    src: graph-from-standard.nf
+    src: "{{ item }}"
     dest: "{{ workflow_path }}"
+  loop:
+  - "graph-from-standard.nf"
+  - "config"
   when:
   - not dedupe_done_file.stat.exists
   - nextflow_result.stdout|length == 0
@@ -35,7 +38,7 @@
 - name: Set nextflow command
   set_fact:
     nextflow_cmd: >-
-      nextflow run graph-from-standard.nf
+      nextflow run graph-from-standard.nf -C config
       --limit {{ process_limit }}
       --skip {{ process_skip }}
       {{ nextflow_extra_args }}

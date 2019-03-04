@@ -34,24 +34,33 @@
     - botocore==1.12.106
   become: yes
 
+- name: Collect enviornment
+  shell: env
+  register: env_result
+
 # Create 'provenance' files...
 
-- name: Write DLS commit provenance (to graph directory)
+- name: Write DLS commit provenance
   copy:
     content: "{{ dls_commit_ref }}"
     dest: "{{ graph_path }}/dls-commit.prov"
 
-- name: Write Fragalysis commit provenance (to graph directory)
+- name: Write Fragalysis commit provenance
   copy:
     content: "{{ fragalysis_commit_ref}}"
     dest: "{{ graph_path }}/fragalysis_commit.prov"
 
-- name: Write standard provenance (to graph directory)
+- name: Write standard provenance
   copy:
     content: "{{ process_path }}/standard-{{ process_standard_number }}"
     dest: "{{ graph_path }}/standard.prov"
 
-- name: Copy playbook parameter file (to graph directory)
+- name: Write enviornment provenance
+  copy:
+    content: "{{ env_result.stdout }}"
+    dest: "{{ graph_path }}/env.prov"
+
+- name: Copy playbook parameter file
   copy:
     src: "{{ role_path }}/../../parameters"
     dest: "{{ graph_path }}/parameters.prov"
