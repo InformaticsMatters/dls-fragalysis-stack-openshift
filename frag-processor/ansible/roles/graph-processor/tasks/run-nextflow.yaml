@@ -55,7 +55,6 @@
   command: "{{ nextflow_cmd }}"
   args:
     chdir: "{{ workflow_path }}"
-  become: yes
   async: "{{ nextflow_timeout_minutes|int * 60 }}"
   poll: 0
   register: nextflow_async
