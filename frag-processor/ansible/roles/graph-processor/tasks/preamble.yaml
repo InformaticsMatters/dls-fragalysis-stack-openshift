@@ -7,6 +7,12 @@
 # in the process directory. This is used to keep a record of precisely
 # what was executed.
 
+- name: Set path facts
+  set_fact:
+    dedupe_path: "{{ lookup('env', 'HOME') }}/{{ dedupe_dir }}"
+    graph_path: "{{ lookup('env', 'HOME') }}/{{ graph_dir }}"
+    workflow_path: "{{ lookup('env','HOME') }}/{{ workflow_dir }}"
+
 - name: Check nextflow
   shell: nextflow -version
   register: nf_v_result
@@ -31,12 +37,9 @@
   debug:
     msg: "{{ build_no_result.stdout }}"
 
-- name: Set salient facts
+- name: Set dynamic facts
   set_fact:
     dls_commit_ref: "{{ commit_result.stdout }}"
-    dedupe_path: "{{ lookup('env', 'HOME') }}/{{ dedupe_dir }}"
-    graph_path: "{{ lookup('env', 'HOME') }}/{{ graph_dir }}"
-    workflow_path: "{{ lookup('env','HOME') }}/{{ workflow_dir }}"
     build_number: "{{ build_no_result.stdout|int }}"
 
 # Clean-up before the run (excluding the tmp directory)...
