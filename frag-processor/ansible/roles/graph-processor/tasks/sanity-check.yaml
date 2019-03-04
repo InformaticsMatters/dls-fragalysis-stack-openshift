@@ -1,17 +1,13 @@
 ---
 
-# A play that simply checks that sensible and essential variables
+# A play that simply checks that essential variables
 # have been setup. Without these key plays cannot run.
 
-- name: Check variables
+- name: Check variables (normally driven by enviornment)
   assert:
     that:
     - s3_bucket is defined
     - s3_bucket|length > 0
-    - process_path is defined
-    - process_path|length > 0
-    - process_standard_number is defined
-    - process_standard_number|int > 0
     - aws_access_key_id is defined
     - aws_access_key_id|length > 0
     - aws_secret_access_key is defined
@@ -21,3 +17,12 @@
     - nextflow_mode is defined
     - nextflow_mode|length > 0
     msg: Have you defined all the required environment variables?
+
+- name: Check variables (other)
+  assert:
+    that:
+    - process_path is defined
+    - process_path|length > 0
+    - process_standard_number is defined
+    - process_standard_number|int > 0
+    msg: Have you defined all the important variables?
