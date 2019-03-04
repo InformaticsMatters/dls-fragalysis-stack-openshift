@@ -13,7 +13,7 @@
     src: "{{ graph_path }}/{{ item }}"
     mode: put
   loop:
-  - dls-commit.ref
-  - fragalysis_commit.ref
-  - standard.ref
-  - parameters.ref
+  - "dls-commit.ref"
+  - "fragalysis_commit.ref"
+  - "standard.ref"
+  - "parameters.ref"
