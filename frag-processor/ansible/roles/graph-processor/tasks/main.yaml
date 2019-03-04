@@ -4,15 +4,16 @@
 
 - import_tasks: sanity-check.yaml
 - import_tasks: preamble.yaml
-- import_tasks: setup.yaml
 
 # Graph-rocessing consists of...
 #
+# - Initialisation
 # - Running nextflow
 # - De-duplicating the collection of results
-# - Creating CSV files
-# - Processing (to grpah files)
+# - Creating CSV files from TXT files
+# - Processing the CSV file (to graph files)
 
+- import_tasks: initialise.yaml
 - import_tasks: run-nextflow.yaml
   when: nextflow_run|bool
 - import_tasks: deduplicate.yaml

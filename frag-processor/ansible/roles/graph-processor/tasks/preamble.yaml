@@ -41,17 +41,3 @@
   set_fact:
     dls_commit_ref: "{{ commit_result.stdout }}"
     build_number: "{{ build_no_result.stdout|int }}"
-
-# Clean-up before the run...
-# The following task does not run if 'clean_start' is false.
-
-- name: Remove existing directories
-  file:
-    path: "{{ item }}"
-    state: absent
-  loop:
-  - "{{ dedupe_path }}"
-  - "{{ workflow_path }}"
-  - "{{ graph_path }}"
-  become: yes
-  when: clean_start|bool

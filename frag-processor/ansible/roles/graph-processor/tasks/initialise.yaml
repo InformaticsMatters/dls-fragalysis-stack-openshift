@@ -1,0 +1,48 @@
+---
+
+# Clean-up before the run...
+# The following task does not run if 'clean_start' is false.
+
+- name: Remove existing directories
+  file:
+    path: "{{ item }}"
+    state: absent
+  loop:
+    - "{{ dedupe_path }}"
+    - "{{ workflow_path }}"
+    - "{{ graph_path }}"
+  become: yes
+  when: clean_start|bool
+
+# Now ensure that the working directories exists
+# and write some audit information to the graph directory
+# (which will eventually be uploaded to S3)
+
+- name: Create directories
+  file:
+    path: "{{ item }}"
+    state: directory
+  loop:
+  - "{{ workflow_path }}"
+  - "{{ dedupe_path }}"
+  - "{{ graph_path }}"
+
+- name: Write DLS commit reference (to graph directory)
+  copy:
+    content: "{{ dls_commit_ref }}"
+    dest: "{{ graph_path }}/dls-commit.ref"
+
+- name: Write Fragalysis commit reference (to graph directory)
+  copy:
+    content: "{{ fragalysis_commit_ref}}"
+    dest: "{{ graph_path }}/fragalysis_commit.ref"
+
+- name: Write standard reference (to graph directory)
+  copy:
+    content: "{{ process_path }}/standard-{{ process_standard_number }}"
+    dest: "{{ graph_path }}/standard.ref"
+
+- name: Copy playbook parameter file (to graph directory)
+  copy:
+    src: parameters
+    dest: "{{ graph_path }}/parameters"
