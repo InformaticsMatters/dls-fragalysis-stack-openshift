@@ -45,4 +45,4 @@
 - name: Copy playbook parameter file (to graph directory)
   copy:
     src: "{{ role_path }}/../../parameters"
-    dest: "{{ graph_path }}/parameters"
+    dest: "{{ graph_path }}/parameters.ref"

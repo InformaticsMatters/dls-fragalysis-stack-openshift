@@ -1,6 +1,19 @@
 ---
 
 # All the things to do when the processing is complete.
-# This essentially means placing the 'audit' files
-# in the build directory. Audit files include
-# Git commit references and the parameters file.
+#
+# This essentially means recording the 'provenance' -
+# te in the build directory that record various repository
+# commit references and the parameter file used for processing.
+
+- name: Preserve graph provenance
+  aws_s3:
+    bucket:
+    object: "build/{{ process_path }}/build-{{ build_number }}/{{ item }}"
+    src: "{{ graph_path }}/{{ item }}"
+    mode: put
+  loop:
+  - dls-commit.ref
+  - fragalysis_commit.ref
+  - standard.ref
+  - parameters.ref
