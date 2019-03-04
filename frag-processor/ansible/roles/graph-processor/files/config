@@ -1,6 +1,6 @@
 process {
     container = 'busybox:latest'
-    scratch = false
+    scratch = true
 }
 
 singularity {

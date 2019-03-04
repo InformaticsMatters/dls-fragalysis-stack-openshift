@@ -5,7 +5,7 @@
 - import_tasks: sanity-check.yaml
 - import_tasks: preamble.yaml
 
-# Graph-rocessing consists of...
+# Graph-processing consists of...
 #
 # - Initialisation
 # - Running nextflow
