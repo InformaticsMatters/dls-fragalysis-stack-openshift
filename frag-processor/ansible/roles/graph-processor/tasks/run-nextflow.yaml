@@ -17,7 +17,7 @@
 - name: Get standard file
   shell: >-
     {{ scripts }}/graph_get_standard_file.py
-    {{ workflow_path }}/standard-{{ process_standard_number }}
+    {{ process_path }}/standard-{{ process_standard_number }}
     {{ workflow_path }}
     --force
   when:
