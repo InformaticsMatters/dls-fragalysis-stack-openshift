@@ -17,6 +17,8 @@ nextflow_timeout_minutes: 10080
 nextflow_poll_period_minutes: 20
 nextflow_run: yes
 nextflow_wait: yes
+nextflow_executor: "{{ lookup('env', 'NXF_EXECUTOR') }}"
+nextflow_mode: "{{ lookup('env', 'NXF_MODE') }}"
 
 # The processing directories (they must be different).
 # Directories exist for the nextflow 'workflow'
