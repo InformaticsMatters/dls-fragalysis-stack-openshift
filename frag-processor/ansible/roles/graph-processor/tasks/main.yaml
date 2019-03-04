@@ -19,4 +19,4 @@
 - import_tasks: deduplicate.yaml
 - import_tasks: txt-to-csv.yaml
 - import_tasks: process-csv.yaml
-- import_tasks: finalise.yaml
+#- import_tasks: finalise.yaml
