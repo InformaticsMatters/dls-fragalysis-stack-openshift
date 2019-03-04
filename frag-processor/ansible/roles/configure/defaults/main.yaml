@@ -8,3 +8,6 @@ fragalysis_version: 1-fragnet
 # This must be the nextflow repo release tag
 # (excluding the initial 'v')
 nextflow_version: 19.01.0
+# The above is only used if nextflow_install is yes.
+# In this case nextflow is installed in the user's bin directory.
+nextflow_install: no

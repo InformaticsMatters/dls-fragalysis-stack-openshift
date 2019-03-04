@@ -6,6 +6,7 @@
     state: directory
   loop:
   - "{{ lookup('env','HOME') }}/github"
+  - "{{ lookup('env','HOME') }}/bin"
 
 - name: Clone Fragalysis
   git:
@@ -28,19 +29,21 @@
     requirements: "{{ lookup('env','HOME') }}/github/fragalysis/requirements.txt"
   become: yes
 
-#- name: Remove nextflow
-#  file:
-#    path: "{{ lookup('env','HOME') }}/bin/nextflow"
-#    state: absent
-#  become: yes
+- name: Remove nextflow
+  file:
+    path: "{{ lookup('env','HOME') }}/bin/nextflow"
+    state: absent
+  become: yes
+  when: nextflow_install
 
-#- name: Get nextflow
-#  uri:
-#    url: "{{ download }}/v{{ nextflow_version }}/nextflow"
-#    dest: "{{ lookup('env','HOME') }}/bin/nextflow"
-#  vars:
-#    download: https://github.com/nextflow-io/nextflow/releases/download
-#  become: yes
+- name: Get nextflow
+  uri:
+    url: "{{ download }}/v{{ nextflow_version }}/nextflow"
+    dest: "{{ lookup('env','HOME') }}/bin/nextflow"
+  vars:
+    download: https://github.com/nextflow-io/nextflow/releases/download
+  become: yes
+  when: nextflow_install
 
 - name: Allowing nextflow execution
   file:
@@ -48,3 +51,4 @@
     mode: a+x
     owner: "{{ ansible_user }}"
   become: yes
+  when: nextflow_install
