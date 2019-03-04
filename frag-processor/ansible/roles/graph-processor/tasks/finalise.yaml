@@ -1,0 +1,6 @@
+---
+
+# All the things to do when the processing is complete.
+# This essentially means placing the 'audit' files
+# in the build directory. Audit files include
+# Git commit references and the parameters file.
