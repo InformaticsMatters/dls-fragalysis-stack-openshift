@@ -42,7 +42,8 @@
     dls_commit_ref: "{{ commit_result.stdout }}"
     build_number: "{{ build_no_result.stdout|int }}"
 
-# Clean-up before the run (excluding the tmp directory)...
+# Clean-up before the run...
+# The following task does not run if 'clean_start' is false.
 
 - name: Remove existing directories
   file:

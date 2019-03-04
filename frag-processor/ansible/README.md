@@ -6,6 +6,7 @@ Pre-requisites: -
 You will need...
 
 -   Ansible (ideally a recent 2.7)
+-   Python 3 (and pip)
 -   As we use S3 you will need to define
     -   FRAGALYSIS_S3_BUCKET (=im-fragnet)
     -   AWS_ACCESS_KEY_ID

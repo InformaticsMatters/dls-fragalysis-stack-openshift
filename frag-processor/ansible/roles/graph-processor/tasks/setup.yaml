@@ -9,10 +9,15 @@
   - "{{ dedupe_path }}"
   - "{{ graph_path }}"
 
-- name: Write commit reference (to workflow directory)
+- name: Write DLS commit reference (to workflow directory)
   copy:
     content: "{{ dls_commit_ref }}"
     dest: "{{ workflow_path }}/dls-commit.ref"
+
+- name: Write Fragalysis commit reference (to workflow directory)
+  copy:
+    content: "{{ fragalysis_commit_ref}}"
+    dest: "{{ workflow_path }}/fragalysis_commit.ref"
 
 - name: Write standard reference (to workflow directory)
   copy:

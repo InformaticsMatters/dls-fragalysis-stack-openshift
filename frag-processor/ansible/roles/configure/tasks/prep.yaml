@@ -13,6 +13,16 @@
     version: "{{ fragalysis_version }}"
     dest: "{{ lookup('env','HOME') }}/github/fragalysis"
 
+- name: Get Fragalysis commit reference
+  shell: git log --pretty=format:'%h' -n 1
+  args:
+    chdir: "{{ lookup('env','HOME') }}/github/fragalysis"
+  register: fragalysis_commit_result
+
+- name: Set Fragalysis Facts
+  set_fact:
+    fragalysis_commit_ref: fragalysis_commit_result.stdout
+
 - name: Install Python requirements
   pip:
     requirements: "{{ lookup('env','HOME') }}/github/fragalysis/requirements.txt"
