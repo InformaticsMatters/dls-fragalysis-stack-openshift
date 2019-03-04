@@ -27,7 +27,7 @@
   register: commit_result
 
 - name: Get a build number
-  shell: ./graph_get_unused_build_number.py {{ workflow_path }}
+  shell: ./graph_get_unused_build_number.py {{ process_path }}
   args:
     chdir: "{{ scripts }}"
   register: build_no_result
