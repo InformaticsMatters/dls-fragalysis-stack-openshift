@@ -3,17 +3,16 @@
 # All the things to do when the processing is complete.
 #
 # This essentially means recording the 'provenance' -
-# te in the build directory that record various repository
+# the files in graph directory that record various repository
 # commit references and the parameter file used for processing.
+# All the files that should capture the build environment.
 
-- name: Preserve graph provenance
-  aws_s3:
-    bucket: "{{ s3_bucket }}"
-    object: "build/{{ process_path }}/build-{{ build_number }}/{{ item }}"
-    src: "{{ graph_path }}/{{ item }}"
-    mode: put
-  loop:
-  - "dls-commit.ref"
-  - "fragalysis_commit.ref"
-  - "standard.ref"
-  - "parameters.ref"
+- name: Save provenance files
+  shell: ./graph_put_build_provenance_files.py {{ source }} {{ path }}
+  args:
+    chdir: "{{ scripts }}"
+  vars:
+    source: "{{ graph_path }}"
+    path: "{{ process_path }}/build-{{ build_number }}"
+  when:
+    - s3_write|bool
