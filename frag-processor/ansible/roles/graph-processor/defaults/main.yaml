@@ -1,9 +1,11 @@
 ---
 
+# Secrets (from the environment)
 aws_access_key_id: "{{ lookup('env', 'AWS_ACCESS_KEY_ID') }}"
 aws_secret_access_key: "{{ lookup('env', 'AWS_SECRET_ACCESS_KEY') }}"
-
 fragalysis_bucket: "{{ lookup('env', 'FRAGALYSIS_S3_BUCKET') }}"
+
+# Writew results to S3 when done (at each stage)
 fragalysis_write: yes
 
 scripts: "{{ lookup('env','HOME') }}/{{ github_dir }}/fragalysis/frag/network/scripts"
