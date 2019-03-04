@@ -9,12 +9,12 @@
   - "{{ dedupe_path }}"
   - "{{ graph_path }}"
 
-- name: Write commit reference (to process directory)
+- name: Write commit reference (to workflow directory)
   copy:
     content: "{{ dls_commit_ref }}"
-    dest: "{{ process_path }}/dls-commit.ref"
+    dest: "{{ workflow_path }}/dls-commit.ref"
 
-- name: Write standard rewference (to workflow directory)
+- name: Write standard reference (to workflow directory)
   copy:
     content: "{{ process_path }}/standard-{{ process_standard_number }}"
     dest: "{{ workflow_path }}/standard.ref"
