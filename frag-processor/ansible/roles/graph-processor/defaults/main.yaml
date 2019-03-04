@@ -6,7 +6,7 @@ aws_secret_access_key: "{{ lookup('env', 'AWS_SECRET_ACCESS_KEY') }}"
 fragalysis_bucket: "{{ lookup('env', 'FRAGALYSIS_S3_BUCKET') }}"
 fragalysis_write: yes
 
-scripts: "{{ lookup('env','HOME') }}/github/fragalysis/frag/network/scripts"
+scripts: "{{ lookup('env','HOME') }}/{{ github_dir }}/fragalysis/frag/network/scripts"
 
 # Nextflow config.
 # Timeouts:  2880 (2 days)
