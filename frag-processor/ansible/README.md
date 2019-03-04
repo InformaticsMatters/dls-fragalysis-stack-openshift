@@ -5,6 +5,7 @@ Pre-requisites: -
 
 You will need...
 
+-   Git
 -   Ansible (ideally a recent 2.7)
 -   Python 3 (and pip)
 -   As we use S3 you will need to define

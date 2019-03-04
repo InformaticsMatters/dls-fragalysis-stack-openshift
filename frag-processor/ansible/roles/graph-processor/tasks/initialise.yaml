@@ -46,3 +46,10 @@
   copy:
     src: "{{ role_path }}/../../parameters"
     dest: "{{ graph_path }}/parameters.ref"
+
+- name: Install Python requirements
+  pip:
+    name:
+    - boto3 == 1.9.106
+    - botocore == 1.12.106
+  become: yes

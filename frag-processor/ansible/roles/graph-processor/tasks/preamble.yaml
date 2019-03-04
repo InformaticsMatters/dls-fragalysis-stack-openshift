@@ -13,6 +13,30 @@
     graph_path: "{{ lookup('env', 'HOME') }}/{{ graph_dir }}"
     workflow_path: "{{ lookup('env','HOME') }}/{{ workflow_dir }}"
 
+- name: Remove nextflow
+  file:
+    path: "{{ lookup('env','HOME') }}/bin/nextflow"
+    state: absent
+  become: yes
+  when: nextflow_install
+
+- name: Get nextflow
+  uri:
+    url: "{{ download }}/v{{ nextflow_version }}/nextflow"
+    dest: "{{ lookup('env','HOME') }}/bin/nextflow"
+  vars:
+    download: https://github.com/nextflow-io/nextflow/releases/download
+  become: yes
+  when: nextflow_install
+
+- name: Allowing nextflow execution
+  file:
+    dest: "{{ lookup('env','HOME') }}/bin/nextflow"
+    mode: a+x
+    owner: "{{ ansible_user }}"
+  become: yes
+  when: nextflow_install
+
 - name: Check nextflow
   shell: nextflow -version
   register: nf_v_result
