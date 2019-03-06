@@ -13,18 +13,18 @@ origin = file(params.origin)
 // (replicating the header)
 process headShred {
 
-    container 'informaticsmatters/fragalysis:0.0.22'
+    container 'informaticsmatters/fragalysis:0.0.23'
     publishDir 'results/', mode: 'copy', pattern: 'standardized_input.smi.gz'
 
     input:
-    file origin
+    file origin*
 
     output:
     file 'origin_part_*.smi' into origin_parts mode flatten
 
     """
     python /usr/local/fragalysis/frag/network/scripts/header_shred.py \
-        -i ${params.origin} -o origin_part -s ${params.shredSize} \
+        ${params.origin} origin_part ${params.shredSize} \
         --skip ${params.skip} --limit ${params.limit}
     """
 
@@ -57,7 +57,7 @@ process headShred {
 // and then clean-up.
 process cgd {
 
-    container 'informaticsmatters/fragalysis:0.0.22'
+    container 'informaticsmatters/fragalysis:0.0.23'
     publishDir 'results/', mode: 'copy'
     errorStrategy 'retry'
     maxRetries 3
@@ -78,7 +78,7 @@ process cgd {
     export ENABLE_BUILD_NETWORK_LOG=1
     export LC_ALL=C
     python /usr/local/fragalysis/frag/network/scripts/header_shred.py \
-        -i !{part} -o ligands_part -s !{params.chunkSize}
+        !{part} ligands_part !{params.chunkSize}
     for chunk in ligands_part*.smi; do
         echo ${chunk},$(date +"%d/%m/%Y %H:%M:%S") >> timing
         python /usr/local/fragalysis/frag/network/scripts/build_db_from_standard.py \
