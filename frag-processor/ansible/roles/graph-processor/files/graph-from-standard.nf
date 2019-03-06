@@ -38,7 +38,7 @@ process headShred {
 // This process...
 // - Splits file into 'chunks'.
 // - Runs graph processing on each chunk to generate node/edges/attributes.
-// - Deduplicates the nodes/edges/attributes
+// - De-duplicates the nodes/edges/attributes
 //   (and finally removes the original graph files).
 //
 // We chunk and process all the chunks in one process to balance container

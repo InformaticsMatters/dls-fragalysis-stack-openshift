@@ -9,15 +9,15 @@
 // - rawStandardise
 // - standardJoin
 
-// You *must* define the raw prefix and the raw standardisation type.,
-// which may not be obvious form the files
+// You *must* define the raw prefix and the raw standardisation type,
+// which may not be obvious from the files
 params.rawPrefix = 'set-me'
 params.rawType = 'set-me'
 
 // The number of raw/vendor molecules to process in one 'shred'
 params.shredSize = 50000
 // Limit the processing to a number of molecules from the joined raw set.
-// 0 implies not skip/limit.
+// 0 implies skip none and no limit.
 params.skip = 0
 params.limit = 0
 
@@ -25,10 +25,14 @@ params.limit = 0
 // presented to the initial 'rawJoin' stage as a list...
 rawFiles = Channel.fromPath( './' + params.rawPrefix + '*' ).toList()
 
-// Joins multiple files (with common headers)
+// Joins multiple files (with common headers).
+//
+// The output of this stage is a file ('raw_join.gz')
+// which has all the raw molecules in it with a header
+// taken from one of the raw files.
 process rawJoin {
 
-    container 'informaticsmatters/fragalysis:0.0.23'
+    container 'informaticsmatters/fragalysis:0.0.24'
     publishDir 'results/', mode: 'copy'
 
     input:
@@ -46,10 +50,15 @@ process rawJoin {
 
 
 // Shreds a 'joined' raw file into smaller parts
-// (replicating the header)
+// (replicating the header).
+//
+// The output of this stage is a number of files,
+// each of which is a small 'slice' of the input file.
+// The output files each have a header, replicated
+// from the input file.
 process rawShred {
 
-    container 'informaticsmatters/fragalysis:0.0.23'
+    container 'informaticsmatters/fragalysis:0.0.24'
     publishDir 'results/', mode: 'copy'
 
     input:
@@ -69,11 +78,11 @@ process rawShred {
 
 // standardise ... a slice of the raw data.
 //
-// This process...
-// - Standardises a 'shred-size' file of customer data.
+// The output of this stage is a standard file,
+// formed from the content of a raw shred.
 process rawStandardise {
 
-    container 'informaticsmatters/fragalysis:0.0.23'
+    container 'informaticsmatters/fragalysis:0.0.24'
     publishDir 'results/', mode: 'copy'
 
     input:
@@ -93,13 +102,13 @@ process rawStandardise {
 
 // standardise ... a slice of the raw data.
 //
-// This process...
-// - Standardises a 'shred-size' file of customer data.
+// The output of this stage is a single standard file,
+// formed from the content of each standard file produced
+// by the prior stage.
 process standardiseJoin {
 
-    container 'informaticsmatters/fragalysis:0.0.23'
+    container 'informaticsmatters/fragalysis:0.0.24'
     publishDir 'results/', mode: 'copy'
-    maxRetries 3
 
     input:
     file standard from standards.toList()
