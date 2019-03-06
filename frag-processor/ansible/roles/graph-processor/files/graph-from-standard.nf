@@ -16,7 +16,7 @@ origin = file(params.origin)
 // (replicating the header)
 process headShred {
 
-    container 'informaticsmatters/fragalysis:0.0.23'
+    container 'informaticsmatters/fragalysis:0.0.24'
     publishDir 'results/', mode: 'copy', pattern: 'standardized_input.smi.gz'
 
     input:
@@ -60,7 +60,7 @@ process headShred {
 // and then clean-up.
 process cgd {
 
-    container 'informaticsmatters/fragalysis:0.0.23'
+    container 'informaticsmatters/fragalysis:0.0.24'
     publishDir 'results/', mode: 'copy'
     errorStrategy 'retry'
     maxRetries 3

@@ -10,7 +10,15 @@
 // - standardJoin
 
 // You *must* define the raw prefix and the raw standardisation type,
-// which may not be obvious from the files
+// which may not be obvious from the files. At the moment the
+// following 'types' ars supported...
+//
+// - senp7
+// - molport
+// - enamine
+//
+// The 'type' is the phrase between the 'standardise_' and '_compounds' part
+// of the Python script name (e.g. 'senp7' for 'standardise_senp7_compounds.py')
 params.rawPrefix = 'set-me'
 params.rawType = 'set-me'
 
