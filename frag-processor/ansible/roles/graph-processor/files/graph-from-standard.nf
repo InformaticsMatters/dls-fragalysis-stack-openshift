@@ -4,8 +4,11 @@
 params.origin = 'standardised-compounds.tab.gz'
 params.shredSize = 200
 params.chunkSize = 10
-params.limit = 0
+
+// Limit the processing to a number of molecules from the joined raw set.
+// 0 implies not skip/limit.
 params.skip = 0
+params.limit = 0
 
 origin = file(params.origin)
 

@@ -16,8 +16,9 @@ params.rawType = 'set-me'
 
 // The number of raw/vendor molecules to process in one 'shred'
 params.shredSize = 50000
-// Limit the processing (in each shred) to a number of molecules.
-// 0 implies process all molecules.
+// Limit the processing to a number of molecules from the joined raw set.
+// 0 implies not skip/limit.
+params.skip = 0
 params.limit = 0
 
 // A channel of all the raw files,
@@ -59,7 +60,8 @@ process rawShred {
 
     """
     python /usr/local/fragalysis/frag/network/scripts/header_shred.py \
-        ${raw} raw_shred ${params.shredSize} --compress
+        ${raw} raw_shred ${params.shredSize} --compress \
+        --skip ${params.skip} --limit ${params.limit}
     rm ${raw}
     """
 
@@ -83,8 +85,7 @@ process rawStandardise {
     shell:
     '''
     python /usr/local/fragalysis/frag/network/scripts/standardise_!{params.rawType}_compounds.py \
-        . raw_shred !{shred} --output-is-prefix \
-        --limit !{params.limit}
+        . raw_shred !{shred} --output-is-prefix
     rm !{shred}
     '''
 
