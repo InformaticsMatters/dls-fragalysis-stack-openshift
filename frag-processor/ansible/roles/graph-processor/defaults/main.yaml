@@ -3,12 +3,14 @@
 # Secrets (from the environment)
 aws_access_key_id: "{{ lookup('env', 'AWS_ACCESS_KEY_ID') }}"
 aws_secret_access_key: "{{ lookup('env', 'AWS_SECRET_ACCESS_KEY') }}"
-s3_bucket: "{{ lookup('env', 'FRAGALYSIS_S3_BUCKET') }}"
 
+# The fragalysis 'scripts' directory
+scripts: "{{ lookup('env','HOME') }}/{{ github_dir }}/fragalysis/frag/network/scripts"
+
+# The S3 bucket for the key files
+s3_bucket: "{{ lookup('env', 'FRAGALYSIS_S3_BUCKET')|default('im-fragnet') }}"
 # Write results to S3 when done (at each stage)
 s3_write: yes
-
-scripts: "{{ lookup('env','HOME') }}/{{ github_dir }}/fragalysis/frag/network/scripts"
 
 # Nextflow config.
 # Timeouts (minutes):  2880 (2 days)
@@ -20,13 +22,13 @@ nextflow_poll_period_minutes: 20
 nextflow_executor: "{{ lookup('env', 'NXF_EXECUTOR') }}"
 nextflow_mode: "{{ lookup('env', 'NXF_MODE') }}"
 
-# The graph processing directorie,
-# they must be different as processes create a 'done' file
-# in the corresponding directories (for dedupe and graph).
+# The graph processing directories,
+# which must be different as processes can create a 'done' file
+# in the corresponding directory (e.g. for dedupe and graph).
 #
-# Directories are used for the nextflow 'workflow'
-# The grand 'de-duplication' of the node/edge files.
-# The final 'graph' files.
+# Directories are needed for the nextflow 'workflow',
+# the grand 'de-duplication' of the node/edge files and
+# the final 'graph' files.
 workflow_dir: workflow
 dedupe_dir: dedupe
 graph_dir: graph
