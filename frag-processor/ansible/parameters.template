@@ -24,6 +24,7 @@ graph_dir: afp-gp-graph
 gp_workflow_dir: afp-gp-workflow
 
 process_max_frag: 13
+process_standard_number: 2
 
 # Standardisation Variables
 # -------------------------
