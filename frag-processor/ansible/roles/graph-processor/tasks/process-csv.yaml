@@ -10,13 +10,19 @@
 
 - import_tasks: sanity-check.yaml
 
-# Processing (csv -> graph)
-# But skip if a 'done' file exists in the output directory.
+# Processing (csv -> graph).
+# The CSV processing must have taken place,
+# but skip if our 'done' file exists in the output directory.
+
+- name: Check CSV Done File
+  stat:
+    path: "{{ dedupe_path }}/done"
+  register: csv_done_file
 
 - name: Check Process Done File
   stat:
     path: "{{ graph_path }}/done"
-  register: graph_done_file
+  register: process_done_file
 
 - name: Process
   shell: >-
@@ -29,4 +35,6 @@
     vendor_file: "{{ workflow_path }}/standardised-compounds.tab.gz"
     nodes_file: "{{ dedupe_path }}/nodes.csv.gz"
     output: "{{ graph_path }}"
-  when: not graph_done_file.stat.exists or not dedupe_done_file.stat.exists
+  when:
+  - not process_done_file.stat.exists
+  - csv_done_file.stat.exists

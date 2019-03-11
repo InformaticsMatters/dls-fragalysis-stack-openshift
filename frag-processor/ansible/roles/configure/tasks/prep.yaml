@@ -1,5 +1,8 @@
 ---
 
+# Create some useful directories
+# and install a few key Python requirements (mainly to deal with S3)...
+
 - name: Make directories
   file:
     path: "{{ item }}"
@@ -7,6 +10,23 @@
   loop:
   - "{{ lookup('env','HOME') }}/{{ github_dir }}"
   - "{{ lookup('env','HOME') }}/bin"
+
+- name: Install Python requirements
+  pip:
+    name:
+    - boto3==1.9.106
+    - botocore==1.12.106
+  become: yes
+
+- name: Get DLS commit reference
+  shell: git log --pretty=format:'%h' -n 1
+  register: commit_result
+
+- name: Set dynamic facts (DLS)
+  set_fact:
+    dls_commit_ref: "{{ commit_result.stdout }}"
+
+# Configure a fragalysis clone...
 
 - name: Clone Fragalysis
   git:
@@ -23,3 +43,39 @@
 - name: Set Fragalysis Facts
   set_fact:
     fragalysis_commit_ref: "{{ fragalysis_commit_result.stdout }}"
+
+# Install nextflow...
+
+- name: Remove nextflow
+  file:
+    path: "{{ lookup('env','HOME') }}/bin/nextflow"
+    state: absent
+  become: yes
+  when: nextflow_install
+
+- name: Get nextflow
+  uri:
+    url: "{{ download }}/v{{ nextflow_version }}/nextflow"
+    dest: "{{ lookup('env','HOME') }}/bin/nextflow"
+  vars:
+    download: https://github.com/nextflow-io/nextflow/releases/download
+  become: yes
+  when: nextflow_install
+
+- name: Allowing nextflow execution
+  file:
+    dest: "{{ lookup('env','HOME') }}/bin/nextflow"
+    mode: a+x
+    owner: "{{ ansible_user }}"
+  become: yes
+  when: nextflow_install
+
+- name: Check nextflow
+  shell: nextflow -version
+  register: nf_v_result
+  changed_when: false
+
+- name: Display nextflow version
+  debug:
+    msg: "{{ nf_v_result.stdout_lines }}"
+

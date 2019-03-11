@@ -3,11 +3,11 @@
 # A play that simply checks that essential variables
 # have been setup. Without these key plays cannot run.
 
-- name: Check variables (graph-specific)
+- name: Check variables (standardise-specific)
   assert:
     that:
     - process_path is defined
     - process_path|length > 0
-    - process_standard_number is defined
-    - process_standard_number|int > 0
+    - process_raw_id is defined
+    - process_raw_id|length > 0
     msg: Have you defined all the important variables?

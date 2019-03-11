@@ -1,27 +1,27 @@
 ---
 
-# If there's a 'done' file in the de-duplication directory
+# If there's a 'done' file in the standard directory
 # then we skip nextflow processing. This happens
 # if we're re-running and do not want to 'clean-up'.
 
-- name: Check de-duplciation directory.
+- name: Check standard directory
   stat:
-    path: "{{ dedupe_path }}/done"
-  register: dedupe_done_file
+    path: "{{ standard_path }}/done"
+  register: std_done_file
 
-- name: Check nextflow (entry)
+- name: Check nextflow
   shell: echo -n $(pgrep java)
   register: nextflow_result
-  when: not dedupe_done_file.stat.exists
+  when: not std_done_file.stat.exists
 
-- name: Get standard file
+- name: Get raw files
   shell: >-
-    {{ scripts }}/graph_get_standard_file.py
-    {{ process_path }}/standard-{{ process_standard_number }}
+    {{ scripts }}/graph_get_raw_files.py
+    {{ process_path }}/{{ process_raw_id }}
     {{ workflow_path }}
     --force
   when:
-  - not dedupe_done_file.stat.exists
+  - not std_done_file.stat.exists
   - nextflow_result.stdout|length == 0
   - nextflow_run|bool
 
@@ -30,31 +30,30 @@
     src: "{{ item }}"
     dest: "{{ workflow_path }}"
   loop:
-  - "graph-from-standard.nf"
+  - "standard-from-raw.nf"
   - "config"
   when:
-  - not dedupe_done_file.stat.exists
+  - not std_done_file.stat.exists
   - nextflow_result.stdout|length == 0
   - nextflow_run|bool
 
 - name: Set nextflow command
   set_fact:
     nextflow_cmd: >-
-      nextflow -C config run graph-from-standard.nf
+      nextflow -C config run standard-from-raw.nf
       --limit {{ process_limit }}
       --skip {{ process_skip }}
-      --maxFrag {{ process_max_frag }}
       {{ nextflow_extra_args }}
       {{ nextflow_debug_args }}
   when:
-  - not dedupe_done_file.stat.exists
+  - not std_done_file.stat.exists
   - nextflow_result.stdout|length == 0
 
 - name: Display nextflow command
   debug:
     var: nextflow_cmd
   when:
-  - not dedupe_done_file.stat.exists
+  - not std_done_file.stat.exists
   - nextflow_result.stdout|length == 0
 
 - name: Run nextflow (async)
@@ -65,7 +64,7 @@
   poll: 0
   register: nextflow_async
   when:
-  - not dedupe_done_file.stat.exists
+  - not std_done_file.stat.exists
   - nextflow_result.stdout|length == 0
   - nextflow_run|bool
 
@@ -82,7 +81,7 @@
   delay: "{{ nextflow_poll_period_minutes|int * 60 }}"
   retries: "{{ (nextflow_timeout_minutes|int / nextflow_poll_period_minutes|int)|int }}"
   when:
-  - not dedupe_done_file.stat.exists
+  - not std_done_file.stat.exists
   - nextflow_result.stdout|length == 0
   - nextflow_run|bool
 

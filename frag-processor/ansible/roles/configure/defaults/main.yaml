@@ -1,17 +1,2 @@
 ---
 
-# The version of the fragalysis repo to clone.
-# This can be the literal string HEAD, a branch name, a tag name.
-fragalysis_version: 1-fragnet
-
-# The nextflow version to install.
-# This must be the nextflow repo release tag
-# (excluding the initial 'v')
-nextflow_version: 19.01.0
-# The above is only used if nextflow_install is yes.
-# In this case nextflow is installed in the user's bin directory.
-nextflow_install: no
-
-# Path to a directory we can use to checkout/clone to.
-# This is a directory relative to the user's account.
-github_dir: git

@@ -1,0 +1,22 @@
+---
+
+# The standard processing directories,
+# which must be different as processes can create a 'done' file
+# in the corresponding directory.
+#
+# Directories are needed for the nextflow 'workflow'
+s_workflow_dir: s-workflow
+standard_dir: standard
+
+# The raw identity to use as a source for the standard processing.
+# The raw path is expected to exist for the defined process path.
+# So the following directory (key) must exist on S3: -
+#   {{ s3_bucket }}/raw/{{ process_path }}/{{ process_raw_id }}/
+#
+# All files in the path are downloaded prior to standard processing.
+process_raw_id: v1
+
+# The prefix for all raw files that are to be used to compile
+# the standard file.
+process_raw_prefix: HTS_
+

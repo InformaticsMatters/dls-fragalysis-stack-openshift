@@ -1,15 +1,36 @@
 ---
 
-github-dir: git
-
-workflow_dir: agp-workflow
-dedupe_dir: agp-dedupe
-graph_dir: agp-graph
+# Common
+# ------
+# These variables are used by all roles.
 
 clean_start: yes
+
+github-dir: git
+
+nextflow_poll_period_minutes: 20
+netflow_run: yes
 
 process_type: senp7
 process_skip: 0
 process_limit: 0
 
-nextflow_poll_period_minutes: 20
+# Graph Processing Variables
+# --------------------------
+# These variables are only used by the Graph Processing role
+
+dedupe_dir: afp-gp-dedupe
+graph_dir: afp-gp-graph
+gp_workflow_dir: afp-gp-workflow
+
+process_max_frag: 13
+
+# Standardisation Variables
+# -------------------------
+# These variables are only used by the Standardisation role
+
+standard_dir: afp-standard
+s_workflow_dir: afp-s-workflow
+
+process_raw_id: v1
+process_raw_prefix: HTS_

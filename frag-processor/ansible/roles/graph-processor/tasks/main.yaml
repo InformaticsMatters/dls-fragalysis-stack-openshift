@@ -1,21 +1,24 @@
 ---
 
-# Just run these plays...
-
 - import_tasks: sanity-check.yaml
-- import_tasks: preamble.yaml
 
 # Graph-processing consists of...
 #
 # - Initialisation
 # - Running nextflow
-# - De-duplicating the collection of results
+# - De-duplicating the collection of nodes and edges into TXT files
 # - Creating CSV files from TXT files
-# - Processing the CSV file (to graph files)
+# - Processing the CSV files (to graph files)
+# - Finalising (writing graph files to S3)
 
 - import_tasks: initialise.yaml
 - import_tasks: run-nextflow.yaml
+
 - import_tasks: deduplicate.yaml
+  when: nextflow_done
 - import_tasks: txt-to-csv.yaml
+  when: nextflow_done
 - import_tasks: process-csv.yaml
+  when: nextflow_done
 - import_tasks: finalise.yaml
+  when: nextflow_done

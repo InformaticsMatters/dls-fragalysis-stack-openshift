@@ -2,10 +2,8 @@
 
 - name: Set path facts
   set_fact:
-    dedupe_path: "{{ lookup('env', 'HOME') }}/{{ dedupe_dir }}"
-    graph_path: "{{ lookup('env', 'HOME') }}/{{ graph_dir }}"
-    workflow_path: "{{ lookup('env','HOME') }}/{{ gp_workflow_dir }}"
-    tmp_path: "{{ tmp_dir }}"
+    workflow_path: "{{ lookup('env','HOME') }}/{{ s_workflow_dir }}"
+    standard_path: "{{ lookup('env','HOME') }}/{{ standard_dir }}"
 
 # Clean-up before the run...
 # The following task does not run if 'clean_start' is false.
@@ -15,10 +13,7 @@
     path: "{{ item }}"
     state: absent
   loop:
-  - "{{ dedupe_path }}"
-  - "{{ workflow_path }}"
-  - "{{ graph_path }}"
-  - "{{ tmp_path }}"
+    - "{{ workflow_path }}"
   become: yes
   when: clean_start|bool
 
@@ -32,24 +27,25 @@
     state: directory
   loop:
   - "{{ workflow_path }}"
-  - "{{ dedupe_path }}"
-  - "{{ graph_path }}"
-  - "{{ tmp_path }}"
 
-- name: Get a build number
-  shell: ./graph_get_unused_build_number.py {{ process_path }}
+# We're going to compile a new standard file from the defined
+# 'raw' files. Go to S£ and get the next available standard number
+# that we'll use as a path to store the results.
+
+- name: Get a standard number
+  shell: ./graph_get_unused_standard_number.py {{ process_path }}
   args:
     chdir: "{{ scripts }}"
-  register: build_no_result
+  register: std_no_result
   changed_when: false
 
-- name: Show build number
+- name: Show standard number
   debug:
-    msg: "{{ build_no_result.stdout }}"
+    msg: "{{ std_no_result.stdout }}"
 
 - name: Set dynamic facts (Build)
   set_fact:
-    build_number: "{{ build_no_result.stdout|int }}"
+    standard_number: "{{ std_no_result.stdout|int }}"
 
 - name: Collect environment
   shell: env
@@ -60,24 +56,24 @@
 - name: Write DLS commit provenance
   copy:
     content: "{{ dls_commit_ref }}"
-    dest: "{{ graph_path }}/dls-commit.prov"
+    dest: "{{ standard_path }}/dls-commit.prov"
 
 - name: Write Fragalysis commit provenance
   copy:
     content: "{{ fragalysis_commit_ref }}"
-    dest: "{{ graph_path }}/fragalysis_commit.prov"
+    dest: "{{ standard_path }}/fragalysis_commit.prov"
 
-- name: Write standard provenance
+- name: Write raw provenance
   copy:
-    content: "{{ process_path }}/standard-{{ process_standard_number }}"
-    dest: "{{ graph_path }}/standard.prov"
+    content: "{{ process_path }}/{{ process_raw_id }}"
+    dest: "{{ standard_path }}/raw.prov"
 
 - name: Write enviornment provenance
   copy:
     content: "{{ env_result.stdout }}"
-    dest: "{{ graph_path }}/env.prov"
+    dest: "{{ standard_path }}/env.prov"
 
 - name: Copy playbook parameter file
   copy:
     src: "{{ role_path }}/../../parameters"
-    dest: "{{ graph_path }}/parameters.prov"
+    dest: "{{ standard_path }}/parameters.prov"

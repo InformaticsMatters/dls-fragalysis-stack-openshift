@@ -1,27 +1,5 @@
 ---
 
-# Secrets (from the environment)
-aws_access_key_id: "{{ lookup('env', 'AWS_ACCESS_KEY_ID') }}"
-aws_secret_access_key: "{{ lookup('env', 'AWS_SECRET_ACCESS_KEY') }}"
-
-# The fragalysis 'scripts' directory
-scripts: "{{ lookup('env','HOME') }}/{{ github_dir }}/fragalysis/frag/network/scripts"
-
-# The S3 bucket for the key files
-s3_bucket: "{{ lookup('env', 'FRAGALYSIS_S3_BUCKET')|default('im-fragnet') }}"
-# Write results to S3 when done (at each stage)
-s3_write: yes
-
-# Nextflow config.
-# Timeouts (minutes):  2880 (2 days)
-#                     10080 (7 days)
-nextflow_extra_args:
-nextflow_debug_args: -with-report -with-trace -with-timeline
-nextflow_timeout_minutes: 10080
-nextflow_poll_period_minutes: 20
-nextflow_executor: "{{ lookup('env', 'NXF_EXECUTOR') }}"
-nextflow_mode: "{{ lookup('env', 'NXF_MODE') }}"
-
 # The graph processing directories,
 # which must be different as processes can create a 'done' file
 # in the corresponding directory (e.g. for dedupe and graph).
@@ -29,31 +7,18 @@ nextflow_mode: "{{ lookup('env', 'NXF_MODE') }}"
 # Directories are needed for the nextflow 'workflow',
 # the grand 'de-duplication' of the node/edge files and
 # the final 'graph' files.
-workflow_dir: workflow
+gp_workflow_dir: gp-workflow
 dedupe_dir: dedupe
 graph_dir: graph
 
-# Clean start-up?
-# If yes then all the working directories are erased when the playbook begin.
-# If you simply want to restart an existing playbook
-# then you probably want to set this to 'no'.
-clean_start: no
-
-# The (S3) path to data for processing.
-# The standard file is expected on this path
-# and the build results are written back to it.
-process_path: activity/senp7
-# The standard file number to use as a source.
-# This standards file is expected to exist for the process path as: -
-# '<bucket>/standard/<process_path/standard-<number>/standardised-compounds.tab.gz'
+# The standard file number to use as a source for the graph processing.
+# This standard file is expected to exist for the defined process path.
+# So the following file (key) must exist on S3: -
+#   {{ s3_bucket }}/standard/{{ process_path }}/
+#       standard-{{ process_standard_number }}/standardised-compounds.tab.gz
 process_standard_number: 2
-# Skip and Limit processing (0 implies no skip/limit)
-process_skip: 0
-process_limit: 0
-# The graph processing type (i.e. vendor).
-# This is the name of the fragalysis process script to execute on the
-# nextflow processing results. It creates the graph-compliant files
-# using the generated nodes.gz/edges.gz files. The scripts are called
-# `proc ess_<type>_compounds.py and, at the time of writing script
-# types are 'enamine', 'molport' and 'senp7'.
-process_type: senp7
+
+# Delete unnecessary nextflow files when nextflow is complete.
+# This will include things like the standard file
+# and the work directory.
+delete_nextflow_as_needed: no

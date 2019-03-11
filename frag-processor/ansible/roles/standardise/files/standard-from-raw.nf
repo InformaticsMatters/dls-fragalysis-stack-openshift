@@ -6,7 +6,7 @@
 //
 // - rawJoin
 // - rawShred
-// - rawStandardise
+// - rawStandardise (xN)
 // - standardJoin
 
 // You *must* define the raw prefix and the raw standardisation type,
@@ -33,14 +33,15 @@ params.limit = 0
 // presented to the initial 'rawJoin' stage as a list...
 rawFiles = Channel.fromPath( './' + params.rawPrefix + '*' ).toList()
 
-// Joins multiple files (with common headers).
+// Join multiple raw files (with common headers)
+// ----
 //
 // The output of this stage is a file ('raw_join.gz')
 // which has all the raw molecules in it with a header
 // taken from one of the raw files.
 process rawJoin {
 
-    container 'informaticsmatters/fragalysis:0.0.24'
+    container 'informaticsmatters/fragalysis:0.0.25'
     publishDir 'results/', mode: 'copy'
 
     input:
@@ -56,9 +57,8 @@ process rawJoin {
 
 }
 
-
-// Shreds a 'joined' raw file into smaller parts
-// (replicating the header).
+// Shred the 'joined' raw file into smaller parts (replicating the header)
+// -----
 //
 // The output of this stage is a number of files,
 // each of which is a small 'slice' of the input file.
@@ -66,7 +66,7 @@ process rawJoin {
 // from the input file.
 process rawShred {
 
-    container 'informaticsmatters/fragalysis:0.0.24'
+    container 'informaticsmatters/fragalysis:0.0.25'
     publishDir 'results/', mode: 'copy'
 
     input:
@@ -84,13 +84,14 @@ process rawShred {
 
 }
 
-// standardise ... a slice of the raw data.
+// Standardise ... a slice of the raw data
+// -----------
 //
 // The output of this stage is a standard file,
 // formed from the content of a raw shred.
 process rawStandardise {
 
-    container 'informaticsmatters/fragalysis:0.0.24'
+    container 'informaticsmatters/fragalysis:0.0.25'
     publishDir 'results/', mode: 'copy'
 
     input:
@@ -108,14 +109,15 @@ process rawStandardise {
 
 }
 
-// standardise ... a slice of the raw data.
+// Join ... all the standard files together (replicating one header)
+// ----
 //
 // The output of this stage is a single standard file,
 // formed from the content of each standard file produced
 // by the prior stage.
 process standardiseJoin {
 
-    container 'informaticsmatters/fragalysis:0.0.24'
+    container 'informaticsmatters/fragalysis:0.0.25'
     publishDir 'results/', mode: 'copy'
 
     input:
@@ -123,7 +125,7 @@ process standardiseJoin {
 
     output:
     file 'standardised-compounds.tab.gz'
-
+    file 'done'
     """
     python /usr/local/fragalysis/frag/network/scripts/header_join.py \
         . raw_shred_ standardised-compounds.tab

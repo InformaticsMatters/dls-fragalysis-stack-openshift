@@ -28,14 +28,28 @@ directory, typically into something like `~/github`: -
     $ cd dls-fragalysis-stack-openshift/frag-processor/ansible
 
 ## Standardising
-
-## Processing
 Create a `parameters` file from the template (`parameters.template`),
 set suitable values from its examples and any other variables you want to
 set and then run the following, and inspect the progress with
 `tail`: -
 
-    $ nohup ./process.sh &
+    $ cp parameters.template parameters
+    [edit parameters]
+    $ nohup ./standardise.sh &
+    $ tail -f nohup.out
+
+>   For up-to-date documentation refer to the documentation in the
+    Ansible playbook `playbooks/processor/standardise.yaml`.
+
+## Graph Processing
+Create a `parameters` file from the template (`parameters.template`),
+set suitable values from its examples and any other variables you want to
+set and then run the following, and inspect the progress with
+`tail`: -
+
+    $ cp parameters.template parameters
+    [edit parameters]
+    $ nohup ./graph-processor.sh &
     $ tail -f nohup.out
 
 >   For up-to-date documentation refer to the documentation in the

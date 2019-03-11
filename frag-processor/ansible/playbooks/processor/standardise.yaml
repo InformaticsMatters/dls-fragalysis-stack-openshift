@@ -1,13 +1,11 @@
 ---
 
-# Runs fragalysis fragment processing to generate neo4j graph files.
+# Runs fragalysis vendor molecule standardisation to generate a standard file.
 # Here, the basic steps that take place are: -
 #
 # - clean-up (removal) of working directories
-#   Separate directories are created for 'processing' (nextflow),
-#   Grand 'de-duplication' and then an 'output' for graph files.
-# - Download of a 'standard' file to the 'process' directory
-# - Copy of the nextflow workflow to the 'process' directory
+# - Download of a 'raw' files to the 'workflow' directory
+# - Copy of the nextflow workflow to the 'workflow' directory
 #
 # Prior to any of this the 'configure' role is executed.
 # This ensures that fragalysis is cloned and the required
@@ -17,9 +15,9 @@
 # as an example) and place your variable values in there and then run this
 # role with the command: -
 #
-#   $ nohup ./process.sh &
+#   $ nohup ./standardise.sh &
 
 - hosts: localhost
 
   roles:
-  - graph-processor
+  - standardise
