@@ -8,7 +8,7 @@ aws_secret_access_key: "{{ lookup('env', 'AWS_SECRET_ACCESS_KEY') }}"
 scripts: "{{ lookup('env','HOME') }}/{{ github_dir }}/fragalysis/frag/network/scripts"
 
 # The S3 bucket for the key files
-s3_bucket: "{{ lookup('env', 'FRAGALYSIS_S3_BUCKET')|default('im-fragnet') }}"
+s3_bucket: "{{ lookup('env', 'FRAGALYSIS_S3_BUCKET') or 'im-fragnet' }}"
 # Write results to S3 when done (at each stage)
 s3_write: yes
 

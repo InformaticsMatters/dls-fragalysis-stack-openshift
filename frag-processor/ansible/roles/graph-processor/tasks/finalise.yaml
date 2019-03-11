@@ -16,6 +16,8 @@
   shell: ./graph_put_build_provenance_files.py {{ source }} {{ path }}
   args:
     chdir: "{{ scripts }}"
+  environment:
+    FRAGALYSIS_S3_BUCKET: "{{ s3_bucket }}"
   vars:
     source: "{{ graph_path }}"
     path: "{{ process_path }}/build-{{ build_number }}"

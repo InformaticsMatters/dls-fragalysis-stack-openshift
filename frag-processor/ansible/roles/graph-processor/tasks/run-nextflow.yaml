@@ -20,6 +20,8 @@
     {{ process_path }}/standard-{{ process_standard_number }}
     {{ workflow_path }}
     --force
+  environment:
+    FRAGALYSIS_S3_BUCKET: "{{ s3_bucket }}"
   when:
   - not dedupe_done_file.stat.exists
   - nextflow_result.stdout|length == 0
