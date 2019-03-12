@@ -116,6 +116,43 @@
   vars:
     tgt: "{{ dedupe_path }}/edges.txt"
 
+# Search for exclusions (present in the 'build-network.log.gz' files.
+#
+# An exclusion is in the file if its line begins 'X'.
+# We collect them together, and compress them if any exclusions
+# were found. If we create an 'excluded.csv.gz' file in the
+# de-duplication directory it will be uploaded to the build
+# directory on S3 at the end of the txt-to-csv stage.
+
+- name: Collect exclusions
+  shell: >-
+    zcat *.build-network.log.gz
+    | grep "^X" > {{ dedupe_path }}/excluded.csv
+  environment:
+    LC_ALL: C
+  args:
+    chdir: "{{ workflow_path }}/results"
+
+- name: Count exclusions
+  shell: cat {{ dedupe_path }}/excluded.csv | wc -l
+  register: excluded_lines
+
+- name: Set exclusion count
+  set_fact:
+    exclusion_count: "{{ excluded_lines.stdout|int }}"
+
+- name: Report exclusion count
+  debug:
+    msg: Exclusion Count is {{ exclusion_count }}
+
+- name: Compress exclusions
+  shell: gzip {{ dedupe_path }}/excluded.csv
+  environment:
+    LC_ALL: C
+  args:
+    creates: "{{ dedupe_path }}/excluded.csv.gz"
+  when: exclusion_count > 0
+
 # We've de-duplicated the nextflow results
 # so we can now delete them.
 # This may save significant space.
