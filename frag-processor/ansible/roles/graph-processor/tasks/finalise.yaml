@@ -22,5 +22,5 @@
     source: "{{ graph_path }}"
     path: "{{ process_path }}/build-{{ build_number }}"
   when:
-  - not process_done_file.stat.exists
+  - process_done_file.stat.exists
   - s3_write|bool
