@@ -74,7 +74,7 @@
 # as it expects an 'ansible_job_id' which will have been lost.
 # So we cannot run this if nextflow was found to be running
 
-- name: Wait for nextflow
+- name: Wait for nextflow (async)
   async_status:
     jid: "{{ nextflow_async.ansible_job_id }}"
   register: nextflow_result
