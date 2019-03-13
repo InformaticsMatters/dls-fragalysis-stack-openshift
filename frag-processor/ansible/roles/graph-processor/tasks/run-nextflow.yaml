@@ -47,15 +47,15 @@
       {{ nextflow_extra_args }}
       {{ nextflow_debug_args }}
   when:
+  - not dedupe_done_file.stat.exists
   - not nextflow_is_running
-  - nextflow_result.stdout|length == 0
 
 - name: Display nextflow command
   debug:
     var: nextflow_cmd
   when:
+  - not dedupe_done_file.stat.exists
   - not nextflow_is_running
-  - nextflow_result.stdout|length == 0
 
 - name: Run nextflow (async)
   command: "{{ nextflow_cmd }}"
