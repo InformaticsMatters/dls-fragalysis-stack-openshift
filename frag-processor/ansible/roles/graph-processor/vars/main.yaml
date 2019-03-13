@@ -1,5 +1,1 @@
 ---
-
-# The name of the nextflow PID file to use.
-# Placed in the workflow directory.
-nextflow_pi_file: nf.pid

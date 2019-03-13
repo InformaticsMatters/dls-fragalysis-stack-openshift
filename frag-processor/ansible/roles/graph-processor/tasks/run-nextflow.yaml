@@ -61,8 +61,6 @@
   command: "{{ nextflow_cmd }}"
   args:
     chdir: "{{ workflow_path }}"
-  environment:
-    NXF_PID_FILE: "{{ workflow_path }}/{{ nextflow_pid_file }}"
   async: "{{ nextflow_timeout_minutes|int * 60 }}"
   poll: 0
   register: nextflow_async
