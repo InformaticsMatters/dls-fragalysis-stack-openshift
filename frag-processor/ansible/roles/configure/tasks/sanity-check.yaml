@@ -12,8 +12,4 @@
     - aws_access_key_id|length > 0
     - aws_secret_access_key is defined
     - aws_secret_access_key|length > 0
-    - nextflow_executor is defined
-    - nextflow_executor|length > 0
-    - nextflow_mode is defined
-    - nextflow_mode|length > 0
     msg: Have you defined all the required environment variables?

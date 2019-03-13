@@ -22,7 +22,7 @@
 
 - name: Set 'is running' fact
   set_fact:
-    nextflow_is_running: "{{ nextflow_log_file.stat.exists and nextflow_log_tail|int == 0 }}"
+    nextflow_is_running: "{{ nextflow_log_file.stat.exists and nextflow_log_tail.stdout|int == 0 }}"
 
 - name: Display 'is running' fact
   debug:

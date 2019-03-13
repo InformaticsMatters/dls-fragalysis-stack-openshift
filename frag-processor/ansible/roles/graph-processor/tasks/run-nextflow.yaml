@@ -9,9 +9,7 @@
     path: "{{ dedupe_path }}/done"
   register: dedupe_done_file
 
-- name: Check nextflow (entry)
-  shell: echo -n $(pgrep java)
-  register: nextflow_result
+- import_tasks: check-nextflow.yaml
   when: not dedupe_done_file.stat.exists
 
 - name: Get standard file
@@ -24,7 +22,7 @@
     FRAGALYSIS_S3_BUCKET: "{{ s3_bucket }}"
   when:
   - not dedupe_done_file.stat.exists
-  - nextflow_result.stdout|length == 0
+  - not nextflow_is_running
   - nextflow_run|bool
 
 - name: Copy nextflow files
@@ -36,7 +34,7 @@
   - "config"
   when:
   - not dedupe_done_file.stat.exists
-  - nextflow_result.stdout|length == 0
+  - not nextflow_is_running
   - nextflow_run|bool
 
 - name: Set nextflow command
@@ -49,14 +47,14 @@
       {{ nextflow_extra_args }}
       {{ nextflow_debug_args }}
   when:
-  - not dedupe_done_file.stat.exists
+  - not nextflow_is_running
   - nextflow_result.stdout|length == 0
 
 - name: Display nextflow command
   debug:
     var: nextflow_cmd
   when:
-  - not dedupe_done_file.stat.exists
+  - not nextflow_is_running
   - nextflow_result.stdout|length == 0
 
 - name: Run nextflow (async)
@@ -70,7 +68,7 @@
   register: nextflow_async
   when:
   - not dedupe_done_file.stat.exists
-  - nextflow_result.stdout|length == 0
+  - not nextflow_is_running
   - nextflow_run|bool
 
 # Optionally wait for nextflow, polling at a user-defined interval...
@@ -87,18 +85,11 @@
   retries: "{{ (nextflow_timeout_minutes|int / nextflow_poll_period_minutes|int)|int }}"
   when:
   - not dedupe_done_file.stat.exists
-  - nextflow_result.stdout|length == 0
+  - not nextflow_is_running
   - nextflow_run|bool
 
 # Finally, just in case the playbook failed
 # and was re-executed, check nextflow status again
-# and set a fact for others.
+# and set the fact for others.
 
-- name: Check nextflow (exit)
-  shell: echo -n $(pgrep java)
-  register: nextflow_exit_result
-  when: not dedupe_done_file.stat.exists
-
-- name: Set nextflow 'done' fact
-  set_fact:
-    nextflow_done: "{{ (nextflow_exit_result.stdout|length == 0)|bool }}"
+- import_tasks: check-nextflow.yaml

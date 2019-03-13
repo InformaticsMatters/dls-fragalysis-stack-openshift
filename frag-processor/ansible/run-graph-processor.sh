@@ -12,7 +12,5 @@ fi
 # You will need to set...
 : "${AWS_SECRET_ACCESS_KEY?Need to set AWS_SECRET_ACCESS_KEY}"
 : "${AWS_ACCESS_KEY_ID?Need to set AWS_ACCESS_KEY_ID}"
-: "${NXF_EXECUTOR?Need to set NXF_EXECUTOR}"
-: "${NXF_MODE?Need to set NXF_MODE}"
 
 ansible-playbook playbooks/processor/graph-processor.yaml --extra-vars "@parameters"

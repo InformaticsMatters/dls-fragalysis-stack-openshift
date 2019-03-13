@@ -13,15 +13,13 @@
 
 - import_tasks: initialise.yaml
 
-- import_tasks: check-nextflow.yaml
+- import_tasks: run-nextflow.yaml
 
-#- import_tasks: run-nextflow.yaml
-
-#- import_tasks: deduplicate.yaml
-#  when: nextflow_done
-#- import_tasks: txt-to-csv.yaml
-#  when: nextflow_done
-#- import_tasks: process-csv.yaml
-#  when: nextflow_done
-#- import_tasks: finalise.yaml
-#  when: nextflow_done
+- import_tasks: deduplicate.yaml
+  when: not nextflow_is_running
+- import_tasks: txt-to-csv.yaml
+  when: not nextflow_is_running
+- import_tasks: process-csv.yaml
+  when: not nextflow_is_running
+- import_tasks: finalise.yaml
+  when: not nextflow_is_running
