@@ -12,7 +12,7 @@
     path: "{{ graph_path }}/done"
   register: process_done_file
 
-- name: Save provenance files
+- name: Save provenance files (build {{ build_number }})
   shell: ./graph_put_build_provenance_files.py {{ source }} {{ path }}
   args:
     chdir: "{{ scripts }}"

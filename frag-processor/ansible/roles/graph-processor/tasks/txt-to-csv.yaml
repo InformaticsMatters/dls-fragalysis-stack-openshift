@@ -34,7 +34,7 @@
     path: "{{ dedupe_path }}/done"
   register: csv_done_file
 
-- name: Save TXT and CSV
+- name: Save TXT and CSV (build {{ build_number }})
   shell: ./graph_put_build_files.py {{ input }} {{ output }}
   args:
     chdir: "{{ scripts }}"
