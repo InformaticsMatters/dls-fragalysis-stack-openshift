@@ -1,4 +1,5 @@
 process {
+    executor = 'slurm'
     container = 'busybox:latest'
     scratch = true
 }
@@ -9,12 +10,6 @@ singularity {
     autoMounts = true
 }
 
-executor = 'ignite'
 executor {
     queueSize = 100
-}
-
-cluster {
-    join = "path:$HOME/cluster"
-    master.maxCpus = 0
 }
