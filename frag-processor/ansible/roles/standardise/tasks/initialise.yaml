@@ -13,7 +13,8 @@
     path: "{{ item }}"
     state: absent
   loop:
-    - "{{ workflow_path }}"
+  - "{{ workflow_path }}"
+  - "{{ standard_path }}"
   become: yes
   when: clean_start|bool
 
@@ -27,6 +28,7 @@
     state: directory
   loop:
   - "{{ workflow_path }}"
+  - "{{ standard_path }}"
 
 # We're going to compile a new standard file from the defined
 # 'raw' files. Go to S£ and get the next available standard number

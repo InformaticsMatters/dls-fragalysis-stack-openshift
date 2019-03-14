@@ -9,8 +9,8 @@
     path: "{{ standard_path }}/done"
   register: std_done_file
 
-#- import_tasks: "{{ role_path }}/graph-processor/tasks/check-nextflow.yaml"
-#  when: not std_done_file.stat.exists
+- import_tasks: "{{ role_path }}/../graph-processor/tasks/check-nextflow.yaml"
+  when: not std_done_file.stat.exists
 
 - name: Get raw files
   shell: >-
@@ -105,4 +105,4 @@
 # and was re-executed, check nextflow status again
 # and set the fact for others.
 
-#- import_tasks: "{{ role_path }}/../../graph-processor/tasks/check-nextflow.yaml"
+- import_tasks: "{{ role_path }}/../graph-processor/tasks/check-nextflow.yaml"
