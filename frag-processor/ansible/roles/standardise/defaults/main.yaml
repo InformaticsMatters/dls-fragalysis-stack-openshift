@@ -8,6 +8,9 @@
 s_workflow_dir: s-workflow
 standard_dir: standard
 
+# The poll period for the Nextflow process
+s_nextflow_poll_period_minutes: 20
+
 # Size of an individual processing shred
 process_raw_shred_size: 10000
 

@@ -42,7 +42,6 @@ nextflow_install: no
 nextflow_extra_args:
 nextflow_debug_args: -with-report -with-trace -with-timeline
 nextflow_timeout_minutes: 10080
-nextflow_poll_period_minutes: 20
 nextflow_executor: "{{ lookup('env', 'NXF_EXECUTOR') }}"
 nextflow_mode: "{{ lookup('env', 'NXF_MODE') }}"
 nextflow_run: yes

@@ -8,7 +8,6 @@ clean_start: yes
 
 github-dir: git
 
-nextflow_poll_period_minutes: 20
 netflow_run: yes
 
 process_id: activity/senp7/v1
@@ -23,6 +22,7 @@ process_limit: 0
 dedupe_dir: afp-gp-dedupe
 graph_dir: afp-gp-graph
 gp_workflow_dir: afp-gp-workflow
+gw_nextflow_poll_period_minutes: 20
 
 process_gp_shred_size: 200
 process_gp_chunk_size: 10
@@ -35,6 +35,7 @@ process_standard_number: 2
 
 standard_dir: afp-standard
 s_workflow_dir: afp-s-workflow
+s_nextflow_poll_period_minutes: 2
 
 process_raw_shred_size: 7000
 process_raw_prefix: HTS_

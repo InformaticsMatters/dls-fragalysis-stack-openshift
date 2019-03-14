@@ -11,6 +11,9 @@ gp_workflow_dir: gp-workflow
 dedupe_dir: dedupe
 graph_dir: graph
 
+# The poll period for the Nextflow process
+gw_nextflow_poll_period_minutes: 20
+
 # Size of an individual processing shred
 process_gp_shred_size: 200
 # Size of an individual processing chunk
