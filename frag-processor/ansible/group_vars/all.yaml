@@ -38,10 +38,11 @@ nextflow_install: no
 
 # Nextflow config.
 # Timeouts (minutes):  2880 (2 days)
+#                      7200 (5 days)
 #                     10080 (7 days)
 nextflow_extra_args:
 nextflow_debug_args: -with-report -with-trace -with-timeline
-nextflow_timeout_minutes: 10080
+nextflow_timeout_minutes: 7200
 nextflow_executor: "{{ lookup('env', 'NXF_EXECUTOR') }}"
 nextflow_mode: "{{ lookup('env', 'NXF_MODE') }}"
 nextflow_run: yes

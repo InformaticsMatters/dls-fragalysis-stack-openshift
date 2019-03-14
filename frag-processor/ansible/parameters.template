@@ -23,7 +23,7 @@ standard_dir: afp-standard
 s_workflow_dir: afp-s-workflow
 s_nextflow_poll_period_minutes: 2
 
-process_raw_shred_size: 7000
+process_raw_shred_size: 35000
 process_raw_prefix: HTS_
 
 # Graph Processing Variables
