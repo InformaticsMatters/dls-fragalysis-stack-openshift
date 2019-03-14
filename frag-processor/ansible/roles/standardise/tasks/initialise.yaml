@@ -36,6 +36,8 @@
   shell: ./graph_get_unused_standard_number.py {{ process_path }}
   args:
     chdir: "{{ scripts }}"
+  environment:
+    FRAGALYSIS_S3_BUCKET: "{{ s3_bucket }}"
   register: std_no_result
   changed_when: false
 

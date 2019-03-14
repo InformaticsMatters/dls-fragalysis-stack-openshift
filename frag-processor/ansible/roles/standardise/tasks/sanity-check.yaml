@@ -3,6 +3,10 @@
 # A play that simply checks that essential variables
 # have been setup. Without these key plays cannot run.
 
+- name: debug
+  debug:
+    var: role_path
+
 - name: Check variables (standardise-specific)
   assert:
     that:
