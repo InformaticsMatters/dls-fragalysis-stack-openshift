@@ -43,6 +43,8 @@
       nextflow -C config run standard-from-raw.nf
       --limit {{ process_limit }}
       --skip {{ process_skip }}
+      --rawPrefix '{{ process_raw_prefix }}'
+      --rawType '{{ process_type }}'
       {{ nextflow_extra_args }}
       {{ nextflow_debug_args }}
   when:
