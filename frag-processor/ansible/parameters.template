@@ -24,7 +24,6 @@ dedupe_dir: afp-gp-dedupe
 graph_dir: afp-gp-graph
 gp_workflow_dir: afp-gp-workflow
 
-process_path: activity/senp7/v1
 process_gp_shred_size: 200
 process_gp_chunk_size: 10
 process_max_frag: 13
