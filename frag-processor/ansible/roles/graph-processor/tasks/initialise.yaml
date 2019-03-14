@@ -71,7 +71,7 @@
 
 - name: Write standard provenance
   copy:
-    content: "{{ process_path }}/standard-{{ process_standard_number }}"
+    content: "{{ process_id }}/standard-{{ process_standard_number }}"
     dest: "{{ graph_path }}/standard.prov"
 
 - name: Write enviornment provenance
