@@ -9,9 +9,7 @@
     path: "{{ standard_path }}/done"
   register: std_done_file
 
-- name: Check nextflow
-  shell: echo -n $(pgrep java)
-  register: nextflow_result
+- import_tasks: "{{ role_path }}/../../graph-processor/tasks/check-nextflow.yaml"
   when: not std_done_file.stat.exists
 
 - name: Get raw files
@@ -20,9 +18,11 @@
     {{ process_path }}/{{ process_raw_id }}
     {{ workflow_path }}
     --force
+  environment:
+    FRAGALYSIS_S3_BUCKET: "{{ s3_bucket }}"
   when:
   - not std_done_file.stat.exists
-  - nextflow_result.stdout|length == 0
+  - not nextflow_is_running
   - nextflow_run|bool
 
 - name: Copy nextflow files
@@ -34,7 +34,7 @@
   - "config"
   when:
   - not std_done_file.stat.exists
-  - nextflow_result.stdout|length == 0
+  - not nextflow_is_running
   - nextflow_run|bool
 
 - name: Set nextflow command
@@ -47,14 +47,14 @@
       {{ nextflow_debug_args }}
   when:
   - not std_done_file.stat.exists
-  - nextflow_result.stdout|length == 0
+  - not nextflow_is_running
 
 - name: Display nextflow command
   debug:
     var: nextflow_cmd
   when:
   - not std_done_file.stat.exists
-  - nextflow_result.stdout|length == 0
+  - not nextflow_is_running
 
 - name: Run nextflow (async)
   command: "{{ nextflow_cmd }}"
@@ -65,7 +65,7 @@
   register: nextflow_async
   when:
   - not std_done_file.stat.exists
-  - nextflow_result.stdout|length == 0
+  - not nextflow_is_running
   - nextflow_run|bool
 
 # Optionally wait for nextflow, polling at a user-defined interval...
@@ -73,7 +73,7 @@
 # as it expects an 'ansible_job_id' which will have been lost.
 # So we cannot run this if nextflow was found to be running
 
-- name: Wait for nextflow
+- name: Wait for nextflow (async)
   async_status:
     jid: "{{ nextflow_async.ansible_job_id }}"
   register: nextflow_result
@@ -82,18 +82,27 @@
   retries: "{{ (nextflow_timeout_minutes|int / nextflow_poll_period_minutes|int)|int }}"
   when:
   - not std_done_file.stat.exists
-  - nextflow_result.stdout|length == 0
+  - not nextflow_is_running
   - nextflow_run|bool
+
+# Copy nextflow trace/report files to the build
+# directory (if they exist). These will be stored on S3
+# when (if) the build is saved.
+
+- name: Copy nextflow debug files
+  shell: cp {{ workflow_path }}/{{ item }} {{ standard_path }} | true
+  loop:
+    - report.html
+    - timeline.html
+    - trace.txt
+  when:
+    - nextflow_debug_args|length > 0
+    - not std_done_file.stat.exists
+    - not nextflow_is_running
+    - nextflow_run|bool
 
 # Finally, just in case the playbook failed
 # and was re-executed, check nextflow status again
-# and set a fact for others.
+# and set the fact for others.
 
-- name: Check nextflow (exit)
-  shell: echo -n $(pgrep java)
-  register: nextflow_exit_result
-  when: not dedupe_done_file.stat.exists
-
-- name: Set nextflow 'done' fact
-  set_fact:
-    nextflow_done: "{{ (nextflow_exit_result.stdout|length == 0)|bool }}"
+- import_tasks: "{{ role_path }}/../../graph-processor/tasks/check-nextflow.yaml"

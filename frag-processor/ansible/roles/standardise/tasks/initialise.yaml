@@ -43,7 +43,7 @@
   debug:
     msg: "{{ std_no_result.stdout }}"
 
-- name: Set dynamic facts (Build)
+- name: Set dynamic facts (Standard)
   set_fact:
     standard_number: "{{ std_no_result.stdout|int }}"
 

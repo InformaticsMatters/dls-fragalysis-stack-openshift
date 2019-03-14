@@ -7,12 +7,17 @@
 # commit references and the parameter file used for processing.
 # All the files that should capture the build environment.
 
-- name: Save provenance files
+- name: Check Standard Done File
+  stat:
+    path: "{{ standard_path }}/done"
+  register: process_done_file
+
+- name: Save provenance files (standard-{{ standard_number }})
   shell: ./graph_put_build_provenance_files.py {{ source }} {{ path }}
   args:
     chdir: "{{ scripts }}"
   vars:
-    source: "{{ graph_path }}"
-    path: "{{ process_path }}/{{ process_raw_id }}/standard-{{ std_no_result.stdout }}"
+    source: "{{ standard_path }}"
+    path: "{{ process_path }}/{{ process_raw_id }}/standard-{{ standard_number }}"
   when:
     - s3_write|bool
