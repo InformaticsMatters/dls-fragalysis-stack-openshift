@@ -98,10 +98,19 @@
     - timeline.html
     - trace.txt
   when:
-    - nextflow_debug_args|length > 0
-    - not std_done_file.stat.exists
-    - not nextflow_is_running
-    - nextflow_run|bool
+  - nextflow_debug_args|length > 0
+  - not std_done_file.stat.exists
+  - not nextflow_is_running
+  - nextflow_run|bool
+
+# Create a done file (to prevent re-processing)
+- name: Create done file
+  file:
+    path: "{{ standard_path }}/done"
+  when:
+  - not std_done_file.stat.exists
+  - not nextflow_is_running
+  - nextflow_run|bool
 
 # Finally, just in case the playbook failed
 # and was re-executed, check nextflow status again
