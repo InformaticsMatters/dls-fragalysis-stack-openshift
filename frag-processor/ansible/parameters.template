@@ -36,6 +36,5 @@ process_standard_number: 2
 standard_dir: afp-standard
 s_workflow_dir: afp-s-workflow
 
-process_raw_shred_size: 10000
-
+process_raw_shred_size: 7000
 process_raw_prefix: HTS_
