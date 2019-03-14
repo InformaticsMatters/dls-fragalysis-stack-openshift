@@ -12,7 +12,7 @@
     path: "{{ standard_path }}/done"
   register: standard_done_file
 
-- name: Save standard file ({{ path }}/standard-{{ standard_number }})
+- name: Save standard file ({{ path }})
   shell: ./graph_put_standard_file.py {{ standard_path }} {{ path }}
   args:
     chdir: "{{ scripts }}"
