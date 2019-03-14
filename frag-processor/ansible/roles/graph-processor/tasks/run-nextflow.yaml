@@ -86,6 +86,18 @@
   - not nextflow_is_running
   - nextflow_run|bool
 
+# Copy nextflow trace/report files to the build
+# directory (if they exist). These will be stored on S3
+# when (if) the build is saved.
+
+- name: Copy nextflow debug files
+  shell: cp {{ workflow_path }}/{{ item }} {{ dedupe_path }} | true
+  loop:
+  - report.html
+  - timeline.html
+  - trace.txt
+  when: nextflow_debug_args|length > 0
+
 # Finally, just in case the playbook failed
 # and was re-executed, check nextflow status again
 # and set the fact for others.
