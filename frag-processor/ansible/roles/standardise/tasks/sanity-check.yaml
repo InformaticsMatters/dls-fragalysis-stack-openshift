@@ -6,8 +6,6 @@
 - name: Check variables (standardise-specific)
   assert:
     that:
-    - process_path is defined
-    - process_path|length > 0
-    - process_raw_id is defined
-    - process_raw_id|length > 0
+    - process_id is defined
+    - process_id|length > 0
     msg: Have you defined all the important variables?

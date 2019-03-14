@@ -11,6 +11,7 @@ github-dir: git
 nextflow_poll_period_minutes: 20
 netflow_run: yes
 
+process_id: activity/senp7/v1
 process_type: senp7
 process_skip: 0
 process_limit: 0
@@ -23,6 +24,7 @@ dedupe_dir: afp-gp-dedupe
 graph_dir: afp-gp-graph
 gp_workflow_dir: afp-gp-workflow
 
+process_path: activity/senp7/v1
 process_max_frag: 13
 process_standard_number: 2
 
@@ -33,5 +35,4 @@ process_standard_number: 2
 standard_dir: afp-standard
 s_workflow_dir: afp-s-workflow
 
-process_raw_id: v1
 process_raw_prefix: HTS_

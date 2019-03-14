@@ -15,7 +15,7 @@
 - name: Get raw files
   shell: >-
     {{ scripts }}/graph_get_raw_files.py
-    {{ process_path }}/{{ process_raw_id }}
+    {{ process_id }}
     {{ workflow_path }}
     --force
   environment:

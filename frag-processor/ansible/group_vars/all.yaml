@@ -48,9 +48,9 @@ nextflow_mode: "{{ lookup('env', 'NXF_MODE') }}"
 nextflow_run: yes
 
 # The (S3) path to data for processing.
-# The standard file is expected on this path
+# The raw files and standard file is expected on this path
 # and the build results are written back to it.
-process_path: activity/senp7
+process_id: activity/senp7/v1
 
 # The graph processing type (i.e. vendor).
 # This is the name of the fragalysis process script to apply to the generated

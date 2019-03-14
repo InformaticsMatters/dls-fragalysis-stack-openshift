@@ -41,7 +41,7 @@
   environment:
     FRAGALYSIS_S3_BUCKET: "{{ s3_bucket }}"
   vars:
-    path: "{{ process_path }}/{{ process_raw_id }}"
+    path: "{{ process_id }}"
   register: std_no_result
   changed_when: false
 
@@ -71,7 +71,7 @@
 
 - name: Write raw provenance
   copy:
-    content: "{{ process_path }}/{{ process_raw_id }}"
+    content: "{{ process_id }}"
     dest: "{{ standard_path }}/raw.prov"
 
 - name: Write enviornment provenance

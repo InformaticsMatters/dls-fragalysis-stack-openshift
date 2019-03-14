@@ -6,8 +6,8 @@
 - name: Check variables (graph-specific)
   assert:
     that:
-    - process_path is defined
-    - process_path|length > 0
+    - process_id is defined
+    - process_id|length > 0
     - process_standard_number is defined
     - process_standard_number|int > 0
     msg: Have you defined all the important variables?
