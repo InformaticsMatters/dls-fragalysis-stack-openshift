@@ -23,15 +23,3 @@
   when:
   - standard_done_file.stat.exists
   - s3_write|bool
-
-- name: Save provenance files (standard-{{ standard_number }})
-  shell: ./graph_put_build_provenance_files.py {{ standard_path }} {{ path }}
-  args:
-    chdir: "{{ scripts }}"
-  environment:
-    FRAGALYSIS_S3_BUCKET: "{{ s3_bucket }}"
-  vars:
-    path: "{{ process_path }}/{{ process_raw_id }}/standard-{{ standard_number }}"
-  when:
-  - standard_done_file.stat.exists
-  - s3_write|bool

@@ -35,11 +35,13 @@
 # that we'll use as a path to store the results.
 
 - name: Get a standard number
-  shell: ./graph_get_unused_standard_number.py {{ process_path }}
+  shell: ./graph_get_unused_standard_number.py {{ path }}
   args:
     chdir: "{{ scripts }}"
   environment:
     FRAGALYSIS_S3_BUCKET: "{{ s3_bucket }}"
+  vars:
+    path: "{{ process_path }}/{{ process_raw_id }}"
   register: std_no_result
   changed_when: false
 
