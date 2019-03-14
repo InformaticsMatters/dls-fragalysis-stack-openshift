@@ -91,6 +91,13 @@
 # directory (if they exist). These will be stored on S3
 # when (if) the build is saved.
 
+- name: Copy generated standard file
+  shell: cp {{ workflow_path }}/results/{{ standard_file }} {{ standard_path }}
+  when:
+  - not std_done_file.stat.exists
+  - not nextflow_is_running
+  - nextflow_run|bool
+
 - name: Copy nextflow debug files
   shell: cp {{ workflow_path }}/{{ item }} {{ standard_path }} | true
   loop:
@@ -107,6 +114,7 @@
 - name: Create done file
   file:
     path: "{{ standard_path }}/done"
+    state: touch
   when:
   - not std_done_file.stat.exists
   - not nextflow_is_running
