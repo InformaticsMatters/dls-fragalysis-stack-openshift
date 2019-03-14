@@ -19,4 +19,4 @@
 - import_tasks: run-nextflow.yaml
 
 - import_tasks: finalise.yaml
-  when: nextflow_done
+  when: not nextflow_is_running
