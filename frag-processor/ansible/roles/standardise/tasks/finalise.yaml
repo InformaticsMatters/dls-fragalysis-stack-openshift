@@ -20,4 +20,4 @@
     source: "{{ standard_path }}"
     path: "{{ process_path }}/{{ process_raw_id }}/standard-{{ standard_number }}"
   when:
-    - s3_write|bool
+  - s3_write|bool

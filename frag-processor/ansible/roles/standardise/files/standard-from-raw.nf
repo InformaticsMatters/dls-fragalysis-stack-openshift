@@ -125,7 +125,7 @@ process standardiseJoin {
 
     output:
     file 'standardised-compounds.tab.gz'
-    file 'done'
+
     """
     python /usr/local/fragalysis/frag/network/scripts/header_join.py \
         . raw_shred_ standardised-compounds.tab

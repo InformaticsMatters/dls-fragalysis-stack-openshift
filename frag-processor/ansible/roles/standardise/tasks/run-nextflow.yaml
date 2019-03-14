@@ -94,9 +94,9 @@
 - name: Copy nextflow debug files
   shell: cp {{ workflow_path }}/{{ item }} {{ standard_path }} | true
   loop:
-    - report.html
-    - timeline.html
-    - trace.txt
+  - report.html
+  - timeline.html
+  - trace.txt
   when:
   - nextflow_debug_args|length > 0
   - not std_done_file.stat.exists
