@@ -41,6 +41,8 @@
   set_fact:
     nextflow_cmd: >-
       nextflow -C config run graph-from-standard.nf
+      --shredSize {{ process_gp_shred_size }}
+      --chunkSize {{ process_gp_chunk_size }}
       --limit {{ process_limit }}
       --skip {{ process_skip }}
       --maxFrag {{ process_max_frag }}

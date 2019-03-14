@@ -41,6 +41,7 @@
   set_fact:
     nextflow_cmd: >-
       nextflow -C config run standard-from-raw.nf
+      --shredSize {{ process_raw_shred_size }}
       --limit {{ process_limit }}
       --skip {{ process_skip }}
       --rawPrefix '{{ process_raw_prefix }}'

@@ -8,6 +8,9 @@
 s_workflow_dir: s-workflow
 standard_dir: standard
 
+# Size of an individual processing shred
+process_raw_shred_size: 10000
+
 # The prefix for all raw files that are to be used to compile
 # the standard file.
 process_raw_prefix: HTS_

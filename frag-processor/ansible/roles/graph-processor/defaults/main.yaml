@@ -11,6 +11,11 @@ gp_workflow_dir: gp-workflow
 dedupe_dir: dedupe
 graph_dir: graph
 
+# Size of an individual processing shred
+process_gp_shred_size: 200
+# Size of an individual processing chunk
+process_gp_chunk_size: 10
+
 # The standard file number to use as a source for the graph processing.
 # This standard file is expected to exist for the defined process path.
 # So the following file (key) must exist on S3: -
