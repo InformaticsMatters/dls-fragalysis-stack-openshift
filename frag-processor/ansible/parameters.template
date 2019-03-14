@@ -15,6 +15,17 @@ process_type: senp7
 process_skip: 0
 process_limit: 0
 
+# Standardisation Variables
+# -------------------------
+# These variables are only used by the Standardisation role
+
+standard_dir: afp-standard
+s_workflow_dir: afp-s-workflow
+s_nextflow_poll_period_minutes: 2
+
+process_raw_shred_size: 7000
+process_raw_prefix: HTS_
+
 # Graph Processing Variables
 # --------------------------
 # These variables are only used by the Graph Processing role
@@ -28,14 +39,3 @@ process_gp_shred_size: 200
 process_gp_chunk_size: 10
 process_max_frag: 13
 process_standard_number: 2
-
-# Standardisation Variables
-# -------------------------
-# These variables are only used by the Standardisation role
-
-standard_dir: afp-standard
-s_workflow_dir: afp-s-workflow
-s_nextflow_poll_period_minutes: 2
-
-process_raw_shred_size: 7000
-process_raw_prefix: HTS_
