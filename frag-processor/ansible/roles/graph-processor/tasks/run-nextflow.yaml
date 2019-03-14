@@ -96,7 +96,11 @@
   - report.html
   - timeline.html
   - trace.txt
-  when: nextflow_debug_args|length > 0
+  when:
+  - nextflow_debug_args|length > 0
+  - not dedupe_done_file.stat.exists
+  - not nextflow_is_running
+  - nextflow_run|bool
 
 # Finally, just in case the playbook failed
 # and was re-executed, check nextflow status again
