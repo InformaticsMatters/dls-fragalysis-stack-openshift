@@ -17,6 +17,10 @@ s3_write: yes
 # If you simply want to restart an existing playbook
 # then you probably want to set this to 'no'.
 clean_start: no
+# Clean shut-down?
+# If yes then all the working directories are erased when the playbook ends.
+# This will only happen if the playbook has completed successfully.
+clean_finish: no
 
 # Path to a directory we can use to checkout/clone to.
 # This is a directory relative to the user's $HOME.

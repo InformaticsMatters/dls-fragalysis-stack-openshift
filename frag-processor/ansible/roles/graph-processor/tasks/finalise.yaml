@@ -23,3 +23,20 @@
   when:
   - process_done_file.stat.exists
   - s3_write|bool
+
+# Clean-up?
+#
+# This step removes the working directories,
+# providing valuable free-space on the control host.
+
+- name: Clean up
+  file:
+    path: "{{ item }}"
+    state: absent
+  loop:
+    - "{{ dedupe_path }}"
+    - "{{ workflow_path }}"
+    - "{{ graph_path }}"
+    - "{{ tmp_path }}"
+  become: yes
+  when: clean_finish|bool

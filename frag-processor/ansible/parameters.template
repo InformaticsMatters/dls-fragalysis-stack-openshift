@@ -5,6 +5,7 @@
 # These variables are used by all roles.
 
 clean_start: yes
+clean_finish: no
 
 github-dir: git
 
