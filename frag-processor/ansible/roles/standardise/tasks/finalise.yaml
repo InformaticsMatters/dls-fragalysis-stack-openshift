@@ -24,6 +24,18 @@
   - standard_done_file.stat.exists
   - s3_write|bool
 
+- name: Save provenance files ({{ path }})
+  shell: ./graph_put_standard_provenance_files.py {{ standard_path }} {{ path }}
+  args:
+    chdir: "{{ scripts }}"
+  environment:
+    FRAGALYSIS_S3_BUCKET: "{{ s3_bucket }}"
+  vars:
+    path: "{{ process_id }}/standard-{{ standard_number }}"
+  when:
+  - standard_done_file.stat.exists
+  - s3_write|bool
+
 # Clean-up?
 #
 # This step removes the working directories,
