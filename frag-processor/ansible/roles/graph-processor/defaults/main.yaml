@@ -22,7 +22,7 @@ process_gp_chunk_size: 10
 # The standard file number to use as a source for the graph processing.
 # This standard file is expected to exist for the defined process path.
 # So the following file (key) must exist on S3: -
-#   {{ s3_bucket }}/standard/{{ process_path }}/
+#   {{ s3_bucket }}/standard/{{ process_id }}/
 #       standard-{{ process_standard_number }}/standardised-compounds.tab.gz
 process_standard_number: 2
 

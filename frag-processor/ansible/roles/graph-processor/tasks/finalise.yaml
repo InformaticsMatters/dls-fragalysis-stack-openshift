@@ -19,7 +19,7 @@
   environment:
     FRAGALYSIS_S3_BUCKET: "{{ s3_bucket }}"
   vars:
-    path: "{{ process_path }}/build-{{ build_number }}"
+    path: "{{ process_id }}/build-{{ build_number }}"
   when:
   - process_done_file.stat.exists
   - s3_write|bool
@@ -31,7 +31,7 @@
   environment:
     FRAGALYSIS_S3_BUCKET: "{{ s3_bucket }}"
   vars:
-    path: "{{ process_path }}/build-{{ build_number }}"
+    path: "{{ process_id }}/build-{{ build_number }}"
   when:
   - process_done_file.stat.exists
   - s3_write|bool

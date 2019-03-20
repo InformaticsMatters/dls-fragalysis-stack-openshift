@@ -40,7 +40,7 @@
     chdir: "{{ scripts }}"
   vars:
     input: "{{ dedupe_path }}"
-    output: "{{ process_path }}/build-{{ build_number }}"
+    output: "{{ process_id }}/build-{{ build_number }}"
   environment:
     FRAGALYSIS_S3_BUCKET: "{{ s3_bucket }}"
   when:
