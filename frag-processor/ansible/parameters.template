@@ -7,7 +7,8 @@
 clean_start: yes
 clean_finish: no
 
-github-dir: git
+fragalysis_version: 1-fragnet
+nextflow_version: 19.01.0
 
 process_id: activity/senp7/v1
 process_type: senp7
@@ -18,12 +19,12 @@ process_limit: 0
 # -------------------------
 # These variables are only used by the Standardisation role
 
+process_raw_shred_size: 4200
+process_raw_prefix: HTS_
+
 standard_dir: afp-standard
 s_workflow_dir: afp-s-workflow
 s_nextflow_poll_period_minutes: 2
-
-process_raw_shred_size: 4200
-process_raw_prefix: HTS_
 
 # Graph Processing Variables
 # --------------------------
@@ -31,8 +32,9 @@ process_raw_prefix: HTS_
 
 dedupe_dir: afp-gp-dedupe
 graph_dir: afp-gp-graph
+
 gp_workflow_dir: afp-gp-workflow
-gw_nextflow_poll_period_minutes: 20
+gp_nextflow_poll_period_minutes: 20
 
 process_gp_shred_size: 200
 process_gp_chunk_size: 10
