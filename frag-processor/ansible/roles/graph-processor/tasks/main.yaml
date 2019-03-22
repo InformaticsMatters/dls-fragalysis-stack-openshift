@@ -19,7 +19,7 @@
   when: not nextflow_is_running
 - import_tasks: txt-to-csv.yaml
   when: not nextflow_is_running
-- import_tasks: process-csv.yaml
+- import_tasks: csv-to-graph.yaml
   when: not nextflow_is_running
 - import_tasks: finalise.yaml
   when: not nextflow_is_running

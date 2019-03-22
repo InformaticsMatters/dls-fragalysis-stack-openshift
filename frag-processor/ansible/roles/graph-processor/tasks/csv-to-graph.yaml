@@ -1,12 +1,13 @@
 ---
 
-# Processes de-duplicated data files.
-# Graph process, de-duplication and txt-to-csv is expected to have taken place.
+# Processes de-duplicated CSV files into neo4j-compliant Graph files.
+# The nextflow workflow, de-duplication and txt-to-csv
+# is expected to have taken place.
 #
-# Here we create a directory (where the processed files will be placed)
+# Here we create a directory (where the graph files will be placed)
 # followed by the graph file format processing,
-# which creates neo4j compliant files based on the
-# define 'process_type'.
+# which creates neo4j-compliant files based on the
+# defined 'process_type'.
 
 - import_tasks: sanity-check.yaml
 
@@ -19,12 +20,12 @@
     path: "{{ dedupe_path }}/done"
   register: csv_done_file
 
-- name: Check Process Done File
+- name: Check Graph Done File
   stat:
     path: "{{ graph_path }}/done"
   register: process_done_file
 
-- name: Process
+- name: Assemble Graph Files ({{ process_type}})
   shell: >-
     ./process_{{ process_type }}_compounds.py
     {{ vendor_file }} {{ nodes_file }} {{ output }}
