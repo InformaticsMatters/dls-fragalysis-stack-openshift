@@ -5,10 +5,10 @@
 - name: Check nextflow log.
   stat:
     path: "{{ workflow_path }}/.nextflow.log"
-  register: nextflow_log_file
+  register: current_nextflow_log_file
 
 - import_tasks: check-nextflow.yaml
-  when: not nextflow_log_file.stat.exists
+  when: not current_nextflow_log_file.stat.exists
 
 - name: Get standard file
   shell: >-
@@ -19,7 +19,7 @@
   environment:
     FRAGALYSIS_S3_BUCKET: "{{ s3_bucket }}"
   when:
-  - not nextflow_log_file.stat.exists
+  - not current_nextflow_log_file.stat.exists
   - not nextflow_is_running
   - nextflow_run|bool
 
@@ -31,7 +31,7 @@
   - "graph-from-standard.nf"
   - "config"
   when:
-  - not nextflow_log_file.stat.exists
+  - not current_nextflow_log_file.stat.exists
   - not nextflow_is_running
   - nextflow_run|bool
 
@@ -47,14 +47,14 @@
       {{ nextflow_extra_args }}
       {{ nextflow_debug_args }}
   when:
-  - not nextflow_log_file.stat.exists
+  - not current_nextflow_log_file.stat.exists
   - not nextflow_is_running
 
 - name: Display nextflow command
   debug:
     var: nextflow_cmd
   when:
-  - not nextflow_log_file.stat.exists
+  - not current_nextflow_log_file.stat.exists
   - not nextflow_is_running
 
 - name: Run nextflow (async)
@@ -65,7 +65,7 @@
   poll: 0
   register: nextflow_async
   when:
-  - not nextflow_log_file.stat.exists
+  - not current_nextflow_log_file.stat.exists
   - not nextflow_is_running
   - nextflow_run|bool
 
@@ -82,7 +82,7 @@
   delay: "{{ gp_nextflow_poll_period_minutes|int * 60 }}"
   retries: "{{ (nextflow_timeout_minutes|int / gp_nextflow_poll_period_minutes|int)|int }}"
   when:
-  - not nextflow_log_file.stat.exists
+  - not current_nextflow_log_file.stat.exists
   - not nextflow_is_running
   - nextflow_run|bool
 
@@ -98,7 +98,7 @@
   - trace.txt
   when:
   - nextflow_debug_args|length > 0
-  - not nextflow_log_file.stat.exists
+  - not current_nextflow_log_file.stat.exists
   - not nextflow_is_running
   - nextflow_run|bool
 
