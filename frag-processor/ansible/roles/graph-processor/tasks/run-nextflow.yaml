@@ -1,16 +1,14 @@
 ---
 
-# If there's a 'done' file in the de-duplication directory
-# then we skip nextflow processing. This happens
-# if we're re-running and do not want to 'clean-up'.
+# If there's a nextflow logfile present we do nothing here...
 
-- name: Check de-duplciation directory.
+- name: Check nextflow log.
   stat:
-    path: "{{ dedupe_path }}/done"
-  register: dedupe_done_file
+    path: "{{ workflow_path }}/.nextflow.log"
+  register: nextflow_log_file
 
 - import_tasks: check-nextflow.yaml
-  when: not dedupe_done_file.stat.exists
+  when: not nextflow_log_file.stat.exists
 
 - name: Get standard file
   shell: >-
@@ -21,7 +19,7 @@
   environment:
     FRAGALYSIS_S3_BUCKET: "{{ s3_bucket }}"
   when:
-  - not dedupe_done_file.stat.exists
+  - not nextflow_log_file.stat.exists
   - not nextflow_is_running
   - nextflow_run|bool
 
@@ -33,7 +31,7 @@
   - "graph-from-standard.nf"
   - "config"
   when:
-  - not dedupe_done_file.stat.exists
+  - not nextflow_log_file.stat.exists
   - not nextflow_is_running
   - nextflow_run|bool
 
@@ -49,14 +47,14 @@
       {{ nextflow_extra_args }}
       {{ nextflow_debug_args }}
   when:
-  - not dedupe_done_file.stat.exists
+  - not nextflow_log_file.stat.exists
   - not nextflow_is_running
 
 - name: Display nextflow command
   debug:
     var: nextflow_cmd
   when:
-  - not dedupe_done_file.stat.exists
+  - not nextflow_log_file.stat.exists
   - not nextflow_is_running
 
 - name: Run nextflow (async)
@@ -67,7 +65,7 @@
   poll: 0
   register: nextflow_async
   when:
-  - not dedupe_done_file.stat.exists
+  - not nextflow_log_file.stat.exists
   - not nextflow_is_running
   - nextflow_run|bool
 
@@ -84,7 +82,7 @@
   delay: "{{ gp_nextflow_poll_period_minutes|int * 60 }}"
   retries: "{{ (nextflow_timeout_minutes|int / gp_nextflow_poll_period_minutes|int)|int }}"
   when:
-  - not dedupe_done_file.stat.exists
+  - not nextflow_log_file.stat.exists
   - not nextflow_is_running
   - nextflow_run|bool
 
@@ -100,7 +98,7 @@
   - trace.txt
   when:
   - nextflow_debug_args|length > 0
-  - not dedupe_done_file.stat.exists
+  - not nextflow_log_file.stat.exists
   - not nextflow_is_running
   - nextflow_run|bool
 
