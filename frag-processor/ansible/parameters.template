@@ -56,3 +56,18 @@ process_gp_shred_size: 200
 process_gp_chunk_size: 10
 process_max_frag: 12
 process_standard_number: 2
+
+# Combiner Variables
+# ------------------
+# The following variables are only used by the 'Combiner' role
+
+combiner_dir: afp-combiner
+
+# The set of build to combine.
+# This is a dictionary of one or more builds.
+combiner_set:
+  senp7:
+    id: activity/senp7/v1
+    build: 2
+    standard: 1
+    type: senp7

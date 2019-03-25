@@ -1,0 +1,21 @@
+# The main input is a list of one or more builds to combine,
+# each of which consists of: -
+#
+# - process ID (i.e. activity/senp7/v1)
+# - a build number (i.e. 1)
+# - standard number (i.e. 1)
+# - process type (i.e. 'senp7')
+combination_set:
+  molport:
+    id: vendor/molport/2018_11
+    build: 2
+    standard: 2
+    type: molport
+  senp7:
+    id: activity/senp7/v1
+    build: 2
+    standard: 1
+    type: senp7
+
+# The directory (in the user's home) for combination.
+combiner_dir: combiner

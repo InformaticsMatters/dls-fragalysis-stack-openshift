@@ -2,8 +2,8 @@
 
 - name: Set path facts
   set_fact:
-    workflow_path: "{{ lookup('env','HOME') }}/{{ s_workflow_dir }}"
-    standard_path: "{{ lookup('env','HOME') }}/{{ standard_dir }}"
+    combiner_path: "{{ lookup('env', 'HOME') }}/{{ combiner_dir }}"
+    tmp_path: "{{ tmp_dir }}"
 
 # Clean-up before the run...
 # The following task does not run if 'clean_start' is false.
@@ -13,8 +13,8 @@
     path: "{{ item }}"
     state: absent
   loop:
-  - "{{ workflow_path }}"
-  - "{{ standard_path }}"
+  - "{{ combiner_path }}"
+  - "{{ tmp_path }}"
   become: yes
   when: clean_start|bool
 
@@ -27,29 +27,25 @@
     path: "{{ item }}"
     state: directory
   loop:
-  - "{{ workflow_path }}"
-  - "{{ standard_path }}"
+  - "{{ combiner_path }}"
+  - "{{ tmp_path }}"
 
-# We're going to compile a new standard file from the defined
-# 'raw' files. Go to S£ and get the next available standard number
-# that we'll use as a path to store the results.
-
-- name: Get a standard number
-  shell: ./graph_get_unused_standard_number.py {{ process_id }}
+- name: Get a combination number
+  shell: ./graph_get_unused_combination_number.py
   args:
     chdir: "{{ scripts }}"
   environment:
     FRAGALYSIS_S3_BUCKET: "{{ s3_bucket }}"
-  register: std_no_result
+  register: combination_no_result
   changed_when: false
 
-- name: Show standard number
+- name: Show combination number
   debug:
-    msg: "{{ std_no_result.stdout }}"
+    msg: "{{ combination_no_result.stdout }}"
 
-- name: Set dynamic facts (Standard)
+- name: Set dynamic facts (Combination)
   set_fact:
-    standard_number: "{{ std_no_result.stdout|int }}"
+    combination_number: "{{ combination_no_result.stdout|int }}"
 
 - name: Collect environment
   shell: env
@@ -60,24 +56,19 @@
 - name: Write DLS commit provenance
   copy:
     content: "{{ dls_commit_ref }}"
-    dest: "{{ standard_path }}/dls-commit.prov"
+    dest: "{{ combiner_path }}/dls-commit.prov"
 
 - name: Write Fragalysis commit provenance
   copy:
     content: "{{ fragalysis_commit_ref }}"
-    dest: "{{ standard_path }}/fragalysis_commit.prov"
-
-- name: Write raw provenance
-  copy:
-    content: "{{ process_id }}"
-    dest: "{{ standard_path }}/raw.prov"
+    dest: "{{ combiner_path }}/fragalysis_commit.prov"
 
 - name: Write environment provenance
   copy:
     content: "{{ env_result.stdout }}"
-    dest: "{{ standard_path }}/env.prov"
+    dest: "{{ combiner_path }}/env.prov"
 
 - name: Copy playbook parameter file
   copy:
     src: "{{ role_path }}/../../parameters"
-    dest: "{{ standard_path }}/parameters.prov"
+    dest: "{{ combiner_path }}/parameters.prov"

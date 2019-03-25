@@ -15,7 +15,7 @@
 # as an example) and place your variable values in there and then run this
 # role with the command: -
 #
-#   $ nohup ./standardise.sh &
+#   $ nohup ./run-standardise.sh &
 
 - hosts: localhost
 

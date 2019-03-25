@@ -1,0 +1,17 @@
+---
+
+# Gets all the build files for all the builds
+# named in the combination_set from S3.
+
+- name: Get Build Files
+  shell: >
+    ./graph_get_build_graph_files.py {{ source }} {{ destination }}
+    --for-combination
+  args:
+    chdir: "{{ scripts }}"
+  environment:
+    FRAGALYSIS_S3_BUCKET: "{{ s3_bucket }}"
+  vars:
+    source: "{{ item.value.id }}/build-{{ item.value.build }}"
+    destination: "{{ combiner_path }}/{{ item.key }}"
+  loop: "{{ lookup('dict', combination_set) }}"

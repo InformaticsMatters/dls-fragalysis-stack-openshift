@@ -74,7 +74,7 @@
     content: "{{ process_id }}/standard-{{ process_standard_number }}"
     dest: "{{ graph_path }}/standard.prov"
 
-- name: Write enviornment provenance
+- name: Write environment provenance
   copy:
     content: "{{ env_result.stdout }}"
     dest: "{{ graph_path }}/env.prov"

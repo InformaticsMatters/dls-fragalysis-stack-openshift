@@ -17,7 +17,7 @@
 # as an example) and place your variable values in there and then run this
 # role with the command: -
 #
-#   $ nohup ./process.sh &
+#   $ nohup ./run-graph-processor.sh &
 
 - hosts: localhost
 

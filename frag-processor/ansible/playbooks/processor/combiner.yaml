@@ -1,0 +1,14 @@
+---
+
+# Runs fragalysis vendor molecule combination.
+#
+# Before you start create a 'parameters' file (using 'parameters.template'
+# as an example) and place your variable values in there and then run this
+# role with the command: -
+#
+#   $ nohup ./run-combiner.sh &
+
+- hosts: localhost
+
+  roles:
+  - combiner

@@ -55,6 +55,18 @@ set and then run the following, and inspect the progress with
     Ansible playbook `playbooks/processor/graph-processor.yaml`.
 
 ## Combination
+Create a `parameters` file from the template (`parameters.template`),
+set suitable values from its examples and any other variables you want to
+set and then run the following, and inspect the progress with
+`tail`: -
+
+    $ cp parameters.template parameters
+    [edit parameters]
+    $ nohup ./run-combiner.sh &
+    $ tail -f nohup.out
+
+>   For up-to-date documentation refer to the documentation in the
+    Ansible playbook `playbooks/processor/standardise.yaml`.
 
 ---
  
