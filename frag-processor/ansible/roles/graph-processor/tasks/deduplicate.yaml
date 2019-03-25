@@ -123,11 +123,14 @@
 # were found. If we create an 'excluded.csv.gz' file in the
 # de-duplication directory it will be uploaded to the build
 # directory on S3 at the end of the txt-to-csv stage.
+#
+# There may not be any exclusions so protect against failure using '|true'.
 
 - name: Collect exclusions
   shell: >-
     zcat *.build-network.log.gz
     | grep "^X" > {{ dedupe_path }}/excluded.csv
+    | true
   environment:
     LC_ALL: C
   args:

@@ -10,7 +10,7 @@
 - import_tasks: check-nextflow.yaml
   when: not current_nextflow_log_file.stat.exists
 
-- name: Get standard file
+- name: Get standard file (standard-{{ process_standard_number }})
   shell: >-
     {{ scripts }}/graph_get_standard_file.py
     {{ process_id }}/standard-{{ process_standard_number }}

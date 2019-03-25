@@ -30,6 +30,10 @@ process_limit: 0
 # Standardisation Variables
 # -------------------------
 # The following variables are only used by the 'Standardise' role
+#
+# Prefix for HTS data is typically 'HTS_'
+# Prefix for Molport data is typically 'iis_smiles_'
+# Prefix for Enamine data is typically a date, i.e. 'Jun2018_'
 
 process_raw_shred_size: 4200
 process_raw_prefix: HTS_
