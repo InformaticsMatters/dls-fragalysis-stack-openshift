@@ -12,6 +12,7 @@
   pip:
     name:
     - ansible==2.7.9
+    - docker-compose==1.23.2
     - future==0.17.1
     - jinja2==2.10
     - passlib==1.7.1
