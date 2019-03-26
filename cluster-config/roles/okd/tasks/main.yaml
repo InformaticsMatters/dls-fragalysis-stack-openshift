@@ -81,3 +81,11 @@
   authorized_key:
     user: "{{ authorized_user }}"
     key: "{{lookup('file', authorized_user_public_key) }}"
+
+# Check DNS resolution (nslookup resolution)
+
+- name: Check DNS (nslookup)
+  shell: nslookup {{ item }}
+  loop:
+  - "{{ hostvars['cli-node']['ansible_hostname'] }}"
+  - google.com
