@@ -61,7 +61,7 @@
   become: yes
 
 - name: Adjust dnsmasq.conf (no-resolv)
-  lineingfile:
+  lineinfile:
     path: /etc/dnsmasq.conf
     regexp: '^#no-resolv$'
     line: 'no-resolv'
@@ -71,7 +71,7 @@
   become: yes
 
 - name: Adjust dnsmasq.conf (add servers)
-  lineingfile:
+  lineinfile:
     path: /etc/dnsmasq.conf
     insertafter: '^#server'
     firstmatch: yes
