@@ -84,5 +84,5 @@
 
 - name: Adjust authorised keys
   authorized_key:
-    user: "{{ authrorized_user }}"
-    key: "{{lookup('file', 'id_rsa.pub') }}"
+    user: "{{ authorized_user }}"
+    key: "{{lookup('file', authorized_user_public_key) }}"
