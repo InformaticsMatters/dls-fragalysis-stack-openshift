@@ -63,10 +63,10 @@ okd:
   ansible_version: 2.7.9
   play:
   - prerequisites
-  - deploy_cluster
+#  - deploy_cluster
 
   post_okd:
-  - play: acme-controller
+#  - play: acme-controller
 
   enable:
   - metrics
