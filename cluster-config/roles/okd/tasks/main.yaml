@@ -27,15 +27,18 @@
     - java-1.8.0-openjdk-headless
     - docker-1.13.1
     - atomic
+  become: yes
 
 - name: Enable and start docker
   systemd:
     name: docker
     enabled: yes
     state: started
+  become: yes
 
 - name: Enable and start NetworkManager
   systemd:
     name: NetworkManager
     enabled: yes
     state: started
+  become: yes

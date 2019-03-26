@@ -6,6 +6,7 @@
   easy_install:
     name: pip
     state: latest
+  become: yes
 
 - name: Install Python Packages
   pip:
@@ -15,3 +16,4 @@
 #    - jinja2==2.10
 #    - passlib==1.7.1
 #    - pyyaml==3.10
+  become: yes
