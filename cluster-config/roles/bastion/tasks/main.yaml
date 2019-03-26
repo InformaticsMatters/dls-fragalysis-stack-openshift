@@ -38,6 +38,8 @@
     owner: root
     group: root
     mode: 0644
+  notify:
+    - Restart dnsmasq
   become: yes
 
 - name: Adjust reolv.conf (insert localhost nameserver)
@@ -48,6 +50,8 @@
     owner: root
     group: root
     mode: 0644
+  notify:
+    - Restart dnsmasq
   become: yes
 
 - name: Protect resolv.conf from the NetworkManager
@@ -58,6 +62,8 @@
     owner: root
     group: root
     mode: 0644
+  notify:
+    - Restart dnsmasq
   become: yes
 
 - name: Adjust dnsmasq.conf (no-resolv)
@@ -68,6 +74,8 @@
     owner: root
     group: root
     mode: 0644
+  notify:
+    - Restart dnsmasq
   become: yes
 
 - name: Adjust dnsmasq.conf (add servers)
@@ -80,11 +88,7 @@
     group: root
     mode: 0644
   with_items: '{{ nameservers }}'
+  notify:
+  - Restart dnsmasq
   become: yes
 
-- name: Restart dnsmasq
-  systemd:
-    name: dnsmasq.service
-    enabled: yes
-    state: restarted
-  become: yes
