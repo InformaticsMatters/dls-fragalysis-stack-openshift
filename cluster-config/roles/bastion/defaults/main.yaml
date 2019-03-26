@@ -1,0 +1,6 @@
+---
+
+# A list of DNS name serves on the cluster...
+nameservers:
+- 185.45.77.14
+- 185.45.77.14

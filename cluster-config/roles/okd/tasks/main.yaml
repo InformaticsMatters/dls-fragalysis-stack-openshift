@@ -27,6 +27,7 @@
     - java-1.8.0-openjdk-headless
     - docker-1.13.1
     - atomic
+    - NetworkManager
   become: yes
 
 - name: Enable and start docker

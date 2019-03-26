@@ -18,7 +18,8 @@
     - pyyaml==3.10
   become: yes
 
-# System configuration
+# Additional Bastion system configuration
+# here we install and configure 'dnsmasq'
 
 - name: Install packages
   yum:
@@ -49,9 +50,41 @@
     mode: 0644
   become: yes
 
-- name: Restart NetworkManager
+- name: Protect resolv.conf from the NetworkManager
+  lineinfile:
+    path: /etc/NetworkManager/NetworkManager.conf
+    line: 'dns=done'
+    insertafter: '^[main]'
+    owner: root
+    group: root
+    mode: 0644
+  become: yes
+
+- name: Adjust dnsmasq.conf (no-resolv)
+  lineingfile:
+    path: /etc/dnsmasq.conf
+    regexp: '^#no-resolv$'
+    line: 'no-resolv'
+    owner: root
+    group: root
+    mode: 0644
+  become: yes
+
+- name: Adjust dnsmasq.conf (add servers)
+  lineingfile:
+    path: /etc/dnsmasq.conf
+    insertafter: '^#server'
+    firstmatch: yes
+    line: server={{ item }}
+    owner: root
+    group: root
+    mode: 0644
+  with_items: '{{ nameservers }}'
+  become: yes
+
+- name: Restart dnsmasq
   systemd:
-    name: NetworkManager
+    name: dnsmasq.service
     enabled: yes
     state: restarted
   become: yes
