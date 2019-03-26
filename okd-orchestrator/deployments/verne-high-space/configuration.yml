@@ -18,8 +18,8 @@ cluster:
   id: xchem-311
 
   name_tag: xchem
-  public_hostname: ???
-  default_subdomain: ???
+  public_hostname: 192.168.160.17.nip.io
+  default_subdomain: 192.168.160.29.nip.io
   api_port: 8443
 
   master:
@@ -37,9 +37,9 @@ cluster:
     labels:
     - graph-node=true
     is_compute_node: yes
-  - name: application
+  - name: app
     labels:
-    - application-node=true
+    - app-node=true
     is_compute_node: yes
   - name: gpu
     labels:
@@ -50,7 +50,7 @@ cluster:
   - count: 1
     node_group: graph
   - count: 1
-    node_group: application
+    node_group: app
   - count: 1
     node_group: gpu
 
