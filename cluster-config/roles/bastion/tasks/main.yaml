@@ -1,0 +1,17 @@
+---
+
+# Bastion-specific configuration
+
+- name: Install PIP
+  easy_install:
+    name: pip
+    state: latest
+
+- name: Install Python Packages
+  pip:
+    name:
+    - ansible==2.7.9
+    - future==0.17.1
+    - jinja2==2.10
+    - passlib==1.7.1
+    - pyyaml==3.10

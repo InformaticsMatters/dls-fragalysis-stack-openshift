@@ -1,0 +1,24 @@
+---
+
+all:
+  children:
+
+    bastion:
+      hosts:
+        xchem-master-1.novalocal:
+
+    cli-node:
+      hosts:
+        xchem-master-1.novalocal:
+
+    nodes:
+      hosts:
+        xchem-infra-1.novalocal:
+        xchem-master-1.novalocal:
+        xchem-node-001.novalocal:
+        xchem-node-002.novalocal:
+        xchem-node-003.novalocal:
+
+  vars:
+    ansible_connection: ssh
+    ansible_user: centos

@@ -1,0 +1,103 @@
+---
+
+# --------------------------------------------------------------------------- #
+# An OKD orchestrator deployment configuration file (version 1)               #
+# --------------------------------------------------------------------------- #
+
+version: 1
+
+name: Diamond (High Space) [Verne]
+description: >
+  The deployment for the Diamond 'High Space' site at Verne.
+  This contains a Master, Infrastructure and two compute nodes.
+
+# --- cluster -----------------------------------------------------------------
+
+cluster:
+
+  id: xchem-311
+
+  name_tag: xchem
+  public_hostname: ???
+  default_subdomain: ???
+  api_port: 8443
+
+  master:
+    count: 1
+    is_infra: no
+    is_bastion: yes
+    is_compute_node: yes
+
+  infra:
+    count: 1
+    is_compute_node: yes
+
+  node_groups:
+  - name: graph
+    labels:
+    - graph-node=true
+    is_compute_node: yes
+  - name: application
+    labels:
+    - application-node=true
+    is_compute_node: yes
+  - name: gpu
+    labels:
+    - gpu-node=true
+    is_compute_node: no
+
+  nodes:
+  - count: 1
+    node_group: graph
+  - count: 1
+    node_group: application
+  - count: 1
+    node_group: gpu
+
+  glusterfs:
+    count: 3
+
+okd:
+
+  ansible_tag: openshift-ansible-3.11.100-1
+  ansible_version: 2.7.9
+  play:
+  - prerequisites
+  - deploy_cluster
+
+  post_okd:
+  - play: acme-controller
+
+  enable:
+  - metrics
+  - prometheus
+  - tsb
+  - asb
+
+  certificates:
+    generate_api_cert: no
+
+# --- my_machines -------------------------------------------------------------
+
+my_machines:
+
+  cli_node: xchem-master-1.novalocal
+  bastion: xchem-master-1.novalocal
+
+  master1: xchem-master-1.novalocal
+
+  infra1: xchem-infra-1.novalocal
+
+  node001: xchem-graph-001.novalocal
+  node002: xchem-app-001.novalocal
+  node003: xchem-gpu-001.novalocal
+
+  glusterfs1: xchem-infra-1.novalocal
+  glusterfs2: xchem-graph-001.novalocal
+  glusterfs3: xchem-app-001.novalocal
+
+  glusterfs1_device1: /dev/sdb
+  glusterfs2_device1: /dev/sda
+  glusterfs3_device1: /dev/sda
+
+# -----------------------------------------------------------------------------
