@@ -1,16 +1,15 @@
 ---
 
+# OpenShift/OKD node configuration
+
+- name: Apply OKD Configuration
+  hosts: nodes
+  roles:
+  - okd
+
 # Bastion configuration
 
 - name: Apply Bastion Configuration
   hosts: bastion
   roles:
-  - okd
   - bastion
-
-# OpenShift/OKD node configuration
-
-#- name: Apply OKD Configuration
-#  hosts: nodes
-#  roles:
-#  - okd

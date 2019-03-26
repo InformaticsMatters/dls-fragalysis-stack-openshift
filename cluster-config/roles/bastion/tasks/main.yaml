@@ -34,7 +34,7 @@
   lineinfile:
     path: /etc/resolv.conf
     regexp: '^search openstacklocal'
-    line: 'search openstacklocal novalocal'
+    line: search openstacklocal novalocal
     owner: root
     group: root
     mode: 0644
@@ -43,7 +43,7 @@
 - name: Adjust reolv.conf (insert localhost nameserver)
   lineinfile:
     path: /etc/resolv.conf
-    line: 'nameserver 127.0.0.1'
+    line: nameserver 127.0.0.1
     insertafter: '^search '
     owner: root
     group: root
@@ -53,7 +53,7 @@
 - name: Protect resolv.conf from the NetworkManager
   lineinfile:
     path: /etc/NetworkManager/NetworkManager.conf
-    line: 'dns=done'
+    line: dns=none
     insertafter: '^[main]'
     owner: root
     group: root
@@ -64,7 +64,7 @@
   lineinfile:
     path: /etc/dnsmasq.conf
     regexp: '^#no-resolv$'
-    line: 'no-resolv'
+    line: no-resolv
     owner: root
     group: root
     mode: 0644

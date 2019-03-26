@@ -30,6 +30,41 @@
     - NetworkManager
   become: yes
 
+# Additional Bastion system configuration
+# here we configure 'dns' by adjusting resolv.conf
+
+- name: Adjust reolv.conf (search)
+  lineinfile:
+    path: /etc/resolv.conf
+    regexp: '^search openstacklocal'
+    line: search openstacklocal novalocal
+    owner: root
+    group: root
+    mode: 0644
+  become: yes
+
+- name: Adjust reolv.conf (insert localhost nameserver)
+  lineinfile:
+    path: /etc/resolv.conf
+    line: nameserver {{ nameserver }}
+    insertafter: '^search '
+    owner: root
+    group: root
+    mode: 0644
+  become: yes
+
+- name: Protect resolv.conf from the NetworkManager
+  lineinfile:
+    path: /etc/NetworkManager/NetworkManager.conf
+    line: dns=none
+    insertafter: '^[main]'
+    owner: root
+    group: root
+    mode: 0644
+  become: yes
+
+# Enable and start some key services...
+
 - name: Enable and start docker
   systemd:
     name: docker

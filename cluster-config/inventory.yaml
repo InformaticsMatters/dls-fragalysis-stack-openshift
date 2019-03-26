@@ -14,10 +14,10 @@ all:
     nodes:
       hosts:
         xchem-infra-1.novalocal:
-        xchem-master-1.novalocal:
-        xchem-graph-001.novalocal:
-        xchem-app-001.novalocal:
-        xchem-gpu-001.novalocal:
+#        xchem-master-1.novalocal:
+#        xchem-graph-001.novalocal:
+#        xchem-app-001.novalocal:
+#        xchem-gpu-001.novalocal:
 
   vars:
     ansible_connection: ssh
