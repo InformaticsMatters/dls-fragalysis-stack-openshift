@@ -77,6 +77,8 @@ okd:
   certificates:
     generate_api_cert: no
 
+  inventory_dir: standard-3-11
+
 # --- my_machines -------------------------------------------------------------
 
 my_machines:
