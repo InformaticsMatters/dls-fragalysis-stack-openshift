@@ -17,3 +17,12 @@
     - passlib==1.7.1
     - pyyaml==3.10
   become: yes
+
+# System configuration
+
+- name: Install packages
+  yum:
+    name: "{{ packages }}"
+    vars:
+      packages:
+        - dnsmasq
