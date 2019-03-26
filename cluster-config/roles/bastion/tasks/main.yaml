@@ -58,7 +58,7 @@
   lineinfile:
     path: /etc/NetworkManager/NetworkManager.conf
     line: dns=none
-    insertafter: '^[main]'
+    insertafter: '^\[main\]'
     firstmatch: yes
     owner: root
     group: root

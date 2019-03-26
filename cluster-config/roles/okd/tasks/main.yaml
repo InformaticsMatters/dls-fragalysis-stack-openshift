@@ -57,11 +57,13 @@
   lineinfile:
     path: /etc/NetworkManager/NetworkManager.conf
     line: dns=none
-    insertafter: '^[main]'
+    insertafter: '^\[main\]'
     firstmatch: yes
     owner: root
     group: root
     mode: 0644
+  notify:
+    - Restart NetworkManager
   become: yes
 
 # Enable and start some key services...
@@ -69,13 +71,6 @@
 - name: Enable and start docker
   systemd:
     name: docker
-    enabled: yes
-    state: started
-  become: yes
-
-- name: Enable and start NetworkManager
-  systemd:
-    name: NetworkManager
     enabled: yes
     state: started
   become: yes
