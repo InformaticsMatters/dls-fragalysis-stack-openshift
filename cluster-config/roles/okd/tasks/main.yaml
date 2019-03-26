@@ -82,6 +82,6 @@
 # Set SSH public key
 
 - name: Adjust authorised keys
-  asuthorized_key:
+  authorized_key:
     user: "{{ authrorized_user }}"
     key: "{{lookup('file', 'id_rsa.pub') }}"
