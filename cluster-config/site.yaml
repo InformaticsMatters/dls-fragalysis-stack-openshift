@@ -9,7 +9,7 @@
 
 # OpenShift/OKD node configuration
 
-- name: Apply OKD Configuration
-  hosts: nodes
-  roles:
-  - okd
+#- name: Apply OKD Configuration
+#  hosts: nodes
+#  roles:
+#  - okd

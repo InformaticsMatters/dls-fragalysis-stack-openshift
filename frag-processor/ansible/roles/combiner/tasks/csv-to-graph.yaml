@@ -1,0 +1,25 @@
+---
+
+# Here we 'chain' a series of processes
+# so that the original nodes.csv is augmented
+# with each combination type.
+
+# Create a script to: -
+#
+# - Download thew standards file for the vendor
+# - Process the file against nide.csv.gz
+# - Remove the standard file
+#
+- name: Combine
+  debug:
+    msg: >
+     ./process_{{ item.value.type }}_compounds.py
+     {{ standard_file }}
+     {{ combiner_path }}/nodes.csv.gz {{ combiner_path }}
+      --for-combination
+  args:
+    chdir: "{{ scripts }}"
+  vars:
+    vendor_file: ./process_{{ item.value.type }}_compounds.py
+
+  loop: "{{ lookup('dict', combination_set) }}"
