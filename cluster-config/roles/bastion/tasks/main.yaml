@@ -8,7 +8,7 @@
     state: latest
   become: yes
 
-- name: Install Python Packages
+- name: Install Python packages
   pip:
     name:
     - ansible==2.7.9
@@ -23,6 +23,35 @@
 - name: Install packages
   yum:
     name: "{{ packages }}"
-    vars:
-      packages:
-        - dnsmasq
+  vars:
+    packages:
+      - bind-utils
+      - dnsmasq
+  become: yes
+
+- name: Adjust reolv.conf (search)
+  lineinfile:
+    path: /etc/resolv.conf
+    regexp: '^search openstacklocal'
+    line: 'search openstacklocal novalocal'
+    owner: root
+    group: root
+    mode: 0644
+  become: yes
+
+- name: Adjust reolv.conf (insert localhost nameserver)
+  lineinfile:
+    path: /etc/resolv.conf
+    line: 'nameserver 127.0.0.1'
+    insertafter: '^search '
+    owner: root
+    group: root
+    mode: 0644
+  become: yes
+
+- name: Restart NetworkManager
+  systemd:
+    name: NetworkManager
+    enabled: yes
+    state: restarted
+  become: yes

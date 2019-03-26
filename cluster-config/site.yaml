@@ -5,6 +5,7 @@
 - name: Apply Bastion Configuration
   hosts: bastion
   roles:
+  - okd
   - bastion
 
 # OpenShift/OKD node configuration
