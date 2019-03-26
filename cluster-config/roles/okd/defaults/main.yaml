@@ -3,3 +3,6 @@
 # DNS name-server - the master?
 # (to insert into a machine's resolv.conf)
 nameserver: 192.168.160.17
+
+# The SSH public key user
+authrorized_user: centos

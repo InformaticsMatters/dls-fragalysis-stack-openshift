@@ -78,3 +78,10 @@
     enabled: yes
     state: started
   become: yes
+
+# Set SSH public key
+
+- name: Adjust authorised keys
+  asuthorized_key:
+    user: "{{ authrorized_user }}"
+    key: "{{lookup('file', 'id_rsa.pub') }}"
