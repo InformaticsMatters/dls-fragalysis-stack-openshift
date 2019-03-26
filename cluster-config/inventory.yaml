@@ -7,14 +7,10 @@ all:
       hosts:
         xchem-master-1.novalocal:
 
-    cli-node:
-      hosts:
-        xchem-master-1.novalocal:
-
     nodes:
       hosts:
-        xchem-infra-1.novalocal:
         xchem-master-1.novalocal:
+        xchem-infra-1.novalocal:
         xchem-graph-001.novalocal:
         xchem-app-001.novalocal:
         xchem-gpu-001.novalocal:
