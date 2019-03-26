@@ -59,6 +59,7 @@
     path: /etc/NetworkManager/NetworkManager.conf
     line: dns=none
     insertafter: '^[main]'
+    firstmatch: yes
     owner: root
     group: root
     mode: 0644
