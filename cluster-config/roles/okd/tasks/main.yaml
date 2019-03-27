@@ -89,3 +89,19 @@
   loop:
   - "{{ hostvars['cli-node']['ansible_hostname'] }}"
   - google.com
+
+# Create the docker group
+# and enable docker use from the authorised user
+
+- name: Create docker group
+  group:
+    name: docker
+  notify:
+  - Restart docker
+  become: yes
+
+- name: Add {{ authorized_user }} to docker group
+  user:
+    name: "{{ authorized_user }}"
+    group: docker
+    append: yes

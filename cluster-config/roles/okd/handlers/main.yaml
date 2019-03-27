@@ -6,3 +6,10 @@
     enabled: yes
     state: restarted
   become: yes
+
+- name: Restart docker
+  systemd:
+    name: docker
+    enabled: yes
+    state: restarted
+  become: yes
