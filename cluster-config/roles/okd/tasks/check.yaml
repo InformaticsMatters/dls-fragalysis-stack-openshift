@@ -1,0 +1,9 @@
+---
+
+# Check DNS resolution (nslookup)
+
+- name: Check DNS (nslookup)
+  shell: nslookup {{ item }}
+  loop:
+  - "{{ hostvars[groups['nodes'][0]]['ansible_hostname'] }}"
+  - google.com
