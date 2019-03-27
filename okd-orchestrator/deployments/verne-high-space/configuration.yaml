@@ -9,7 +9,8 @@ version: 1
 name: Diamond (High Space) [Verne]
 description: >
   The deployment for the Diamond 'High Space' site at Verne.
-  This contains a Master, Infrastructure and two compute nodes.
+  This contains a Master, Infrastructure and three compute nodes
+  although one (the GPU node) is not enabled for compute resources.
 
 # --- cluster -----------------------------------------------------------------
 
@@ -18,9 +19,9 @@ cluster:
   id: xchem-311
 
   name_tag: xchem
-  public_hostname: xchem-master-1.novalocal
-  default_subdomain: xchem-infra-1.novalocal
-  api_port: 8443
+  public_hostname: openshift.xchem.diamond.ac.uk
+  default_subdomain: apps.xchem.diamond.ac.uk
+  api_port: 443
 
   master:
     count: 1
@@ -66,7 +67,7 @@ okd:
   - deploy_cluster
 
   post_okd:
-#  - play: acme-controller
+  - play: acme-controller
 
   enable:
   - metrics
@@ -75,7 +76,7 @@ okd:
   - asb
 
   certificates:
-    generate_api_cert: no
+    generate_api_cert: yes
 
   inventory_dir: standard-os-3-11
 
