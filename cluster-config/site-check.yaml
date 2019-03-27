@@ -1,0 +1,9 @@
+---
+
+- hosts: nodes
+
+  tasks:
+  - name: Run the check tasks
+    include_role:
+      name: okd
+      tasks_from: check.yaml
