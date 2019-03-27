@@ -63,7 +63,7 @@
     group: root
     mode: 0644
   notify:
-    - Restart NetworkManager
+  - Restart NetworkManager
   become: yes
 
 # Enable and start some key services...
@@ -82,14 +82,6 @@
     user: "{{ authorized_user }}"
     key: "{{lookup('file', authorized_user_public_key) }}"
 
-# Check DNS resolution (nslookup resolution)
-
-- name: Check DNS (nslookup)
-  shell: nslookup {{ item }}
-  loop:
-  - "{{ hostvars['cli-node']['ansible_hostname'] }}"
-  - google.com
-
 # Create the docker group
 # and enable docker use from the authorised user
 
@@ -105,3 +97,11 @@
     name: "{{ authorized_user }}"
     group: docker
     append: yes
+
+# Check DNS resolution (nslookup)
+
+- name: Check DNS (nslookup)
+  shell: nslookup {{ item }}
+  loop:
+  - "{{ hostvars[groups['nodes'][0]]['ansible_hostname'] }}"
+  - google.com
