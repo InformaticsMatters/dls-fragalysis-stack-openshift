@@ -7,3 +7,4 @@
   loop:
   - "{{ hostvars[groups['nodes'][0]]['ansible_hostname'] }}"
   - google.com
+  changed_when: false
