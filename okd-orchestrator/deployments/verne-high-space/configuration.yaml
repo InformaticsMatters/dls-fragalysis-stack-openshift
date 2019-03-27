@@ -18,8 +18,8 @@ cluster:
   id: xchem-311
 
   name_tag: xchem
-  public_hostname: 192.168.160.17.nip.io
-  default_subdomain: 192.168.160.29.nip.io
+  public_hostname: xchem-master-1.novalocal
+  default_subdomain: xchem-infra-1.novalocal
   api_port: 8443
 
   master:
@@ -63,7 +63,7 @@ okd:
   ansible_version: 2.7.9
   play:
   - prerequisites
-#  - deploy_cluster
+  - deploy_cluster
 
   post_okd:
 #  - play: acme-controller
