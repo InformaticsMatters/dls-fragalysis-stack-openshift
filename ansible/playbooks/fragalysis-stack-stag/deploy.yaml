@@ -4,4 +4,4 @@
   gather_facts: No
 
   roles:
-  - fragalysis-dev
+  - fragalysis-stack-stag

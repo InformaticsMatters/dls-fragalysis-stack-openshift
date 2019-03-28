@@ -6,5 +6,5 @@
   tasks:
   - name: Run the Fragalysis Staging Undeploy Tasks
     include_role:
-      name: fragalysis-stag
+      name: fragalysis-stack-stag
       tasks_from: fs-s-undeploy.yaml

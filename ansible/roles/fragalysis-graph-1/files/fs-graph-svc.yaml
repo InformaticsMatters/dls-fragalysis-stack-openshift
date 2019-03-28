@@ -1,6 +1,6 @@
 ---
 
-# The Fragalysis Stack's Neo4J Graph database deployment.
+# The Fragalysis Stack's Neo4J Graph Service deployment.
 #
 # oc process -f fs-graph-svc.yaml | oc create -f -
 # oc delete svc --selector template=fs-graph-svc

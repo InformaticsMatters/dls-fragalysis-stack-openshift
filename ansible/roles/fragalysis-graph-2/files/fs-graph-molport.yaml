@@ -25,10 +25,8 @@ parameters:
   value: '350'
 - name: NEO4J_HEAP
   value: 8g
-- name: NEO4J_REPLICAS
-  value: '1'
 - name: NEO4J_CPU_LIMIT_M
-  value: '8000'
+  value: '4000'
 - name: NEO4J_MEM_LIMIT_G
   value: '400'
 
@@ -51,7 +49,7 @@ objects:
   metadata:
     name: graph-molport
   spec:
-    replicas: ${NEO4J_REPLICAS}
+    replicas: 1
     selector:
       name: graph-molport
     template:

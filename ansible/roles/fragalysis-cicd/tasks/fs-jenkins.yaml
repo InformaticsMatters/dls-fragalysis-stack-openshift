@@ -1,7 +1,7 @@
 ---
 
-- name: Move to Fragalysis Project (MySQL)
-  shell: oc project {{ namespace }}
+- name: Move to Fragalysis CI/CD Project
+  shell: oc project {{ cicd_namespace }}
   changed_when: False
 
 # Check and create the Jenkins user roles
@@ -44,7 +44,7 @@
 - name: Create Input PV
   shell: >
     oc process -f {{ role_path }}/{{ t_dir }}/fs-input-pv-nfs.yaml
-    -p INPUT_NAMESPACE={{ namespace }}
+    -p INPUT_NAMESPACE={{ cicd_namespace }}
     -p INPUT_VOLUME_NAME={{ input_vol_name }}
     | oc create -f -
   when:

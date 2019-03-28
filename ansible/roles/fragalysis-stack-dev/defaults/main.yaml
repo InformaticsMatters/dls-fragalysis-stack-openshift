@@ -1,9 +1,9 @@
 ---
 
 # Our project/namespace...
-namespace: fragalysis-cicd
+namespace: fragalysis-dev
 namespace_display_name: "Fragalysis (Development)"
-namespace_description: "The Fragalysis CI/CD Project (Development Deployment)"
+namespace_description: "The Fragalysis Project (Development Namespace)"
 
 # Project-specific variables
 backup_nfs_dir: pv-fs-mysql-data-backup

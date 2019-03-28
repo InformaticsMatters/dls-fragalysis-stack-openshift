@@ -6,5 +6,5 @@
   tasks:
   - name: Run the Fragalysis Production Undeploy Tasks
     include_role:
-      name: fragalysis-prod
-      tasks_from: fs-p-undeploy.yaml
+      name: fragalysis-stack-dev
+      tasks_from: fs-undeploy.yaml

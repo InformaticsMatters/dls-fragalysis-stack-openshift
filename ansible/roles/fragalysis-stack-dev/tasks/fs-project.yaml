@@ -1,6 +1,6 @@
 ---
 
-# Setup the Fragalysis (TEST) Project.
+# Setup the Fragalysis (DEV) Project.
 # Ths includes the project and its service account.
 
 - name: Login (admin)

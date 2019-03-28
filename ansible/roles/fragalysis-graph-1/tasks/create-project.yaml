@@ -17,7 +17,7 @@
     oc new-project {{ graph_1_namespace }}
     --display-name="{{ graph_1_namespace_display_name }}"
     --description="{{ graph_1_namespace_description }}"
-  when: graph_namespace not in projects_result.stdout
+  when: graph_1_namespace not in projects_result.stdout
 
 - name: Move to Graph Project
   shell: oc project {{ graph_1_namespace }}

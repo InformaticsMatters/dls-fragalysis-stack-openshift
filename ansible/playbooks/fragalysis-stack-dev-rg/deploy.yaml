@@ -29,4 +29,4 @@
     web_image_tag: latest
 
   roles:
-  - fragalysis-prod
+  - fragalysis-stack-prod

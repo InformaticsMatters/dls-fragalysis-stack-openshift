@@ -1,0 +1,7 @@
+---
+
+# Our project/namespace...
+cicd_namespace: fragalysis-cicd
+cicd_namespace_display_name: Fragalysis (CI/CD)
+cicd_namespace_description: >
+  The Fragalysis CI/CD (Jenkins) Project.

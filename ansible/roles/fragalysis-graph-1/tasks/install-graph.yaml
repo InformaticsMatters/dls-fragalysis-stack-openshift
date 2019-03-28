@@ -13,7 +13,7 @@
 
 - name: Create Graph ImageStream
   shell: >
-    oc process -f {{ role_path }}/{{ t_dir }}/fs-graph-is.yaml
+    oc process -f {{ role_path }}/files/fs-graph-is.yaml
     | oc create -f -
   when: '"graph-stream" not in graph_is.stdout'
 
@@ -24,7 +24,10 @@
 
 - name: Create Graph Deployment
   shell: >
-    oc process -f {{ role_path }}/{{ t_dir }}/fs-graph.yaml
+    oc process -f {{ role_path }}/files/fs-graph.yaml
+    -p NEO4J_PAGECACHE_G={{ graph_1_pagecache_g }}
+    -p NEO4J_MEM_LIMIT_G={{ graph_1_memory_limit_g }}
+    -p NEO4J_CPU_LIMIT_M={{ graph_1_cpu_limit_cores|int * 1000 }}
     | oc create -f -
   when: '"graph" not in graph_dc.stdout'
 
@@ -38,7 +41,7 @@
 
 - name: Create Graph Service
   shell: >
-    oc process -f {{ role_path }}/{{ t_dir }}/fs-graph-svc.yaml
+    oc process -f {{ role_path }}/files/fs-graph-svc.yaml
     | oc create -f -
   when: '"neo4j " not in graph_svc.stdout'
 
