@@ -50,7 +50,7 @@ objects:
         slave-label: ${SLAVE_LABEL}
       from:
         kind: DockerImage
-        name:  docker.io/informaticsmatters/jenkins-slave-buildah-centos7:${TAG}
+        name: docker.io/informaticsmatters/jenkins-slave-buildah-centos7:${TAG}
       name: ${TAG}
       importPolicy:
         scheduled: false

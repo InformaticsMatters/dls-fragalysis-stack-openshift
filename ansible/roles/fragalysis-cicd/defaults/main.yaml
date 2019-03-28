@@ -1,7 +1,9 @@
 ---
 
 # Our project/namespace...
+# This is created at the same time Jenkins is deployed.
+# The user must create Jenkins in this project/namespace.
 cicd_namespace: fragalysis-cicd
-cicd_namespace_display_name: Fragalysis (CI/CD)
-cicd_namespace_description: >
-  The Fragalysis CI/CD (Jenkins) Project.
+
+input_vol_name: fs-input
+input_vol_is_nfs: yes

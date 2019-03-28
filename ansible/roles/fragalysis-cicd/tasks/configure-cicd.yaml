@@ -1,8 +1,31 @@
 ---
 
+# Configure the Jenkins Project.
+# Here a jenkins application is expected in the
+# CI/CD project.
+
+- name: Get Projects
+  shell: oc get projects
+  register: projects_result
+  changed_when: False
+
+- name: Assert the Fragalysis CI/CD Project Exists
+  assert:
+    that: cicd_namespace in projects_result.stdout
+
 - name: Move to Fragalysis CI/CD Project
   shell: oc project {{ cicd_namespace }}
   changed_when: False
+
+# Check the Jenkins user exists
+
+- name: Check Jenkins User
+  shell: oc get users
+  register: users_result
+
+- name: Assert Jenkins User Exists
+  assert:
+    that: jenkins_user in users_result.stdout
 
 # Check and create the Jenkins user roles
 
@@ -20,36 +43,37 @@
   - oc adm policy add-scc-to-user -z {{ jenkins_user }} privileged
   when: jenkins_user not in who_can_result.stdout
 
-# Create the Jenkins PV
-# This is where the Jenkins configuration is persisted.
-
-- name: Check Jenkins PV
-  shell: oc get pv
-  register: jenkins_pv
-  when: use_nfs
-  changed_when: False
-
-- name: Create Jenkins PV
-  shell: >
-    oc process -f {{ role_path }}/{{ t_dir }}/fs-jenkins-pv-nfs.yaml
-    -p JENKINS_NAMESPACE={{ namespace }}
-    | oc create -f -
-  when:
-  -  use_nfs
-  - '"fs-jenkins" not in jenkins_pv.stdout'
-
 # Create the Data Input PV/PVC
 # This is where the Web and Graph data is expected to be found.
 
+- name: Check PVs
+  shell: oc get pv
+  register: pv_result
+  when: input_vol_is_nfs
+  changed_when: False
+
 - name: Create Input PV
   shell: >
-    oc process -f {{ role_path }}/{{ t_dir }}/fs-input-pv-nfs.yaml
+    oc process -f {{ role_path }}/files/fs-input-pv-nfs.yaml
     -p INPUT_NAMESPACE={{ cicd_namespace }}
     -p INPUT_VOLUME_NAME={{ input_vol_name }}
     | oc create -f -
   when:
-  - use_nfs
-  - not jenkins_pv.stdout | regex_search('^fs-input\s', multiline=True)
+  - input_vol_is_nfs
+  - not pv_result.stdout | regex_search('^fs-input\s', multiline=True)
+
+- name: Wait for PVs to become Available
+  shell: oc get pv/{{ item }} | grep Available
+  delay: 5
+  retries: "{{ (pv_create_timeout_s|int / 5)|int }}"
+  register: result
+  until: result.rc == 0
+  loop:
+  - fs-input
+  when:
+  - input_vol_is_nfs
+  - not pv_result.stdout | regex_search('^fs-input\s', multiline=True)
+  changed_when: False
 
 # Create the Input PVCs
 
@@ -60,7 +84,7 @@
 
 - name: Create Input PVC
   shell: >
-    oc process -f {{ role_path }}/{{ t_dir }}/fs-input-pvc.yaml
+    oc process -f {{ role_path }}/files/fs-input-pvc.yaml
     -p INPUT_VOLUME_NAME={{ input_vol_name }}
     | oc create -f -
   when: not input_pvc.stdout | regex_search('^fs-input-claim\s', multiline=True)
@@ -86,7 +110,7 @@
 
 - name: Create Agent ImageStreams
   shell: >
-    oc process -f {{ role_path }}/{{ t_dir }}/fs-jenkins-{{ item }}-agent-is.yaml
+    oc process -f {{ role_path }}/files/fs-jenkins-{{ item }}-agent-is.yaml
     | oc create -f -
   loop:
   - buildah-slave
@@ -97,7 +121,7 @@
 # Configure Jenkins?
 # i.e. set secrets ctc.
 
-- name: Configure Jenkins Jobs/Secrets
-  shell: >
-    {{ role_path }}/../../../jenkins/configure-cicd.py set test --force
-  when: configure_jenkins
+#- name: Configure Jenkins Jobs/Secrets
+#  shell: >
+#    {{ role_path }}/../../../jenkins/configure-cicd.py set test --force
+#  when: configure_jenkins

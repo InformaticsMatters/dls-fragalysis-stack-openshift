@@ -26,10 +26,15 @@ parameters:
 
 objects:
 
+  # To avoid the loader claim from creating a volume
+  # from the default storage class (glusterfs-storage)
+  # we set the storage-class annotation to a blank string (' ')
 - apiVersion: v1
   kind: PersistentVolumeClaim
   metadata:
     name: ${INPUT_CLAIM_NAME}
+    annotations:
+      volume.beta.kubernetes.io/storage-class: ' '
   spec:
     accessModes:
     - ReadOnlyMany
