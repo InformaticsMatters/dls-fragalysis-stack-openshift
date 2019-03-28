@@ -43,27 +43,25 @@
     mode: 0644
   become: yes
 
-- name: Adjust reolv.conf (insert localhost nameserver)
+- name: Adjust reolv.conf (remove existing servers)
   lineinfile:
     path: /etc/resolv.conf
-    line: nameserver {{ nameserver }}
-    insertafter: '^search '
+    regexp: '^(nameserver .*)$'
+    line: '#\1'
     owner: root
     group: root
     mode: 0644
   become: yes
 
-- name: Protect resolv.conf from the NetworkManager
+- name: Adjust reolv.conf (insert localhost nameserver)
   lineinfile:
-    path: /etc/NetworkManager/NetworkManager.conf
-    line: dns=none
-    insertafter: '^\[main\]'
-    firstmatch: yes
+    path: /etc/resolv.conf
+    regexp: '^nameserver {{ nameserver }}$'
+    line: nameserver {{ nameserver }}
+    insertafter: '^search '
     owner: root
     group: root
     mode: 0644
-  notify:
-  - Restart NetworkManager
   become: yes
 
 # Enable and start some key services...

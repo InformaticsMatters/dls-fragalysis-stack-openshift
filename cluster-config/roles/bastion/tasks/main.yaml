@@ -45,21 +45,9 @@
 - name: Adjust reolv.conf (insert localhost nameserver)
   lineinfile:
     path: /etc/resolv.conf
+    regexp: '^nameserver 127.0.0.1$'
     line: nameserver 127.0.0.1
     insertafter: '^search '
-    owner: root
-    group: root
-    mode: 0644
-  notify:
-    - Restart dnsmasq
-  become: yes
-
-- name: Protect resolv.conf from the NetworkManager
-  lineinfile:
-    path: /etc/NetworkManager/NetworkManager.conf
-    line: dns=none
-    insertafter: '^\[main\]'
-    firstmatch: yes
     owner: root
     group: root
     mode: 0644
@@ -82,6 +70,7 @@
 - name: Adjust dnsmasq.conf (add servers)
   lineinfile:
     path: /etc/dnsmasq.conf
+    regexp: '^server={{ item }}$'
     insertafter: '^#server'
     firstmatch: yes
     line: server={{ item }}
@@ -92,4 +81,3 @@
   notify:
   - Restart dnsmasq
   become: yes
-

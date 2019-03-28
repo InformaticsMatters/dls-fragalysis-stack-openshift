@@ -19,14 +19,14 @@ cluster:
   id: xchem-311
 
   name_tag: xchem
-  public_hostname: openshift.xchem.diamond.ac.uk
-  default_subdomain: apps.xchem.diamond.ac.uk
+  public_hostname: verne.informaticsmatters.com
+  default_subdomain: apps.verne.informaticsmatters.com
   api_port: 443
 
   master:
     count: 1
     is_infra: no
-    is_bastion: no
+    is_bastion: yes
     is_compute_node: yes
 
   infra:
