@@ -22,13 +22,11 @@ parameters:
 - name: NEO4J_AUTH
   value: none
 - name: NEO4J_PAGECACHE
-  value: 18g
+  value: 350g
 - name: NEO4J_HEAP
   value: 8g
 - name: NEO4J_REPLICAS
   value: '1'
-- name: NEO4J_NODE_SIZE_SELECTOR
-  value: 'big'
 
   # Do not mount '/data' in v3.4.x.
   # Neo4J expects to own '/data' changing the permissions of this directory.
@@ -58,7 +56,7 @@ objects:
           name: graph-molport
       spec:
         nodeSelector:
-          size: ${NEO4J_NODE_SIZE_SELECTOR}
+          graph-node: 'true'
         serviceAccountName: diamond
 
         # Application containers

@@ -1,0 +1,70 @@
+---
+
+# The Graph Database's Persistent Volumes (NFS).
+#
+# This expects these volumes:
+#
+#   ${NFS_PATH}/pv-fs-graph-molport-data-loader
+#
+# oc process -f fs-graph-molport-pv-nfs.yaml | oc create -f -
+# oc delete pv --selector template=fs-graph-molport-pv-nfs
+
+kind: Template
+apiVersion: v1
+metadata:
+  name: fs-graph-molport-pv-nfs
+  annotations:
+    description: Fragalysis Stack's Graph-2 Volumes (using NFS)
+    tags: fragalysis,graph,graph-2,neo4j,molport
+labels:
+  template: fs-graph-molport-pv-nfs
+
+parameters:
+
+- name: NFS_SERVER
+  value: bastion.novalocal
+- name: NFS_PATH
+  value: /data
+
+- name: GRAPH_NAMESPACE
+  value: fragalysis-graph-2
+
+#- name: DATA_PV_DIR
+#  value: pv-fs-molport-enamine-data
+#- name: DATA_PV_SIZE
+#  value: 500Gi
+
+- name: DATA_LOADER_PV_DIR
+  value: pv-fs-molport-enamine-data-loader
+- name: DATA_LOADER_PV_SIZE
+  value: 50Gi
+
+#- name: LOGS_PV_DIR
+#  value: pv-fs-molport-logs
+#- name: LOGS_PV_SIZE
+#  value: 2Gi
+
+objects:
+
+# --------------------------
+# Fragalysis Graph-2 Volumes
+# --------------------------
+
+- kind: PersistentVolume
+  apiVersion: v1
+  metadata:
+    name: fs-graph-molport-data-loader
+    labels:
+      target-graph: graph-2
+  spec:
+    capacity:
+      storage: ${DATA_LOADER_PV_SIZE}
+    accessModes:
+    - ReadWriteMany
+    persistentVolumeReclaimPolicy: Retain
+    nfs:
+      server: ${NFS_SERVER}
+      path: ${NFS_PATH}/${DATA_LOADER_PV_DIR}
+    claimRef:
+      name: fs-graph-molport-data-loader-claim
+      namespace: ${GRAPH_NAMESPACE}

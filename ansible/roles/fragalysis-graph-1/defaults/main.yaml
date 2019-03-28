@@ -1,0 +1,8 @@
+---
+
+# Our project/namespace...
+graph_1_namespace: fragalysis-graph-1
+graph_1_namespace_display_name: Fragalysis (Graph 1)
+graph_1_namespace_description: >
+  The Fragalysis Graph '1' Project.
+  Hosting a neo4j graph database.

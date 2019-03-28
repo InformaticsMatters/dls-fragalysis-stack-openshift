@@ -4,6 +4,15 @@
 # This essentially consists of removing the project (and waiting for it)
 # and then removing the persistent volumes we expect to exist.
 
+- name: Delete Fragalysis DEVELOPMEMNT Environment?
+  pause:
+    prompt: >-
+      Delete the DEVELOPMENT environment from {{ cluster_url }}?
+      Hit return to delete it.
+      Hit Ctrl+c and then "a" if you've changed your mind.
+
+# Go...
+
 - name: Login (admin)
   shell: oc login {{ cluster_url }} -u admin -p {{ admin_password }}
   changed_when: False

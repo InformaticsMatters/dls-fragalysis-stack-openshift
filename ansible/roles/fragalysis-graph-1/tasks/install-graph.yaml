@@ -2,8 +2,8 @@
 
 # Create the Graph Deployment
 
-- name: Move to Fragalysis Project (MySQL)
-  shell: oc project {{ namespace }}
+- name: Move to Graph 1 Project
+  shell: oc project {{ graph_1_namespace }}
   changed_when: False
 
 - name: Check Graph ImageStream

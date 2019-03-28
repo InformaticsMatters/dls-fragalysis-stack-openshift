@@ -26,6 +26,36 @@ parameters:
 
 objects:
 
+# The 'loader' volume.
+# This is 'transient' volume where the data to be used
+# to form the graph database resides. It contains the
+# crucial 'load' neo4j EXTENSION script and the node and
+# relationship CSV files used during the initial (bulk) import.
+
+  # To avoid the loader claim from creating a volume
+  # from the default storage class (glusterfs-storage)
+  # we set the storage-class annotation to a blank string (' ')
+- apiVersion: v1
+  kind: PersistentVolumeClaim
+  metadata:
+    name: fs-graph-molport-data-loader-claim
+    annotations:
+      volume.beta.kubernetes.io/storage-class: ' '
+  spec:
+    accessModes:
+      - ReadWriteMany
+    resources:
+      requests:
+        storage: ${GRAPH_DATA_LOADER_SIZE}
+    selector:
+      matchLabels:
+        target-graph: graph-2
+
+# The following are volumes are for the
+# loaded graph database
+# (constructed at boot-time from the loader volume contents)
+# and the graph database logs.
+
 - apiVersion: v1
   kind: PersistentVolumeClaim
   metadata:
@@ -36,17 +66,7 @@ objects:
     resources:
       requests:
         storage: ${GRAPH_DATA_SIZE}
-
-- apiVersion: v1
-  kind: PersistentVolumeClaim
-  metadata:
-    name: fs-graph-molport-data-loader-claim
-  spec:
-    accessModes:
-    - ReadWriteMany
-    resources:
-      requests:
-        storage: ${GRAPH_DATA_LOADER_SIZE}
+    storageClassName: glusterfs-storage
 
 - apiVersion: v1
   kind: PersistentVolumeClaim
@@ -58,3 +78,4 @@ objects:
     resources:
       requests:
         storage: ${GRAPH_LOGS_SIZE}
+    storageClassName: glusterfs-storage

@@ -1,0 +1,95 @@
+---
+
+# Install the Graph database.
+# This includes the loader's Persistent Volume
+# and the Volume Claims.
+
+- name: Login (admin at {{ cluster_url }})
+  shell: oc login {{ cluster_url }} -u admin -p {{ admin_password }}
+  changed_when: False
+
+- name: Move to Graph-2 Project
+  shell: oc project {{ graph_2_namespace }}
+  changed_when: False
+
+# Create the Graph PV
+
+- name: Check Graph-2 PV
+  shell: oc get pv
+  register: molport_pv
+  when:
+  - graph_2_use_nfs
+  changed_when: False
+
+- name: Create Graph-2 PV
+  shell: >
+    oc process -f {{ role_path }}/files/fs-graph-molport-pv-nfs.yaml
+    -p GRAPH_NAMESPACE={{ graph_2_namespace }}
+    | oc create -f -
+  when:
+  - graph_2_use_nfs
+  - '"fs-graph-molport-data" not in molport_pv.stdout'
+
+# Wait for Graph PV to become "Available"...
+# We only do this if we created the PV in this session.
+
+- name: Wait for PVs to become Available
+  shell: oc get pv/{{ item }} | grep Available
+  delay: 5
+  retries: "{{ (pv_create_timeout_s|int / 5)|int }}"
+  register: result
+  until: result.rc == 0
+  loop:
+  - fs-graph-molport-data-loader
+  when:
+  - graph_2_use_nfs
+  - '"fs-graph-molport-data" not in molport_pv.stdout'
+  changed_when: False
+
+# Create the Graph PVCs
+
+- name: Check Graph-2 PVCs
+  shell: oc get pvc
+  register: molport_pvc
+  changed_when: False
+
+- name: Create Graph-2 PVCs
+  shell: >
+    oc process -f {{ role_path }}/files/fs-graph-molport-pvc.yaml
+    | oc create -f -
+  when:
+  - '"fs-graph-molport-data-claim" not in molport_pvc.stdout'
+
+# Wait for PVCs to become "Bound"...
+
+- name: Wait for Graph-2 PVCs to become Bound
+  shell: oc get pvc/{{ item }} | grep Bound
+  delay: 5
+  retries: "{{ (pvc_bind_timeout_s|int / 5)|int }}"
+  register: result
+  until: result.rc == 0
+  loop:
+  - fs-graph-molport-data-loader-claim
+  - fs-graph-molport-data-claim
+  - fs-graph-molport-logs-claim
+  when:
+  - '"fs-graph-molport-data-claim" not in molport_pvc.stdout'
+  changed_when: False
+
+# Create the Graph Deployment
+
+- name: Check Graph-2 Deployment
+  shell: oc get deploymentconfigs
+  register: graph_dc
+  changed_when: False
+
+- name: Create Graph-2 Deployment
+  shell: >
+    oc process -f {{ role_path }}/files/fs-graph-molport.yaml
+    -p NEO4J_PAGECACHE={{ graph_2_pagecache }}
+    | oc create -f -
+  when:
+  - '"graph-molport" not in graph_dc.stdout'
+
+# We do not wait for the graph.
+# Depending on the loader data this may take minutes or hours!
