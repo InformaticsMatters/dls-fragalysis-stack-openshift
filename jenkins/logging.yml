@@ -16,7 +16,7 @@ handlers:
     stream: ext://sys.stdout
 loggers:
   ImJenkinsServer:
-    level: DEBUG
+    level: INFO
     propagate: yes
 root:
   level: INFO
