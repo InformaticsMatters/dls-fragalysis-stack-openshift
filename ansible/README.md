@@ -8,6 +8,7 @@ Before running any playbook: -
 1.  There is an `admin` user known to the cluster
 1.  There is a `jenkins` user known to the cluster
 1.  You have created a `vault-pass.txt` file in this directory
+1.  A Python 3 conda/virtual environment from which to run these playbooks
 
 If using NFS make sure you've configured it with all the appropriate mounts.
 The playbook will create the PVs and PVCs: -

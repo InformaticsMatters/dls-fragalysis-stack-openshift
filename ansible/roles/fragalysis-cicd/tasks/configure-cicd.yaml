@@ -22,6 +22,7 @@
 - name: Check Jenkins User
   shell: oc get users
   register: users_result
+  changed_when: False
 
 - name: Assert Jenkins User Exists
   assert:
@@ -121,7 +122,13 @@
 # Configure Jenkins?
 # i.e. set secrets ctc.
 
-#- name: Configure Jenkins Jobs/Secrets
-#  shell: >
-#    {{ role_path }}/../../../jenkins/configure-cicd.py set test --force
-#  when: configure_jenkins
+- name: Configure Jenkins Jobs/Secrets
+  shell: >
+    ./configure-cicd.py set --force {{ disable }}
+    --location {{ cicd_location }}
+    --cluster-url {{ cluster_api_url }}
+  args:
+    chdir: "{{ role_path }}/../../../jenkins"
+  vars:
+    disable: "{{ '--disable-jobs' if deploy_jobs_disabled else '' }}"
+  when: configure_jenkins|bool

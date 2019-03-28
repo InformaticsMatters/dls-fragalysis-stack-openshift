@@ -5,5 +5,11 @@
 # The user must create Jenkins in this project/namespace.
 cicd_namespace: fragalysis-cicd
 
+cicd_location: jenkins-fragalysis-cicd.apps.verne.informaticsmatters.com
+cluster_api_url: https://apps.verne.informaticsmatters.com
+
+configure_jenkins: no
+deploy_jobs_disabled: yes
+
 input_vol_name: fs-input
 input_vol_is_nfs: yes
