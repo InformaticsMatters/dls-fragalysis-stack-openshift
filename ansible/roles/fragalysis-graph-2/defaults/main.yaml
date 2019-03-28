@@ -5,7 +5,9 @@ graph_2_namespace: fragalysis-graph-2
 graph_2_namespace_display_name: Fragalysis (Graph 2)
 graph_2_namespace_description: >
   The Fragalysis Graph '2' Project.
-  Hosting a neo4j graph database.
+  A neo4j graph database.
 
 graph_2_use_nfs: yes
-graph_2_pagecache: 350g
+graph_2_pagecache_g: 350
+graph_2_memory_limit_g: 400
+graph_2_cpu_limit_cores: 16
