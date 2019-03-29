@@ -54,10 +54,10 @@ pipeline {
       }
       steps {
         dir('images/graph') {
-//          slackSend channel: "#${SLACK_BUILD_CHANNEL}",
-//                    message: "${JOB_NAME} build ${BUILD_NUMBER} - starting..."
-//          slackSend channel: "#${SLACK_BUILD_CHANNEL}",
-//                    message: "${JOB_NAME} build ${BUILD_NUMBER} - using '${DATA_ORIGIN}' data"
+          slackSend channel: "#${SLACK_BUILD_CHANNEL}",
+                    message: "${JOB_NAME} build ${BUILD_NUMBER} - starting..."
+          slackSend channel: "#${SLACK_BUILD_CHANNEL}",
+                    message: "${JOB_NAME} build ${BUILD_NUMBER} - using '${DATA_ORIGIN}' data"
           sh "cp ${SOURCE_DATA_ROOT}/${DATA_ORIGIN}/* data-loader"
           sh "buildah bud --format docker --build-arg DATA_ORIGIN=${DATA_ORIGIN} -f Dockerfile -t ${STREAM_IMAGE} ."
         }
@@ -77,9 +77,9 @@ pipeline {
         sh "podman logout ${REGISTRY}"
         sh "buildah images"
 
-//        slackSend channel: "#${SLACK_BUILD_CHANNEL}",
-//                  color: 'good',
-//                  message: "${JOB_NAME} build ${BUILD_NUMBER} - complete"
+        slackSend channel: "#${SLACK_BUILD_CHANNEL}",
+                  color: 'good',
+                  message: "${JOB_NAME} build ${BUILD_NUMBER} - complete"
       }
     }
 
