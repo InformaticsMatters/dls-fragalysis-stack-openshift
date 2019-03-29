@@ -10,11 +10,11 @@ pipeline {
     // Registry details
     REGISTRY_USER = 'jenkins'
     REGISTRY = 'docker-registry.default.svc:5000'
-    STREAM_IMAGE = "${REGISTRY}/fragalysis-cicd/graph-stream:latest"
+    STREAM_IMAGE = "${REGISTRY}/fragalysis-graph-1/graph-stream:latest"
 
     // get_unbuilt_data_directory environment...
     SOURCE_DATA_ROOT = '/fragalysis/graph_data'
-    TARGET_IMAGE = 'fragalysis-cicd/graph-stream'
+    TARGET_IMAGE = 'fragalysis-graph-1/graph-stream'
     INSIST_ON_READY = 'Yes'
     READY_FILE = 'READY'
     HOURLY_DATA = 'No'
