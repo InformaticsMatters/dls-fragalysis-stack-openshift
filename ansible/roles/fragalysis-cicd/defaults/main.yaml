@@ -25,3 +25,5 @@ deploy_jobs_disabled: yes
 
 input_vol_name: fs-input
 input_vol_is_nfs: yes
+
+recycle_released_pvs: yes

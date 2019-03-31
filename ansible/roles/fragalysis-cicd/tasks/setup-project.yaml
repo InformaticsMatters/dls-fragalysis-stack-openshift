@@ -19,25 +19,22 @@
   assert:
     that: jenkins_user in users_result.stdout
 
-# Create the Jenkins project
+# Check the Jenkins project
 
 - name: Get Projects
   shell: oc get projects
   register: projects_result
   changed_when: False
 
-- name: Create the Fragalysis CI/CD Project
-  shell: >
-    oc new-project {{ cicd_namespace }}
-    --display-name="{{ cicd_namespace_display_name }}"
-    --description="{{ cicd_namespace_description }}"
-  when: cicd_namespace not in projects_result.stdout
+- name: Assert Project Exists
+  assert:
+    that: cicd_namespace in projects_result.stdout
+
+# The Jenkins service account must exist in the CI/CD project
 
 - name: Move to CI/CD Project
   shell: oc project {{ cicd_namespace }}
   changed_when: False
-
-# The Jenkins service account must exist in the CI/CD project
 
 - name: Check {{ jenkins_user }} SA
   shell: oc get sa
@@ -53,14 +50,13 @@
 #
 # (initially, when SA doesn't exist)
 
-- name: Give Roles to {{ jenkins_user }}
+- name: Give Roles
   shell: "{{ item }}"
   loop:
   - oc adm policy add-role-to-user system:registry {{ jenkins_user }}
   - oc adm policy add-role-to-user system:image-builder {{ jenkins_user }}
   - oc adm policy add-role-to-user admin {{ jenkins_user }}
   - oc adm policy add-scc-to-user -z {{ jenkins_user }} privileged
-  when: jenkins_user not in sa_result.stdout
 
 # To allow any CI/CD job to push images to another namespace
 # the jenkins SA (used by the agents that run the Job) must have
@@ -94,6 +90,25 @@
   when:
   - input_vol_is_nfs
   - not pv_result.stdout | regex_search('^fs-input\s', multiline=True)
+
+# Deal with "Released" volumes.
+# Those PVs that are "Released"
+# must be "Available" to accept new binds...
+
+- name: Check Released volumes
+  shell: oc get pv | grep Released | grep {{ cicd_namespace }}/ | cut -f 1 -d " "
+  register: released_vols
+  when: recycle_released_pvs
+  changed_when: False
+
+- name: Recover Released volumes
+  shell: >
+    oc patch pv/{{ item }} --type json
+    -p $'- op: remove\n  path: /spec/claimRef'
+  with_items:
+  - "{{ released_vols.stdout_lines }}"
+  when:
+  - recycle_released_pvs
 
 - name: Wait for PVs to become Available
   shell: oc get pv/{{ item }} | grep Available
