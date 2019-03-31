@@ -4,7 +4,8 @@
 # common to all roles (development, staging and production)
 
 # The cluster's URL
-cluster_url: https://verne.informaticsmatters.com/
+# This is the URL to the Master API
+cluster_url: https://xchem.informaticsmatters.com/
 
 # The Jenkins CI/CD user
 jenkins_user: jenkins

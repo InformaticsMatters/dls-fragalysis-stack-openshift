@@ -1,48 +1,80 @@
 ---
 
 # Configure the Jenkins Project.
-# Here a jenkins application is expected in the
-# CI/CD project.
+# Here a jenkins application is expected to be deployed (manually)
+# to the CI/CD project.
+
+- name: Login (admin at {{ cluster_url }})
+  shell: oc login {{ cluster_url }} -u admin -p {{ admin_password }}
+  changed_when: False
+
+# Check the Jenkins user exists
+
+- name: Check {{ jenkins_user }} User
+  shell: oc get users
+  register: users_result
+  changed_when: False
+
+- name: Assert {{ jenkins_user }} User Exists
+  assert:
+    that: jenkins_user in users_result.stdout
+
+# Create the Jenkins project
 
 - name: Get Projects
   shell: oc get projects
   register: projects_result
   changed_when: False
 
-- name: Assert the Fragalysis CI/CD Project Exists
-  assert:
-    that: cicd_namespace in projects_result.stdout
+- name: Create the Fragalysis CI/CD Project
+  shell: >
+    oc new-project {{ cicd_namespace }}
+    --display-name="{{ cicd_namespace_display_name }}"
+    --description="{{ cicd_namespace_description }}"
+  when: cicd_namespace not in projects_result.stdout
 
-- name: Move to Fragalysis CI/CD Project
+- name: Move to CI/CD Project
   shell: oc project {{ cicd_namespace }}
   changed_when: False
 
-# Check the Jenkins user exists
+# The Jenkins service account must exist in the CI/CD project
 
-- name: Check Jenkins User
-  shell: oc get users
-  register: users_result
+- name: Check {{ jenkins_user }} SA
+  shell: oc get sa
+  register: sa_result
   changed_when: False
 
-- name: Assert Jenkins User Exists
-  assert:
-    that: jenkins_user in users_result.stdout
+- name: Create {{ jenkins_user }} SA
+  shell: oc create sa {{ jenkins_user }}
+  register: sa_result
+  when: jenkins_user not in sa_result.stdout
 
 # Check and create the Jenkins user roles
+#
+# (initially, when SA doesn't exist)
 
-- name: Check Jenkins Role
-  shell: oc adm policy who-can update imagestreamimages
-  register: who_can_result
-  changed_when: False
-
-- name: Give Roles to Jenkins
+- name: Give Roles to {{ jenkins_user }}
   shell: "{{ item }}"
   loop:
   - oc adm policy add-role-to-user system:registry {{ jenkins_user }}
   - oc adm policy add-role-to-user system:image-builder {{ jenkins_user }}
   - oc adm policy add-role-to-user admin {{ jenkins_user }}
   - oc adm policy add-scc-to-user -z {{ jenkins_user }} privileged
-  when: jenkins_user not in who_can_result.stdout
+  when: jenkins_user not in sa_result.stdout
+
+# To allow any CI/CD job to push images to another namespace
+# the jenkins SA (used by the agents that run the Job) must have
+# the 'image-pusher' role in project that wil be pushed to...
+#
+# (initially, when SA doesn't exist)
+
+#- name: Add image-pusher rights to {{ jenkins_user }} SA
+#  shell: >
+#    oc policy add-role-to-user system:image-pusher
+#    system:serviceaccount:{{ cicd_namespace }}:{{ jenkins_user }}
+#    --namespace={{ item }}
+#  with_items: "{{ cicd_push_projects }}"
+#  when: jenkins_user not in sa_result.stdout
 
 # Create the Data Input PV/PVC
 # This is where the Web and Graph data is expected to be found.
@@ -102,9 +134,9 @@
   when: not input_pvc.stdout | regex_search('^fs-input-claim\s', multiline=True)
   changed_when: False
 
-# Create the Web (Buildah) Slave Agents
+# Check and create the Slave Agents
 
-- name: Check Buildah Agent ImageStreams
+- name: Check ImageStreams
   shell: oc get is
   register: agent_is
   changed_when: False
@@ -118,17 +150,3 @@
   - graph-slave
   - loadah-slave
   when: not agent_is.stdout | regex_search('^%s\s' % item, multiline=True)
-
-# Configure Jenkins?
-# i.e. set secrets ctc.
-
-- name: Configure Jenkins Jobs/Secrets
-  shell: >
-    ./configure-cicd.py set --force {{ disable }}
-    --location {{ cicd_location }}
-    --cluster-url {{ cluster_api_url }}
-  args:
-    chdir: "{{ role_path }}/../../../jenkins"
-  vars:
-    disable: "{{ '--disable-jobs' if deploy_jobs_disabled else '' }}"
-  when: configure_jenkins|bool

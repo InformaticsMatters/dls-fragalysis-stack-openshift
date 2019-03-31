@@ -60,7 +60,7 @@ cluster:
 
 okd:
 
-  ansible_tag: openshift-ansible-3.11.100-1
+  ansible_tag: openshift-ansible-3.11.102-1
   ansible_version: 2.7.9
   play:
   - prerequisites

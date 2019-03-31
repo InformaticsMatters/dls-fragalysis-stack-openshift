@@ -4,9 +4,21 @@
 # This is created at the same time Jenkins is deployed.
 # The user must create Jenkins in this project/namespace.
 cicd_namespace: fragalysis-cicd
+cicd_namespace_display_name: The Fragalysis CI/CD Project
+cicd_namespace_description: >
+  The Fragalysis CI/CD Project.
+  A place for the Jenkins framework and its Jobs.
 
 cicd_location: jenkins-fragalysis-cicd.apps.verne.informaticsmatters.com
-cluster_api_url: https://apps.verne.informaticsmatters.com
+cluster_api_url: https://apps.xchem.diamond.ac.uk
+
+# All the projects that the CI/CD Jobs are expected
+# to push container images to...
+cicd_push_projects:
+- fragalysis-graph-1
+- fragalysis-stack-dev
+- fragalysis-stack-prod
+- fragalysis-stack-stag
 
 configure_jenkins: no
 deploy_jobs_disabled: yes

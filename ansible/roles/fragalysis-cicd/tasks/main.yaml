@@ -1,3 +1,3 @@
 ---
 
-- import_tasks: configure-cicd.yaml
+- import_tasks: create-project.yaml
