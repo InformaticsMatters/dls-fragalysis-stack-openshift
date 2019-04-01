@@ -6,6 +6,7 @@
 # The cluster's URL
 # This is the URL to the Master API
 cluster_url: https://xchem.informaticsmatters.com/
+app_domain: apps.xchem.informaticsmatters.com
 
 # The Jenkins CI/CD user
 jenkins_user: jenkins

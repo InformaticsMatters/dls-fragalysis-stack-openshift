@@ -17,12 +17,11 @@
 
 - name: Configure Jenkins Jobs/Secrets
   shell: >
-  ./configure-cicd.py set --force
-  {{ disabled }}
-  --location {{ cicd_location }}
-  --cluster-url {{ cluster_api_url }}
+    ./configure-cicd.py set --force
+    {{ disabled }}
+    --location {{ cicd_location }}
+    --cluster-url {{ cluster_url }}
   args:
-  chdir: "{{ role_path }}/../../../jenkins"
+    chdir: "{{ role_path }}/../../../jenkins"
   vars:
-  disabled: "{{ '--disable-jobs' if deploy_jobs_disabled else '' }}"
-  when: configure_jenkins|bool
+    disabled: "{{ '--disable-jobs' if deploy_jobs_disabled else '' }}"
