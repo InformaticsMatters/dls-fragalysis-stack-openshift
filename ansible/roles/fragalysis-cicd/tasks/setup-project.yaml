@@ -58,20 +58,6 @@
   - oc adm policy add-role-to-user admin {{ jenkins_user }}
   - oc adm policy add-scc-to-user -z {{ jenkins_user }} privileged
 
-# To allow any CI/CD job to push images to another namespace
-# the jenkins SA (used by the agents that run the Job) must have
-# the 'image-pusher' role in project that wil be pushed to...
-#
-# (initially, when SA doesn't exist)
-
-#- name: Add image-pusher rights to {{ jenkins_user }} SA
-#  shell: >
-#    oc policy add-role-to-user system:image-pusher
-#    system:serviceaccount:{{ cicd_namespace }}:{{ jenkins_user }}
-#    --namespace={{ item }}
-#  with_items: "{{ cicd_push_projects }}"
-#  when: jenkins_user not in sa_result.stdout
-
 # Create the Data Input PV/PVC
 # This is where the Web and Graph data is expected to be found.
 

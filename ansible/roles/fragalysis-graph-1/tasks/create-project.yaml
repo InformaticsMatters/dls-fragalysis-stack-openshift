@@ -35,3 +35,52 @@
   - oc adm policy add-role-to-user admin -z diamond
   - oc adm policy add-scc-to-user anyuid -z diamond
   when: '"diamond" not in diamond_sa_result.stdout'
+
+# Check and create the Jenkins user roles
+
+# Give the jenkins user access to this project.
+# The builds take place in the CI/CD project and images
+# need to be pushed to this project.
+# The system:image-builder role allows both pull and push capability.
+#
+# See: -
+#
+#   https://docs.openshift.com/container-platform/3.9/
+#         install_config/registry/accessing_registry.html
+#
+# And a handy crib-sheet of verbs and names that can be used
+# with the 'oc adm policy who-can' command...
+#
+#   https://docs.openshift.com/container-platform/3.6/
+#          architecture/additional_concepts/
+#          authorization.html#evaluating-authorization
+
+- name: Check Jenkins Role
+  shell: oc adm policy who-can update imagestreamimages
+  register: who_can_result
+  changed_when: False
+
+- name: Give Roles to Jenkins
+  shell: "{{ item }}"
+  loop:
+    - oc adm policy add-role-to-user system:registry {{ jenkins_user }}
+    - oc adm policy add-role-to-user system:image-builder {{ jenkins_user }}
+    - oc adm policy add-role-to-user admin {{ jenkins_user }}
+    - oc adm policy add-scc-to-user -z {{ jenkins_user }} privileged
+  when: jenkins_user not in who_can_result.stdout
+
+# To allow any CI/CD job to push images to this project/namespace
+# the jenkins SA (used by the agents that run the Job) in the CI/CD project
+# must have the 'image-pusher' role in for this project...
+
+- name: Move to CI/CD Project (image-pusher)
+  shell: oc project {{ cicd_namespace }}
+  changed_when: False
+  when: jenkins_user not in who_can_result.stdout
+
+- name: Add image-pusher rights to {{ jenkins_user }} SA
+  shell: >
+    oc policy add-role-to-user system:image-pusher
+    system:serviceaccount:{{ cicd_namespace }}:{{ jenkins_user }}
+    --namespace={{ graph_1_namespace }}
+  when: jenkins_user not in who_can_result.stdout

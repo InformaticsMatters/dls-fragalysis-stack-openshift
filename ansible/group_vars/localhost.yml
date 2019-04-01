@@ -10,6 +10,8 @@ app_domain: apps.xchem.informaticsmatters.com
 
 # The Jenkins CI/CD user
 jenkins_user: jenkins
+# The procject/namespace for Jenkins...
+cicd_namespace: fragalysis-cicd
 
 # The deployment service account
 service_account: diamond
