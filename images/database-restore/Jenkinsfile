@@ -48,7 +48,7 @@ pipeline {
             env.SOURCE_CLAIM = ""
             String SOURCE_PROJECT_LC = SOURCE_PROJECT.toLowerCase()
             if (SOURCE_PROJECT_LC == "development") {
-              env.SOURCE_NS = "fragalysis-cicd"
+              env.SOURCE_NS = "fragalysis-dev"
               env.SOURCE_CLAIM = "fs-db-recovery-dev-claim"
             } else if (SOURCE_PROJECT_LC == "production") {
               env.SOURCE_NS = "fragalysis-prod"
@@ -63,7 +63,7 @@ pipeline {
             env.DESTINATION_NS = ""
             String DESTINATION_PROJECT_LC = DESTINATION_PROJECT.toLowerCase()
             if (DESTINATION_PROJECT_LC == "development") {
-              env.DESTINATION_NS = 'fragalysis-cicd'
+              env.DESTINATION_NS = 'fragalysis-dev'
             } else if (DESTINATION_PROJECT_LC == "production") {
               env.DESTINATION_NS = 'fragalysis-prod'
             } else if (DESTINATION_PROJECT_LC == "staging") {

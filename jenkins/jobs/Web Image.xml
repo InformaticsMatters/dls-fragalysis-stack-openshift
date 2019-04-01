@@ -30,7 +30,7 @@
         <hudson.model.StringParameterDefinition>
           <name>PROJECT</name>
           <description>The OpenShift project identity (namespace) for the web deployment.</description>
-          <defaultValue>fragalysis-cicd</defaultValue>
+          <defaultValue>fragalysis-dev</defaultValue>
         </hudson.model.StringParameterDefinition>
         <hudson.model.StringParameterDefinition>
           <name>PROJECT_H</name>
