@@ -10,7 +10,6 @@
 - name: Check Recovery PVs
   shell: oc get pv
   register: r_pv
-  when: use_nfs
   changed_when: False
 
 # Create the PVs
@@ -25,8 +24,20 @@
     | oc create -f -
   loop: "{{ lookup('dict', recovery_volumes) }}"
   when:
-  - use_nfs
   - not r_pv.stdout | regex_search('^%s\s' % item.value.volume_name, multiline=True)
+
+# Wait for PV to become "Available"...
+
+- name: Wait for Input PV to become Available
+  shell: oc get pv/{{ item.value.volume_name }} | grep Available
+  delay: 5
+  retries: "{{ (pv_create_timeout_s|int / 5)|int }}"
+  register: result
+  until: result.rc == 0
+  loop: "{{ lookup('dict', recovery_volumes) }}"
+  when:
+  - not r_pv.stdout | regex_search('^%s\s' % item.value.volume_name, multiline=True)
+  changed_when: False
 
 # Create the Recovery PVCs.
 # Each in a different namespace.

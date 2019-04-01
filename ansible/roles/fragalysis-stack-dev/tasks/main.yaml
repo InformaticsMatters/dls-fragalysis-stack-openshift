@@ -1,10 +1,11 @@
 ---
 
 - import_tasks: fs-project.yaml
+- import_tasks: fs-cicd.yaml
 - import_tasks: fs-secrets.yaml
 - import_tasks: fs-mysql.yaml
 - import_tasks: fs-web.yaml
 - import_tasks: fs-backup.yaml
-  when: deploy_backup
+  when: backup_deploy|bool
 - import_tasks: fs-recovery.yaml
-  when: deploy_backup
+  when: backup_deploy|bool

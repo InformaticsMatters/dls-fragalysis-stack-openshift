@@ -43,15 +43,10 @@
   register: pv_result
   changed_when: False
 
-- name: Delete Persistent Volumes
+- name: Delete Persistent Volumes (Backup)
   shell: oc delete pv/{{ item }}
   loop:
-  - "{{ mysql_vol_name }}"
   - "{{ backup_vol_name }}"
-  - "{{ web_vol_name }}"
   - "{{ input_vol_name }}"
-  - "{{ graph_data_vol_name }}"
-  - "{{ graph_loader_vol_name }}"
-  - "{{ graph_logs_vol_name }}"
-  - "{{ jenkins_vol_name }}"
-  when: item in pv_result.stdout
+  when:
+  - item in pv_result.stdout

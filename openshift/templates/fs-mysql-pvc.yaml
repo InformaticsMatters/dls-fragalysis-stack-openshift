@@ -17,8 +17,6 @@ labels:
 
 parameters:
 
-- name: MYSQL_VOLUME_NAME
-  value: fs-mysql-data
 - name: MYSQL_VOLUME_CLAIM_NAME
   value: fs-mysql-data-claim
 - name: MYSQL_PV_SIZE
@@ -33,7 +31,6 @@ objects:
   spec:
     accessModes:
     - ReadWriteMany
-    volumeName: ${MYSQL_VOLUME_NAME}
     resources:
       requests:
         storage: ${MYSQL_PV_SIZE}

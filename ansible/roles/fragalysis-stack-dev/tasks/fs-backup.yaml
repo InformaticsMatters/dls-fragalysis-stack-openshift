@@ -9,7 +9,6 @@
 - name: Check Backup PV
   shell: oc get pv
   register: bu_pv
-  when: use_nfs
   changed_when: False
 
 - name: Create Backup PV
@@ -20,8 +19,21 @@
     -p BACKUP_VOLUME_NAME={{ backup_vol_name }}
     | oc create -f -
   when:
-  - use_nfs
   - not bu_pv.stdout | regex_search('^%s\s' % backup_vol_name, multiline=True)
+
+# Wait for PV to become "Available"...
+
+- name: Wait for Input PV to become Available
+  shell: oc get pv/{{ item }} | grep Available
+  delay: 5
+  retries: "{{ (pv_create_timeout_s|int / 5)|int }}"
+  register: result
+  until: result.rc == 0
+  loop:
+  - "{{ backup_vol_name }}"
+  when:
+  - not jenkins_pv.stdout | regex_search('^%s\s' % backup_vol_name, multiline=True)
+  changed_when: False
 
 # Create the Backup PVCs
 
@@ -42,7 +54,7 @@
 - name: Check Backup Deployment
   shell: oc get cronjobs
   register: bu_cj
-  when: deploy_backup
+  when: backup_deploy|bool
   changed_when: False
 
 - name: Create Backup Deployment (H)
