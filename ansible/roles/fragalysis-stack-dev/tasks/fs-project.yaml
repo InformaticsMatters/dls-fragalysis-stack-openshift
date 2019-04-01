@@ -33,7 +33,7 @@
 - name: Create Diamond Service Account
   shell: "{{ item }}"
   loop:
-  - oc create sa diamond
-  - oc adm policy add-role-to-user admin -z diamond
-  - oc adm policy add-scc-to-user anyuid -z diamond
-  when: '"diamond" not in diamond_sa_result.stdout'
+  - oc create sa {{ service_account }}
+  - oc adm policy add-role-to-user admin -z {{ service_account }}
+  - oc adm policy add-scc-to-user anyuid -z {{ service_account }}
+  when: service_account not in diamond_sa_result.stdout
