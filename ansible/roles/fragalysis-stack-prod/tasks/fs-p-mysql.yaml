@@ -4,25 +4,6 @@
   shell: oc project {{ namespace }}
   changed_when: False
 
-# Create the MySQL PV
-
-- name: Check MySQL PV
-  shell: oc get pv
-  register: mysql_pv
-  when: use_nfs
-  changed_when: False
-
-- name: Create MySQL PV
-  shell: >
-    oc process -f {{ role_path }}/{{ t_dir }}/fs-mysql-pv-nfs.yaml
-    -p MYSQL_NAMESPACE={{ namespace }}
-    -p MYSQL_PV_DIR={{ mysql_nfs_dir }}
-    -p MYSQL_VOLUME_NAME={{ mysql_vol_name }}
-    | oc create -f -
-  when:
-  - use_nfs
-  - not mysql_pv.stdout | regex_search('^%s\s' % mysql_vol_name, multiline=True)
-
 # Create the MySQL PVCs
 
 - name: Check MySQL PVC
@@ -33,7 +14,6 @@
 - name: Create MySQL PVC
   shell: >
     oc process -f {{ role_path }}/{{ t_dir }}/fs-mysql-pvc.yaml
-    -p MYSQL_VOLUME_NAME={{ mysql_vol_name }}
     | oc create -f -
   when: '"fs-mysql-data-claim" not in mysql_pvc.stdout'
 

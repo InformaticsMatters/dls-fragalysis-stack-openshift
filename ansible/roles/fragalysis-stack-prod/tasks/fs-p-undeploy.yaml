@@ -43,18 +43,10 @@
   register: pv_result
   changed_when: False
 
-- name: Delete Persistent Volumes
-  shell: oc delete pv/{{ item }}
-  loop:
-  - "{{ mysql_vol_name }}"
-  - "{{ web_vol_name }}"
-  - "{{ input_vol_name }}"
-  when: item in pv_result.stdout
-
 - name: Delete Persistent Volumes (Backup)
   shell: oc delete pv/{{ item }}
   loop:
   - "{{ backup_vol_name }}"
   when:
-  - deploy_backup
+  - backup_deploy|bool
   - item in pv_result.stdout

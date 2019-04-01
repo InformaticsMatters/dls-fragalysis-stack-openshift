@@ -14,23 +14,21 @@ fragalysis_cicd_namespace: fragalysis-cicd
 # Project-specific variables
 backup_nfs_dir: pv-fs-p-mysql-data-backup
 backup_vol_name: fs-p-db-backup
-deploy_backup: yes
-deploy_jun2018_graph: no
+backup_deploy: no
+
 graph_svc: neo4j.{{ fragalysis_cicd_namespace }}.svc
 graph_bolt_url: bolt://neo4j:test@neo4j.{{ fragalysis_cicd_namespace }}.svc:7687
+
 input_vol_name: fs-p-input
+
 mysql_name: mysql-prod
-mysql_nfs_dir: pv-fs-p-mysql-data
-mysql_vol_name: fs-p-mysql-data
-use_nfs: yes
 wait_for_mysql: yes
+
 web_hostname: fragalysis.diamond.ac.uk
 web_name: web-prod
-web_nfs_dir: pv-fs-p-web-media
-web_vol_name: fs-p-web-media
 web_image_tag: stable
 
-# Recovery PVs and PVCs - used when deploy_backup is 'yes'.
+# Recovery PVs and PVCs - used when backup_deploy is 'yes'.
 #
 # There is an entry here for each namespace that we want to recover to.
 # The first one is our own namespace, others are for the namespaces

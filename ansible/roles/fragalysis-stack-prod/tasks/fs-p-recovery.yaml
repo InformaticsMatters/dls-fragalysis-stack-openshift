@@ -14,7 +14,6 @@
 - name: Check Recovery PVs
   shell: oc get pv
   register: r_pv
-  when: use_nfs
   changed_when: False
 
 # Create the PVs
@@ -29,7 +28,6 @@
     | oc create -f -
   loop: "{{ lookup('dict', recovery_volumes) }}"
   when:
-  - use_nfs
   - not r_pv.stdout | regex_search('^%s\s' % item.value.volume_name, multiline=True)
 
 # Create the Recovery PVCs.

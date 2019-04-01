@@ -9,6 +9,6 @@ graph_2_namespace_description: >
 
 graph_2_pagecache_g: 350
 graph_2_memory_limit_g: 400
-graph_2_cpu_limit_cores: 4
+graph_2_cpu_limit_cores: 8
 
 graph_2_use_nfs: yes

@@ -2,10 +2,12 @@
 
 # Our project/namespace...
 namespace: fragalysis-stag
+namespace_display_name: "Fragalysis (Staging)"
+namespace_description: "The Fragalysis Project (Staging Deployment)"
 
 # Project-specific variables
 mysql_name: mysql-stag
 mysql_nfs_dir: pv-fs-s-mysql-data
 mysql_vol_name: fs-s-mysql-data
-use_nfs: yes
+
 wait_for_mysql: yes

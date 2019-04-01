@@ -9,7 +9,6 @@
 - name: Check Backup PV
   shell: oc get pv
   register: bu_pv
-  when: use_nfs
   changed_when: False
 
 - name: Create Backup PV
@@ -20,7 +19,6 @@
     -p BACKUP_VOLUME_NAME={{ backup_vol_name }}
     | oc create -f -
   when:
-  - use_nfs
   - backup_vol_name not in bu_pv.stdout
 
 # Create the Backup PVCs

@@ -15,8 +15,8 @@
 - name: Create Fraglysis Project
   shell: >
     oc new-project {{ namespace }}
-    --display-name='Fragalysis (Staging)'
-    --description='The Fragalysis Project (Staging Deployment)'
+    --display-name="{{ namespace_display_name }}"
+    --description="{{ namespace_description }}"
   when: not projects_result.stdout | regex_search('^%s\s' % namespace, multiline=True)
 
 - name: Move to Fragalysis Project

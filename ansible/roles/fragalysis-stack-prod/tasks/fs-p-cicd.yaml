@@ -37,13 +37,12 @@
   - oc adm policy add-scc-to-user -z {{ jenkins_user }} privileged
   when: jenkins_user not in who_can_result.stdout
 
-# Create the Jenkins PV
+# Check PVs
 # This is where the Jenkins configuration is persisted.
 
-- name: Check Jenkins PV
+- name: Check PV
   shell: oc get pv
   register: jenkins_pv
-  when: use_nfs
   changed_when: False
 
 # Create the Data Input PV/PVC
@@ -56,7 +55,6 @@
     -p INPUT_VOLUME_NAME={{ input_vol_name }}
     | oc create -f -
   when:
-  - use_nfs
   - not jenkins_pv.stdout | regex_search('^%s\s' % input_vol_name, multiline=True)
 
 # Create the Input PVC

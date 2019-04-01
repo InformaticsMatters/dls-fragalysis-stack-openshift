@@ -19,8 +19,8 @@ cluster:
   id: xchem-311
 
   name_tag: xchem
-  public_hostname: verne.informaticsmatters.com
-  default_subdomain: apps.verne.informaticsmatters.com
+  public_hostname: okd.xchem.diamond.ac.uk
+  default_subdomain: apps.xchem.diamond.ac.uk
   api_port: 443
 
   master:

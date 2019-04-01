@@ -35,16 +35,3 @@
   delay: 10
   until: namespace not in wait_cmd.stdout
   changed_when: False
-
-# Remove Persistent Volumes
-
-- name: Check Persistent Volumes
-  shell: oc get pv
-  register: pv_result
-  changed_when: False
-
-- name: Delete Persistent Volumes
-  shell: oc delete pv/{{ item }}
-  loop:
-  - "{{ mysql_vol_name }}"
-  when: item in pv_result.stdout

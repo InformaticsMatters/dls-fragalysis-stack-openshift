@@ -113,6 +113,9 @@ objects:
 
         restartPolicy: Always
 
+    strategy:
+      type: Recreate
+
     triggers:
      - type: ConfigChange
 

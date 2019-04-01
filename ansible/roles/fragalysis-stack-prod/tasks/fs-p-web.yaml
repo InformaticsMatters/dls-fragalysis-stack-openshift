@@ -7,25 +7,6 @@
   shell: oc project {{ namespace }}
   changed_when: False
 
-# Create the Web PV
-
-- name: Check Web PV
-  shell: oc get pv
-  register: w_pv
-  when: use_nfs
-  changed_when: False
-
-- name: Create Web PV
-  shell: >
-    oc process -f {{ role_path }}/{{ t_dir }}/fs-web-pv-nfs.yaml
-    -p WEB_NAMESPACE={{ namespace }}
-    -p WEB_VOLUME_NAME={{ web_vol_name }}
-    -p WEB_MEDIA_PV_DIR={{ web_nfs_dir }}
-    | oc create -f -
-  when:
-  - use_nfs
-  - not w_pv.stdout | regex_search('^%s\s' % web_vol_name, multiline=True)
-
 # Crete the PVC, Image Stream, Deployment and Route...
 
 - name: Check Web PVC
@@ -36,7 +17,6 @@
 - name: Create Web PVC
   shell: >
     oc process -f {{ role_path }}/{{ t_dir }}/fs-web-pvc.yaml
-    -p WEB_VOLUME_NAME={{ web_vol_name }}
     | oc create -f -
   when: '"fs-web-media-claim" not in w_pvc.stdout'
 
@@ -73,7 +53,6 @@
   shell: >
     oc process -f {{ role_path }}/{{ t_dir }}/fs-web.yaml
     -p WEB_NAMESPACE={{ namespace }}
-    -p WEB_HOSTNAME={{ web_hostname }}
     -p WEB_GRAPH_SERVICE={{ graph_svc }}
     -p WEB_MYSQL_SERVICE={{ mysql_name }}
     -p WEB_NAME={{ web_name }}
