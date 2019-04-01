@@ -5,12 +5,12 @@
 
 # The cluster's URL
 # This is the URL to the Master API
-cluster_url: https://xchem.informaticsmatters.com/
-app_domain: apps.xchem.informaticsmatters.com
+cluster_url: https://okd.xchem.diamond.ac.uk/
+app_domain: apps.xchem.diamond.ac.uk
 
 # The Jenkins CI/CD user
 jenkins_user: jenkins
-# The procject/namespace for Jenkins...
+# The project/namespace for Jenkins...
 cicd_namespace: fragalysis-cicd
 
 # The deployment service account
