@@ -7,5 +7,3 @@
 - import_tasks: fs-p-web.yaml
 - import_tasks: fs-p-backup.yaml
   when: backup_deploy|bool
-- import_tasks: fs-p-recovery.yaml
-  when: backup_deploy|bool

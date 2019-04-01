@@ -11,7 +11,6 @@ namespace_description: "The Fragalysis Project (Production Deployment)"
 # the namespace you used when deploying the fragalysis-cicd role.
 fragalysis_cicd_namespace: fragalysis-cicd
 
-# Project-specific variables
 backup_nfs_dir: pv-fs-p-mysql-data-backup
 backup_vol_name: fs-p-db-backup
 backup_deploy: no
@@ -27,29 +26,3 @@ wait_for_mysql: yes
 web_hostname: fragalysis.diamond.ac.uk
 web_name: web-prod
 web_image_tag: stable
-
-# Recovery PVs and PVCs - used when backup_deploy is 'yes'.
-#
-# There is an entry here for each namespace that we want to recover to.
-# The first one is our own namespace, others are for the namespaces
-# of others, like staging and dev. Each shares an (NFS) 'directory'
-# but has its own 'name', 'claim' and 'namespace'
-recovery_volumes:
-  # Recovering from here (prod) to prod
-  dev:
-    dir: pv-fs-p-mysql-data-backup
-    volume_name: fs-p-db-recovery-prod
-    volume_claim: fs-db-recovery-prod-claim
-    namespace: fragalysis-prod
-  # Recovering from here to staging
-  stag:
-    dir: pv-fs-p-mysql-data-backup
-    volume_name: fs-p-db-recovery-stag
-    volume_claim: fs-db-recovery-prod-claim
-    namespace: fragalysis-stag
-  # Recovering from here to development
-  prod:
-    dir: pv-fs-p-mysql-data-backup
-    volume_name: fs-p-db-recovery-dev
-    volume_claim: fs-db-recovery-prod-claim
-    namespace: fragalysis-cicd

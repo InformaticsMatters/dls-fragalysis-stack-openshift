@@ -36,22 +36,6 @@
   - oc adm policy add-scc-to-user anyuid -z {{ service_account }}
   when: service_account not in sa_result.stdout
 
-# To allow any CI/CD job to push images to this project/namespace
-# the jenkins SA (used by the agents that run the Job) in the CI/CD project
-# must have the 'image-pusher' role in for this project...
-
-- name: Move to CI/CD Project (image-pusher)
-  shell: oc project {{ cicd_namespace }}
-  changed_when: False
-  when: service_account not in sa_result.stdout
-
-- name: Add image-pusher rights to {{ jenkins_user }} SA
-  shell: >
-    oc policy add-role-to-user system:image-pusher
-    system:serviceaccount:{{ cicd_namespace }}:{{ jenkins_user }}
-    --namespace={{ namespace }}
-  when: service_account not in sa_result.stdout
-
 # We need to allow the production project to be able to pull from
 # the Development project (which is where the probe image lives).
 # To do this the service account in Production must be bound to

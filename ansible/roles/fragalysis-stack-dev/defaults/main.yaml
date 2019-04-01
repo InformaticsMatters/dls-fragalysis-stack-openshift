@@ -5,7 +5,7 @@ namespace: fragalysis-dev
 namespace_display_name: "Fragalysis (Development)"
 namespace_description: "The Fragalysis Project (Development Namespace)"
 
-# Project-specific variables
+# Backup/Recovery
 backup_nfs_dir: pv-fs-mysql-data-backup
 backup_vol_name: fs-db-backup
 backup_deploy: no
@@ -13,29 +13,3 @@ backup_deploy: no
 input_vol_name: fs-d-input
 
 wait_for_mysql: yes
-
-# Recovery PVs and PVCs - used when deploy_backup is 'yes'.
-#
-# There is an entry here for each namespace that we want to recover to.
-# The first one is our own namespace, others are for the namespaces
-# of others, like staging and production. Each shares a 'volume'
-# but has its own 'name', 'claim' and 'namespace'
-recovery_volumes:
-  # Recovering from here (development) to dev
-  dev:
-    dir: pv-fs-mysql-data-backup
-    volume_name: fs-db-recovery-dev
-    volume_claim: fs-db-recovery-dev-claim
-    namespace: fragalysis-dev
-  # Recovering from here to staging
-  stag:
-    dir: pv-fs-mysql-data-backup
-    volume_name: fs-db-recovery-stag
-    volume_claim: fs-db-recovery-dev-claim
-    namespace: fragalysis-stag
-  # Recovering from here to production
-  prod:
-    dir: pv-fs-mysql-data-backup
-    volume_name: fs-db-recovery-prod
-    volume_claim: fs-db-recovery-dev-claim
-    namespace: fragalysis-prod

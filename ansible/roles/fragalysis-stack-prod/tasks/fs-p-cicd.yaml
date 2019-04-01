@@ -37,6 +37,22 @@
   - oc adm policy add-scc-to-user -z {{ jenkins_user }} privileged
   when: jenkins_user not in who_can_result.stdout
 
+# To allow any CI/CD job to push images to this project/namespace
+# the jenkins SA (used by the agents that run the Job) in the CI/CD project
+# must have the 'image-pusher' role in for this project...
+
+- name: Move to CI/CD Project (image-pusher)
+  shell: oc project {{ cicd_namespace }}
+  changed_when: False
+  when: jenkins_user not in who_can_result.stdout
+
+- name: Add image-pusher rights to {{ jenkins_user }} SA
+  shell: >
+    oc policy add-role-to-user system:image-pusher
+    system:serviceaccount:{{ cicd_namespace }}:{{ jenkins_user }}
+    --namespace={{ namespace }}
+  when: jenkins_user not in who_can_result.stdout
+
 # Check PVs
 # This is where the Jenkins configuration is persisted.
 
