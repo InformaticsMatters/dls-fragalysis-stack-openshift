@@ -34,7 +34,7 @@
   - oc create sa {{ service_account }}
   - oc adm policy add-role-to-user admin -z {{ service_account }}
   - oc adm policy add-scc-to-user anyuid -z {{ service_account }}
-  when: service_account not in diamond_sa_result.stdout'
+  when: service_account not in diamond_sa_result.stdout
 
 # Check and create the Jenkins user roles
 
