@@ -23,7 +23,7 @@
 
 # Wait for PV to become "Available"...
 
-- name: Wait for Input PV to become Available
+- name: Wait for Backup PV to become Available
   shell: oc get pv/{{ item }} | grep Available
   delay: 5
   retries: "{{ (pv_create_timeout_s|int / 5)|int }}"

@@ -21,6 +21,20 @@
   when:
   - backup_vol_name not in bu_pv.stdout
 
+# Wait for PV to become "Available"...
+
+- name: Wait for Backup PV to become Available
+  shell: oc get pv/{{ item }} | grep Available
+  delay: 5
+  retries: "{{ (pv_create_timeout_s|int / 5)|int }}"
+  register: result
+  until: result.rc == 0
+  loop:
+  - "{{ backup_vol_name }}"
+  when:
+  - not jenkins_pv.stdout | regex_search('^%s\s' % backup_vol_name, multiline=True)
+  changed_when: False
+
 # Create the Backup PVCs
 
 - name: Check Backup PVC
