@@ -1,7 +1,7 @@
 im-jenkins-utils >= 1.2.0
 
 neo4j-driver == 1.6.2
-ansible == 2.6.4
+ansible == 2.7.9
 awscli == 1.16.14
 PyYAML == 3.13
 tqdm == 4.26.0

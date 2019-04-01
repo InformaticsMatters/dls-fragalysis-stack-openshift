@@ -64,7 +64,6 @@
 - name: Check PVs
   shell: oc get pv
   register: pv_result
-  when: input_vol_is_nfs
   changed_when: False
 
 - name: Create Input PV
@@ -74,7 +73,6 @@
     -p INPUT_VOLUME_NAME={{ input_vol_name }}
     | oc create -f -
   when:
-  - input_vol_is_nfs
   - not pv_result.stdout | regex_search('^fs-input\s', multiline=True)
 
 # Deal with "Released" volumes.
@@ -105,7 +103,6 @@
   loop:
   - fs-input
   when:
-  - input_vol_is_nfs
   - not pv_result.stdout | regex_search('^fs-input\s', multiline=True)
   changed_when: False
 
