@@ -27,7 +27,7 @@ parameters:
   value: https://fragalysis.apps.xchem.diamond.ac.uk
 
 - name: PROBE_NAMESPACE
-  value: fragalysis-cicd
+  value: fragalysis-dev
 
 - name: PROBE_NAMESPACE_H
   value: Dev
