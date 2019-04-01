@@ -15,8 +15,8 @@ backup_nfs_dir: pv-fs-p-mysql-data-backup
 backup_vol_name: fs-p-db-backup
 backup_deploy: no
 
-graph_svc: neo4j.{{ fragalysis_cicd_namespace }}.svc
-graph_bolt_url: bolt://neo4j:test@neo4j.{{ fragalysis_cicd_namespace }}.svc:7687
+graph_svc: neo4j.fragalysis-graph-1.svc
+graph_bolt_url: bolt://neo4j:test@neo4j.fragalysis-graph-1.svc:7687
 
 input_vol_name: fs-p-input
 

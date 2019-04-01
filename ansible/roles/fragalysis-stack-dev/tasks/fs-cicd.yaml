@@ -55,6 +55,10 @@
 
 # Check PVs
 
+- name: Move to Fragalysis Project (DEV)
+  shell: oc project {{ namespace }}
+  changed_when: False
+
 - name: Check PV
   shell: oc get pv
   register: pv_result

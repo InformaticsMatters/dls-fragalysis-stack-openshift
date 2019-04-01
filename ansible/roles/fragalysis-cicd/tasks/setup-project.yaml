@@ -7,6 +7,8 @@
 - name: Login (admin at {{ cluster_url }})
   shell: oc login {{ cluster_url }} -u admin -p {{ admin_password }}
   changed_when: False
+  tags:
+  - agents
 
 # Check the Jenkins user exists
 
@@ -35,6 +37,8 @@
 - name: Move to CI/CD Project
   shell: oc project {{ cicd_namespace }}
   changed_when: False
+  tags:
+  - agents
 
 - name: Check {{ jenkins_user }} SA
   shell: oc get sa
@@ -138,6 +142,8 @@
   shell: oc get is
   register: agent_is
   changed_when: False
+  tags:
+  - agents
 
 - name: Create Agent ImageStreams
   shell: >
@@ -148,3 +154,5 @@
   - graph-slave
   - loadah-slave
   when: not agent_is.stdout | regex_search('^%s\s' % item, multiline=True)
+  tags:
+  - agents
