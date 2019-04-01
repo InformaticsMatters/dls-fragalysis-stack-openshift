@@ -2,7 +2,7 @@
 
 # Create the Backup PV
 
-- name: Move to Fragalysis Project (MySQL)
+- name: Move to Fragalysis Project (Backup)
   shell: oc project {{ namespace }}
   changed_when: False
 
@@ -54,7 +54,6 @@
 - name: Check Backup Deployment
   shell: oc get cronjobs
   register: bu_cj
-  when: backup_deploy|bool
   changed_when: False
 
 - name: Create Backup Deployment (H)
