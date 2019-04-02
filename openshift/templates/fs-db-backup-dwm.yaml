@@ -59,7 +59,7 @@ objects:
               name: backup-daily
           spec:
             nodeSelector:
-              app-node: 'true'
+              purpose: 'app'
             serviceAccountName: diamond
 
             # Application containers
@@ -104,7 +104,7 @@ objects:
               name: backup-weekly
           spec:
             nodeSelector:
-              app-node: 'true'
+              purpose: 'app'
             serviceAccountName: diamond
 
             # Application containers
@@ -149,7 +149,7 @@ objects:
               name: backup-monthly
           spec:
             nodeSelector:
-              app-node: 'true'
+              purpose: 'app'
             serviceAccountName: diamond
 
             # Application containers

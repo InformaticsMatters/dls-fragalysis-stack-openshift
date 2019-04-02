@@ -49,7 +49,7 @@ objects:
               name: backup-hourly
           spec:
             nodeSelector:
-              app-node: 'true'
+              purpose: 'app'
             serviceAccountName: diamond
 
             # Application containers

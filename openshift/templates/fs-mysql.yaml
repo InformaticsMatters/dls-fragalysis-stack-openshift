@@ -43,7 +43,7 @@ objects:
           name: ${MYSQL_NAME}
       spec:
         nodeSelector:
-          app-node: 'true'
+          purpose: 'app'
         serviceAccountName: diamond
 
         # Application containers

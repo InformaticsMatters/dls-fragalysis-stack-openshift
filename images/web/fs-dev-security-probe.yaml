@@ -76,7 +76,7 @@ objects:
         name: fs-dev-security-probe
       spec:
         nodeSelector:
-          app-node: 'true'
+          purpose: 'app'
         serviceAccountName: diamond
 
         containers:

@@ -57,7 +57,7 @@ objects:
           name: ${WEB_NAME}
       spec:
         nodeSelector:
-          app-node: 'true'
+          purpose: 'app'
         serviceAccountName: diamond
 
         # Init Containers

@@ -36,15 +36,15 @@ cluster:
   node_groups:
   - name: graph
     labels:
-    - graph-node=true
+    - purpose=graph
     is_compute_node: yes
   - name: app
     labels:
-    - app-node=true
+    - purpose=app
     is_compute_node: yes
   - name: gpu
     labels:
-    - gpu-node=true
+    - purpose=gpu
     is_compute_node: no
 
   nodes:

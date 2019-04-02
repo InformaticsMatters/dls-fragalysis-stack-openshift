@@ -56,7 +56,7 @@ objects:
           name: graph-jun2018
       spec:
         nodeSelector:
-          graph-node: 'true'
+          purpose: 'graph'
         serviceAccountName: diamond
 
         # Application containers

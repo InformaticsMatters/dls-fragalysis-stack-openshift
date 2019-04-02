@@ -43,7 +43,7 @@ objects:
           name: fs-restore
       spec:
         nodeSelector:
-          app-node: 'true'
+          purpose: 'app'
         serviceAccountName: diamond
 
         containers:

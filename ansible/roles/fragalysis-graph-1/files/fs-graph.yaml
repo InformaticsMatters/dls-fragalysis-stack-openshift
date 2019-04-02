@@ -44,7 +44,7 @@ objects:
           name: graph
       spec:
         nodeSelector:
-          graph-node: 'true'
+          purpose: 'graph'
         serviceAccountName: diamond
 
         # Application containers
