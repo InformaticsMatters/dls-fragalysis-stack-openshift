@@ -18,7 +18,7 @@ labels:
 parameters:
 
 - name: GRAPH_IMAGE
-  value: 'informaticsmatters/neo4j:3.4.9'
+  value: 'informaticsmatters/neo4j:3.5.0'
 - name: NEO4J_AUTH
   value: none
 - name: NEO4J_PAGECACHE_G

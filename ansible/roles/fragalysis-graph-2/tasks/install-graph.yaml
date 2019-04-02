@@ -17,8 +17,6 @@
 - name: Check Graph-2 PV
   shell: oc get pv
   register: molport_pv
-  when:
-  - graph_2_use_nfs
   changed_when: False
 
 - name: Create Graph-2 PV
@@ -27,13 +25,12 @@
     -p GRAPH_NAMESPACE={{ graph_2_namespace }}
     | oc create -f -
   when:
-  - graph_2_use_nfs
   - '"fs-graph-molport-data" not in molport_pv.stdout'
 
 # Wait for Graph PV to become "Available"...
 # We only do this if we created the PV in this session.
 
-- name: Wait for PVs to become Available
+- name: Wait for Graph-2 PV to become Available
   shell: oc get pv/{{ item }} | grep Available
   delay: 5
   retries: "{{ (pv_create_timeout_s|int / 5)|int }}"
@@ -42,7 +39,6 @@
   loop:
   - fs-graph-molport-data-loader
   when:
-  - graph_2_use_nfs
   - '"fs-graph-molport-data" not in molport_pv.stdout'
   changed_when: False
 
