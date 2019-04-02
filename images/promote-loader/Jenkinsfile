@@ -24,7 +24,7 @@ pipeline {
     STREAM_NAME = 'loader-stream'
 
     // Source registry details
-    SRC_PROJECT = 'fragalysis-dev'
+    SRC_PROJECT = 'fragalysis-cicd'
     SRC_STREAM_IMAGE = "${SRC_PROJECT}/${STREAM_NAME}"
 
     // Target registry details
