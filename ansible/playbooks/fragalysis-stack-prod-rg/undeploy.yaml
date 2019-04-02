@@ -6,7 +6,7 @@
   vars:
     namespace: fragalysis-rg
     deploy_backup: no
-    input_vol_name: fs-gc-input
+    input_vol_name: fs-rg-input
 
   tasks:
   - name: Run the Fragalysis Production Undeploy Tasks (RG)

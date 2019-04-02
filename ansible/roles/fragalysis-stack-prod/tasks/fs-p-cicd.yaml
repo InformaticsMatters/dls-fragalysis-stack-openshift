@@ -89,7 +89,7 @@
   loop:
   - "{{ input_vol_name }}"
   when:
-  - not pv_result.stdout | regex_search('^%s\s' % input_vol_name, multiline=True)
+  - not jenkins_pv.stdout | regex_search('^%s\s' % input_vol_name, multiline=True)
   changed_when: False
 
 # Create the Input PVC
