@@ -7,6 +7,7 @@ oc login ${CLUSTER_URL} -u ${OC_USER} -p ${OC_USER_PASSWORD}
 KEEP=10
 
 echo "=-> Deleting web-stream tags..."
+oc project fragalysis-dev
 oc describe is/web-stream | \
     grep ^latest-[1-9] | \
     cut -d- -f2 | sort -nr | \
@@ -14,6 +15,7 @@ oc describe is/web-stream | \
     awk '{system("oc delete istag/web-stream:latest-"$1)}'
 
 echo "=-> Deleting loader-stream tags..."
+oc project fragalysis-cicd
 oc describe is/loader-stream | \
     grep ^latest-[1-9] | \
     cut -d- -f2 | \
