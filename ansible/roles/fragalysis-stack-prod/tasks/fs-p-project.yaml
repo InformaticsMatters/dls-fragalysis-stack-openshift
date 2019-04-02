@@ -37,9 +37,9 @@
   when: service_account not in sa_result.stdout
 
 # We need to allow the production project to be able to pull from
-# the Development project (which is where the probe image lives).
+# the CI/CD project (which is where the probe image lives).
 # To do this the service account in Production must be bound to
-# the system:image-puller role in Development
+# the system:image-puller role in CI/CD
 #
 # If the service account has the image-puller role you'll see
 # "system:image-puller /system:image-puller fragalysis-prod/diamond"
