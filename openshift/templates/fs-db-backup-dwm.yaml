@@ -23,8 +23,6 @@ parameters:
   value: 'informaticsmatters/sql-backup'
 - name: BACKUP_TAG
   value: 'stable'
-- name: BACKUP_NODE_SIZE_SELECTOR
-  value: 'small'
 - name: BACKUP_D_SCHEDULE
   value: '55 0 * * *'
 - name: BACKUP_W_SCHEDULE
@@ -61,7 +59,7 @@ objects:
               name: backup-daily
           spec:
             nodeSelector:
-              size: ${BACKUP_NODE_SIZE_SELECTOR}
+              app-node: 'true'
             serviceAccountName: diamond
 
             # Application containers
@@ -106,7 +104,7 @@ objects:
               name: backup-weekly
           spec:
             nodeSelector:
-              size: ${BACKUP_NODE_SIZE_SELECTOR}
+              app-node: 'true'
             serviceAccountName: diamond
 
             # Application containers
@@ -151,7 +149,7 @@ objects:
               name: backup-monthly
           spec:
             nodeSelector:
-              size: ${BACKUP_NODE_SIZE_SELECTOR}
+              app-node: 'true'
             serviceAccountName: diamond
 
             # Application containers

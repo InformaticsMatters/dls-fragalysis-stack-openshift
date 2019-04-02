@@ -26,8 +26,6 @@ parameters:
 
 - name: RECOVERY_IMAGE
   value: informaticsmatters/sql-recovery:stable
-- name: RECOVERY_NODE_SIZE_SELECTOR
-  value: small
 
 objects:
 
@@ -45,7 +43,7 @@ objects:
           name: fs-restore
       spec:
         nodeSelector:
-          size: ${RECOVERY_NODE_SIZE_SELECTOR}
+          app-node: 'true'
         serviceAccountName: diamond
 
         containers:
