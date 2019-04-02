@@ -16,14 +16,15 @@
     namespace_display_name: "Fragalysis (Ric)"
     namespace_description: "The Fragalysis Project (Ric Gillams' Deployment)"
 
-    deploy_backup: no
+    backup_deploy: no
+    backup_nfs_dir: pv-fs-rg-mysql-data-backup
+    backup_vol_name: fs-rg-db-backup
+
     input_vol_name: fs-rg-input
     mysql_name: mysql-rg
     wait_for_mysql: yes
     web_hostname: fragalysis-rg.apps.xchem.informaticsmatters.com
     web_name: web-rg
-    web_nfs_dir: pv-fs-rg-web-media
-    web_vol_name: fs-rg-web-media
     web_image_tag: latest
 
   roles:
