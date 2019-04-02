@@ -10,6 +10,7 @@ prod_namespace: fragalysis-proc
 # and 'prod_recovery_volumes' dictionaries.
 enable:
 - dev
+- stag
 - prod
 
 # DEV Recovery PVs and PVCs - used when recovery_deploy is 'yes'.
