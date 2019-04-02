@@ -1,4 +1,7 @@
 ---
 
+# Deploys Recovery volumes and volume claims.
+# These need to be deployed before recovery jobs can run.
+
 - import_tasks: fs-d-recovery.yaml
 - import_tasks: fs-p-recovery.yaml

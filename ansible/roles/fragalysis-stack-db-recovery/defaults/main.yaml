@@ -1,5 +1,17 @@
 ---
 
+dev_namespace: fragalysis-dev
+stag_namespace: fragalysis-stag
+prod_namespace: fragalysis-proc
+
+# Projects to enable for backup and recovery.
+# This is the first-level entry of the
+# corresponding 'dev_recovery_volumes'
+# and 'prod_recovery_volumes' dictionaries.
+enable:
+- dev
+- prod
+
 # DEV Recovery PVs and PVCs - used when recovery_deploy is 'yes'.
 # Recovery of DEV MySQL backups to DEV, STAG or PROD.
 #
