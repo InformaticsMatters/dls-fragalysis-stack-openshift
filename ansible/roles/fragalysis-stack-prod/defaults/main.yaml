@@ -23,6 +23,6 @@ input_vol_name: fs-p-input
 mysql_name: mysql-prod
 wait_for_mysql: yes
 
-web_hostname: fragalysis.diamond.ac.uk
+web_hostname: fragalysis.xchem.informaticsmatters.com
 web_name: web-prod
 web_image_tag: stable

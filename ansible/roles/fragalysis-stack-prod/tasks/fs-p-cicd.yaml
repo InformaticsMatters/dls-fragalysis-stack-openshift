@@ -1,6 +1,6 @@
 ---
 
-- name: Move to Fragalysis Project (Jenkins)
+- name: Move to Fragalysis Project (Production)
   shell: oc project {{ namespace }}
   changed_when: False
 
@@ -53,6 +53,10 @@
     --namespace={{ namespace }}
   when: jenkins_user not in who_can_result.stdout
 
+- name: Move to Fragalysis Project (Production)
+  shell: oc project {{ namespace }}
+  changed_when: False
+
 # Check PVs
 # This is where the Jenkins configuration is persisted.
 
@@ -72,6 +76,21 @@
     | oc create -f -
   when:
   - not jenkins_pv.stdout | regex_search('^%s\s' % input_vol_name, multiline=True)
+
+# Wait for Input PV to become "Available"...
+# We only do this if we created the PV in this session.
+
+- name: Wait for Input PV to become Available
+  shell: oc get pv/{{ item }} | grep Available
+  delay: 5
+  retries: "{{ (pv_create_timeout_s|int / 5)|int }}"
+  register: result
+  until: result.rc == 0
+  loop:
+  - "{{ input_vol_name }}"
+  when:
+  - not pv_result.stdout | regex_search('^%s\s' % input_vol_name, multiline=True)
+  changed_when: False
 
 # Create the Input PVC
 
