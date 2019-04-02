@@ -32,7 +32,7 @@
   loop:
   - "{{ backup_vol_name }}"
   when:
-  - not jenkins_pv.stdout | regex_search('^%s\s' % backup_vol_name, multiline=True)
+  - not bu_pv.stdout | regex_search('^%s\s' % backup_vol_name, multiline=True)
   changed_when: False
 
 # Create the Backup PVCs
@@ -49,18 +49,33 @@
     | oc create -f -
   when: '"fs-db-backup-claim" not in bu_pvc.stdout'
 
-# Create the Backup Deployment
+- name: Wait for Backup PVC to become Bound
+  shell: >
+    oc get pvc/{{ item }} | grep Bound
+  retries: 12
+  delay: 5
+  register: result
+  until: result.rc == 0
+  loop:
+  - fs-db-backup-claim
+  when: item not in bu_pvc.stdout
+  changed_when: False
+
+# Create the Backup Deployment (only if 'backup_deploy')
 
 - name: Check Backup Deployment
   shell: oc get cronjobs
   register: bu_cj
   changed_when: False
+  when:
+  - backup_deploy|bool
 
 - name: Create Backup Deployment (H)
   shell: >
     oc process -f {{ role_path }}/{{ t_dir }}/fs-db-backup-h.yaml
     | oc create -f -
   when:
+  - backup_deploy|bool
   - not enable_rsync_in_backup
   - '"db-backup-hourly" not in bu_cj.stdout'
 
@@ -69,6 +84,7 @@
     oc process -f {{ role_path }}/{{ t_dir }}/fs-db-backup-h-plus-rsync.yaml
     | oc create -f -
   when:
+  - backup_deploy|bool
   - enable_rsync_in_backup
   - '"db-backup-hourly" not in bu_cj.stdout'
 
@@ -76,7 +92,9 @@
   shell: >
     oc process -f {{ role_path }}/{{ t_dir }}/fs-db-backup-dwm.yaml
     | oc create -f -
-  when: '"db-backup-daily" not in bu_cj.stdout'
+  when:
+  - backup_deploy|bool
+  - '"db-backup-daily" not in bu_cj.stdout'
 
 # We don't wait for this job,
 # its deployment is controlled by Cron.
