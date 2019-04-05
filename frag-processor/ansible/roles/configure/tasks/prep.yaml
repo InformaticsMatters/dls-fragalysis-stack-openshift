@@ -17,7 +17,7 @@
     - singularity
   become: yes
 
-- name: Install Python requirements
+- name: Install Python requirements ({{ pip_executable }})
   pip:
     executable: "{{ pip_executable }}"
     name:
