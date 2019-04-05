@@ -11,8 +11,15 @@
   - "{{ lookup('env','HOME') }}/{{ github_dir }}"
   - "{{ lookup('env','HOME') }}/bin"
 
+- name: Install Packages
+  yum:
+    name:
+    - singularity
+  become: yes
+
 - name: Install Python requirements
   pip:
+    executable: "{{ pip_executable }}"
     name:
     - boto3==1.9.106
     - botocore==1.12.106
