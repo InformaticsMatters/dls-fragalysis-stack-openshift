@@ -18,6 +18,10 @@ To install Python 3 (and pip) on CentOS...
     $ sudo yum install -y python36 python36-pip
     $ sudo ln -s /usr/bin/python3.6 /usr/bin/python3
 
+>   If singularity is installed after this you might find it installs
+    Python 3.4 and breaks any links you have to 3.6. If so just remake them
+    with something like `sudo ln -sf /usr/bin/python3.6 /usr/bin/python3`
+    
 There are three stages, each with an accompanying shell-script/playbook: -
 
 1.  Standardise
