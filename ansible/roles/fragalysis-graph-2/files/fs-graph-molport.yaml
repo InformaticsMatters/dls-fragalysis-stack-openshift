@@ -25,8 +25,12 @@ parameters:
   value: '350'
 - name: NEO4J_HEAP
   value: 8g
-- name: NEO4J_CPU_LIMIT_M
+- name: NEO4J_CPU_REQUEST_M
   value: '4000'
+- name: NEO4J_CPU_LIMIT_M
+  value: '8000'
+- name: NEO4J_MEM_REQUEST_G
+  value: '200'
 - name: NEO4J_MEM_LIMIT_G
   value: '400'
 
@@ -90,8 +94,8 @@ objects:
               cpu: ${NEO4J_CPU_LIMIT_M}m
               memory: ${NEO4J_MEM_LIMIT_G}Gi
             requests:
-              cpu: ${NEO4J_CPU_LIMIT_M}m
-              memory: ${NEO4J_MEM_LIMIT_G}Gi
+              cpu: ${NEO4J_CPU_REQUEST_M}m
+              memory: ${NEO4J_MEM_REQUEST_G}Gi
           volumeMounts:
           - name: fs-graph-data-loader
             mountPath: ${NEO4J_DATA_LOADER_DIR}

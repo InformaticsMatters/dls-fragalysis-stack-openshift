@@ -83,8 +83,10 @@
   shell: >
     oc process -f {{ role_path }}/files/fs-graph-molport.yaml
     -p NEO4J_PAGECACHE_G={{ graph_2_pagecache_g }}
-    -p NEO4J_MEM_LIMIT_G={{ graph_2_memory_limit_g }}
     -p NEO4J_CPU_LIMIT_M={{ graph_2_cpu_limit_cores|int * 1000 }}
+    -p NEO4J_CPU_REQUEST_M={{ graph_2_cpu_request_cores|int * 1000 }}
+    -p NEO4J_MEM_LIMIT_G={{ graph_2_memory_limit_g }}
+    -p NEO4J_MEM_REQUEST_G={{ graph_2_memory_request_g }}
     | oc create -f -
   when:
   - '"graph-molport" not in graph_dc.stdout'

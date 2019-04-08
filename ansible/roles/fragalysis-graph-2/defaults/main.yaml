@@ -8,5 +8,7 @@ graph_2_namespace_description: >
   A neo4j graph database.
 
 graph_2_pagecache_g: 350
-graph_2_memory_limit_g: 400
+graph_2_cpu_request_cores: 4
 graph_2_cpu_limit_cores: 8
+graph_2_memory_request_g: 200
+graph_2_memory_limit_g: 400
