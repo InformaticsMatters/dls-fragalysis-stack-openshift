@@ -207,7 +207,7 @@ done
 if [[ "$(id -u)" = "0" ]]; then
   chmod -R 755 /data
   chown -R "${userid}":"${groupid}" /data
-  rm -f /var/lib/neo4j/logs/*
+  rm -f /var/lib/neo4j/logs/* | true
 fi
 
 
