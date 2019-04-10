@@ -298,7 +298,7 @@ Creating the index...
     neo4j> CREATE INDEX ON :F2(smiles);
     neo4j> :exit
 
-Diplsaying indices....
+Displaying indices....
 
     # cypher-shell
     neo4j> CALL db.indexes;
@@ -307,7 +307,12 @@ Diplsaying indices....
 Clearing the unix filesystem cache...
 
     $ sudo sh -c 'free && sync && echo 3 > /proc/sys/vm/drop_caches && free'
-    
+
+Listing dbms procedures...
+
+    # cypher-shell
+    neo4j> CALL dbms.procedures() YIELD name RETURN name;
+   
 Warm-up the cache using the APOC tools...
 
 >   CALL apoc.warmup.run([loadProperties],[loadDynamicProperties])
@@ -320,8 +325,12 @@ Warm-up the cache using the APOC tools...
     neo4j> CALL apoc.warmup.run(true, true);    <- Include dynamic properties
     neo4j> :exit
 
-The full warm-up 9properties and dynamic properties
+The full warm-up (properties and dynamic properties)
 will take about 45 minutes to complete.
+
+Running commands in the cypher-shell (non-interactively):
+
+    # cypher-shell --non-interactive "CALL apoc.warmup.run(true,true);"
     
 ---
 

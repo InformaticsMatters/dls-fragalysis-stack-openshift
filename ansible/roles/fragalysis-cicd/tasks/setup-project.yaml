@@ -1,0 +1,158 @@
+---
+
+# Configure the Jenkins Project.
+# Here a jenkins application is expected to be deployed (manually)
+# to the CI/CD project.
+
+- name: Login (admin at {{ cluster_url }})
+  shell: oc login {{ cluster_url }} -u admin -p {{ admin_password }}
+  changed_when: False
+  tags:
+  - agents
+
+# Check the Jenkins user exists
+
+- name: Check {{ jenkins_user }} User
+  shell: oc get users
+  register: users_result
+  changed_when: False
+
+- name: Assert {{ jenkins_user }} User Exists
+  assert:
+    that: jenkins_user in users_result.stdout
+
+# Check the Jenkins project
+
+- name: Get Projects
+  shell: oc get projects
+  register: projects_result
+  changed_when: False
+
+- name: Assert Project Exists
+  assert:
+    that: cicd_namespace in projects_result.stdout
+
+# The Jenkins service account must exist in the CI/CD project
+
+- name: Move to CI/CD Project
+  shell: oc project {{ cicd_namespace }}
+  changed_when: False
+  tags:
+  - agents
+
+- name: Check {{ jenkins_user }} SA
+  shell: oc get sa
+  register: sa_result
+  changed_when: False
+
+- name: Create {{ jenkins_user }} SA
+  shell: oc create sa {{ jenkins_user }}
+  register: sa_result
+  when: jenkins_user not in sa_result.stdout
+
+# Check and create the Jenkins user roles
+#
+# (initially, when SA doesn't exist)
+
+- name: Give Roles
+  shell: "{{ item }}"
+  loop:
+  - oc adm policy add-role-to-user system:registry {{ jenkins_user }}
+  - oc adm policy add-role-to-user system:image-builder {{ jenkins_user }}
+  - oc adm policy add-role-to-user admin {{ jenkins_user }}
+  - oc adm policy add-scc-to-user -z {{ jenkins_user }} privileged
+
+# Create the Data Input PV/PVC
+# This is where the Web and Graph data is expected to be found.
+
+- name: Check PVs
+  shell: oc get pv
+  register: pv_result
+  changed_when: False
+
+- name: Create Input PV
+  shell: >
+    oc process -f {{ role_path }}/files/fs-input-pv-nfs.yaml
+    -p INPUT_NAMESPACE={{ cicd_namespace }}
+    -p INPUT_VOLUME_NAME={{ input_vol_name }}
+    | oc create -f -
+  when:
+  - not pv_result.stdout | regex_search('^fs-input\s', multiline=True)
+
+# Deal with "Released" volumes.
+# Those PVs that are "Released"
+# must be "Available" to accept new binds...
+
+- name: Check Released volumes
+  shell: oc get pv | grep Released | grep {{ cicd_namespace }}/ | cut -f 1 -d " "
+  register: released_vols
+  when: recycle_released_pvs
+  changed_when: False
+
+- name: Recover Released volumes
+  shell: >
+    oc patch pv/{{ item }} --type json
+    -p $'- op: remove\n  path: /spec/claimRef'
+  with_items:
+  - "{{ released_vols.stdout_lines }}"
+  when:
+  - recycle_released_pvs
+
+- name: Wait for PVs to become Available
+  shell: oc get pv/{{ item }} | grep Available
+  delay: 5
+  retries: "{{ (pv_create_timeout_s|int / 5)|int }}"
+  register: result
+  until: result.rc == 0
+  loop:
+  - fs-input
+  when:
+  - not pv_result.stdout | regex_search('^fs-input\s', multiline=True)
+  changed_when: False
+
+# Create the Input PVCs
+
+- name: Check Input PVC
+  shell: oc get pvc
+  register: input_pvc
+  changed_when: False
+
+- name: Create Input PVC
+  shell: >
+    oc process -f {{ role_path }}/files/fs-input-pvc.yaml
+    -p INPUT_VOLUME_NAME={{ input_vol_name }}
+    | oc create -f -
+  when: not input_pvc.stdout | regex_search('^fs-input-claim\s', multiline=True)
+
+- name: Wait for Input PVC to become Bound
+  shell: >
+    oc get pvc/{{ item }} | grep Bound
+  retries: 12
+  delay: 5
+  register: result
+  until: result.rc == 0
+  loop:
+  - fs-input-claim
+  when: not input_pvc.stdout | regex_search('^fs-input-claim\s', multiline=True)
+  changed_when: False
+
+# Check and create the Slave Agents
+
+- name: Check ImageStreams
+  shell: oc get is
+  register: agent_is
+  changed_when: False
+  tags:
+  - agents
+
+- name: Create Agent ImageStreams
+  shell: >
+    oc process -f {{ role_path }}/files/fs-jenkins-{{ item }}-agent-is.yaml
+    | oc create -f -
+  loop:
+  - buildah-slave
+  - graph-slave
+  - loadah-slave
+  when: not agent_is.stdout | regex_search('^%s\s' % item, multiline=True)
+  tags:
+  - agents

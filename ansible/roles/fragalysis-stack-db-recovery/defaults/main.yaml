@@ -1,0 +1,64 @@
+---
+
+dev_namespace: fragalysis-dev
+stag_namespace: fragalysis-stag
+prod_namespace: fragalysis-proc
+
+# Projects to enable for backup and recovery.
+# This is the first-level entry of the
+# corresponding 'dev_recovery_volumes'
+# and 'prod_recovery_volumes' dictionaries.
+enable:
+- dev
+- stag
+- prod
+
+# DEV Recovery PVs and PVCs - used when recovery_deploy is 'yes'.
+# Recovery of DEV MySQL backups to DEV, STAG or PROD.
+#
+# There is an entry here for each namespace that we want to recover to.
+# The first one is our own namespace, others are for the namespaces
+# of others, like staging and production. Each shares an NFS 'dir'
+# (where the database backup exists) but has its own PV 'name',
+# PVC 'claim' and 'namespace'
+dev_recovery_volumes:
+  # Recovering from dev (development) to dev
+  dev:
+    dir: pv-fs-mysql-data-backup
+    volume_name: fs-db-recovery-dev
+    volume_claim: fs-db-recovery-dev-claim
+    namespace: fragalysis-dev
+  # Recovering from dev to staging
+  stag:
+    dir: pv-fs-mysql-data-backup
+    volume_name: fs-db-recovery-stag
+    volume_claim: fs-db-recovery-dev-claim
+    namespace: fragalysis-stag
+  # Recovering from dev to production
+  prod:
+    dir: pv-fs-mysql-data-backup
+    volume_name: fs-db-recovery-prod
+    volume_claim: fs-db-recovery-dev-claim
+    namespace: fragalysis-prod
+
+# PROD Recovery PVs and PVCs - used when recovery_deploy is 'yes'.
+#
+prod_recovery_volumes:
+  # Recovering from here (prod) to prod
+  dev:
+    dir: pv-fs-p-mysql-data-backup
+    volume_name: fs-p-db-recovery-prod
+    volume_claim: fs-db-recovery-prod-claim
+    namespace: fragalysis-prod
+  # Recovering from here to staging
+  stag:
+    dir: pv-fs-p-mysql-data-backup
+    volume_name: fs-p-db-recovery-stag
+    volume_claim: fs-db-recovery-prod-claim
+    namespace: fragalysis-stag
+  # Recovering from here to development
+  prod:
+    dir: pv-fs-p-mysql-data-backup
+    volume_name: fs-p-db-recovery-dev
+    volume_claim: fs-db-recovery-prod-claim
+    namespace: fragalysis-cicd

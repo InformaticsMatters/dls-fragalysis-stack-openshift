@@ -1,0 +1,12 @@
+---
+
+# Our project/namespace...
+graph_1_namespace: fragalysis-graph-1
+graph_1_namespace_display_name: Fragalysis (Graph 1)
+graph_1_namespace_description: >
+  The Fragalysis Graph '1' Project.
+  A neo4j graph database.
+
+graph_1_pagecache_g: 8
+graph_1_memory_limit_g: 20
+graph_1_cpu_limit_cores: 4

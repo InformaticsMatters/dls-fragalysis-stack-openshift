@@ -1,0 +1,10 @@
+---
+
+- hosts: localhost
+  gather_facts: No
+
+  tasks:
+  - name: Run the Fragalysis Backup Tasks
+    include_role:
+      name: fragalysis-stack-dev
+      tasks_from: fs-backup.yaml

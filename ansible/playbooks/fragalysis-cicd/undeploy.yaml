@@ -1,0 +1,10 @@
+---
+
+- hosts: localhost
+  gather_facts: No
+
+  tasks:
+  - name: Run the CI/CD Undeploy Tasks
+    include_role:
+      name: fragalysis-cicd
+      tasks_from: undeploy.yaml

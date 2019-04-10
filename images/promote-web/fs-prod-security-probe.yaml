@@ -47,8 +47,6 @@ parameters:
   value: >
     frank.von-delft@diamond.ac.uk
     rachael.skyner@diamond.ac.uk
-    anthony.bradley@diamond.ac.uk
-    ric.gillams@gmail.com
   description: >
     A list of addresses for recipients of security emails
 
@@ -59,9 +57,6 @@ parameters:
   value: fragalysis-cicd/probe-stream:latest
   description: >
     The container image for the security probe implementation
-
-- name: PROBE_NODE_SIZE_SELECTOR
-  value: small
 
 objects:
 
@@ -80,7 +75,7 @@ objects:
         name: fs-prod-security-probe
       spec:
         nodeSelector:
-          size: ${PROBE_NODE_SIZE_SELECTOR}
+          purpose: 'app'
         serviceAccountName: diamond
 
         containers:

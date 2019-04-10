@@ -22,10 +22,10 @@ from im_jenkins_server import ImJenkinsServer
 
 # URL for the CI/CD server.
 SERVER = 'jenkins-fragalysis-cicd.apps.xchem.diamond.ac.uk'
-# Our job configuration directory
-JOB_DIR = 'jobs'
 # CLUSTER_URL
 CLUSTER_URL = 'https://openshift.xchem.diamond.ac.uk'
+# Our job configuration directory
+JOB_DIR = 'jobs'
 
 # Load logger configuration (from cwd)...
 # But only if the logging configuration is present!
@@ -66,10 +66,16 @@ PARSER.add_argument('--disable-jobs',
                     action='store_true',
                     help='Disable the jobs as they are created or reconfigured'
                          ' (useful during set).')
+PARSER.add_argument('--location',
+                    type=str, nargs='?', default=SERVER,
+                    help='The server address (without the http://).')
+PARSER.add_argument('--cluster-url',
+                    type=str, nargs='?', default=CLUSTER_URL,
+                    help='The cluster console address.')
 ARGS = PARSER.parse_args()
 
 # Connect to the server
-J_URL = SERVER
+J_URL = ARGS.location
 J_URL_WITH_USER = 'https://%s:%s@%s' % (J_USER, J_TOKEN, J_URL)
 JS = ImJenkinsServer(J_URL_WITH_USER)
 if not JS.is_connected():
@@ -135,7 +141,7 @@ elif ARGS.action == 'set':
                        J_SLACK_TOKEN,
                        "Slack channel Jenkins Integration token")
     JS.set_secret_text('clusterUrl',
-                       CLUSTER_URL,
+                       ARGS.cluster_url,
                        "The OC cluster URL")
     JS.set_secret_text('ocUser',
                        J_OC_USER,

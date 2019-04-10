@@ -1,0 +1,21 @@
+---
+
+# Our project/namespace...
+namespace: fragalysis-dev
+namespace_display_name: "Fragalysis (Development)"
+namespace_description: "The Fragalysis Project (Development Namespace)"
+
+# The namespace of the Test/CICD Fragalysis deployment.
+# This is used to allow us to get a reference to services exposed there
+# (i.e. the Graph database). it should match the value of
+# the namespace you used when deploying the fragalysis-cicd role.
+fragalysis_cicd_namespace: fragalysis-cicd
+
+# Backup/Recovery
+backup_nfs_dir: pv-fs-mysql-data-backup
+backup_vol_name: fs-db-backup
+backup_deploy: no
+
+input_vol_name: fs-d-input
+
+wait_for_mysql: yes

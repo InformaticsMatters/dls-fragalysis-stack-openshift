@@ -1,0 +1,7 @@
+---
+
+- hosts: localhost
+  gather_facts: No
+
+  roles:
+  - fragalysis-stack-prod

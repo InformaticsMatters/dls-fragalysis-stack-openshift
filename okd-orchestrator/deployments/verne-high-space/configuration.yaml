@@ -19,8 +19,8 @@ cluster:
   id: xchem-311
 
   name_tag: xchem
-  public_hostname: verne.informaticsmatters.com
-  default_subdomain: apps.verne.informaticsmatters.com
+  public_hostname: okd.xchem.diamond.ac.uk
+  default_subdomain: apps.xchem.diamond.ac.uk
   api_port: 443
 
   master:
@@ -36,15 +36,15 @@ cluster:
   node_groups:
   - name: graph
     labels:
-    - graph-node=true
+    - purpose=graph
     is_compute_node: yes
   - name: app
     labels:
-    - app-node=true
+    - purpose=app
     is_compute_node: yes
   - name: gpu
     labels:
-    - gpu-node=true
+    - purpose=gpu
     is_compute_node: no
 
   nodes:
@@ -60,7 +60,7 @@ cluster:
 
 okd:
 
-  ansible_tag: openshift-ansible-3.11.100-1
+  ansible_tag: openshift-ansible-3.11.102-1
   ansible_version: 2.7.9
   play:
   - prerequisites

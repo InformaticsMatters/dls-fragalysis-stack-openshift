@@ -1,0 +1,27 @@
+---
+
+# Configure the Jenkins Project.
+# Here a jenkins application is expected to be deployed (manually)
+# to the CI/CD project.
+
+- name: Login (admin at {{ cluster_url }})
+  shell: oc login {{ cluster_url }} -u admin -p {{ admin_password }}
+  changed_when: False
+
+- name: Move to CI/CD Project
+  shell: oc project {{ cicd_namespace }}
+  changed_when: False
+
+# Configure Jenkins
+# i.e. set secrets ctc.
+
+- name: Configure Jenkins Jobs/Secrets
+  shell: >
+    ./configure-cicd.py set --force
+    {{ disabled }}
+    --location {{ cicd_location }}
+    --cluster-url {{ cluster_url }}
+  args:
+    chdir: "{{ role_path }}/../../../jenkins"
+  vars:
+    disabled: "{{ '--disable-jobs' if deploy_jobs_disabled else '' }}"

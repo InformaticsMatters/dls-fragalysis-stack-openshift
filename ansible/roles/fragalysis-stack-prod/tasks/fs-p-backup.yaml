@@ -1,0 +1,100 @@
+---
+
+# Create the Backup PV
+
+- name: Move to Fragalysis Project (Backup)
+  shell: oc project {{ namespace }}
+  changed_when: False
+
+- name: Check Backup PV
+  shell: oc get pv
+  register: bu_pv
+  changed_when: False
+
+- name: Create Backup PV
+  shell: >
+    oc process -f {{ role_path }}/{{ t_dir }}/fs-db-backup-pv-nfs.yaml
+    -p BACKUP_NAMESPACE={{ namespace }}
+    -p BACKUP_PV_DIR={{ backup_nfs_dir }}
+    -p BACKUP_VOLUME_NAME={{ backup_vol_name }}
+    | oc create -f -
+  when:
+  - not bu_pv.stdout | regex_search('^%s\s' % backup_vol_name, multiline=True)
+
+# Wait for PV to become "Available"...
+
+- name: Wait for Backup PV to become Available
+  shell: oc get pv/{{ item }} | grep Available
+  delay: 5
+  retries: "{{ (pv_create_timeout_s|int / 5)|int }}"
+  register: result
+  until: result.rc == 0
+  loop:
+  - "{{ backup_vol_name }}"
+  when:
+  - not bu_pv.stdout | regex_search('^%s\s' % backup_vol_name, multiline=True)
+  changed_when: False
+
+# Create the Backup PVCs
+
+- name: Check Backup PVC
+  shell: oc get pvc
+  register: bu_pvc
+  changed_when: False
+
+- name: Create Backup PVC
+  shell: >
+    oc process -f {{ role_path }}/{{ t_dir }}/fs-db-backup-pvc.yaml
+    -p BACKUP_VOLUME_NAME={{ backup_vol_name }}
+    | oc create -f -
+  when: '"fs-db-backup-claim" not in bu_pvc.stdout'
+
+- name: Wait for Backup PVC to become Bound
+  shell: >
+    oc get pvc/{{ item }} | grep Bound
+  retries: 12
+  delay: 5
+  register: result
+  until: result.rc == 0
+  loop:
+  - fs-db-backup-claim
+  when: item not in bu_pvc.stdout
+  changed_when: False
+
+# Create the Backup Deployment (only if 'backup_deploy')
+
+- name: Check Backup Deployment
+  shell: oc get cronjobs
+  register: bu_cj
+  changed_when: False
+  when:
+  - backup_deploy|bool
+
+- name: Create Backup Deployment (H)
+  shell: >
+    oc process -f {{ role_path }}/{{ t_dir }}/fs-db-backup-h.yaml
+    | oc create -f -
+  when:
+  - backup_deploy|bool
+  - not enable_rsync_in_backup
+  - '"db-backup-hourly" not in bu_cj.stdout'
+
+- name: Create Backup Deployment (H+RSYNC)
+  shell: >
+    oc process -f {{ role_path }}/{{ t_dir }}/fs-db-backup-h-plus-rsync.yaml
+    | oc create -f -
+  when:
+  - backup_deploy|bool
+  - enable_rsync_in_backup
+  - '"db-backup-hourly" not in bu_cj.stdout'
+
+- name: Create Backup Deployment (DWM)
+  shell: >
+    oc process -f {{ role_path }}/{{ t_dir }}/fs-db-backup-dwm.yaml
+    | oc create -f -
+  when:
+  - backup_deploy|bool
+  - '"db-backup-daily" not in bu_cj.stdout'
+
+# We don't wait for this job,
+# its deployment is controlled by Cron.

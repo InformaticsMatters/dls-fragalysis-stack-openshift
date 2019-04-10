@@ -1,0 +1,18 @@
+---
+
+# Our project/namespace...
+# This is created at the same time Jenkins is deployed.
+# The user must create Jenkins in this project/namespace.
+cicd_namespace_display_name: The Fragalysis CI/CD Project
+cicd_namespace_description: >
+  The Fragalysis CI/CD Project.
+  A place for the Jenkins framework and its Jobs.
+
+cicd_location: jenkins-fragalysis-cicd.{{ app_domain }}
+
+configure_jenkins: yes
+deploy_jobs_disabled: yes
+
+input_vol_name: fs-input
+
+recycle_released_pvs: yes

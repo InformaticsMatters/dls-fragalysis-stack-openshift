@@ -1,0 +1,65 @@
+---
+
+- name: Move to Fragalysis Project (DEV)
+  shell: oc project {{ namespace }}
+  changed_when: False
+
+# Create the MySQL PVCs
+
+- name: Check MySQL PVC
+  shell: oc get pvc
+  register: mysql_pvc
+  changed_when: False
+
+- name: Create MySQL PVC
+  shell: >
+    oc process -f {{ role_path }}/{{ t_dir }}/fs-mysql-pvc.yaml
+    | oc create -f -
+  when: '"fs-mysql-data-claim" not in mysql_pvc.stdout'
+
+- name: Wait for MySQL PVCs to become Bound
+  shell: >
+    oc get pvc/{{ item }} | grep Bound
+  retries: 12
+  delay: 5
+  register: result
+  until: result.rc == 0
+  loop:
+  - fs-mysql-data-claim
+  when: '"fs-mysql-data-claim" not in mysql_pvc.stdout'
+  changed_when: False
+
+# Create the MySQL Deployment
+
+- name: Check MySQL Deployment
+  shell: oc get deploymentconfigs
+  register: mysql_dc
+  changed_when: False
+
+- name: Create MySql Deployment
+  shell: >
+    oc process -f {{ role_path }}/{{ t_dir }}/fs-mysql.yaml
+    | oc create -f -
+  when: '"mysql" not in mysql_dc.stdout'
+
+- name: Check MySQL Service
+  shell: oc get svc
+  register: mysql_svc
+  changed_when: False
+
+- name: Create MySql Service
+  shell: >
+    oc process -f {{ role_path }}/{{ t_dir }}/fs-mysql-svc.yaml
+    | oc create -f -
+  when: '"mysql" not in mysql_svc.stdout'
+
+# Wait...
+
+- name: Wait for MySQL
+  shell: oc get po | grep mysql | grep -v deploy | grep 1/1 > /dev/null
+  retries: 15
+  delay: 20
+  register: result
+  until: result.rc == 0
+  when: wait_for_mysql
+  changed_when: False

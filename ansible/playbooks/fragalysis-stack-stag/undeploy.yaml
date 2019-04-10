@@ -1,0 +1,10 @@
+---
+
+- hosts: localhost
+  gather_facts: No
+
+  tasks:
+  - name: Run the Fragalysis Staging Undeploy Tasks
+    include_role:
+      name: fragalysis-stack-stag
+      tasks_from: fs-s-undeploy.yaml

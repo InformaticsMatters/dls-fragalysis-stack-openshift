@@ -23,8 +23,6 @@ parameters:
   value: 'informaticsmatters/sql-recovery'
 - name: RECOVERY_TAG
   value: 'latest'
-- name: RECOVERY_NODE_SIZE_SELECTOR
-  value: 'small'
 - name: RECOVERY_FROM
   value: 'none'
 - name: RECOVERY_PGHOST
@@ -51,7 +49,7 @@ objects:
               name: recovery-test
           spec:
             nodeSelector:
-              size: ${RECOVERY_NODE_SIZE_SELECTOR}
+              purpose: 'app'
             serviceAccountName: diamond
 
             # Application containers

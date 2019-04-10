@@ -1,0 +1,73 @@
+---
+
+# Recovery PV and PVC definitions.
+# Used when deploying the recovery mechanism.
+#
+# There's a recovery PV and PVC for each project
+# (defined in the 'dev_recovery_volumes' dictionary variable)
+# that we want to recover this project's database backup into.
+
+- name: Check Recovery PVs (DEV)
+  shell: oc get pv
+  register: r_pv
+  changed_when: False
+
+# Create the PVs
+
+- name: Create Recovery PVs (DEV)
+  shell: >
+    oc process -f {{ role_path }}/{{ t_dir }}/fs-db-recovery-pv-nfs.yaml
+    -p RECOVERY_PV_DIR={{ item.value.dir }}
+    -p RECOVERY_VOLUME_NAME={{ item.value.volume_name }}
+    -p RECOVERY_VOLUME_CLAIM_NAME={{ item.value.volume_claim }}
+    -p RECOVERY_NAMESPACE={{ item.value.namespace }}
+    | oc create -f -
+  loop: "{{ lookup('dict', dev_recovery_volumes) }}"
+  when:
+  - item.key in enable
+  - not r_pv.stdout | regex_search('^%s\s' % item.value.volume_name, multiline=True)
+
+# Wait for PV to become "Available"...
+
+- name: Wait for Recovery PV to become Available (DEV)
+  shell: oc get pv/{{ item.value.volume_name }} | grep Available
+  delay: 5
+  retries: "{{ (pv_create_timeout_s|int / 5)|int }}"
+  register: result
+  until: result.rc == 0
+  loop: "{{ lookup('dict', dev_recovery_volumes) }}"
+  when:
+  - item.key in enable
+  - not r_pv.stdout | regex_search('^%s\s' % item.value.volume_name, multiline=True)
+  changed_when: False
+
+# Create the Recovery PVCs.
+# Each in a different namespace.
+
+- name: Check Recovery PVCs (DEV)
+  shell: oc get pvc --all-namespaces
+  register: r_pvc
+  changed_when: False
+
+- name: Create Recovery PVCs (DEV)
+  shell: >
+    oc process -f {{ role_path }}/{{ t_dir }}/fs-db-recovery-pvc.yaml
+    -p RECOVERY_VOLUME_NAME={{ item.value.volume_name }}
+    -p RECOVERY_VOLUME_CLAIM_NAME={{ item.value.volume_claim }}
+    | oc create -n {{ item.value.namespace }} -f -
+  loop: "{{ lookup('dict', dev_recovery_volumes) }}"
+  when:
+  - item.key in enable
+  - not r_pvc.stdout | regex_search('^%s\s+%s\s' % (item.value.namespace, item.value.volume_claim), multiline=True)
+
+- name: Wait for Recovery PVCs to become Bound (DEV)
+  shell: oc get pvc/{{ item.value.volume_claim }} -n {{ item.value.namespace }} | grep Bound
+  retries: 12
+  delay: 5
+  register: result
+  until: result.rc == 0
+  loop: "{{ lookup('dict', dev_recovery_volumes) }}"
+  when:
+  - item.key in enable
+  - not r_pvc.stdout | regex_search('^%s\s+%s\s' % (item.value.namespace, item.value.volume_claim), multiline=True)
+  changed_when: False

@@ -1,0 +1,8 @@
+---
+
+- import_tasks: fs-project.yaml
+- import_tasks: fs-cicd.yaml
+- import_tasks: fs-secrets.yaml
+- import_tasks: fs-mysql.yaml
+- import_tasks: fs-web.yaml
+- import_tasks: fs-backup.yaml

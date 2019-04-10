@@ -27,8 +27,6 @@ parameters:
   value: 8g
 - name: NEO4J_REPLICAS
   value: '1'
-- name: NEO4J_NODE_SIZE_SELECTOR
-  value: 'big'
 
   # Do not mount '/data' in v3.4.x.
   # Neo4J expects to own '/data' changing the permissions of this directory.
@@ -58,7 +56,7 @@ objects:
           name: graph-jun2018
       spec:
         nodeSelector:
-          size: ${NEO4J_NODE_SIZE_SELECTOR}
+          purpose: 'graph'
         serviceAccountName: diamond
 
         # Application containers

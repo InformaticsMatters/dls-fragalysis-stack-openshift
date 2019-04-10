@@ -1,0 +1,31 @@
+---
+
+# A developer-specific project deployment (for Ric Gillams).
+# This re-uses the production playbook with key variables set
+# to create a separate project that has its own database
+# (without running backups) and one that uses the graph database
+# from the development project.
+#
+# Variables defined here replace any role defaults.
+
+- hosts: localhost
+  gather_facts: No
+
+  vars:
+    namespace: fragalysis-rg
+    namespace_display_name: "Fragalysis (Ric)"
+    namespace_description: "The Fragalysis Project (Ric Gillams' Deployment)"
+
+    backup_deploy: no
+    backup_nfs_dir: pv-fs-rg-mysql-data-backup
+    backup_vol_name: fs-rg-db-backup
+
+    input_vol_name: fs-rg-input
+    mysql_name: mysql-rg
+    wait_for_mysql: yes
+    web_hostname: fragalysis-rg.apps.xchem.informaticsmatters.com
+    web_name: web-rg
+    web_image_tag: latest
+
+  roles:
+  - fragalysis-stack-prod

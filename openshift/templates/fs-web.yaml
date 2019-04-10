@@ -21,24 +21,22 @@ parameters:
   value: busybox:1.28.0
 
 - name: WEB_NAMESPACE
-  value: fragalysis-cicd
+  value: fragalysis-dev
 
-- name: WEB_HOSTNAME
-  value: fragalysis.apps.xchem.diamond.ac.uk
 - name: WEB_NAME
   value: web
 - name: WEB_TAG
   value: 'latest'
 - name: WEB_REPLICAS
   value: '1'
-- name: WEB_NODE_SIZE_SELECTOR
-  value: 'small'
 - name: WEB_GRAPH_SERVICE
-  value: neo4j
+  value: neo4j.fragalysis-graph-1
 - name: WEB_MYSQL_SERVICE
   value: mysql
 - name: WEB_VOLUME_CLAIM_NAME
   value: fs-web-media-claim
+- name: WEB_BUILD_XCDB
+  value: 'yes'
 
 objects:
 
@@ -59,7 +57,7 @@ objects:
           name: ${WEB_NAME}
       spec:
         nodeSelector:
-          size: ${WEB_NODE_SIZE_SELECTOR}
+          purpose: 'app'
         serviceAccountName: diamond
 
         # Init Containers
@@ -187,6 +185,33 @@ objects:
               secretKeyRef:
                 name: fs-graph-secrets
                 key: graph-service-name
+          - name: XCHEM_NAME
+            valueFrom:
+              secretKeyRef:
+                name: fs-xchem-secrets
+                key: xchem-name
+          - name: XCHEM_USER
+            valueFrom:
+              secretKeyRef:
+                name: fs-xchem-secrets
+                key: xchem-user
+          - name: XCHEM_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: fs-xchem-secrets
+                key: xchem-password
+          - name: XCHEM_HOST
+            valueFrom:
+              secretKeyRef:
+                name: fs-xchem-secrets
+                key: xchem-host
+          - name: XCHEM_PORT
+            valueFrom:
+              secretKeyRef:
+                name: fs-xchem-secrets
+                key: xchem-port
+          - name: BUILD_XCDB
+            value: ${WEB_BUILD_XCDB}
           ports:
           - containerPort: 80
           volumeMounts:

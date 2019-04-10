@@ -23,8 +23,6 @@ parameters:
   value: 'informaticsmatters/sql-backup'
 - name: BACKUP_TAG
   value: 'stable'
-- name: BACKUP_NODE_SIZE_SELECTOR
-  value: 'small'
 - name: BACKUP_H_SCHEDULE
   value: '5 * * * *'
 - name: BACKUP_H_COUNT
@@ -51,7 +49,7 @@ objects:
               name: backup-hourly
           spec:
             nodeSelector:
-              size: ${BACKUP_NODE_SIZE_SELECTOR}
+              purpose: 'app'
             serviceAccountName: diamond
 
             # Application containers

@@ -1,0 +1,107 @@
+---
+
+# The Fragalysis Stack's Neo4J Graph database deployment.
+#
+# oc process -f fs-graph.yaml | oc create -f -
+# oc delete all --selector template=fs-graph
+
+kind: Template
+apiVersion: v1
+metadata:
+  name: fs-graph
+  annotations:
+    description: Fragalysis Stack's Neo4J Definition
+    tags: fragalysis,graph,graph-1,neo4j
+labels:
+  template: fs-graph
+
+parameters:
+
+- name: NEO4J_AUTH
+  value: none
+- name: NEO4J_PAGECACHE_G
+  value: '8'
+- name: NEO4J_HEAP
+  value: 8g
+- name: NEO4J_CPU_LIMIT_M
+  value: '4000'
+- name: NEO4J_MEM_LIMIT_G
+  value: '20'
+
+objects:
+
+- kind: DeploymentConfig
+  apiVersion: v1
+  metadata:
+    name: graph
+  spec:
+    replicas: 1
+    selector:
+      name: graph
+    template:
+      metadata:
+        labels:
+          name: graph
+      spec:
+        nodeSelector:
+          purpose: 'graph'
+        serviceAccountName: diamond
+
+        # Application containers
+        containers:
+        - name: graph
+          # Expect the earliest that the container can be ready is 60 seconds.
+          # But check every 15 seconds and permit 56 failures before
+          # considering the startup to have failed (that's about 15 minutes).
+          readinessProbe:
+            initialDelaySeconds: 60
+            periodSeconds: 15
+            timeoutSeconds: 3
+            failureThreshold: 56
+            tcpSocket:
+              port: 7474
+          # Consider the container dead if the port is not open
+          # after 4 attempts over a 2 minute period after about 15 minutes.
+          livenessProbe:
+            initialDelaySeconds: 930
+            periodSeconds: 30
+            timeoutSeconds: 3
+            failureThreshold: 4
+            tcpSocket:
+              port: 7474
+          env:
+          - name: NEO4J_AUTH
+            value: ${NEO4J_AUTH}
+          - name: NEO4J_dbms_memory_pagecache_size
+            value: ${NEO4J_PAGECACHE_G}g
+          - name: NEO4J_dbms_memory_heap_initial__size
+            value: ${NEO4J_HEAP}
+          - name: NEO4J_dbms_memory_heap_max__size
+            value: ${NEO4J_HEAP}
+          - name: EXTENSION_SCRIPT
+            value: /data-loader/load_neo4j.sh
+          ports:
+          - containerPort: 7474
+          - containerPort: 7687
+          resources:
+            limits:
+              cpu: ${NEO4J_CPU_LIMIT_M}m
+              memory: ${NEO4J_MEM_LIMIT_G}Gi
+            requests:
+              cpu: ${NEO4J_CPU_LIMIT_M}m
+              memory: ${NEO4J_MEM_LIMIT_G}Gi
+        restartPolicy: Always
+
+    strategy:
+      type: Recreate
+
+    triggers:
+     - type: ConfigChange
+     - type: ImageChange
+       imageChangeParams:
+         automatic: true
+         containerNames:
+         - graph
+         from:
+           kind: ImageStreamTag
+           name: graph-stream:latest

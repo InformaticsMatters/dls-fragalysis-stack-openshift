@@ -1,0 +1,50 @@
+---
+
+# Removes the CI/CD deployment.
+# This essentially consists of removing the project (and waiting for it).
+
+- name: Delete Fragalysis CI/CD Environment?
+  pause:
+    prompt: >-
+      Delete the CI/CD environment from {{ cluster_url }}?
+      Hit return to delete it.
+      Hit Ctrl+c and then "a" if you've changed your mind.
+
+# Go...
+
+- name: Login (admin at {{ cluster_url }})
+  shell: oc login {{ cluster_url }} -u admin -p {{ admin_password }}
+  changed_when: False
+
+# Remove CI/CD namespace
+
+- name: Check projects
+  shell: oc get projects
+  register: p_result
+  changed_when: False
+
+- name: Delete CI/CD project
+  shell: oc delete project/{{ cicd_namespace }}
+  when: cicd_namespace in p_result.stdout
+
+- name: Wait for CI/CD project deletion
+  shell: oc get projects
+  register: wait_cmd
+  retries: 12
+  delay: 10
+  until: cicd_namespace not in wait_cmd.stdout
+  changed_when: False
+
+# Remove Persistent Volumes
+
+- name: Check Persistent Volumes
+  shell: oc get pv
+  register: pv_result
+  changed_when: False
+
+- name: Delete Persistent Volumes (CD/CD)
+  shell: oc delete pv/{{ item }}
+  loop:
+    - "{{ input_vol_name }}"
+  when:
+    - item in pv_result.stdout

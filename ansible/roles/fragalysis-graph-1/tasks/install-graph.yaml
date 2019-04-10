@@ -1,0 +1,49 @@
+---
+
+# Create the Graph Deployment
+
+- name: Move to Graph 1 Project
+  shell: oc project {{ graph_1_namespace }}
+  changed_when: False
+
+- name: Check Graph ImageStream
+  shell: oc get imagestreams
+  register: graph_is
+  changed_when: False
+
+- name: Create Graph ImageStream
+  shell: >
+    oc process -f {{ role_path }}/files/fs-graph-is.yaml
+    | oc create -f -
+  when: '"graph-stream" not in graph_is.stdout'
+
+- name: Check Graph Deployment
+  shell: oc get deploymentconfigs
+  register: graph_dc
+  changed_when: False
+
+- name: Create Graph Deployment
+  shell: >
+    oc process -f {{ role_path }}/files/fs-graph.yaml
+    -p NEO4J_PAGECACHE_G={{ graph_1_pagecache_g }}
+    -p NEO4J_MEM_LIMIT_G={{ graph_1_memory_limit_g }}
+    -p NEO4J_CPU_LIMIT_M={{ graph_1_cpu_limit_cores|int * 1000 }}
+    | oc create -f -
+  when: '"graph" not in graph_dc.stdout'
+
+- name: Check Graph Service
+  shell: oc get svc
+  register: graph_svc
+  changed_when: False
+
+# The space ("neo4j ") here is important.
+# There's also the possibility that there's a neo4j-jun2018 service...
+
+- name: Create Graph Service
+  shell: >
+    oc process -f {{ role_path }}/files/fs-graph-svc.yaml
+    | oc create -f -
+  when: '"neo4j " not in graph_svc.stdout'
+
+# We don't wait for this pod,
+# its deployment is controlled by Jenkins.
