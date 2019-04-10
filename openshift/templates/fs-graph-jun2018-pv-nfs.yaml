@@ -23,7 +23,7 @@ labels:
 parameters:
 
 - name: NFS_SERVER
-  value: bastion.novalocal
+  value: xchem-graph-001.novalocal
 - name: NFS_PATH
   value: /data
 
