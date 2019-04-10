@@ -13,6 +13,7 @@ pipeline {
     REGISTRY = 'docker-registry.default.svc:5000'
     PROJECT_IMAGE = "${PROJECT}/loader-stream:latest"
     STREAM_IMAGE = "${REGISTRY}/${PROJECT_IMAGE}"
+    TARGET_PROJECT = 'fragalysis-dev'
 
     // get_unbuilt_data_directory environment...
 
@@ -152,8 +153,8 @@ pipeline {
         // To successfully launch the Job we first delete prior instances.
         // All of this takes place in the 'deploy.sh'
         script {
-          LOADER_EXISTS = sh(script: 'oc get jobs | grep fs-loader | wc -l', returnStdout: true).trim()
-          LOADER_RUNNING = sh(script: 'oc get jobs | grep fs-loader | grep Running | wc -l', returnStdout: true).trim()
+          LOADER_EXISTS = sh(script: "oc get jobs -n ${TARGET_PROJECT} | grep fs-loader | wc -l", returnStdout: true).trim()
+          LOADER_RUNNING = sh(script: "oc get jobs -n ${TARGET_PROJECT} | grep fs-loader | grep Running | wc -l", returnStdout: true).trim()
         }
         echo "RUNNING=${LOADER_RUNNING}"
       }
@@ -168,7 +169,7 @@ pipeline {
           script {
             if (LOADER_EXISTS == '1') {
               echo "Deleting prior loader Job..."
-              sh "oc delete job/fs-loader"
+              sh "oc delete job/fs-loader -n ${TARGET_PROJECT}"
               sleep 4
             } else {
               echo "No prior loader Job, nothing to delete"
