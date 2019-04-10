@@ -48,7 +48,7 @@ objects:
         name: fs-loader
       spec:
         nodeSelector:
-          purpose: 'app'
+          purpose: 'graph'
         serviceAccountName: diamond
 
         # Init Containers
