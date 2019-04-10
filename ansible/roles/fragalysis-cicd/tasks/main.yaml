@@ -1,5 +1,6 @@
 ---
 
 - import_tasks: setup-project.yaml
+- import_tasks: setup-storage.yaml
 - import_tasks: configure-jenkins.yaml
   when: configure_jenkins|bool

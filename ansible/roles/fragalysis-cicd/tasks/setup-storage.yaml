@@ -1,0 +1,87 @@
+---
+
+# Configure the Jenkins Project's storage.
+# Here a jenkins application is expected to be deployed (manually)
+# to the CI/CD project.
+
+- name: Login (admin at {{ cluster_url }})
+  shell: oc login {{ cluster_url }} -u admin -p {{ admin_password }}
+  changed_when: False
+
+- name: Move to CI/CD Project
+  shell: oc project {{ cicd_namespace }}
+  changed_when: False
+
+# Create the Data Input PV/PVC
+# This is where the Web and Graph data is expected to be found.
+
+- name: Check PVs
+  shell: oc get pv
+  register: pv_result
+  changed_when: False
+
+- name: Create Input PV
+  shell: >
+    oc process -f {{ role_path }}/files/fs-input-pv-nfs.yaml
+    -p INPUT_NAMESPACE={{ cicd_namespace }}
+    -p INPUT_VOLUME_NAME={{ input_vol_name }}
+    | oc create -f -
+  when:
+  - not pv_result.stdout | regex_search('^fs-input\s', multiline=True)
+
+# Deal with "Released" volumes.
+# Those PVs that are "Released"
+# must be "Available" to accept new binds...
+
+- name: Check Released volumes
+  shell: oc get pv | grep Released | grep {{ cicd_namespace }}/ | cut -f 1 -d " "
+  register: released_vols
+  when: recycle_released_pvs
+  changed_when: False
+
+- name: Recover Released volumes
+  shell: >
+    oc patch pv/{{ item }} --type json
+    -p $'- op: remove\n  path: /spec/claimRef'
+  with_items:
+  - "{{ released_vols.stdout_lines }}"
+  when:
+  - recycle_released_pvs
+
+- name: Wait for PVs to become Available
+  shell: oc get pv/{{ item }} | grep Available
+  delay: 5
+  retries: "{{ (pv_create_timeout_s|int / 5)|int }}"
+  register: result
+  until: result.rc == 0
+  loop:
+  - fs-input
+  when:
+  - not pv_result.stdout | regex_search('^fs-input\s', multiline=True)
+  changed_when: False
+
+# Create the Input PVCs
+
+- name: Check Input PVC
+  shell: oc get pvc
+  register: input_pvc
+  changed_when: False
+
+- name: Create Input PVC
+  shell: >
+    oc process -f {{ role_path }}/files/fs-input-pvc.yaml
+    -p INPUT_VOLUME_NAME={{ input_vol_name }}
+    | oc create -f -
+  when: not input_pvc.stdout | regex_search('^fs-input-claim\s', multiline=True)
+
+- name: Wait for Input PVC to become Bound
+  shell: >
+    oc get pvc/{{ item }} | grep Bound
+  retries: 12
+  delay: 5
+  register: result
+  until: result.rc == 0
+  loop:
+  - fs-input-claim
+  when: not input_pvc.stdout | regex_search('^fs-input-claim\s', multiline=True)
+  changed_when: False
