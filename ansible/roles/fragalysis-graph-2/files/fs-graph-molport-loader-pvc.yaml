@@ -1,28 +1,24 @@
 ---
 
-# The Graph Database Persistent Volume Claims.
+# The Graph Database Persistent Volume Claims (loader).
 #
-# oc process -f fs-graph-molport-pvc.yaml | oc create -f -
-# oc delete pvc --selector template=fs-graph-molport-pvc
+# oc process -f fs-graph-molport-loader-pvc.yaml | oc create -f -
+# oc delete pvc --selector template=fs-graph-molport-loader-pvc
 
 kind: Template
 apiVersion: v1
 metadata:
-  name: fs-graph-molport-pvc
+  name: fs-graph-molport-loader-pvc
   annotations:
     description: Fragalysis Stack's Persistent Volume Claims
     tags: fragalysis,graph,neo4j,molport
 labels:
-  template: fs-graph-molport-pvc
+  template: fs-graph-molport-loader-pvc
 
 parameters:
 
-- name: GRAPH_DATA_SIZE
-  value: 500Gi
 - name: GRAPH_DATA_LOADER_SIZE
   value: 50Gi
-- name: GRAPH_LOGS_SIZE
-  value: 2Gi
 
 objects:
 
@@ -50,32 +46,3 @@ objects:
     selector:
       matchLabels:
         target-graph: graph-2
-
-# The following are volumes are for the
-# loaded graph database
-# (constructed at boot-time from the loader volume contents)
-# and the graph database logs.
-
-- apiVersion: v1
-  kind: PersistentVolumeClaim
-  metadata:
-    name: fs-graph-molport-data-claim
-  spec:
-    accessModes:
-    - ReadWriteMany
-    resources:
-      requests:
-        storage: ${GRAPH_DATA_SIZE}
-    storageClassName: glusterfs-storage
-
-- apiVersion: v1
-  kind: PersistentVolumeClaim
-  metadata:
-    name: fs-graph-molport-logs-claim
-  spec:
-    accessModes:
-    - ReadWriteMany
-    resources:
-      requests:
-        storage: ${GRAPH_LOGS_SIZE}
-    storageClassName: glusterfs-storage

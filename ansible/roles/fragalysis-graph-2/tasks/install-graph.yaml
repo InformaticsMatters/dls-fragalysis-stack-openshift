@@ -16,7 +16,7 @@
 
 - name: Check Graph-2 PV
   shell: oc get pv
-  register: molport_pv
+  register: pv_result
   changed_when: False
 
 - name: Create Graph-2 PV
@@ -25,7 +25,7 @@
     -p GRAPH_NAMESPACE={{ graph_2_namespace }}
     | oc create -f -
   when:
-  - '"fs-graph-molport-data" not in molport_pv.stdout'
+  - '"fs-graph-molport-data-loader" not in pv_result.stdout'
 
 # Wait for Graph PV to become "Available"...
 # We only do this if we created the PV in this session.
@@ -39,22 +39,31 @@
   loop:
   - fs-graph-molport-data-loader
   when:
-  - '"fs-graph-molport-data" not in molport_pv.stdout'
+  - '"fs-graph-molport-data-loader" not in pv_result.stdout'
   changed_when: False
 
-# Create the Graph PVCs
+# Create the Graph PVCs (loader)
 
-- name: Check Graph-2 PVCs
+- name: Check Graph-2 PVCs (loader)
   shell: oc get pvc
-  register: molport_pvc
+  register: pvc_result
   changed_when: False
 
-- name: Create Graph-2 PVCs
+- name: Create Graph-2 PVCs (loader)
   shell: >
-    oc process -f {{ role_path }}/files/fs-graph-molport-pvc.yaml
+    oc process -f {{ role_path }}/files/fs-graph-molport-loader-pvc.yaml
     | oc create -f -
   when:
-  - '"fs-graph-molport-data-claim" not in molport_pvc.stdout'
+  - '"fs-graph-molport-data-loader-claim" not in pvc_result.stdout'
+
+# Create the Graph PVCs (graph)
+
+- name: Create Graph-2 PVCs (graph)
+  shell: >
+    oc process -f {{ role_path }}/files/fs-graph-molport-graph-pvc.yaml
+    | oc create -f -
+  when:
+    - '"fs-graph-molport-data-claim" not in pvc_result.stdout'
 
 # Wait for PVCs to become "Bound"...
 
@@ -68,8 +77,6 @@
   - fs-graph-molport-data-loader-claim
   - fs-graph-molport-data-claim
   - fs-graph-molport-logs-claim
-  when:
-  - '"fs-graph-molport-data-claim" not in molport_pvc.stdout'
   changed_when: False
 
 # Create the Graph Deployment
