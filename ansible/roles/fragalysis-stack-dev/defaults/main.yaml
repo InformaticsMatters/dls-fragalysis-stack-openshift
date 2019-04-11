@@ -16,7 +16,8 @@ backup_nfs_dir: pv-fs-mysql-data-backup
 backup_vol_name: fs-db-backup
 backup_h_schedule: "5 * * * *"
 backup_deploy: no
-backup_enable_rsync: no
+backup_enable_rsync: yes
+backup_rsync_path: /dls/verne/fs-development
 
 input_vol_name: fs-d-input
 
