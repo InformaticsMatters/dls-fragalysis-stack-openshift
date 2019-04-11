@@ -1,8 +1,13 @@
 ---
 
+# The backup definition.
+# We always create volumes and volume claims
+# but only deploy the backup (cron-job)
+# if 'backup-deploy' is set.
+
 # Create the Backup PV
 
-- name: Move to Fragalysis Project (Backup)
+- name: Move to Fragalysis Project (Staging) (Backup)
   shell: oc project {{ namespace }}
   changed_when: False
 

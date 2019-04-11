@@ -17,8 +17,10 @@
     namespace_description: "The Fragalysis Project (Ric Gillams' Deployment)"
 
     backup_deploy: no
+    backup_enable_rsync: no
     backup_nfs_dir: pv-fs-rg-mysql-data-backup
     backup_vol_name: fs-rg-db-backup
+    backup_h_schedule: "25 * * * *"
 
     input_vol_name: fs-rg-input
     mysql_name: mysql-rg

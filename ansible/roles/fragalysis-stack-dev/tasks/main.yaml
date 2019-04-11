@@ -5,4 +5,6 @@
 - import_tasks: fs-secrets.yaml
 - import_tasks: fs-mysql.yaml
 - import_tasks: fs-web.yaml
+
 - import_tasks: fs-backup.yaml
+  when: backup_deploy|bool

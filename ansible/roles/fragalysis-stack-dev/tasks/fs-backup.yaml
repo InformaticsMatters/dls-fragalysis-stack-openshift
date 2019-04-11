@@ -76,19 +76,19 @@
 - name: Create Backup Deployment (H)
   shell: >
     oc process -f {{ role_path }}/{{ t_dir }}/fs-db-backup-h.yaml
+    -p BACKUP_H_SCHEDULE="{{ backup_h_schedule }}"
     | oc create -f -
   when:
-  - backup_deploy|bool
-  - not enable_rsync_in_backup
+  - not backup_enable_rsync|bool
   - '"db-backup-hourly" not in bu_cj.stdout'
 
 - name: Create Backup Deployment (H+RSYNC)
   shell: >
     oc process -f {{ role_path }}/{{ t_dir }}/fs-db-backup-h-plus-rsync.yaml
+    -p BACKUP_H_SCHEDULE="{{ backup_h_schedule }}"
     | oc create -f -
   when:
-  - backup_deploy|bool
-  - enable_rsync_in_backup
+  - backup_enable_rsync|bool
   - '"db-backup-hourly" not in bu_cj.stdout'
 
 - name: Create Backup Deployment (DWM)
@@ -96,7 +96,6 @@
     oc process -f {{ role_path }}/{{ t_dir }}/fs-db-backup-dwm.yaml
     | oc create -f -
   when:
-  - backup_deploy|bool
   - '"db-backup-daily" not in bu_cj.stdout'
 
 # We don't wait for this job,

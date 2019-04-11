@@ -107,12 +107,11 @@ probe_mailgun_password: !vault |
   63643034633331306130353365303365313963393865623639326238613637383264313164363532
   303638343537353366313235326562626434
 
-# Backup configuration
+# Secretes for the backup rsync configuration
 #
-# Enable rsync in backup?
-# If so we need encrypted rsync credentials here.
-# which will be used to create backup secrets.
-enable_rsync_in_backup: yes
+# These are the rsync credentials,
+# used if the role's backup sets
+# 'backup_enable_rsync' to 'yes'.
 
 backup_rsync_pass: !vault |
   $ANSIBLE_VAULT;1.1;AES256

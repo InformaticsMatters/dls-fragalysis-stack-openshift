@@ -6,6 +6,13 @@ namespace_display_name: "Fragalysis (Staging)"
 namespace_description: "The Fragalysis Project (Staging Deployment)"
 
 # Project-specific variables
+
+backup_nfs_dir: pv-fs-s-mysql-data-backup
+backup_vol_name: fs-s-db-backup
+backup_h_schedule: "35 * * * *"
+backup_deploy: no
+backup_enable_rsync: no
+
 mysql_name: mysql-stag
 mysql_nfs_dir: pv-fs-s-mysql-data
 mysql_vol_name: fs-s-mysql-data

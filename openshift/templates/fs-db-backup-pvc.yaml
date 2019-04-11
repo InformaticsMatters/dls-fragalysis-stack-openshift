@@ -30,6 +30,8 @@ objects:
   kind: PersistentVolumeClaim
   metadata:
     name: ${BACKUP_VOLUME_CLAIM_NAME}
+    annotations:
+      volume.beta.kubernetes.io/storage-class: ' '
   spec:
     accessModes:
     - ReadWriteMany
