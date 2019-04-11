@@ -24,7 +24,7 @@
     | oc create -f -
   loop: "{{ lookup('dict', dev_recovery_volumes) }}"
   when:
-  - item.key in enable
+  - item.key in enable_to
   - not r_pv.stdout | regex_search('^%s\s' % item.value.volume_name, multiline=True)
 
 # Wait for PV to become "Available"...
@@ -37,7 +37,7 @@
   until: result.rc == 0
   loop: "{{ lookup('dict', dev_recovery_volumes) }}"
   when:
-  - item.key in enable
+  - item.key in enable_to
   - not r_pv.stdout | regex_search('^%s\s' % item.value.volume_name, multiline=True)
   changed_when: False
 
@@ -57,7 +57,7 @@
     | oc create -n {{ item.value.namespace }} -f -
   loop: "{{ lookup('dict', dev_recovery_volumes) }}"
   when:
-  - item.key in enable
+  - item.key in enable_to
   - not r_pvc.stdout | regex_search('^%s\s+%s\s' % (item.value.namespace, item.value.volume_claim), multiline=True)
 
 - name: Wait for Recovery PVCs to become Bound (DEV)
@@ -68,6 +68,6 @@
   until: result.rc == 0
   loop: "{{ lookup('dict', dev_recovery_volumes) }}"
   when:
-  - item.key in enable
+  - item.key in enable_to
   - not r_pvc.stdout | regex_search('^%s\s+%s\s' % (item.value.namespace, item.value.volume_claim), multiline=True)
   changed_when: False

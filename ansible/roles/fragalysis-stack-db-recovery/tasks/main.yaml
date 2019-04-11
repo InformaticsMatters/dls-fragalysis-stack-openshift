@@ -1,7 +1,18 @@
 ---
 
 # Deploys Recovery volumes and volume claims.
-# These need to be deployed before recovery jobs can run.
+# there's a playbook for the source of each database,
+# i.e. the 'fs-d-recovery.yaml' playbook allows recovery of the
+# Development (d) data to each project. And where
+# d = development
+# s = staging
+# p = production
+#
+# These plays need to be run before recovery jobs can run.
 
 - import_tasks: fs-d-recovery.yaml
+  when: '"dev" in enable_from'
+- import_tasks: fs-s-recovery.yaml
+  when: '"stag" in enable_from'
 - import_tasks: fs-p-recovery.yaml
+  when: '"prod" in enable_from'

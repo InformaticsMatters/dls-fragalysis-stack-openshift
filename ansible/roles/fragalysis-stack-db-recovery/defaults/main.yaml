@@ -4,16 +4,22 @@ dev_namespace: fragalysis-dev
 stag_namespace: fragalysis-stag
 prod_namespace: fragalysis-proc
 
-# Projects to enable for backup and recovery.
-# This is the first-level entry of the
-# corresponding 'dev_recovery_volumes'
-# and 'prod_recovery_volumes' dictionaries.
-enable:
+# Projects to enable recovery from.
+enable_from:
 - dev
 - stag
 - prod
 
-# DEV Recovery PVs and PVCs - used when recovery_deploy is 'yes'.
+# Projects to enable for recovery to.
+# This is the first-level entry of the
+# corresponding 'dev_recovery_volumes'
+# and 'prod_recovery_volumes' dictionaries.
+enable_to:
+- dev
+- stag
+- prod
+
+# DEV Recovery PVs and PVCs - used when 'dev' is in 'enable_from'.
 # Recovery of DEV MySQL backups to DEV, STAG or PROD.
 #
 # There is an entry here for each namespace that we want to recover to.
@@ -41,7 +47,29 @@ dev_recovery_volumes:
     volume_claim: fs-db-recovery-dev-claim
     namespace: fragalysis-prod
 
-# PROD Recovery PVs and PVCs - used when recovery_deploy is 'yes'.
+# PROD Recovery PVs and PVCs - used when 'stag' is in 'enable_from'.
+#
+stag_recovery_volumes:
+  # Recovering from here (prod) to prod
+  dev:
+    dir: pv-fs-s-mysql-data-backup
+    volume_name: fs-s-db-recovery-prod
+    volume_claim: fs-db-recovery-prod-claim
+    namespace: fragalysis-prod
+  # Recovering from here to staging
+  stag:
+    dir: pv-fs-s-mysql-data-backup
+    volume_name: fs-s-db-recovery-stag
+    volume_claim: fs-db-recovery-prod-claim
+    namespace: fragalysis-stag
+  # Recovering from here to development
+  prod:
+    dir: pv-fs-s-mysql-data-backup
+    volume_name: fs-s-db-recovery-dev
+    volume_claim: fs-db-recovery-prod-claim
+    namespace: fragalysis-cicd
+
+# PROD Recovery PVs and PVCs - used when 'prod' is in 'enable_from'.
 #
 prod_recovery_volumes:
   # Recovering from here (prod) to prod
