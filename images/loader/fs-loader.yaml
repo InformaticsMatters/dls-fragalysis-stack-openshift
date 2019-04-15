@@ -31,6 +31,11 @@ parameters:
 - name: LOADER_MEDIA_VOLUME_CLAIM_NAME
   value: fs-web-media-claim
 
+- name: LOADER_CPU_REQUEST
+  value: 500m
+- name: LOADER_MEM_REQUEST
+  value: 8Gi
+
 objects:
 
 # -----------------------------------------------------------------------------
@@ -70,6 +75,10 @@ objects:
         - image: ${LOADER_REGISTRY}/${LOADER_IMAGE}
           name: fs-loader
           imagePullPolicy: Always
+          resources:
+            requests:
+              cpu: ${LOADER_CPU_REQUEST}
+              memory: ${LOADER_MEM_REQUEST}
           command:
           - 'sh'
           - '-c'
