@@ -7,7 +7,7 @@
 clean_start: yes
 clean_finish: no
 
-fragalysis_version: 0.0.31
+fragalysis_version: 0.0.32
 nextflow_version: 19.01.0
 
 # The process 'id' is the S3 'tag'
@@ -63,10 +63,17 @@ process_standard_number: 2
 
 combiner_dir: afp-combiner
 
-# The set of build to combine.
-# This is a dictionary of one or more builds.
-combiner_set:
+# The builds to combine.
+# This is a dictionary of two or more builds.
+combination_set:
+  molport:
+    origin: build
+    id: vendor/molport/2018-11
+    build: 3
+    standard: 2
+    type: molport
   senp7:
+    origin: build
     id: activity/senp7/v1
     build: 2
     standard: 1

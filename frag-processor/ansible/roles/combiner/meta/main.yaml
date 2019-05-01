@@ -2,3 +2,5 @@
 
 dependencies:
 - role: configure
+  vars:
+    nextflow_install: no

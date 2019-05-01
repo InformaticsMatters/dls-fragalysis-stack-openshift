@@ -1,17 +1,20 @@
-# The main input is a list of one or more builds to combine,
-# each of which consists of: -
+# The main input is a list of one or more builds (or existing combinations)
+# to combine, each of which consists of: -
 #
-# - process ID (i.e. activity/senp7/v1)
-# - a build number (i.e. 1)
-# - standard number (i.e. 1)
-# - process type (i.e. 'senp7')
+# - An origin (i.e. 'build')
+# - An identity (i.e. activity/senp7/v1)
+# - Build number (i.e. 1)
+# - Standard number (i.e. 1)
+# - Process type (i.e. 'senp7')
 combination_set:
   molport:
-    id: vendor/molport/2018_11
-    build: 2
+    origin: build
+    id: vendor/molport/2018-11
+    build: 3
     standard: 2
     type: molport
   senp7:
+    origin: build
     id: activity/senp7/v1
     build: 2
     standard: 1

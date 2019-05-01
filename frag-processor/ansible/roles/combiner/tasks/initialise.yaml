@@ -15,11 +15,10 @@
   loop:
   - "{{ combiner_path }}"
   - "{{ tmp_path }}"
-  become: yes
   when: clean_start|bool
 
 # Now ensure that the working directories exist
-# and write some provenance information to the graph directory
+# and write some provenance information to the combination directory
 # (which will eventually be uploaded to S3)
 
 - name: Create directories

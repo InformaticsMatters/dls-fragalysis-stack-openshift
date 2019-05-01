@@ -16,10 +16,8 @@
      ./process_{{ item.value.type }}_compounds.py
      {{ standard_file }}
      {{ combiner_path }}/nodes.csv.gz {{ combiner_path }}
-      --for-combination
   args:
     chdir: "{{ scripts }}"
   vars:
     vendor_file: ./process_{{ item.value.type }}_compounds.py
-
   loop: "{{ lookup('dict', combination_set) }}"

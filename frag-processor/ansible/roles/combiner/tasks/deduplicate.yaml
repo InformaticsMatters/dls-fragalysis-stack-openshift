@@ -10,11 +10,13 @@
   stat:
     path: "{{ combiner_path }}/nodes.csv.gz"
   register: nodes_gz_file
+  changed_when: False
 
-- name: Dedupicate nodes
+- name: Deduplicate nodes
   shell: >-
-    find -name nodes.csv.gz -print
-    | xargs sort --temporary-directory={{ tmp_path }} -u
+    find . -name nodes.csv.gz -print
+    | xargs gzip -d -c
+    | sort --temporary-directory={{ tmp_path }} -u
     | gzip -c > combined-nodes.csv.gz
   environment:
     LC_ALL: C
@@ -22,13 +24,13 @@
     chdir: "{{ combiner_path }}"
   when: not nodes_gz_file.stat.exists
 
-- name: Remove original Nodes
-  shell: find -name nodes.csv.gz -exec rm -f {} \;
-  args:
-    chdir: "{{ combiner_path }}"
-  when: not nodes_gz_file.stat.exists
+#- name: Remove original Nodes
+#  shell: find . -name nodes.csv.gz -exec rm -f {} \;
+#  args:
+#    chdir: "{{ combiner_path }}"
+#  when: not nodes_gz_file.stat.exists
 
-- name: Move combined nodes
+- name: Rename combined nodes
   shell: mv combined-nodes.csv.gz nodes.csv.gz
   args:
     chdir: "{{ combiner_path }}"
@@ -40,11 +42,13 @@
   stat:
     path: "{{ combiner_path }}/edges.csv.gz"
   register: edges_gz_file
+  changed_when: False
 
-- name: Dedupicate Edges
+- name: Deduplicate Edges
   shell: >-
-    find -name edges.csv.gz -print
-    | xargs sort --temporary-directory={{ tmp_path }} -u
+    find . -name edges.csv.gz -print
+    | xargs gzip -d -c
+    | sort --temporary-directory={{ tmp_path }} -u
     | gzip -c > combined-edges.csv.gz
   environment:
     LC_ALL: C
@@ -52,13 +56,13 @@
     chdir: "{{ combiner_path }}"
   when: not edges_gz_file.stat.exists
 
-- name: Remove original Edges
-  shell: find -name edges.csv.gz -exec rm -f {} \;
-  args:
-    chdir: "{{ combiner_path }}"
-  when: not edges_gz_file.stat.exists
+#- name: Remove original Edges
+#  shell: find . -name edges.csv.gz -exec rm -f {} \;
+#  args:
+#    chdir: "{{ combiner_path }}"
+#  when: not edges_gz_file.stat.exists
 
-- name: Move combined Edges
+- name: Rename combined Edges
   shell: mv combined-edges.csv.gz edges.csv.gz
   args:
     chdir: "{{ combiner_path }}"

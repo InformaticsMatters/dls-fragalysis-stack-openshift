@@ -1,5 +1,14 @@
 ---
 
+# Include variables from the role's vars directory
+# based on first file found principle...
+
+- name: Gather OS-Specific Variables
+  include_vars: "{{ item }}"
+  with_first_found:
+  - "{{ ansible_distribution }}.yaml"
+  - default.yaml
+
 # Create some useful directories
 # and install a few key Python requirements (mainly to deal with S3)...
 
@@ -12,10 +21,11 @@
   - "{{ lookup('env','HOME') }}/bin"
 
 - name: Install Packages
-  yum:
+  package:
     name:
     - singularity
   become: yes
+  when: ansible_distribution != 'MacOSX'
 
 - name: Install Python requirements ({{ pip_executable }})
   pip:
@@ -23,7 +33,6 @@
     name:
     - boto3==1.9.106
     - botocore==1.12.106
-  become: yes
 
 - name: Get DLS commit reference
   shell: git log --pretty=format:'%h' -n 1
@@ -57,7 +66,6 @@
   file:
     path: "{{ lookup('env','HOME') }}/bin/nextflow"
     state: absent
-  become: yes
   when: nextflow_install
 
 - name: Get nextflow
@@ -66,7 +74,6 @@
     dest: "{{ lookup('env','HOME') }}/bin/nextflow"
   vars:
     download: https://github.com/nextflow-io/nextflow/releases/download
-  become: yes
   when: nextflow_install
 
 - name: Allowing nextflow execution
@@ -81,8 +88,9 @@
   shell: nextflow -version
   register: nf_v_result
   changed_when: false
+  when: nextflow_install
 
 - name: Display nextflow version
   debug:
     msg: "{{ nf_v_result.stdout_lines }}"
-
+  when: nextflow_install

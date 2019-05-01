@@ -3,15 +3,38 @@
 # Gets all the build files for all the builds
 # named in the combination_set from S3.
 
+# But don't get the files (which may be large)
+# if the combination files (generated in a later step) appear to exist...
+
+- name: Check nodes combination file
+  stat:
+    path: "{{ combiner_path }}/nodes.csv.gz"
+  register: nodes_gz_combined_file
+  changed_when: False
+
+- name: Check edges combination file
+  stat:
+    path: "{{ combiner_path }}/edges.csv.gz"
+  register: edges_gz_combined_file
+  changed_when: False
+
+# The following is conditional on the above...
+# The get does not act if one of the destination files exists (nodes.csv.gz)
+
 - name: Get Build Files
   shell: >
     ./graph_get_build_graph_files.py {{ source }} {{ destination }}
     --for-combination
+    --force
   args:
     chdir: "{{ scripts }}"
+    creates: "{{ destination }}/nodes.csv.gz"
   environment:
     FRAGALYSIS_S3_BUCKET: "{{ s3_bucket }}"
   vars:
     source: "{{ item.value.id }}/build-{{ item.value.build }}"
     destination: "{{ combiner_path }}/{{ item.key }}"
   loop: "{{ lookup('dict', combination_set) }}"
+  when:
+  - not nodes_gz_combined_file.stat.exists
+  - not edges_gz_combined_file.stat.exists
