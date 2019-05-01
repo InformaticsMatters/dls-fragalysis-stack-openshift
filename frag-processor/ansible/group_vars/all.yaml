@@ -69,3 +69,6 @@ process_type: senp7
 process_skip: 0
 process_limit: 0
 process_max_frag: 0
+
+# The name of the generated standard file
+standard_file: standardised-compounds.tab.gz

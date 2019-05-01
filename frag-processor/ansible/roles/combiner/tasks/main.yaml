@@ -18,3 +18,4 @@
 - import_tasks: initialise.yaml
 - import_tasks: get-builds.yaml
 - import_tasks: deduplicate.yaml
+- import_tasks: csv-to-graph.yaml
