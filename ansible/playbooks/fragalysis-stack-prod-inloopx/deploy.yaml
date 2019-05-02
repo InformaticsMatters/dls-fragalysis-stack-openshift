@@ -1,0 +1,27 @@
+---
+
+# A developer-specific project deployment (for InLoopX).
+# This re-uses the production playbook with key variables set
+# to create a separate project that has its own database
+# (without running backups) and one that uses the graph database
+# from the development project.
+#
+# Variables defined here replace any role defaults.
+
+- hosts: localhost
+  gather_facts: No
+
+  vars:
+    namespace: fragalysis-inloopx
+    namespace_display_name: "Fragalysis (InLoopX)"
+    namespace_description: "The Fragalysis Project (InLoopX Deployment)"
+
+    backup_deploy: no
+
+    input_vol_name: fs-inloopx-input
+    wait_for_mysql: yes
+    web_hostname: fragalysis-inloopx.apps.xchem.diamond.ac.uk
+    web_image_tag: latest
+
+  roles:
+  - fragalysis-stack-prod
