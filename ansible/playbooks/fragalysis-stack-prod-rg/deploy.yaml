@@ -25,7 +25,7 @@
     input_vol_name: fs-rg-input
     mysql_name: mysql-rg
     wait_for_mysql: yes
-    web_hostname: fragalysis-rg.apps.xchem.informaticsmatters.com
+    web_hostname: fragalysis-rg.apps.xchem.diamond.ac.uk
     web_name: web-rg
     web_image_tag: latest
 
