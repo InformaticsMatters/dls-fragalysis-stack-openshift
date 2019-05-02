@@ -5,7 +5,7 @@
 
 - name: Delete Fragalysis GRAPH 1 Environment?
   pause:
-    prompt: >-
+    prompt: |-
       Delete the GRAPH-1 environment from {{ cluster_url }}?
       Hit return to delete it.
       Hit Ctrl+c and then "a" if you've changed your mind.

@@ -3,10 +3,10 @@
 # Removes the CI/CD deployment.
 # This essentially consists of removing the project (and waiting for it).
 
-- name: Delete Fragalysis CI/CD Environment?
+- name: Delete Fragalysis CI/CD Project?
   pause:
-    prompt: >-
-      Delete the CI/CD environment from {{ cluster_url }}?
+    prompt: |-
+      Delete the CI/CD project from {{ cluster_url }}?
       Hit return to delete it.
       Hit Ctrl+c and then "a" if you've changed your mind.
 

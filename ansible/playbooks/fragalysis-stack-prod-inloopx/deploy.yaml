@@ -21,6 +21,7 @@
     input_vol_name: fs-inloopx-input
     wait_for_mysql: yes
     web_hostname: fragalysis-inloopx.apps.xchem.diamond.ac.uk
+    web_name: web-inloopx
     web_image_tag: latest
 
   roles:

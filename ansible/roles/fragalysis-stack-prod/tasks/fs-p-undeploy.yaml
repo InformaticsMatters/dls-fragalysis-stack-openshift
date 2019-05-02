@@ -1,13 +1,13 @@
 ---
 
-# Removes the production deployment.
+# Removes the named deployment.
 # This essentially consists of removing the project (and waiting for it)
 # and then removing the persistent volumes we expect to exist.
 
-- name: Delete Fragalysis PRODUCTION Environment?
+- name: Delete the {{ namespace }} Project?
   pause:
-    prompt: >-
-      Delete the Fragalysis STAGING environment from {{ cluster_url }}?
+    prompt: |-
+      Delete the {{ namespace }} project from {{ cluster_url }}?
       Hit return to delete it.
       Hit Ctrl+c and then "a" if you've changed your mind.
 
@@ -19,16 +19,16 @@
 
 # Remove the Production project
 
-- name: Check project
+- name: Check {{ namespace }} project
   shell: oc get projects
   register: p_result
   changed_when: False
 
-- name: Delete project
+- name: Delete {{ namespace }} project
   shell: oc delete project/{{ namespace }}
   when: namespace in p_result.stdout
 
-- name: Wait for project deletion
+- name: Wait for {{ namespace }} project deletion
   shell: oc get projects
   register: wait_cmd
   retries: 12

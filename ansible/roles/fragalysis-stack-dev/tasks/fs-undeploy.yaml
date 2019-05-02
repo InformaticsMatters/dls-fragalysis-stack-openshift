@@ -4,10 +4,10 @@
 # This essentially consists of removing the project (and waiting for it)
 # and then removing the persistent volumes we expect to exist.
 
-- name: Delete Fragalysis DEVELOPMEMNT Environment?
+- name: Delete Fragalysis DEVELOPMEMNT Project?
   pause:
-    prompt: >-
-      Delete the DEVELOPMENT environment from {{ cluster_url }}?
+    prompt: |-
+      Delete the DEVELOPMENT project from {{ cluster_url }}?
       Hit return to delete it.
       Hit Ctrl+c and then "a" if you've changed your mind.
 
