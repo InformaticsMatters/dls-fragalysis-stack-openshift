@@ -12,54 +12,6 @@
   <description>The Web Image is the production container image for the Django application. This is based on the fragalysis-stack container image.</description>
   <keepDependencies>false</keepDependencies>
   <properties>
-    <org.jenkinsci.plugins.workflow.job.properties.PipelineTriggersJobProperty>
-      <triggers>
-        <jenkins.triggers.ReverseBuildTrigger>
-          <spec></spec>
-          <upstreamProjects>Fragalysis Stack (RG)</upstreamProjects>
-          <threshold>
-            <name>SUCCESS</name>
-            <ordinal>0</ordinal>
-            <color>BLUE</color>
-            <completeBuild>true</completeBuild>
-          </threshold>
-        </jenkins.triggers.ReverseBuildTrigger>
-      </triggers>
-    </org.jenkinsci.plugins.workflow.job.properties.PipelineTriggersJobProperty>
-    <hudson.model.ParametersDefinitionProperty>
-      <parameterDefinitions>
-        <hudson.model.StringParameterDefinition>
-          <name>PROJECT</name>
-          <description>The OpenShift project identity (namespace) for the web deployment.</description>
-          <defaultValue>fragalysis-rg</defaultValue>
-          <trim>false</trim>
-        </hudson.model.StringParameterDefinition>
-        <hudson.model.StringParameterDefinition>
-          <name>PROJECT_H</name>
-          <description>A human-friendly version of the project. This is passed to the security probe for simplified references to the project should the probe &quot;fire&quot;.</description>
-          <defaultValue>Dev (RIC)</defaultValue>
-          <trim>false</trim>
-        </hudson.model.StringParameterDefinition>
-        <hudson.model.StringParameterDefinition>
-          <name>STACK_DC</name>
-          <description>The name of the DeploymentConfig that controls the Stack image deployment. This is used to set replicas when deploying and it&apos;s used by the security probe to scale-down the stack if there&apos;s a security error.</description>
-          <defaultValue>web-rg</defaultValue>
-          <trim>false</trim>
-        </hudson.model.StringParameterDefinition>
-        <hudson.model.StringParameterDefinition>
-          <name>PROBE_LOCATION</name>
-          <description>The URL the security probe should use to monitor the deployed application.</description>
-          <defaultValue>https://fragalysis-rg.apps.xchem.diamond.ac.uk</defaultValue>
-          <trim>false</trim>
-        </hudson.model.StringParameterDefinition>
-        <hudson.model.StringParameterDefinition>
-          <name>DOCKERFILE</name>
-          <description>The Dockerfile (in the &quot;images/web&quot; directory) to use as when building the image. Typically &quot;Dockerfile&quot; but it can be &quot;Dockerfile-ricgillams&quot; for example.</description>
-          <defaultValue>Dockerfile-ricgillams</defaultValue>
-          <trim>false</trim>
-        </hudson.model.StringParameterDefinition>
-      </parameterDefinitions>
-    </hudson.model.ParametersDefinitionProperty>
     <io.fabric8.jenkins.openshiftsync.BuildConfigProjectProperty plugin="openshift-sync@1.0.35">
       <uid></uid>
       <namespace></namespace>
@@ -75,6 +27,54 @@
       </strategy>
     </jenkins.model.BuildDiscarderProperty>
     <org.jenkinsci.plugins.workflow.job.properties.DisableConcurrentBuildsJobProperty/>
+    <hudson.model.ParametersDefinitionProperty>
+      <parameterDefinitions>
+        <hudson.model.StringParameterDefinition>
+          <name>PROJECT</name>
+          <description>The OpenShift project identity (namespace) for the web deployment.</description>
+          <defaultValue>fragalysis-inloopx</defaultValue>
+          <trim>false</trim>
+        </hudson.model.StringParameterDefinition>
+        <hudson.model.StringParameterDefinition>
+          <name>PROJECT_H</name>
+          <description>A human-friendly version of the project. This is passed to the security probe for simplified references to the project should the probe &quot;fire&quot;.</description>
+          <defaultValue>Dev (InLoopX)</defaultValue>
+          <trim>false</trim>
+        </hudson.model.StringParameterDefinition>
+        <hudson.model.StringParameterDefinition>
+          <name>STACK_DC</name>
+          <description>The name of the DeploymentConfig that controls the Stack image deployment. This is used to set replicas when deploying and it&apos;s used by the security probe to scale-down the stack if there&apos;s a security error.</description>
+          <defaultValue>web</defaultValue>
+          <trim>false</trim>
+        </hudson.model.StringParameterDefinition>
+        <hudson.model.StringParameterDefinition>
+          <name>PROBE_LOCATION</name>
+          <description>The URL the security probe should use to monitor the deployed application.</description>
+          <defaultValue>https://fragalysis-inloopx.apps.xchem.diamond.ac.uk</defaultValue>
+          <trim>false</trim>
+        </hudson.model.StringParameterDefinition>
+        <hudson.model.StringParameterDefinition>
+          <name>DOCKERFILE</name>
+          <description>The Dockerfile (in the &quot;images/web&quot; directory) to use as when building the image. Typically &quot;Dockerfile&quot; but it can be &quot;Dockerfile-inloopx&quot; for example.</description>
+          <defaultValue>Dockerfile-inloopx</defaultValue>
+          <trim>false</trim>
+        </hudson.model.StringParameterDefinition>
+      </parameterDefinitions>
+    </hudson.model.ParametersDefinitionProperty>
+    <org.jenkinsci.plugins.workflow.job.properties.PipelineTriggersJobProperty>
+      <triggers>
+        <jenkins.triggers.ReverseBuildTrigger>
+          <spec></spec>
+          <upstreamProjects>Fragalysis Stack (RG)</upstreamProjects>
+          <threshold>
+            <name>SUCCESS</name>
+            <ordinal>0</ordinal>
+            <color>BLUE</color>
+            <completeBuild>true</completeBuild>
+          </threshold>
+        </jenkins.triggers.ReverseBuildTrigger>
+      </triggers>
+    </org.jenkinsci.plugins.workflow.job.properties.PipelineTriggersJobProperty>
   </properties>
   <definition class="org.jenkinsci.plugins.workflow.cps.CpsScmFlowDefinition" plugin="workflow-cps@2.65">
     <scm class="hudson.plugins.git.GitSCM" plugin="git@3.9.3">
@@ -97,5 +97,5 @@
     <lightweight>true</lightweight>
   </definition>
   <triggers/>
-  <disabled>false</disabled>
+  <disabled>true</disabled>
 </flow-definition>
