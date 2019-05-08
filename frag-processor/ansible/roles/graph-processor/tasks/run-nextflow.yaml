@@ -44,6 +44,8 @@
       --limit {{ process_limit }}
       --skip {{ process_skip }}
       --maxFrag {{ process_max_frag }}
+      --minHac {{ process_min_hac }}
+      --maxHac {{ process_max_hac }}
       {{ nextflow_extra_args }}
       {{ nextflow_debug_args }}
   when:

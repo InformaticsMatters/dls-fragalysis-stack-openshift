@@ -26,6 +26,9 @@ process_type: molport
 process_skip: 0
 # Input molecules to process (0 implies all)
 process_limit: 0
+# Minimum/Maximum Heavy Atom Counts (0 implies no restriction)
+process_min_hac = 0
+process_max_hac = 0
 
 # Standardisation Variables
 # -------------------------

@@ -6,10 +6,12 @@ params.shredSize = 200
 params.chunkSize = 10
 
 // Limit the processing to a number of molecules from the joined raw set.
-// 0 implies not skip/limit.
+// 0 implies no skip/limit.
 params.maxFrag = 0
 params.skip = 0
 params.limit = 0
+params.minHac = 0
+params.maxHac = 0
 
 origin = file(params.origin)
 
@@ -28,8 +30,7 @@ process headShred {
 
     """
     python /usr/local/fragalysis/frag/network/scripts/header_shred.py \
-        ${params.origin} origin_part ${params.shredSize} \
-        --skip ${params.skip} --limit ${params.limit}
+        ${params.origin} origin_part ${params.shredSize}
     """
 
 }
@@ -87,7 +88,12 @@ process cgd {
         echo ${chunk},$(date +"%d/%m/%Y %H:%M:%S") >> timing
         python /usr/local/fragalysis/frag/network/scripts/build_db_from_standard.py \
             --input ${chunk} --base_dir output_${chunk%.*} \
-            --max-frag !{params.maxFrag} --non_isomeric
+            --limit ${params.limit} \
+            --skip ${params.skip} \
+            --min-hac !{params.minHac} \
+            --max-hac !{params.maxHac} \
+            --max-frag !{params.maxFrag} \
+            --non_isomeric
     done
     echo deduplicating,$(date +"%d/%m/%Y %H:%M:%S") >> timing
     find . -name edges.txt | xargs cat | sort --temporary-directory=. -u | gzip > !{part}.edges.gz
