@@ -32,7 +32,7 @@ process_limit: 0
 # The following variables are only used by the 'Standardise' role
 #
 # Prefix for HTS data is typically 'HTS_'
-# Prefix for MolPort data is typically 'iis_smiles_'
+# Prefix for MolPort data is typically 'iis_smiles-'
 # Prefix for Enamine data is typically a date, i.e. 'Jun2018_'
 #
 # Try shred sizes of 4200 for HTS (SENP7)
