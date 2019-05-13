@@ -41,7 +41,7 @@ rawFiles = Channel.fromPath( './' + params.rawPrefix + '*' ).toList()
 // taken from one of the raw files.
 process rawJoin {
 
-    container 'informaticsmatters/fragalysis:0.0.35'
+    container 'informaticsmatters/fragalysis:0.0.36'
     publishDir 'results/', mode: 'copy'
 
     input:
@@ -66,7 +66,7 @@ process rawJoin {
 // from the input file.
 process rawShred {
 
-    container 'informaticsmatters/fragalysis:0.0.35'
+    container 'informaticsmatters/fragalysis:0.0.36'
     publishDir 'results/', mode: 'copy'
 
     input:
@@ -91,7 +91,7 @@ process rawShred {
 // formed from the content of a raw shred.
 process rawStandardise {
 
-    container 'informaticsmatters/fragalysis:0.0.28'
+    container 'informaticsmatters/fragalysis:0.0.36'
     publishDir 'results/', mode: 'copy'
 
     input:
@@ -117,7 +117,7 @@ process rawStandardise {
 // by the prior stage.
 process standardiseJoin {
 
-    container 'informaticsmatters/fragalysis:0.0.28'
+    container 'informaticsmatters/fragalysis:0.0.36'
     publishDir 'results/', mode: 'copy'
 
     input:
