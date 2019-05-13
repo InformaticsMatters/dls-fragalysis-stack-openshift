@@ -7,7 +7,7 @@
 clean_start: yes
 clean_finish: no
 
-fragalysis_version: 0.0.37
+fragalysis_version: 0.0.38
 nextflow_version: 19.01.0
 
 # The process 'id' is the S3 'tag'
@@ -60,7 +60,7 @@ process_gp_chunk_size: 10
 process_min_hac: 0
 process_max_hac: 36
 process_max_frag: 12
-process_standard_number: 2
+process_standard_number: 1
 
 # Combiner Variables
 # ------------------
