@@ -7,7 +7,7 @@
 clean_start: yes
 clean_finish: no
 
-fragalysis_version: 0.0.35
+fragalysis_version: 0.0.36
 nextflow_version: 19.01.0
 
 # The process 'id' is the S3 'tag'
@@ -19,7 +19,7 @@ nextflow_version: 19.01.0
 #       in 'standard/vendor/molport/2018-11'
 #   'graph data' (created by the graph-processor play)
 #       in 'build/vendor/molport/2018-11'
-process_id: vendor/molport/2018-11
+process_id: vendor/molport/2019-05
 process_type: molport
 
 # Input molecules to skip (0 implies none)
@@ -38,8 +38,8 @@ process_limit: 0
 # Try shred sizes of 4200 for HTS (SENP7)
 # and maybe 50000 for MolPort
 
-process_raw_shred_size: 4200
-process_raw_prefix: HTS_
+process_raw_shred_size: 50000
+process_raw_prefix: iis_smiles-
 
 standard_dir: afp-standard
 s_workflow_dir: afp-s-workflow
