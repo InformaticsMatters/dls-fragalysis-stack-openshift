@@ -43,7 +43,7 @@ process_raw_prefix: HTS_
 
 standard_dir: afp-standard
 s_workflow_dir: afp-s-workflow
-s_nextflow_poll_period_minutes: 10
+s_nextflow_poll_period_minutes: 5
 
 # Graph Processing Variables
 # --------------------------
@@ -57,6 +57,8 @@ gp_nextflow_poll_period_minutes: 20
 
 process_gp_shred_size: 200
 process_gp_chunk_size: 10
+process_min_hac: 0
+process_max_hac: 36
 process_max_frag: 12
 process_standard_number: 2
 

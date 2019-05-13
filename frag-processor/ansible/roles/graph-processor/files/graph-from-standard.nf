@@ -10,26 +10,48 @@ params.chunkSize = 10
 params.maxFrag = 0
 params.skip = 0
 params.limit = 0
+params.minHac = 0
+params.maxHac = 0
 
 origin = file(params.origin)
+
+// Filters the standard file based on skip, limit, min and max HAC
+process filterStandard {
+
+    container 'informaticsmatters/fragalysis:0.0.36'
+    publishDir 'results/', mode: 'copy'
+
+    input:
+    file origin
+
+    output:
+    file 'filtered-compounds.tab.gz' into filtered_shred
+
+    """
+    python /usr/local/fragalysis/frag/network/scripts/filter_standard.py \
+        --input ${params.origin} --output filtered-compounds.tab.gz \
+        --skip ${params.skip} --limit ${params.limit} \
+        --min-hac ${params.minHac} --max-hac ${params.maxHac}
+    """
+
+}
 
 // Shreds a standard file into smaller parts
 // (replicating the header)
 process headShred {
 
-    container 'informaticsmatters/fragalysis:0.0.35'
+    container 'informaticsmatters/fragalysis:0.0.36'
     publishDir 'results/', mode: 'copy', pattern: 'standardized_input.smi.gz'
 
     input:
-    file origin
+    file filtered from filtered_shred
 
     output:
     file 'origin_part_*.smi' into origin_parts mode flatten
 
     """
     python /usr/local/fragalysis/frag/network/scripts/header_shred.py \
-        ${params.origin} origin_part ${params.shredSize} \
-        --skip ${params.skip} --limit ${params.limit}
+        ${filtered} origin_part ${params.shredSize}
     """
 
 }
@@ -61,7 +83,7 @@ process headShred {
 // and then clean-up.
 process cgd {
 
-    container 'informaticsmatters/fragalysis:0.0.35'
+    container 'informaticsmatters/fragalysis:0.0.36'
     publishDir 'results/', mode: 'copy'
     errorStrategy 'retry'
     maxRetries 3

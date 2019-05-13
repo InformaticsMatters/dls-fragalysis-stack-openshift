@@ -43,6 +43,8 @@
       --chunkSize {{ process_gp_chunk_size }}
       --limit {{ process_limit }}
       --skip {{ process_skip }}
+      --minHac {{ process_min_hac }}
+      --maxHac {{ process_max_hac }}
       --maxFrag {{ process_max_frag }}
       {{ nextflow_extra_args }}
       {{ nextflow_debug_args }}

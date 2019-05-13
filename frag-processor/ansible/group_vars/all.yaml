@@ -68,6 +68,8 @@ process_type: senp7
 # Skip and Limit processing (0 implies no skip/limit)
 process_skip: 0
 process_limit: 0
+process_min_hac: 0
+process_max_hac: 0
 process_max_frag: 0
 
 # The name of the generated standard file
