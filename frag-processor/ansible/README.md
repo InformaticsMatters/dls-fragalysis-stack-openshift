@@ -36,6 +36,21 @@ directory, typically into something like `~/github`: -
     $ git clone https://github.com/InformaticsMatters/dls-fragalysis-stack-openshift.git
     $ cd dls-fragalysis-stack-openshift/frag-processor/ansible
 
+## Adding new (raw) data
+Everything starts with the vendor's files. We call these 'raw' files from the
+fragment-processing perspective. These need to be collected and placed on
+a suitable path on **s3** under `raw`.
+
+For example, if you have new MolPort (SMILES) data and have downloaded it
+you can _sync_ it to **s3**. In the following example the current directory
+contains MolPort SMILES data for 2019-05. We sync this to **s3** with the
+following command: -
+
+    $  aws s3 sync . s3://im-fragnet/raw/vendor/molport/2019-05
+ 
+>   Use of the AWS command-line will require suitable credentials,
+    recorded in environment variables.
+
 ## Standardising
 Create a `parameters` file from the template (`parameters.template`),
 set suitable values from its examples and any other variables you want to
