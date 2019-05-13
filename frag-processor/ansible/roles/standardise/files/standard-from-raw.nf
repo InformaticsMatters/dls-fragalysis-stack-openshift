@@ -41,7 +41,7 @@ rawFiles = Channel.fromPath( './' + params.rawPrefix + '*' ).toList()
 // taken from one of the raw files.
 process rawJoin {
 
-    container 'informaticsmatters/fragalysis:0.0.28'
+    container 'informaticsmatters/fragalysis:0.0.35'
     publishDir 'results/', mode: 'copy'
 
     input:
@@ -66,7 +66,7 @@ process rawJoin {
 // from the input file.
 process rawShred {
 
-    container 'informaticsmatters/fragalysis:0.0.28'
+    container 'informaticsmatters/fragalysis:0.0.35'
     publishDir 'results/', mode: 'copy'
 
     input:

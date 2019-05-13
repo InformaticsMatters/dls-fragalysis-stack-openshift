@@ -32,15 +32,18 @@ process_limit: 0
 # The following variables are only used by the 'Standardise' role
 #
 # Prefix for HTS data is typically 'HTS_'
-# Prefix for Molport data is typically 'iis_smiles_'
+# Prefix for MolPort data is typically 'iis_smiles_'
 # Prefix for Enamine data is typically a date, i.e. 'Jun2018_'
+#
+# Try shred sizes of 4200 for HTS (SENP7)
+# and maybe 50000 for MolPort
 
 process_raw_shred_size: 4200
 process_raw_prefix: HTS_
 
 standard_dir: afp-standard
 s_workflow_dir: afp-s-workflow
-s_nextflow_poll_period_minutes: 2
+s_nextflow_poll_period_minutes: 10
 
 # Graph Processing Variables
 # --------------------------
