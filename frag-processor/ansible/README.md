@@ -53,6 +53,9 @@ following command: -
     recorded in environment variables.
 
 ## Standardising
+All raw files are processed into our _standard_ file format
+before further processing.
+
 Create a `parameters` file from the template (`parameters.template`),
 set suitable values from its examples and any other variables you want to
 set and then run the following, and inspect the progress with
@@ -71,6 +74,8 @@ set and then run the following, and inspect the progress with
     `nextflow_timeout_minutes` in you parameters file.
 
 ## Graph Processing
+Standard files are compiled into graph representations, called a _build_.
+
 Create a `parameters` file from the template (`parameters.template`),
 set suitable values from its examples and any other variables you want to
 set and then run the following, and inspect the progress with
@@ -89,6 +94,9 @@ set and then run the following, and inspect the progress with
     `nextflow_timeout_minutes` in you parameters file.
 
 ## Combination
+_Builds_ can be combined to form a graph containing molecules
+from multiple vendors.
+
 Create a `parameters` file from the template (`parameters.template`),
 set suitable values from its examples and any other variables you want to
 set and then run the following, and inspect the progress with
