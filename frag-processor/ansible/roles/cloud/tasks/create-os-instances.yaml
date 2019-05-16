@@ -21,9 +21,9 @@
   os_server:
     auth: "{{ os_auth }}"
     region_name: "{{ os_region_name }}"
-    name: frag-slurm-head
-    availability_zone: "{{ os_slurm_availability_zone }}"
-    image: "{{ os_slurm_image_name }}"
+    name: frag-head
+    availability_zone: "{{ os_availability_zone }}"
+    image: "{{ os_slurm_head_image_name }}"
     flavor: "{{ os_slurm_head_flavour }}"
     key_name: "{{ os_key_name }}"
     auto_floating_ip: true
@@ -32,5 +32,17 @@
   os_server_volume:
     auth: "{{ os_auth }}"
     device: "{{ os_slurm_volume_device }}"
-    server: frag-slurm-head
+    server: frag-head
     volume: frag-volume
+
+- name: Create Slurm worker node
+  os_server:
+    auth: "{{ os_auth }}"
+    region_name: "{{ os_region_name }}"
+    name: frag-worker-{{ '%02d'|format(item|int + 1) }}
+    availability_zone: "{{ os_availability_zone }}"
+    image: "{{ os_slurm_worker_image_name }}"
+    flavor: "{{ os_slurm_worker_flavour }}"
+    key_name: "{{ os_key_name }}"
+    auto_floating_ip: false
+  loop: "{{ range(os_slurm_worker_count)|list }}"
