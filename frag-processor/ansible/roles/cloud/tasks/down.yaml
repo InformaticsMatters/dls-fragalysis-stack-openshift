@@ -10,14 +10,20 @@
   assert:
     that: os_auth_url is defined
 
+# No need to detach the volume
+# (we see errors if it's not there anyway)
+# so just delete the server...
+
 - name: Delete Slurm head node
   os_server:
-    auth:
-      auth_url: "{{ os_auth_url }}"
-      username: "{{ os_username }}"
-      password: "{{ os_password }}"
-      project_id: "{{ os_project_id }}"
-      user_domain_name: "{{ os_user_domain_name }}"
+    auth: "{{ os_auth }}"
     region_name: "{{ os_region_name }}"
     name: frag-slurm-head
+    state: absent
+
+- name: Delete Slurm shared volume
+  os_volume:
+    auth: "{{ os_auth }}"
+    size: "{{ os_slurm_volume_size_g }}"
+    display_name: frag-volume
     state: absent

@@ -10,14 +10,16 @@
   assert:
     that: os_auth_url is defined
 
+- name: Create Slurm shared volume
+  os_volume:
+    auth: "{{ os_auth }}"
+    size: "{{ os_slurm_volume_size_g }}"
+    display_name: frag-volume
+    display_description: Shared volume for the Fragment cluster
+
 - name: Create Slurm head node
   os_server:
-    auth:
-      auth_url: "{{ os_auth_url }}"
-      username: "{{ os_username }}"
-      password: "{{ os_password }}"
-      project_id: "{{ os_project_id }}"
-      user_domain_name: "{{ os_user_domain_name }}"
+    auth: "{{ os_auth }}"
     region_name: "{{ os_region_name }}"
     name: frag-slurm-head
     availability_zone: "{{ os_slurm_availability_zone }}"
@@ -25,3 +27,10 @@
     flavor: "{{ os_slurm_head_flavour }}"
     key_name: "{{ os_key_name }}"
     auto_floating_ip: true
+
+- name: Attach the shared volume
+  os_server_volume:
+    auth: "{{ os_auth }}"
+    device: "{{ os_slurm_volume_device }}"
+    server: frag-slurm-head
+    volume: frag-volume
