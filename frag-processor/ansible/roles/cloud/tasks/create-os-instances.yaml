@@ -1,0 +1,27 @@
+---
+
+# Creates our Slurm cluster on OpenStack.
+#
+# This is driven by variables that should be defined by
+# 'sourcing' your OpenStack Keystone file. The initial
+# 'assert' check that variables appear to be set.
+
+- name: Assert key variables
+  assert:
+    that: os_auth_url is defined
+
+- name: Create Slurm head node
+  os_server:
+    auth:
+      auth_url: "{{ os_auth_url }}"
+      username: "{{ os_username }}"
+      password: "{{ os_password }}"
+      project_id: "{{ os_project_id }}"
+      user_domain_name: "{{ os_user_domain_name }}"
+    region_name: "{{ os_region_name }}"
+    name: frag-slurm-head
+    availability_zone: "{{ os_slurm_availability_zone }}"
+    image: "{{ os_slurm_image_name }}"
+    flavor: "{{ os_slurm_head_flavour }}"
+    key_name: "{{ os_key_name }}"
+    auto_floating_ip: true

@@ -1,0 +1,15 @@
+---
+
+os_auth_url: "{{ ansible_env.OS_AUTH_URL }}"
+os_project_id: "{{ ansible_env.OS_PROJECT_ID }}"
+os_username: "{{ ansible_env.OS_USERNAME }}"
+os_password: "{{ ansible_env.OS_PASSWORD }}"
+os_user_domain_name: "{{ ansible_env.OS_USER_DOMAIN_NAME }}"
+os_region_name: "{{ ansible_env.OS_REGION_NAME }}"
+
+os_key_name: stfc-abc-1
+os_availability_zone: ceph
+
+os_slurm_head_flavour: m1.xlarge
+os_slurm_image_name: centos7-image
+os_slurm_availability_zone: ceph

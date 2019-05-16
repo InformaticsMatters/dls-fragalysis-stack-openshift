@@ -1,0 +1,8 @@
+---
+
+# Runs the main playbook in the cloud role.
+
+- hosts: localhost
+
+  roles:
+  - cloud
