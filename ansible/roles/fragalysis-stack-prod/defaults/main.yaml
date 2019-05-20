@@ -18,8 +18,8 @@ backup_deploy: no
 backup_enable_rsync: yes
 backup_rsync_path: /dls/verne/fs-production
 
-graph_svc: neo4j.fragalysis-graph-1.svc
-graph_bolt_url: bolt://neo4j:test@neo4j.fragalysis-graph-1.svc:7687
+graph_svc: neo4j-molport.fragalysis-graph-2.svc
+graph_bolt_url: bolt://neo4j:test@neo4j-molport.fragalysis-graph-2.svc:7687
 
 input_vol_name: fs-p-input
 
