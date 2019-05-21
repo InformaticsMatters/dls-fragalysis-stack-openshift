@@ -25,10 +25,13 @@
     path: "{{ graph_path }}/done"
   register: process_done_file
 
-- name: Assemble Graph Files ({{ process_type}})
+- name: Assemble Graph Files ({{ process_type }})
   shell: >-
     ./process_{{ process_type }}_compounds.py
     {{ vendor_file }} {{ nodes_file }} {{ output }}
+    --processing-version {{ fragalysis_version }}
+    --process-id {{ process_id }}
+    --build-number {{ build_number }}
     --limit {{ process_limit }}
   args:
     chdir: "{{ scripts }}"

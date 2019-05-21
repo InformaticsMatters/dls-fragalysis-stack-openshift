@@ -45,13 +45,13 @@
   register: build_no_result
   changed_when: false
 
-- name: Show build number
-  debug:
-    msg: "{{ build_no_result.stdout }}"
-
 - name: Set dynamic facts (Build)
   set_fact:
     build_number: "{{ build_no_result.stdout|int }}"
+
+- name: Show build number
+  debug:
+    var: build_number
 
 - name: Collect environment
   shell: env
