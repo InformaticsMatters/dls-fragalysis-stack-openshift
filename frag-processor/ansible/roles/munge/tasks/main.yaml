@@ -7,11 +7,13 @@
     name:
     - epel-release
     - munge
+  notify: Restart MUNGE
 
 - name: Crete MUNGE group
   group:
     gid: "{{ os_munge_user_id }}"
     name: munge
+  notify: Restart MUNGE
 
 - name: Crete MUNGE user
   user:
@@ -20,6 +22,7 @@
     group: munge
     home: /var/lib/munge
     shell: /sbin/nologin
+  notify: Restart MUNGE
 
 - name: Configure MUNGE directories
   file:
@@ -31,6 +34,7 @@
   loop:
   - /etc/munge
   - /var/log/munge
+  notify: Restart MUNGE
 
 - name: Copy MUNGE key
   copy:
