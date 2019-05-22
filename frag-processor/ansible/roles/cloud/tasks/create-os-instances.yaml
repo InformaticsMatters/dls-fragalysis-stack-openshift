@@ -45,4 +45,4 @@
     flavor: "{{ os_slurm_worker_flavour }}"
     key_name: "{{ os_key_name }}"
     auto_floating_ip: false
-  loop: "{{ range(os_slurm_worker_count)|list }}"
+  loop: "{{ range(slurm_worker_count)|list }}"

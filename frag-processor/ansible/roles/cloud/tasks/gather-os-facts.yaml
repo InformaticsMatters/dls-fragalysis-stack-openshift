@@ -30,3 +30,12 @@
     groups: slurm_worker
     name: "{{ item.private_v4 }}"
   loop: "{{ openstack_servers }}"
+
+- name: Create nodes map
+  set_fact:
+    nodes: "{{ nodes|combine({ 'addr': item.private_v4, 'name': item.name }) }}"
+  loop: "{{ openstack_servers }}"
+
+- name: Display node map
+  debug:
+    var: nodes

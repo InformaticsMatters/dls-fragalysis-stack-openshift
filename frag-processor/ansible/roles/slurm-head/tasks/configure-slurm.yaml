@@ -51,11 +51,11 @@
     recurse: true
 #  notify: Restart slurm
 
-#- name: Copy slurm configuration template
-#  template:
-#    src: "{{ role_path }}/../head/files/slurm.conf.j2"
-#    dest: /etc/slurm/slurm.conf
-#    owner: slurm
+- name: Copy slurm configuration template
+  template:
+    src: "{{ role_path }}/files/slurm.conf.j2"
+    dest: /etc/slurm/slurm.conf
+    owner: slurm
 #  notify: Restart slurm
 
 - name: Copy slurm cgroup configuration

@@ -27,7 +27,7 @@
     region_name: "{{ os_region_name }}"
     name: "{{ os_slurm_instance_base_name }}-worker-{{ '%02d'|format(item|int + 1) }}"
     state: absent
-  loop: "{{ range(os_slurm_worker_count)|list }}"
+  loop: "{{ range(slurm_worker_count)|list }}"
 
 - name: Delete Slurm shared volume
   os_volume:
