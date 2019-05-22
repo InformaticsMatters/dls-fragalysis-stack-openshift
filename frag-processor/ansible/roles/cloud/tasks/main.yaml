@@ -2,4 +2,3 @@
 
 - import_tasks: create-os-instances.yaml
 - import_tasks: gather-os-facts.yaml
-- import_tasks: configure-head.yaml
