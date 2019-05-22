@@ -32,6 +32,5 @@
 - name: Delete Slurm shared volume
   os_volume:
     auth: "{{ os_auth }}"
-    size: "{{ os_slurm_volume_size_g }}"
     display_name: "{{ os_slurm_instance_base_name }}-volume"
     state: absent
