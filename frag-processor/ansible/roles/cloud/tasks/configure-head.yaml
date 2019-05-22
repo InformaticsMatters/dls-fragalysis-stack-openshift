@@ -54,7 +54,6 @@
   group:
     gid: "{{ os_munge_user_id }}"
     name: munge
-  become: yes
 
 - name: Crete munge user
   user:
@@ -63,13 +62,11 @@
     group: munge
     home: /var/lib/munge
     shell: /sbin/nologin
-  become: yes
 
 - name: Crete slurm group
   group:
     gid: "{{ os_slurm_user_id }}"
     name: slurm
-  become: yes
 
 - name: Crete slurm user
   user:
@@ -78,7 +75,6 @@
     group: slurm
     home: /var/lib/slurm
     shell: /bin/bash
-  become: yes
 
 # Install munge
 

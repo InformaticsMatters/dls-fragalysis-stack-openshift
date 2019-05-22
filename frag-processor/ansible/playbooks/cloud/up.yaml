@@ -7,6 +7,7 @@
   - cloud
 
 - hosts: slurm_head
+  become: yes
   tasks:
   - name: Configure the head node
     include_role:
