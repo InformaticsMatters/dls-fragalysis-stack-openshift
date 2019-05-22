@@ -19,4 +19,4 @@
     group: root
   notify: Restart NFS
 
-- import_tasks: "{{ role_path }}/../slurm-head/tasks/configure-munge.yaml"
+- import_tasks: configure-munge.yaml
