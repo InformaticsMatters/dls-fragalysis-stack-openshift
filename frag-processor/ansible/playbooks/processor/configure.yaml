@@ -7,4 +7,4 @@
 - hosts: localhost
 
   roles:
-  - configure
+  - graph-configure

@@ -20,4 +20,4 @@
 - hosts: localhost
 
   roles:
-  - standardise
+  - graph-standardise

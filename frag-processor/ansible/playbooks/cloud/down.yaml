@@ -1,7 +1,5 @@
 ---
 
-# Runs the 'down' playbook in the cloud role.
-
 - hosts: localhost
 
   tasks:

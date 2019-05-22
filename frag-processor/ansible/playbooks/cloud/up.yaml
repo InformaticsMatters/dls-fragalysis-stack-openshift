@@ -1,7 +1,5 @@
 ---
 
-# Runs the main playbook in the cloud role.
-
 - hosts: localhost
   roles:
   - cloud
@@ -9,9 +7,9 @@
 - hosts: slurm_head
   become: yes
   roles:
-  - head
+  - slurm-head
 
 - hosts: slurm_worker
   become: yes
   roles:
-  - worker
+  - slurm-worker
