@@ -8,7 +8,7 @@
   os_server_facts:
     auth: "{{ os_auth }}"
     region_name: "{{ os_region_name }}"
-    server: "{{ os_slurm_instance_base_name }}-head"
+    server: "{{ slurm_instance_base_name }}-head"
 
 - name: Display head node
   debug:
@@ -23,7 +23,7 @@
   os_server_facts:
     auth: "{{ os_auth }}"
     region_name: "{{ os_region_name }}"
-    server: "{{ os_slurm_instance_base_name }}-worker-*"
+    server: "{{ slurm_instance_base_name }}-worker-*"
 
 - name: Add worker nodes
   add_host:
