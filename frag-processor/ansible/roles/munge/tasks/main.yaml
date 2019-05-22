@@ -40,6 +40,5 @@
   copy:
     content: "{{ munge_key }}"
     dest: /etc/munge/munge.key
-    mode: 0400
     owner: munge
   notify: Restart MUNGE

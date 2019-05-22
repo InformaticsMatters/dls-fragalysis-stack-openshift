@@ -12,8 +12,9 @@
   - head
   - munge
 
-#- hosts: slurm_worker
-#  become: yes
-#  roles:
+- hosts: slurm_worker
+  become: yes
+  roles:
+  - worker
 #  - munge
 

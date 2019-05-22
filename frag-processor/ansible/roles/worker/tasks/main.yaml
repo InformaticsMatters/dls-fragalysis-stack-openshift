@@ -1,0 +1,19 @@
+---
+
+- name: Install head packages
+  yum:
+    name:
+    - epel-release
+    - nfs-utils
+    - nfs-utils-lib
+
+# Setup NFS share and head node mounts
+# The
+
+- name: Create slurm (home) mount-point
+  file:
+    path: "{{ slurm_home_path }}"
+    state: directory
+    mode: 0777
+    owner: root
+    group: root
