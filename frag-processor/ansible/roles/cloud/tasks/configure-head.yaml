@@ -2,7 +2,7 @@
 
 # Install packages for MUNGE, slurm and other stuff
 
-- name: Install stuff
+- name: Install supporting packages
   yum:
     name:
     - epel-release
@@ -26,9 +26,10 @@
     owner: root
     group: root
 
-- name: Ensure mount has a filesystem
+- name: Ensure device has a filesystem
   filesystem:
     fstype: ext4
+    force: yes
     dev: "{{ os_slurm_volume_device }}"
 
 - name: Mount home
