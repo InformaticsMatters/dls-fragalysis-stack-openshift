@@ -11,7 +11,7 @@
   roles:
   - head
 
-#- hosts: slurm_worker
-#  become: yes
-#  roles:
-#  - worker
+- hosts: slurm_worker
+  become: yes
+  roles:
+  - worker

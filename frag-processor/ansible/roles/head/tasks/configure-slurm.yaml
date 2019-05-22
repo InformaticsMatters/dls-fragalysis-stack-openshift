@@ -2,6 +2,18 @@
 
 # Install packages slurm
 
+- name: Install munge packages
+  yum:
+    name:
+    - epel-release
+    - openssl
+    - numactl
+    - hwloc
+    - lua
+    - libibmad
+    - libibumad
+#  notify: Restart MUNGE
+
 #- name: Add slurm (Galaxy) repository
 #  yum_repository:
 #    name: slurm
@@ -41,21 +53,21 @@
 
 #- name: Copy slurm configuration template
 #  template:
-#    src: "{{ role_path }}/files/slurm.conf.j2"
+#    src: "{{ role_path }}/../head/files/slurm.conf.j2"
 #    dest: /etc/slurm/slurm.conf
 #    owner: slurm
 #  notify: Restart slurm
 
 - name: Copy slurm cgroup configuration
   copy:
-    src: "{{ role_path }}/files/cgroup.conf"
+    src: "{{ role_path }}/../head/files/cgroup.conf"
     dest: /etc/slurm/cgroup.conf
     owner: slurm
 #  notify: Restart slurm
 
 - name: Copy slurm cgroup allowed devices configuration
   copy:
-    src: "{{ role_path }}/files/cgroup_allowed_devices_file.conf"
+    src: "{{ role_path }}/../head/files/cgroup_allowed_devices_file.conf"
     dest: /etc/slurm/cgroup_allowed_devices_file.conf
     owner: slurm
 #  notify: Restart slurm
@@ -67,4 +79,11 @@
     mode: 0755
     owner: slurm
     recurse: true
+#  notify: Restart slurm
+
+- name: Touch slurm log
+  file:
+    path: /var/log/slurmd.log
+    owner: slurm
+    state: touch
 #  notify: Restart slurm

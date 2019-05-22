@@ -15,3 +15,12 @@
     dest: /etc/munge/munge.key
     owner: munge
 #  notify: Restart MUNGE
+
+- name: Adsjut MUNGE log directory
+  file:
+    path: /var/log/munge
+    owner: munge
+    mode: 0700
+    state: directory
+    recurse: yes
+#  notify: Restart MUNGE

@@ -1,11 +1,12 @@
 ---
 
-- name: Install head packages
+- name: Install worker packages
   yum:
     name:
     - epel-release
     - nfs-utils
     - nfs-utils-lib
+    - munge
 
 # Setup NFS share and head node mounts
 
@@ -17,3 +18,5 @@
     owner: root
     group: root
   notify: Restart NFS
+
+- import_tasks: "{{ role_path }}/../head/tasks/configure-munge.yaml
