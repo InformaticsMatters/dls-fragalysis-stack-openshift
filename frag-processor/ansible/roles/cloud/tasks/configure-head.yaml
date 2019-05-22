@@ -26,27 +26,27 @@
     owner: root
     group: root
 
-#- name: Ensure mount has a filesystem
-#  filesystem:
-#    fstype: ext4
-#    dev: "{{ os_slurm_volume_device }}"
+- name: Ensure mount has a filesystem
+  filesystem:
+    fstype: ext4
+    dev: "{{ os_slurm_volume_device }}"
 
-#- name: Mount home
-#  mount:
-#    name: /home
-#    src: "{{ os_slurm_volume_device }}"
-#    fstype: auto
-#    opts: defaults,nobootwait
-#    passno: 2
-#    state: mounted
+- name: Mount home
+  mount:
+    name: /home
+    src: "{{ os_slurm_volume_device }}"
+    fstype: auto
+    opts: defaults,nobootwait
+    passno: 2
+    state: mounted
 
-#- name: Copy exports
-#  copy:
-#    content: /home *(rw,no_root_squash)
-#    dest: /etc/exports
-#    owner: root
-#    group: root
-#  notify: Restart NFS
+- name: Copy exports
+  copy:
+    content: /home *(rw,no_root_squash)
+    dest: /etc/exports
+    owner: root
+    group: root
+  notify: Restart NFS
 
 # Crete munge and slurm groups and users
 
