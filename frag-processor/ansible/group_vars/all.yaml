@@ -80,3 +80,4 @@ standard_file: standardised-compounds.tab.gz
 # and is the mount-path for the slurm volume (shared by all nodes)
 slurm_user_id: 992
 slurm_home_path: /slurm-home
+slurm_vol_size_g: 500

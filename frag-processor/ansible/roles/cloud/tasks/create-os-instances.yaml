@@ -13,7 +13,7 @@
 - name: Create Slurm shared volume
   os_volume:
     auth: "{{ os_auth }}"
-    size: "{{ os_slurm_volume_size_g }}"
+    size: "{{ slurm_vol_size_g }}"
     display_name: "{{ os_slurm_instance_base_name }}-volume"
     display_description: Shared volume for the Fragment cluster
 
