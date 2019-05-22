@@ -1,6 +1,6 @@
 ---
 
-- name: Install addtional packages
+- name: Install head packages
   yum:
     name:
     - epel-release
@@ -24,16 +24,17 @@
     force: yes
     dev: "{{ os_slurm_volume_device }}"
 
-- name: Mount home
+- name: Mount device
   mount:
-    name: "{{ slurm_home_path }}"
+    name: Slurm
     src: "{{ os_slurm_volume_device }}"
-    fstype: auto
+    path: "{{ slurm_home_path }}"
+    fstype: ext4
     opts: defaults,nobootwait
     passno: 2
     state: mounted
 
-- name: Create exports
+- name: Create NFS exports
   copy:
     content: "{{ slurm_home_path }} *(rw,no_root_squash)"
     dest: /etc/exports

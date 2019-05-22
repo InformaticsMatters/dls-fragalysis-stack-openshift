@@ -2,19 +2,17 @@
 
 # Install packages for MUNGE, slurm and other stuff
 
-- name: Install supporting packages
+- name: Add slurm (Galaxy) repository
+  yum_repository:
+    name: slurm
+    description: Galaxy slurm 18.08 packages
+    baseurl: https://depot.galaxyproject.org/yum/package/slurm/18.08/$releasever/$basearch/
+    gpgcheck: no
+
+- name: Install slurm packages
   yum:
     name:
-    - epel-release
-    - nfs-utils
-    - nfs-utils-lib
-    - munge
-    - openssl
-    - numactl
-    - hwloc
-    - lua
-    - libibmad
-    - libibumad
+    - slurm
 
 - name: Crete slurm group
   group:

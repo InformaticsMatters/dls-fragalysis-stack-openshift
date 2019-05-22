@@ -2,7 +2,7 @@
 
 # Install packages for MUNGE
 
-- name: Install supporting packages
+- name: Install munge packages
   yum:
     name:
     - epel-release
