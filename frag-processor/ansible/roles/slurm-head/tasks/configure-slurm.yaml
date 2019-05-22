@@ -2,7 +2,7 @@
 
 # Install packages slurm
 
-- name: Install munge packages
+- name: Install slurm packages
   yum:
     name:
     - epel-release
