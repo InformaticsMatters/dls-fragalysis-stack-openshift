@@ -12,7 +12,7 @@ os_availability_zone: ceph
 os_slurm_head_flavour: m3.small
 os_slurm_head_image_name: ScientificLinux-7-NoGui
 os_slurm_worker_flavour: m3.small
-os_slurm_worker_image_name: nextflow-worker-base-image-2.2
+os_slurm_worker_image_name: ScientificLinux-7-NoGui
 os_slurm_worker_count: 2
 os_slurm_instance_base_name: graph
 
