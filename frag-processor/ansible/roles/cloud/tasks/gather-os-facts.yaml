@@ -33,7 +33,7 @@
 
 - name: Create nodes map
   set_fact:
-    nodes: "{{ nodes|default({})|combine({ 'addr': item.private_v4, 'name': item.name }) }}"
+    nodes: "{{ nodes|combine({ 'addr': item.private_v4, 'name': item.name }) }}"
   loop: "{{ openstack_servers }}"
 
 - name: Display node map
