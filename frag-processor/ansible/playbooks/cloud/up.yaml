@@ -9,5 +9,6 @@
 - hosts: slurm_head
   become: yes
   roles:
+  - head
   - munge
   - slurm

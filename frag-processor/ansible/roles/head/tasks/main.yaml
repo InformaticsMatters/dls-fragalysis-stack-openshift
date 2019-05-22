@@ -2,8 +2,8 @@
 
 # Install packages for MUNGE, slurm and other stuff
 
-- name: Install supporting packages
-  dnf:
+- name: Install addtional packages
+  yum:
     name:
     - epel-release
     - nfs-utils
