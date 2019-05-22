@@ -10,6 +10,10 @@
     region_name: "{{ os_region_name }}"
     server: "{{ os_slurm_instance_base_name }}-head"
 
+- name: Display head node
+  debug:
+    var: openstack_servers
+
 - name: Add head node
   add_host:
     groups: slurm_head

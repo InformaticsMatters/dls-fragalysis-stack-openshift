@@ -1,6 +1,6 @@
 ---
 
-# Install packages for munge, slurm and other stuff
+# Install packages for MUNGE, slurm and other stuff
 
 - name: Install stuff
   yum:
@@ -48,20 +48,45 @@
     group: root
   notify: Restart NFS
 
-# Crete munge and slurm groups and users
+# Setup MUNGE
 
-- name: Crete munge group
+- name: Crete MUNGE group
   group:
     gid: "{{ os_munge_user_id }}"
     name: munge
 
-- name: Crete munge user
+- name: Crete MUNGE user
   user:
     name: munge
     uid: "{{ os_munge_user_id }}"
     group: munge
     home: /var/lib/munge
     shell: /sbin/nologin
+
+- name: Configure MUNGE directories
+  file:
+    path: "{{ item }}"
+    state: directory
+    mode: 0700
+    owner: munge
+    recurse: true
+  loop:
+  - /etc/munge
+  - /var/log/munge
+
+- name: Create MUNGE key
+  set_fact:
+    munge_key: "{{ lookup('password', '/dev/null length=1024') }}"
+
+- name:
+  copy:
+    content: "{{ munge_key }}"
+    dest: /etc/munge/munge.key
+    mode: 0400
+    owner: munge
+#  notify: Restart MUNGE
+
+# Setup slurm
 
 - name: Crete slurm group
   group:
@@ -76,20 +101,27 @@
     home: /var/lib/slurm
     shell: /bin/bash
 
-# Install munge
-
-- name: Configure munge directories
+- name: Create slurm config directory
   file:
-    path: "{{ item }}"
+    path: /etc/slurm
     state: directory
-    mode: 0700
     owner: munge
     recurse: true
-  loop:
-  - /etc/munge
-  - /var/log/munge
+  notify: Restart slurm
 
-# Setup slurm
+#- name: Copy slurm configuration template
+#  template:
+#    src: "{{ role_path }}/files/slurm.conf.j2"
+#    dest: /etc/slurm/slurm.conf
+#    owner: slurm
+#  notify: Restart slurm
+
+- name: Copy slurm cgroup configuration
+  copy:
+    src: "{{ role_path }}/files/cgroup.conf"
+    dest: /etc/slurm/cgroup.conf
+    owner: slurm
+  notify: Restart slurm
 
 - name: Configure slurmd directory
   file:
@@ -98,8 +130,9 @@
     mode: 0755
     owner: slurm
     recurse: true
+  notify: Restart slurm
 
-- name: Initialise logfile
+- name: Initialise slurm logfile
   file:
     path: /var/log/slurmd.log
     state: touch
