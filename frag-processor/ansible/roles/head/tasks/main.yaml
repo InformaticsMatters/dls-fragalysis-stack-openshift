@@ -18,6 +18,11 @@
     owner: root
     group: root
 
+- name: Unmount device
+  mount:
+    path: "{{ slurm_home_path }}"
+    state: unmounted
+
 - name: Ensure device has a filesystem
   filesystem:
     fstype: ext4
@@ -25,11 +30,10 @@
 
 - name: Mount device
   mount:
-    name: Slurm
     src: "{{ os_slurm_volume_device }}"
     path: "{{ slurm_home_path }}"
     fstype: ext4
-    opts: defaults,nobootwait
+    opts: defaults
     passno: 2
     state: mounted
 
