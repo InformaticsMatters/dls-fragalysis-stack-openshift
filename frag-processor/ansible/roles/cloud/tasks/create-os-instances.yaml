@@ -39,7 +39,7 @@
   os_server:
     auth: "{{ os_auth }}"
     region_name: "{{ os_region_name }}"
-    name: "{{ os_slurm_instance_base_name }}-worker-{{ '%02d'|format(item|int + 1) }}"
+    name: "{{ os_slurm_instance_base_name }}-worker-{{ '%d'|format(item|int + 1) }}"
     availability_zone: "{{ os_availability_zone }}"
     image: "{{ os_slurm_worker_image_name }}"
     flavor: "{{ os_slurm_worker_flavour }}"
