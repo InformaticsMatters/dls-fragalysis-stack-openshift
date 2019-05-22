@@ -6,8 +6,8 @@
   yum:
     name:
     - epel-release
-    - nfs-common
-    - nfs-kernel-server
+    - nfs-utils
+    - nfs-utils-lib
     - munge
     - openssl
     - numactl

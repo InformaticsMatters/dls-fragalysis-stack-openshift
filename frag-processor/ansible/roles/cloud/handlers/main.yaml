@@ -2,5 +2,5 @@
 
 - name: Restart NFS
   service:
-    name: nfs-kernel-server
+    name: nfs
     state: restarted
