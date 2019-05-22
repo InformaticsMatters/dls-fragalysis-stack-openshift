@@ -60,14 +60,14 @@
 
 - name: Copy slurm cgroup configuration
   copy:
-    src: "{{ role_path }}/../head/files/cgroup.conf"
+    src: "{{ role_path }}/files/cgroup.conf"
     dest: /etc/slurm/cgroup.conf
     owner: slurm
 #  notify: Restart slurm
 
 - name: Copy slurm cgroup allowed devices configuration
   copy:
-    src: "{{ role_path }}/../head/files/cgroup_allowed_devices_file.conf"
+    src: "{{ role_path }}/files/cgroup_allowed_devices_file.conf"
     dest: /etc/slurm/cgroup_allowed_devices_file.conf
     owner: slurm
 #  notify: Restart slurm
