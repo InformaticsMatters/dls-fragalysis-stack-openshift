@@ -21,7 +21,6 @@
 - name: Ensure device has a filesystem
   filesystem:
     fstype: ext4
-    force: yes
     dev: "{{ os_slurm_volume_device }}"
 
 - name: Mount device
