@@ -1,0 +1,28 @@
+---
+
+- name: Assert key variables
+  assert:
+    that: os_auth_url is defined
+
+- name: Get head node facts
+  os_server_facts:
+    auth: "{{ os_auth }}"
+    region_name: "{{ os_region_name }}"
+    server: frag-head
+
+- name: Add head node
+  add_host:
+    groups: slurm_head
+    name: "{{ openstack_servers[0].interface_ip }}"
+
+- name: Get worker node facts
+  os_server_facts:
+    auth: "{{ os_auth }}"
+    region_name: "{{ os_region_name }}"
+    server: frag-worker-*
+
+- name: Add worker nodes
+  add_host:
+    groups: slurm_worker
+    name: "{{ item.private_v4 }}"
+  loop: "{{ openstack_servers }}"

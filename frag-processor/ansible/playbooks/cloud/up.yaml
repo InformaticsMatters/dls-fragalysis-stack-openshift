@@ -3,6 +3,12 @@
 # Runs the main playbook in the cloud role.
 
 - hosts: localhost
-
   roles:
   - cloud
+
+- hosts: slurm_head
+  tasks:
+  - name: Configure the head node
+    include_role:
+      name: cloud
+      tasks_from: configure-head.yaml

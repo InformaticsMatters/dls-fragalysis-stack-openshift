@@ -28,14 +28,14 @@
     key_name: "{{ os_key_name }}"
     auto_floating_ip: true
 
-- name: Attach the shared volume
+- name: Attach the shared volume to the head node
   os_server_volume:
     auth: "{{ os_auth }}"
     device: "{{ os_slurm_volume_device }}"
     server: frag-head
     volume: frag-volume
 
-- name: Create Slurm worker node
+- name: Create Slurm worker nodes
   os_server:
     auth: "{{ os_auth }}"
     region_name: "{{ os_region_name }}"
