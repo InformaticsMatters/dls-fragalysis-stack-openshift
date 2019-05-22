@@ -8,6 +8,7 @@
     description: Galaxy slurm 18.08 packages
     baseurl: https://depot.galaxyproject.org/yum/package/slurm/18.08/$releasever/$basearch/
     gpgcheck: no
+    skip_if_unavailable: yes
 
 #- name: Install slurm packages
 #  yum:
