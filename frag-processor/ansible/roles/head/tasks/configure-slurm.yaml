@@ -17,14 +17,14 @@
 
 - name: Crete slurm group
   group:
-    gid: "{{ os_slurm_user_id }}"
+    gid: "{{ slurm_user_id }}"
     name: slurm
 #  notify: Restart slurm
 
 - name: Crete slurm user
   user:
     name: slurm
-    uid: "{{ os_slurm_user_id }}"
+    uid: "{{ slurm_user_id }}"
     group: slurm
     home: "{{ slurm_home_path }}"
     create_home: no
