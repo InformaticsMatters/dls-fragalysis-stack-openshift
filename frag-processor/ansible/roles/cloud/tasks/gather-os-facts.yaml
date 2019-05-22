@@ -31,9 +31,9 @@
     name: "{{ item.private_v4 }}"
   loop: "{{ openstack_servers }}"
 
-- name: Create nodes map
+- name: Create nodes list
   set_fact:
-    nodes: "{{ nodes|combine({ 'addr': item.private_v4, 'name': item.name }) }}"
+    nodes: "{{ nodes|default([]) + [{'addr': item.private_v4, 'name': item.name}] }}"
   loop: "{{ openstack_servers }}"
 
 - name: Display node map
