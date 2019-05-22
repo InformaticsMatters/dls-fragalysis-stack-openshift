@@ -32,8 +32,8 @@
   os_server_volume:
     auth: "{{ os_auth }}"
     device: "{{ os_slurm_volume_device }}"
-    server: "{{ os_slurm_instance_base_name }}--head"
-    volume: "{{ os_slurm_instance_base_name }}--volume"
+    server: "{{ os_slurm_instance_base_name }}-head"
+    volume: "{{ os_slurm_instance_base_name }}-volume"
 
 - name: Create Slurm worker nodes
   os_server:
