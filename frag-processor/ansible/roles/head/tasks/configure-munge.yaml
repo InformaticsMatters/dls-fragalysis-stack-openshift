@@ -1,0 +1,17 @@
+---
+
+# Install packages for MUNGE
+
+- name: Install munge packages
+  yum:
+    name:
+    - epel-release
+    - munge
+#  notify: Restart MUNGE
+
+- name: Copy MUNGE key
+  copy:
+    content: "{{ munge_key }}"
+    dest: /etc/munge/munge.key
+    owner: munge
+#  notify: Restart MUNGE

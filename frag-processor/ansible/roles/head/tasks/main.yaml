@@ -48,3 +48,6 @@
 - name: Create MUNGE key
   set_fact:
     munge_key: "{{ lookup('password', '/dev/null length=1024') }}"
+
+- import_tasks: configure-munge.yaml
+- import_tasks: configure-slurm.yaml

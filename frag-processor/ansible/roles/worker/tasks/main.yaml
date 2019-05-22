@@ -8,7 +8,6 @@
     - nfs-utils-lib
 
 # Setup NFS share and head node mounts
-# The
 
 - name: Create slurm (home) mount-point
   file:
@@ -17,3 +16,4 @@
     mode: 0777
     owner: root
     group: root
+  notify: Restart NFS

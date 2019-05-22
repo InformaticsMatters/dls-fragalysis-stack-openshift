@@ -27,13 +27,13 @@
     group: slurm
     home: "{{ slurm_home_path }}"
     create_home: no
-    shell: /bin/bash
+  shell: /bin/bash
 
 - name: Create slurm config directory
   file:
     path: /etc/slurm
     state: directory
-    owner: munge
+    owner: slurm
     recurse: true
   notify: Restart slurm
 
@@ -57,11 +57,5 @@
     state: directory
     mode: 0755
     owner: slurm
-    recurse: true
+  recurse: true
 #  notify: Restart slurm
-
-- name: Initialise slurm logfile
-  file:
-    path: /var/log/slurmd.log
-    state: touch
-    owner: slurm
