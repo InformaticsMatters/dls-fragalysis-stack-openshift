@@ -51,6 +51,13 @@
     owner: slurm
   notify: Restart slurm
 
+- name: Copy slurm cgroup allowed devices configuration
+  copy:
+    src: "{{ role_path }}/files/cgroup_allowed_devices_file.conf"
+    dest: /etc/slurm/cgroup_allowed_devices_file.conf
+    owner: slurm
+  notify: Restart slurm
+
 - name: Configure slurmd directory
   file:
     path: /var/spool/slurmd
