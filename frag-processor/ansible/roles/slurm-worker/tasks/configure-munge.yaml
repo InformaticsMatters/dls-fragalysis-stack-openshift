@@ -1,0 +1,26 @@
+---
+
+# Install packages for MUNGE
+
+- name: Install munge packages
+  yum:
+    name:
+    - epel-release
+    - munge
+#  notify: Restart MUNGE
+
+- name: Copy MUNGE key
+  copy:
+    content: "{{ hostvars[groups['slurm_head'][0]]['munge_key'] }}"
+    dest: /etc/munge/munge.key
+    owner: munge
+#  notify: Restart MUNGE
+
+- name: Adsjut MUNGE log directory
+  file:
+    path: /var/log/munge
+    owner: munge
+    mode: 0700
+    state: directory
+    recurse: yes
+#  notify: Restart MUNGE
