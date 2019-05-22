@@ -56,6 +56,8 @@
     src: "{{ role_path }}/files/slurm.conf.j2"
     dest: /etc/slurm/slurm.conf
     owner: slurm
+  vars:
+    nodes: "{{ hostvars['localhost']['nodes'] }}"
 #  notify: Restart slurm
 
 - name: Copy slurm cgroup configuration

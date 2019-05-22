@@ -85,3 +85,4 @@ slurm_user_id: 992
 slurm_home_path: /slurm-home
 slurm_vol_size_g: 500
 slurm_worker_count: 2
+slurm_instance_base_name: graph
