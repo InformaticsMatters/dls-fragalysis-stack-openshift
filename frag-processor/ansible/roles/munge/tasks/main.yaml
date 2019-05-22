@@ -1,0 +1,45 @@
+---
+
+# Install packages for MUNGE
+
+- name: Install supporting packages
+  yum:
+    name:
+    - epel-release
+    - munge
+
+- name: Crete MUNGE group
+  group:
+    gid: "{{ os_munge_user_id }}"
+    name: munge
+
+- name: Crete MUNGE user
+  user:
+    name: munge
+    uid: "{{ os_munge_user_id }}"
+    group: munge
+    home: /var/lib/munge
+    shell: /sbin/nologin
+
+- name: Configure MUNGE directories
+  file:
+    path: "{{ item }}"
+    state: directory
+    mode: 0700
+    owner: munge
+    recurse: true
+  loop:
+  - /etc/munge
+  - /var/log/munge
+
+- name: Create MUNGE key
+  set_fact:
+    munge_key: "{{ lookup('password', '/dev/null length=1024') }}"
+
+- name:
+  copy:
+    content: "{{ munge_key }}"
+    dest: /etc/munge/munge.key
+    mode: 0400
+    owner: munge
+#  notify: Restart MUNGE

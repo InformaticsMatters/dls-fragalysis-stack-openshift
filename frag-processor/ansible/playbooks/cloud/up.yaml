@@ -8,8 +8,6 @@
 
 - hosts: slurm_head
   become: yes
-  tasks:
-  - name: Configure the head node
-    include_role:
-      name: cloud
-      tasks_from: configure-head.yaml
+  roles:
+  - munge
+  - slurm

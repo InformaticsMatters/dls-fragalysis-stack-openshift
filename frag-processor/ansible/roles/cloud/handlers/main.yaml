@@ -4,13 +4,3 @@
   service:
     name: nfs
     state: restarted
-
-- name: Restart MUNGE
-  service:
-    name: munge
-    state: restarted
-
-- name: Restart slurm
-  service:
-    name: slurmctl
-    state: restarted

@@ -21,7 +21,7 @@
     name: "{{ os_slurm_instance_base_name }}-head"
     state: absent
 
-- name: Delete Slurm woker node
+- name: Delete Slurm woker nodes
   os_server:
     auth: "{{ os_auth }}"
     region_name: "{{ os_region_name }}"
