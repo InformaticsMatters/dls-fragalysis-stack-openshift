@@ -44,3 +44,15 @@
     owner: root
     group: root
   notify: Restart NFS
+
+- name: Create NFS exports
+  copy:
+    content: "{{ slurm_home_path }} *(rw,no_root_squash)"
+    dest: /etc/exports
+    owner: root
+    group: root
+  notify: Restart NFS
+
+- name: Create MUNGE key
+  set_fact:
+    munge_key: "{{ lookup('password', '/dev/null length=1024') }}"

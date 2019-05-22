@@ -32,14 +32,10 @@
   - /etc/munge
   - /var/log/munge
 
-- name: Create MUNGE key
-  set_fact:
-    munge_key: "{{ lookup('password', '/dev/null length=1024') }}"
-
-- name:
+- name: Copy MUNGE key
   copy:
     content: "{{ munge_key }}"
     dest: /etc/munge/munge.key
     mode: 0400
     owner: munge
-#  notify: Restart MUNGE
+  notify: Restart MUNGE
