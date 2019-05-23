@@ -1,6 +1,6 @@
 ---
 
-# Creates our Slurm cluster on OpenStack.
+# Creates our cluster on OpenStack.
 #
 # This is driven by variables that should be defined by
 # 'sourcing' your OpenStack Keystone file. The initial
@@ -10,14 +10,14 @@
   assert:
     that: os_auth_url is defined
 
-- name: Create Slurm shared volume
+- name: Create shared volume
   os_volume:
     auth: "{{ os_auth }}"
     size: "{{ slurm_vol_size_g }}"
     display_name: "{{ slurm_instance_base_name }}-volume"
     display_description: Shared volume for the Fragment cluster
 
-- name: Create Slurm head node
+- name: Create head node
   os_server:
     auth: "{{ os_auth }}"
     region_name: "{{ os_region_name }}"
@@ -35,7 +35,7 @@
     server: "{{ slurm_instance_base_name }}-head"
     volume: "{{ slurm_instance_base_name }}-volume"
 
-- name: Create Slurm worker nodes
+- name: Create worker nodes
   os_server:
     auth: "{{ os_auth }}"
     region_name: "{{ os_region_name }}"

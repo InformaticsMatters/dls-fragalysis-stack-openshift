@@ -1,6 +1,6 @@
 ---
 
-# Deletes our Slurm cluster on OpenStack.
+# Deletes our cluster on OpenStack.
 #
 # This is driven by variables that should be defined by
 # 'sourcing' your OpenStack Keystone file. The initial
@@ -14,14 +14,14 @@
 # (we see errors if it's not there anyway)
 # so just delete the server...
 
-- name: Delete Slurm head node
+- name: Delete head node
   os_server:
     auth: "{{ os_auth }}"
     region_name: "{{ os_region_name }}"
     name: "{{ slurm_instance_base_name }}-head"
     state: absent
 
-- name: Delete Slurm woker nodes
+- name: Delete woker nodes
   os_server:
     auth: "{{ os_auth }}"
     region_name: "{{ os_region_name }}"
@@ -29,7 +29,7 @@
     state: absent
   loop: "{{ range(slurm_worker_count)|list }}"
 
-- name: Delete Slurm shared volume
+- name: Delete shared volume
   os_volume:
     auth: "{{ os_auth }}"
     display_name: "{{ slurm_instance_base_name }}-volume"
