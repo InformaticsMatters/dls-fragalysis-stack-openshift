@@ -6,7 +6,7 @@
 
 # Get information about the node
 # We simply want its IP address
-# so we can add it to the 'slurm_head' inventory group
+# so we can add it to the 'head' inventory group
 
 - name: Get head node facts
   os_server_facts:
@@ -16,12 +16,12 @@
 
 - name: Adjust to head node group
   add_host:
-    groups: slurm_head
+    groups: head
     name: "{{ openstack_servers[0].interface_ip }}"
 
 # Get information about the worker nodes
 # We simply want their IP addresses
-# so we can add them to the 'slurm_worker' inventory group
+# so we can add them to the 'worker' inventory group
 
 - name: Get worker node facts
   os_server_facts:
@@ -31,7 +31,7 @@
 
 - name: Adjust worker nodes grpup
   add_host:
-    groups: slurm_worker
+    groups: worker
     name: "{{ item.private_v4 }}"
   loop: "{{ openstack_servers }}"
   no_log: yes

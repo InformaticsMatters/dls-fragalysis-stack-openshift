@@ -26,7 +26,7 @@
 
 - name: Copy MUNGE key
   copy:
-    content: "{{ hostvars[groups['slurm_head'][0]]['munge_key'] }}"
+    content: "{{ hostvars[groups['head'][0]]['munge_key'] }}"
     dest: /etc/munge/munge.key
     owner: munge
     group: munge

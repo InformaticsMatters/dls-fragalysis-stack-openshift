@@ -27,5 +27,5 @@
     passno: 2
     state: mounted
   vars:
-    nfs_ip: "{{ hostvars[groups['slurm_head'][0]]['ansible_default_ipv4']['address'] }}"
+    nfs_ip: "{{ hostvars[groups['head'][0]]['ansible_default_ipv4']['address'] }}"
   notify: Restart NFS

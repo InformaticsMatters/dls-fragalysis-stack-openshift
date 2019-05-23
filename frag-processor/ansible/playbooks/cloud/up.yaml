@@ -4,16 +4,18 @@
   roles:
   - cloud
 
-- hosts: slurm_head
+- hosts: head
   become: yes
   roles:
   - cloud-head
-  - app-munge
-  - app-slurm
 
-- hosts: slurm_worker
+- hosts: worker
   become: yes
   roles:
   - cloud-worker
+
+- hosts: head:worker
+  become: yes
+  roles:
   - app-munge
   - app-slurm
