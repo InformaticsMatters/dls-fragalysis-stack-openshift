@@ -14,28 +14,24 @@
   become: yes
   roles:
   - cloud-head
-
-- hosts: worker
-  become: yes
-  roles:
-  - cloud-worker
-
-# Install common head and worker applications
-
-- hosts: head
-  become: yes
   tasks:
   - name: Build slurm
     include_role:
       name: app-slurm
       tasks_from: build-slurm.yaml
-  roles:
-  - app-munge
-  - app-slurm
-  - app-slurm-drmaa
 
 - hosts: worker
   become: yes
   roles:
+  - cloud-worker
   - app-munge
+  - app-slurm
+
+# Install common head and worker applications
+
+- hosts: head
+  become: yes
+  roles:
+  - app-munge
+  - app-slurm-drmaa
   - app-slurm
