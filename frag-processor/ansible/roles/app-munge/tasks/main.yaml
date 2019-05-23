@@ -38,7 +38,7 @@
     path: "{{ item.dir }}"
     owner: munge
     group: munge
-    mode: "{{ item.perm }}"
+    mode: "{{ item.perm|int }}"
     state: directory
     recurse: yes
   with_items:
