@@ -85,7 +85,7 @@
 #  notify: Restart slurm
 
 - name: Touch slurm log
- file:
+  file:
     path: /var/log/slurmd.log
     owner: slurm
     group: slurm
