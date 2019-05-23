@@ -1,3 +1,6 @@
 ---
 
 slurm_version: 18.08.5-2
+
+slurm_user_id: 992
+slurm_home_path: /data/slurm

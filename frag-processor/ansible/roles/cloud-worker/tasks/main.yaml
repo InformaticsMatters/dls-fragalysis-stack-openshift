@@ -18,7 +18,7 @@
     regexp: "{{ line }}"
     line: "{{ line }}"
   vars:
-    line: "{{ hostvars['localhost']['head_addr'] }} {{ slurm_instance_base_name }}-head"
+    line: "{{ hostvars['localhost']['head_addr'] }} {{ hostvars['localhost']['head_name'] }}"
 
 # Mount NFS share
 
@@ -28,18 +28,18 @@
     enabled: yes
     state: restarted
 
-- name: Create slurm (home) mount-point
+- name: Create volume mount-point
   file:
-    path: "{{ slurm_home_path }}"
+    path: "{{ os_volume_mount }}"
     state: directory
     mode: 0777
     owner: root
     group: root
 
-- name: Mount slurm (home)
+- name: Mount volume
   mount:
-    path: "{{ slurm_home_path }}"
-    src: "{{ nfs_ip }}:{{ slurm_home_path }}"
+    path: "{{ os_volume_mount }}"
+    src: "{{ nfs_ip }}:{{ os_volume_mount }}"
     fstype: nfs
     opts: defaults
     passno: '2'

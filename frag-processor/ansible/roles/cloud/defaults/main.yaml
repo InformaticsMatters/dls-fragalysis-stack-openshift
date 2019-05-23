@@ -1,9 +1,15 @@
 ---
 
-os_head_flavour: m3.small
+os_instance_base_name: graph
+
+os_head_flavour: c1.xlarge
 os_head_image_name: ScientificLinux-7-NoGui
 os_worker_flavour: m3.small
 os_worker_image_name: ScientificLinux-7-NoGui
+
+os_worker_count: 2
+
+os_volume_size_g: 500
 os_volume_device: /dev/vdb
 
 os_auth_url: "{{ ansible_env.OS_AUTH_URL }}"
@@ -15,7 +21,7 @@ os_region_name: "{{ ansible_env.OS_REGION_NAME }}"
 os_key_name: stfc-abc-1
 os_availability_zone: ceph
 
-# The authentication dictionary.
+# A convenient authentication dictionary.
 # Used by numerous OpenStack tasks.
 os_auth:
   auth_url: "{{ os_auth_url }}"

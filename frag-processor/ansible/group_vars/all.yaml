@@ -74,15 +74,3 @@ process_max_frag: 0
 
 # The name of the generated standard file
 standard_file: standardised-compounds.tab.gz
-
-# MUNGE configuration
-munge_user_id: 991
-
-# Slurm configuration.
-# The slurn_home_path is where slurm's home directory is
-# and is the mount-path for the volume shared by all nodes.
-slurm_user_id: 992
-slurm_home_path: /slurm-home
-slurm_vol_size_g: 500
-slurm_worker_count: 2
-slurm_instance_base_name: graph

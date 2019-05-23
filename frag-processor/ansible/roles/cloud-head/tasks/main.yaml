@@ -18,13 +18,13 @@
     regexp: "{{ line }}"
     line: "{{ line }}"
   vars:
-    line: "{{ hostvars['localhost']['head_addr'] }} {{ slurm_instance_base_name }}-head"
+    line: "{{ hostvars['localhost']['head_addr'] }} {{ hostvars['localhost']['head_name'] }}"
 
 # Setup NFS share and head node mounts
 
 # Ansible provides a 'ansible_mounts' variable.
 # It's a map of mounts and we just want to know if
-# our mount (slurm_home_path) is in it.
+# our mount (os_volume_mount) is in it.
 #
 # The map looks something like this (ansible 2.7.10): -
 #
@@ -38,22 +38,22 @@
 #            "inode_available": 32767989,
 #            "inode_total": 32768000,
 #            "inode_used": 11,
-#            "mount": "/slurm-home",
+#            "mount": "/data",
 #            "options": "rw,relatime,data=ordered",
 #            "size_available": 501374754816,
 #            "size_total": 528310599680,
 #            "uuid": "dc613974-7fc1-48ad-9448-b78003aecaa5"
 #        }]
 
-- name: Inspect slurm (home) mount
+- name: Inspect volume mount
   set_fact:
     mounted: "{{ ansible_mounts|json_query(query)|length }}"
   vars:
-    query: "[?mount=='{{ slurm_home_path }}']"
+    query: "[?mount=='{{ os_volume_mount }}']"
 
-- name: Create slurm (home) mount-point
+- name: Create volume mount-point
   file:
-    path: "{{ slurm_home_path }}"
+    path: "{{ os_volume_mount }}"
     state: directory
     mode: 0777
     owner: root
@@ -62,7 +62,7 @@
 
 - name: Unmount device
   mount:
-    path: "{{ slurm_home_path }}"
+    path: "{{ os_volume_mount }}"
     state: unmounted
   when: not mounted|bool
 
@@ -75,7 +75,7 @@
 - name: Mount device
   mount:
     src: "{{ os_volume_device }}"
-    path: "{{ slurm_home_path }}"
+    path: "{{ os_volume_mount }}"
     fstype: ext4
     opts: defaults
     passno: 2
@@ -84,7 +84,7 @@
 
 - name: Create NFS exports
   copy:
-    content: "{{ slurm_home_path }} *(rw,no_root_squash)"
+    content: "{{ os_volume_mount }} *(rw,no_root_squash)"
     dest: /etc/exports
     owner: root
     group: root

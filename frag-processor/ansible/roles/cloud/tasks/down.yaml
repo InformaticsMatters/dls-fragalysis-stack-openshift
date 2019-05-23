@@ -18,19 +18,19 @@
   os_server:
     auth: "{{ os_auth }}"
     region_name: "{{ os_region_name }}"
-    name: "{{ slurm_instance_base_name }}-head"
+    name: "{{ os_instance_base_name }}-head"
     state: absent
 
 - name: Delete woker nodes
   os_server:
     auth: "{{ os_auth }}"
     region_name: "{{ os_region_name }}"
-    name: "{{ slurm_instance_base_name }}-worker-{{ '%d'|format(item|int + 1) }}"
+    name: "{{ os_instance_base_name }}-worker-{{ '%d'|format(item|int + 1) }}"
     state: absent
-  loop: "{{ range(slurm_worker_count)|list }}"
+  loop: "{{ range(os_worker_count)|list }}"
 
 - name: Delete shared volume
   os_volume:
     auth: "{{ os_auth }}"
-    display_name: "{{ slurm_instance_base_name }}-volume"
+    display_name: "{{ os_instance_base_name }}-volume"
     state: absent
