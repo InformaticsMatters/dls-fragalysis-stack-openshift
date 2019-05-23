@@ -3,7 +3,7 @@
 # Install packages for MUNGE
 
 - name: Install MUNGE
-  yum:
+  package:
     name:
     - epel-release
     - munge

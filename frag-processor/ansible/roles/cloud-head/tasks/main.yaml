@@ -1,7 +1,9 @@
 ---
 
+- import_tasks: create-munge-key.yaml
+
 - name: Install head packages
-  yum:
+  package:
     name:
     - epel-release
     - nfs-utils
@@ -94,5 +96,3 @@
     name: nfs
     enabled: yes
     state: restarted
-
-- import_tasks: create-munge-key.yaml

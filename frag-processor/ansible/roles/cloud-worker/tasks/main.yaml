@@ -1,7 +1,7 @@
 ---
 
 - name: Install worker packages
-  yum:
+  package:
     name:
     - epel-release
     - nfs-utils

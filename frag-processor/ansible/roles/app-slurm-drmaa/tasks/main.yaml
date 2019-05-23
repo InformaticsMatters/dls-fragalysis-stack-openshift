@@ -13,7 +13,7 @@
   register: libdrmaa
 
 - name: Install build environment
-  yum:
+  package:
     name:
     - epel-release
     - gcc

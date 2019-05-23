@@ -1,12 +1,14 @@
 ---
 
+- import_tasks: create-user.yaml
+
 # Install packages for slurm.
 # As this role is applied to every node in the cluster
 # we also use it to install additional things
 # like Singularity and Java
 
 - name: Install slurm packages
-  yum:
+  package:
     name:
     - epel-release
     - openssl
@@ -17,12 +19,12 @@
     - libibumad
 
 - name: Install Singularity
-  yum:
+  package:
     name:
     - singularity
 
 - name: Install Java
-  yum:
+  package:
     name:
     - java-1.8.0-openjdk
 
@@ -37,20 +39,6 @@
   args:
     chdir: "{{ slurm_home_path }}"
     warn: no
-
-- name: Crete slurm group
-  group:
-    gid: "{{ slurm_user_id }}"
-    name: slurm
-
-- name: Crete slurm user
-  user:
-    name: slurm
-    uid: "{{ slurm_user_id }}"
-    group: slurm
-    home: "{{ slurm_home_path }}"
-    create_home: no
-    shell: /sbin/bash
 
 - name: Create slurm config directory
   file:

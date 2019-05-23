@@ -1,0 +1,15 @@
+---
+
+- name: Crete slurm group
+  group:
+    gid: "{{ slurm_user_id }}"
+    name: slurm
+
+- name: Crete slurm user
+  user:
+    name: slurm
+    uid: "{{ slurm_user_id }}"
+    group: slurm
+    home: "{{ slurm_home_path }}"
+    shell: /sbin/bash
+
