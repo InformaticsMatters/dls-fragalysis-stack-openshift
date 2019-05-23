@@ -7,13 +7,13 @@
     name:
     - epel-release
     - munge
-#  notify: Restart MUNGE
+  notify: Restart MUNGE
 
 - name: Crete MUNGE group
   group:
     gid: "{{ munge_user_id }}"
     name: munge
-#  notify: Restart MUNGE
+  notify: Restart MUNGE
 
 - name: Crete MUNGE user
   user:
@@ -21,7 +21,7 @@
     uid: "{{ munge_user_id }}"
     group: munge
     shell: /bin/bash
-#  notify: Restart MUNGE
+  notify: Restart MUNGE
 
 - name: Copy MUNGE key
   copy:
@@ -29,7 +29,7 @@
     dest: /etc/munge/munge.key
     owner: munge
     group: munge
-#  notify: Restart MUNGE
+  notify: Restart MUNGE
 
 - name: Adjust MUNGE directories
   file:
@@ -42,5 +42,4 @@
   loop:
   - /var/log/munge
   - /etc/munge/
-
-#  notify: Restart MUNGE
+  notify: Restart MUNGE

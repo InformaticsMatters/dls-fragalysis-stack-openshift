@@ -13,6 +13,7 @@
     auth: "{{ os_auth }}"
     region_name: "{{ os_region_name }}"
     server: "{{ slurm_instance_base_name }}-head"
+    limit: 1
 
 - name: Display head node
   debug:
@@ -47,6 +48,7 @@
     auth: "{{ os_auth }}"
     region_name: "{{ os_region_name }}"
     name: "{{ os_worker_flavour }}"
+    limit: 1
 
 # Now set a 'worker_nodes' fact.
 # This contains their names, addresses and vCPU value.

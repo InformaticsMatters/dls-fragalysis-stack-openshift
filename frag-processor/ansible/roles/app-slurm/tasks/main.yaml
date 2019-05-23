@@ -57,7 +57,7 @@
     dest: /etc/slurm/slurm.conf
     owner: slurm
     vars:
-    nodes: "{{ hostvars['localhost']['nodes'] }}"
+      worker_nodes: "{{ hostvars['localhost']['worker_nodes'] }}"
 #  notify: Restart slurm
 
 - name: Copy slurm cgroup configuration
