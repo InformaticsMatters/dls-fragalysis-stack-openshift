@@ -46,6 +46,3 @@
   notify: Restart NFS
 
 - import_tasks: create-munge-key.yaml
-
-- import_tasks: configure-munge.yaml
-- import_tasks: configure-slurm.yaml

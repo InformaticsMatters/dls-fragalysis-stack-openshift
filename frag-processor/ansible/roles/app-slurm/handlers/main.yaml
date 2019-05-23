@@ -1,0 +1,6 @@
+---
+
+- name: Restart slurm
+  service:
+    name: slurmctl
+    state: restarted

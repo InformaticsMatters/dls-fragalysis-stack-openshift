@@ -7,9 +7,13 @@
 - hosts: slurm_head
   become: yes
   roles:
-  - slurm-head
+  - cloud-head
+  - app-munge
+  - app-slurm
 
 - hosts: slurm_worker
   become: yes
   roles:
-  - slurm-worker
+  - cloud-worker
+  - app-munge
+  - app-slurm

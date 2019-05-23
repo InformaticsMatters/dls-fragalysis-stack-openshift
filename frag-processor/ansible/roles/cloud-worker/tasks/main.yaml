@@ -1,0 +1,31 @@
+---
+
+- name: Install worker packages
+  yum:
+    name:
+    - epel-release
+    - nfs-utils
+    - nfs-utils-lib
+
+# Mount NFS share
+
+- name: Create slurm (home) mount-point
+  file:
+    path: "{{ slurm_home_path }}"
+    state: directory
+    mode: 0777
+    owner: root
+    group: root
+  notify: Restart NFS
+
+- name: Mount slurm (home)
+  mount:
+    path: "{{ slurm_home_path }}"
+    src: "{{ nfs_ip }}:{{ slurm_home_path }}"
+    fstype: nfs
+    opts: defaults
+    passno: 2
+    state: mounted
+  vars:
+    nfs_ip: "{{ hostvars[groups['slurm_head'][0]]['ansible_default_ipv4']['address'] }}"
+  notify: Restart NFS

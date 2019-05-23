@@ -1,0 +1,48 @@
+---
+
+# Install packages for MUNGE
+
+- name: Install MUNGE
+  yum:
+    name:
+    - epel-release
+    - munge
+#  notify: Restart MUNGE
+
+- name: Crete MUNGE group
+  group:
+    gid: "{{ munge_user_id }}"
+    name: munge
+#  notify: Restart MUNGE
+
+- name: Crete MUNGE user
+  user:
+    name: munge
+    uid: "{{ munge_user_id }}"
+    group: munge
+    home: "{{ munge_home_path }}"
+    create_home: no
+    shell: /bin/bash
+#  notify: Restart MUNGE
+
+- name: Copy MUNGE key
+  copy:
+    content: "{{ hostvars[groups['slurm_head'][0]]['munge_key'] }}"
+    dest: /etc/munge/munge.key
+    owner: munge
+    group: munge
+#  notify: Restart MUNGE
+
+- name: Adjust MUNGE directories
+  file:
+    path: "{{ item }}"
+    owner: munge
+    group: munge
+    mode: 0700
+    state: directory
+    recurse: yes
+  loop:
+  - /var/log/munge
+  - /etc/munge/
+
+#  notify: Restart MUNGE
