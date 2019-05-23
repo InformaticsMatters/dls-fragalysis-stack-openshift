@@ -33,5 +33,5 @@
   become: yes
   roles:
   - app-munge
-  - app-slurm-drmaa
   - app-slurm
+  - app-slurm-drmaa

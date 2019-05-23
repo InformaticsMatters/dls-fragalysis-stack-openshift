@@ -32,3 +32,7 @@
   shell: rpmbuild -ta slurm-{{ slurm_version }}.tar.bz2
   args:
     chdir: "{{ slurm_home_path }}"
+
+- name: Move slurm
+  shell: mv /root/rpmbuild {{ slurm_home_path}}/rpmbuild
+  creates: {{ slurm_home_path}}/rpmbuild
