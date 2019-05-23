@@ -7,6 +7,14 @@
     - nfs-utils
     - nfs-utils-lib
 
+- name: Adjust /etc/hosts
+  lineinfile:
+    path: /etc/hosts
+    regexp: "{{ line }}"
+    line: "{{ line }}"
+  vars:
+    line: "{{ hostvars[inventory_hostname]['ansible_default_ipv4']['address'] }} {{ slurm_instance_base_name }}-head"
+
 # Setup NFS share and head node mounts
 
 # Ansible provides a 'ansible_mounts' variable.

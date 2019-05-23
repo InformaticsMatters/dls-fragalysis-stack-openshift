@@ -53,7 +53,7 @@
     owner: slurm
   vars:
     worker_nodes: "{{ hostvars['localhost']['worker_nodes'] }}"
-    head_addr: "{{ hostvars[groups['head'][0]]['ansible_default_ipv4']['address'] }}"
+    head_name: "{{ slurm_instance_base_name }}-head"
 
 - name: Copy slurm cgroup configuration
   copy:
