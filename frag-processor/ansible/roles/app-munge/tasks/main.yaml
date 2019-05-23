@@ -30,17 +30,20 @@
     dest: /etc/munge/munge.key
     owner: munge
     group: munge
+    mode: 0400
 #  notify: Restart MUNGE
 
 - name: Adjust MUNGE directories
   file:
-    path: "{{ item }}"
+    path: "{{ item.dir }}"
     owner: munge
     group: munge
-    mode: 0700
+    mode: "{{ item.perm }}"
     state: directory
     recurse: yes
-  loop:
-  - /var/log/munge
-  - /etc/munge/
+  with_items:
+  - { dir: '/etc/munge', perm: 0700 }
+  - { dir: '/var/lib/munge', perm: 0711 }
+  - { dir: '/var/log/munge', perm: 0700 }
+  - { dir: '/var/run/munge', perm: 0755 }
 #  notify: Restart MUNGE
