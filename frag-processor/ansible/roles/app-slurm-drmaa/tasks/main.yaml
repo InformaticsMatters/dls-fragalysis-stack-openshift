@@ -31,7 +31,6 @@
     drmaa_tarball: slurm-drmaa-{{ drmaa_version }}.tar.gz
     drmaa_unpacked: slurm-drmaa-{{ drmaa_version }}
     download_origin: github.com/natefoo/slurm-drmaa/releases/download
-  when: not libdrmaa.stat.exists
 
 - name: Get DRMAA
   get_url:
