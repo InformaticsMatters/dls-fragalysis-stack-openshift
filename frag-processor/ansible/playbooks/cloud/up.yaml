@@ -32,8 +32,6 @@
       name: app-slurm
       tasks_from: start-slurm-d.yaml
 
-# Install common head and worker applications
-
 - hosts: head
   become: yes
   roles:
