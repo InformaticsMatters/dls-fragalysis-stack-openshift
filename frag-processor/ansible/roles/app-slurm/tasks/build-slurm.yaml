@@ -10,7 +10,6 @@
     name:
     - epel-release
     - gcc
-    - rpmbuild
     - perl-ExtUtils-MakeMaker
     - mariadb-server
     - mariadb-devel
