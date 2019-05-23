@@ -27,10 +27,10 @@
   - app-munge
   - app-slurm
   tasks:
-    - name: Start slurm daemon
-      include_role:
-        name: app-slurm
-        tasks_from: start-slurm-d.yaml
+  - name: Start slurm daemon
+    include_role:
+      name: app-slurm
+      tasks_from: start-slurm-d.yaml
 
 # Install common head and worker applications
 
@@ -41,7 +41,7 @@
   - app-slurm
   - app-slurm-drmaa
   tasks:
-    - name: Start slurm controller daemon
-      include_role:
-        name: app-slurm
-        tasks_from: bstart-slurm-ctld.yaml
+  - name: Start slurm controller daemon
+    include_role:
+      name: app-slurm
+      tasks_from: bstart-slurm-ctld.yaml
