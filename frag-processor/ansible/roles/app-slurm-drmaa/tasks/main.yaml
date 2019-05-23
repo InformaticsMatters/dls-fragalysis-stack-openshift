@@ -3,6 +3,10 @@
 # Builds (and installs) slurm-DRMAA from source
 # unless it looks like it's already installed.
 
+- name: Display expected slurm version
+  debug:
+    msg: slurm-DRMAA version={{ drmaa_version }}
+
 - name: Check DRMAA build library
   stat:
     path: /usr/local/lib/libdrmaa.so
