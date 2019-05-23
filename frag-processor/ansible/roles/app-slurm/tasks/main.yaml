@@ -23,7 +23,7 @@
   shell: yum --nogpgcheck localinstall -y rpmbuild/RPMS/x86_64/slurm-*.rpm
   args:
     chdir: "{{ slurm_home_path }}"
-  warn: false
+    warn: no
 
 - name: Crete slurm group
   group:
