@@ -1,0 +1,32 @@
+---
+
+# Builds slurm from source.
+# This is typically only done on the head node.
+# The workers will use the produced RPM, which is
+# deposited on the shared file-system.
+
+- name: Install build environment
+  yum:
+    name:
+    - epel-release
+    - gcc
+    - rpmbuild
+    - perl-ExtUtils-MakeMaker
+    - mariadb-server
+    - mariadb-devel
+    - rpm-build
+    - readline-devel
+    - openssl
+    - pam-devel
+    - python-pip
+    - python-virtualenv
+
+- name: Get slurm
+  get_url:
+    url: https://download.schedmd.com/slurm/slurm-{{ slurm_version }}.tar.bz2
+    dest: "{{ slurm_home_path }}/slurm-{{ slurm_version }}.tar.bz2"
+
+- name: Build slurm
+  shell: rpmbuild -ta slurm-{{ slurm_version }}.tar.bz2
+  args:
+    chdir: "{{ slurm_home_path }}"

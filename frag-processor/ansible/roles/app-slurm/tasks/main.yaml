@@ -12,20 +12,6 @@
     - lua
     - libibmad
     - libibumad
-#  notify: Restart MUNGE
-
-#- name: Add slurm (Galaxy) repository
-#  yum_repository:
-#    name: slurm
-#    description: Galaxy slurm 18.08 packages
-#    baseurl: https://depot.galaxyproject.org/yum/package/slurm/18.08/$releasever/$basearch/
-#    gpgcheck: no
-#    skip_if_unavailable: yes
-
-#- name: Install slurm packages
-#  yum:
-#    name:
-#    - slurm
 
 - name: Crete slurm group
   group:

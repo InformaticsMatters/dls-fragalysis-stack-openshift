@@ -1,0 +1,4 @@
+---
+
+drmaa_version: 1.1.0
+slurm_version: 18.08.5-2
