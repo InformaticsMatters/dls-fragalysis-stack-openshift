@@ -26,7 +26,6 @@
 # Get information about the worker nodes
 # We simply want their IP addresses
 # so we can add them to the 'slurm_worker' inventory group
-# and set a 'nodes' fact that wil lbe used for application templating.
 
 - name: Get worker node facts
   os_server_facts:
@@ -40,23 +39,8 @@
     name: "{{ item.private_v4 }}"
   loop: "{{ openstack_servers }}"
 
-- name: Create nodes list
-  set_fact:
-    nodes: "{{ nodes|default([]) + [{'addr': item.private_v4, 'name': item.name}] }}"
-  loop: "{{ openstack_servers }}"
-
-# Get information about the head and worker node 'flavours'
+# Get information about the worker node 'flavour'.
 # We want the CPU count for slurm.
-
-- name: Get head node flavour facts
-  os_flavor_facts:
-    auth: "{{ os_auth }}"
-    region_name: "{{ os_region_name }}"
-    name: "{{ os_head_flavour }}"
-
-- name: Print head flavour fact
-  debug:
-    var: openstack_flavors
 
 - name: Get worker node flavour facts
   os_flavor_facts:
@@ -64,6 +48,12 @@
     region_name: "{{ os_region_name }}"
     name: "{{ os_worker_flavour }}"
 
-- name: Print worker flavour fact
-  debug:
-    var: openstack_flavors
+# Now set a 'worker_nodes' fact.
+# This contains their names, addresses and vCPU value.
+
+- name: Create worker nodes fact
+  set_fact:
+    worker_nodes: "{{ nodes|default([]) + [{'addr': item.private_v4, 'name': item.name}, 'vcpus': vcpus] }}"
+  vars:
+    vcpus: "{{ openstack_flavors[0]['vcpus'] }}"
+  loop: "{{ openstack_servers }}"

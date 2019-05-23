@@ -20,8 +20,6 @@
     name: munge
     uid: "{{ munge_user_id }}"
     group: munge
-    home: "{{ munge_home_path }}"
-    create_home: no
     shell: /bin/bash
 #  notify: Restart MUNGE
 
