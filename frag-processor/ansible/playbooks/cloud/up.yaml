@@ -23,6 +23,7 @@
 # Install common head and worker applications
 
 - hosts: head
+  become: yes
   tasks:
   - name: Build slurm
     include_role:

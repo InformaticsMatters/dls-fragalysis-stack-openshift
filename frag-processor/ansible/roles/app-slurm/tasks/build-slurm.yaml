@@ -2,7 +2,8 @@
 
 # Builds slurm from source.
 # This is typically only done on the head node.
-# The workers will use the produced RPM, which is
+# The workers (and the head installation)
+# will use the produced RPM, which is
 # deposited on the shared file-system.
 
 - name: Install build environment
