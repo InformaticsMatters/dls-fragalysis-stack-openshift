@@ -34,7 +34,6 @@
     groups: worker
     name: "{{ item.private_v4 }}"
   loop: "{{ openstack_servers }}"
-  no_log: yes
 
 # Now set a 'worker_nodes' fact.
 # This contains their names, addresses and vCPU value.
@@ -45,7 +44,6 @@
   vars:
     vcpus: "{{ openstack_flavors[0]['vcpus'] }}"
   loop: "{{ openstack_servers }}"
-  no_log: yes
 
 - name: Display worker nodes
   debug:
