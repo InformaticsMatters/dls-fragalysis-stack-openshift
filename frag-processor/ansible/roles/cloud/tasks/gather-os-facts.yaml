@@ -56,7 +56,3 @@
     vcpus: "{{ openstack_flavors[0]['vcpus'] }}"
   loop: "{{ openstack_servers }}"
   no_log: yes
-
-- name: Display worker nodes
-  debug:
-    var: worker_nodes
