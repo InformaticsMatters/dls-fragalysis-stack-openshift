@@ -35,4 +35,3 @@
 
 - name: Move slurm
   shell: mv -f /root/rpmbuild {{ slurm_home_path}}/rpmbuild
-  creates: {{ slurm_home_path}}/rpmbuild
