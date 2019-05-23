@@ -14,11 +14,7 @@
     region_name: "{{ os_region_name }}"
     server: "{{ slurm_instance_base_name }}-head"
 
-- name: Display head node
-  debug:
-    var: openstack_servers
-
-- name: Adjust head node group
+- name: Adjust to head node group
   add_host:
     groups: slurm_head
     name: "{{ openstack_servers[0].interface_ip }}"
@@ -33,11 +29,12 @@
     region_name: "{{ os_region_name }}"
     server: "{{ slurm_instance_base_name }}-worker-*"
 
-- name: Add worker nodes
+- name: Adjust worker nodes grpup
   add_host:
     groups: slurm_worker
     name: "{{ item.private_v4 }}"
   loop: "{{ openstack_servers }}"
+  no_log: yes
 
 # Get information about the worker node 'flavour'.
 # We want the CPU count for slurm.
@@ -58,3 +55,4 @@
   vars:
     vcpus: "{{ openstack_flavors[0]['vcpus'] }}"
   loop: "{{ openstack_servers }}"
+  no_log: yes
