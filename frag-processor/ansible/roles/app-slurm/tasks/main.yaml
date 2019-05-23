@@ -13,13 +13,17 @@
     - libibmad
     - libibumad
 
-# Install slurm
-# from a pre-build RPM expected to reside on the shared volume
+# Install slurm from a pre-built RPM
+# (expected to reside on the shared volume).
+#
+# We disable warnings on the next task because ansible
+# wants us to use the yum module.
 
 - name: Install slurm
   shell: yum --nogpgcheck localinstall -y rpmbuild/RPMS/x86_64/slurm-*.rpm
   args:
     chdir: "{{ slurm_home_path }}"
+  warn: false
 
 - name: Crete slurm group
   group:
