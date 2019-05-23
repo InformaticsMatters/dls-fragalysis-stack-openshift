@@ -23,11 +23,6 @@
     name:
     - singularity
 
-- name: Install Java
-  package:
-    name:
-    - java-1.8.0-openjdk
-
 # Install slurm from a pre-built RPM
 # (expected to reside on the shared volume).
 #
