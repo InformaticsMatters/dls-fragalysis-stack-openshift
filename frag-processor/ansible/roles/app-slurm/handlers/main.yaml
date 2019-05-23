@@ -3,4 +3,5 @@
 - name: Restart slurm
   service:
     name: slurmctl
+    enabled: yes
     state: restarted

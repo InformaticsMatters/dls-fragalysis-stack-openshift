@@ -21,6 +21,7 @@
     uid: "{{ munge_user_id }}"
     group: munge
     shell: /bin/bash
+    home: /home/munge
   notify: Restart MUNGE
 
 - name: Copy MUNGE key
