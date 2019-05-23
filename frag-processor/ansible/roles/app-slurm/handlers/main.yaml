@@ -1,7 +1,0 @@
----
-
-- name: Restart slurm
-  service:
-    name: slurmctld
-    enabled: yes
-    state: restarted
