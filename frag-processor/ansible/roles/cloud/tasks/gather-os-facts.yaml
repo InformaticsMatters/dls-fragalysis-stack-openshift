@@ -29,22 +29,12 @@
     region_name: "{{ os_region_name }}"
     server: "{{ slurm_instance_base_name }}-worker-*"
 
-- name: Adjust worker nodes grpup
+- name: Adjust worker nodes group
   add_host:
     groups: worker
     name: "{{ item.private_v4 }}"
   loop: "{{ openstack_servers }}"
   no_log: yes
-
-# Get information about the worker node 'flavour'.
-# We want the CPU count for slurm.
-
-- name: Get worker node flavour facts
-  os_flavor_facts:
-    auth: "{{ os_auth }}"
-    region_name: "{{ os_region_name }}"
-    name: "{{ os_worker_flavour }}"
-    limit: 1
 
 # Now set a 'worker_nodes' fact.
 # This contains their names, addresses and vCPU value.
@@ -56,3 +46,18 @@
     vcpus: "{{ openstack_flavors[0]['vcpus'] }}"
   loop: "{{ openstack_servers }}"
   no_log: yes
+
+- name: Display worker nodes
+  debug:
+    var: worker_nodes
+
+
+# Get information about the worker node 'flavour'.
+# We want the CPU count for slurm.
+
+- name: Get worker node flavour facts
+  os_flavor_facts:
+    auth: "{{ os_auth }}"
+    region_name: "{{ os_region_name }}"
+    name: "{{ os_worker_flavour }}"
+    limit: 1

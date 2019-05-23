@@ -51,6 +51,10 @@
     recurse: true
 #  notify: Restart slurm
 
+- name: Display worker nodes
+  debug:
+    msg: "{{ hostvars['localhost']['worker_nodes'] }}"
+
 - name: Copy slurm configuration template
   template:
     src: "{{ role_path }}/files/slurm.conf.j2"
