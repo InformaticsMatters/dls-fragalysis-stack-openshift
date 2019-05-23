@@ -14,7 +14,7 @@
   become: yes
   roles:
   - cloud-head
-  - app-drmaa
+  - app-slurm-drmaa
   tasks:
   - name: Build slurm
     include_role:

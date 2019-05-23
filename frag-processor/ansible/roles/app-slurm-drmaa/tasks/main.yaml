@@ -1,0 +1,43 @@
+---
+
+# Builds (and installs) DRMAA from source.
+
+- name: Install build environment
+  yum:
+    name:
+    - epel-release
+    - gcc
+    - perl-ExtUtils-MakeMaker
+    - mariadb-server
+    - mariadb-devel
+    - rpm-build
+    - readline-devel
+    - openssl
+    - pam-devel
+    - python-pip
+    - python-virtualenv
+
+- name: Get DRMAA
+  get_url:
+    url: https://github.com/natefoo/slurm-drmaa/releases/download/{{ drmaa_version }}/slurm-drmaa-{{ drmaa_version }}.tar.gz
+    dest: "{{ slurm_home_path }}/slurm-drmaa-{{ drmaa_version }}.tar.gz"
+
+- name: Unpack DRMAA
+  unarchive:
+    src: "{{ slurm_home_path }}/slurm-drmaa-{{ drmaa_version }}.tar.gz"
+    dest: "{{ slurm_home_path }}/slurm-drmaa-{{ drmaa_version }}"
+
+- name: Configure DRMAA
+  shell: ./configure
+  args:
+    chdir: "{{ slurm_home_path }}/slurm-drmaa-{{ drmaa_version }}"
+
+- name: Make DRMAA
+  shell: make
+  args:
+    chdir: "{{ slurm_home_path }}/slurm-drmaa-{{ drmaa_version }}"
+
+- name: Make Install DRMAA
+  shell: make install
+  args:
+    chdir: "{{ slurm_home_path }}/slurm-drmaa-{{ drmaa_version }}"

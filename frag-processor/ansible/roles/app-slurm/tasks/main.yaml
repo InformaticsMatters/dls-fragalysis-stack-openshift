@@ -13,6 +13,14 @@
     - libibmad
     - libibumad
 
+# Install slurm
+# from a pre-build RPM expected to reside on the shared volume
+
+#- name: Install slurm
+#  shell: yum --nogpgcheck localinstall -y rpmbuild/RPMS/x86_64/slurm-*.rpm
+#  args:
+#    chdir: "{{ slurm_home_path }}"
+
 - name: Crete slurm group
   group:
     gid: "{{ slurm_user_id }}"
