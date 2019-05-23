@@ -75,6 +75,11 @@
     dest: /etc/exports
     owner: root
     group: root
-  notify: Restart NFS
+
+- name: Enable and restart NFS
+  service:
+    name: nfs
+    enabled: yes
+    state: restarted
 
 - import_tasks: create-munge-key.yaml

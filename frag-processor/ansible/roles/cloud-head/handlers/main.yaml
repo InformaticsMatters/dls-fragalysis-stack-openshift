@@ -1,7 +1,0 @@
----
-
-- name: Restart NFS
-  service:
-    name: nfs
-    enabled: yes
-    state: restarted

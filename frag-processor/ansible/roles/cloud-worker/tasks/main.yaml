@@ -7,6 +7,12 @@
     - nfs-utils
     - nfs-utils-lib
 
+- name: Enable and restart NFS
+  service:
+    name: nfs
+    enabled: yes
+    state: restarted
+
 # Mount NFS share
 
 - name: Create slurm (home) mount-point
@@ -16,7 +22,6 @@
     mode: 0777
     owner: root
     group: root
-  notify: Restart NFS
 
 - name: Mount slurm (home)
   mount:
@@ -28,4 +33,3 @@
     state: mounted
   vars:
     nfs_ip: "{{ hostvars[groups['head'][0]]['ansible_default_ipv4']['address'] }}"
-  notify: Restart NFS
