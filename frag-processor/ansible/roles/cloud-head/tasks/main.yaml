@@ -26,11 +26,11 @@
 - name: Ensure device has a filesystem
   filesystem:
     fstype: ext4
-    dev: "{{ os_slurm_volume_device }}"
+    dev: "{{ os_volume_device }}"
 
 - name: Mount device
   mount:
-    src: "{{ os_slurm_volume_device }}"
+    src: "{{ os_volume_device }}"
     path: "{{ slurm_home_path }}"
     fstype: ext4
     opts: defaults

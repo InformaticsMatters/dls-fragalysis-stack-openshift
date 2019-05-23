@@ -1,10 +1,9 @@
 ---
 
-os_slurm_head_flavour: m3.small
-os_slurm_head_image_name: ScientificLinux-7-NoGui
-os_slurm_worker_flavour: m3.small
-os_slurm_worker_image_name: ScientificLinux-7-NoGui
-os_slurm_volume_device: /dev/vdb
+os_head_flavour: m3.small
+os_head_image_name: ScientificLinux-7-NoGui
+os_worker_flavour: m3.small
+os_worker_image_name: ScientificLinux-7-NoGui
 
 os_auth_url: "{{ ansible_env.OS_AUTH_URL }}"
 os_project_id: "{{ ansible_env.OS_PROJECT_ID }}"
