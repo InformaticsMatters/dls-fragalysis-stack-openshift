@@ -7,14 +7,17 @@
     name:
     - epel-release
     - gcc
-    - perl-ExtUtils-MakeMaker
-    - mariadb-server
     - mariadb-devel
-    - readline-devel
+    - mariadb-server
+    - munge-devel
+    - munge-libs
     - openssl
     - pam-devel
+    - perl-ExtUtils-MakeMaker
     - python-pip
     - python-virtualenv
+    - readline-devel
+    - rpm-build
 
 - name: Get DRMAA
   get_url:
