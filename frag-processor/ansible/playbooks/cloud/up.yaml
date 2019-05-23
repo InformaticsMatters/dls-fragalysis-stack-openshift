@@ -44,4 +44,4 @@
   - name: Start slurm controller daemon
     include_role:
       name: app-slurm
-      tasks_from: bstart-slurm-ctld.yaml
+      tasks_from: start-slurm-ctld.yaml
