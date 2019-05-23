@@ -24,7 +24,7 @@
     src: "{{ nfs_ip }}:{{ slurm_home_path }}"
     fstype: nfs
     opts: defaults
-    passno: 2
+    passno: '2'
     state: mounted
   vars:
     nfs_ip: "{{ hostvars[groups['head'][0]]['ansible_default_ipv4']['address'] }}"

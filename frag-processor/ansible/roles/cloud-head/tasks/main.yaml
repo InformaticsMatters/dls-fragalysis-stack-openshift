@@ -10,10 +10,10 @@
 # Setup NFS share and head node mounts
 
 # Ansible provides a 'ansible_mounts' variable.
-# It's a map of mounts. We just want to know if
-# out mount (slurm_home_path) is in it.
+# It's a map of mounts and we just want to know if
+# our mount (slurm_home_path) is in it.
 #
-# The map looks something like this (ansible 2.7.1): -
+# The map looks something like this (ansible 2.7.10): -
 #
 # "ansible_mounts": [{
 #            "block_available": 122405946,
