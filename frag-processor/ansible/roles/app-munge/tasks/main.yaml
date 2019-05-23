@@ -7,13 +7,15 @@
     name:
     - epel-release
     - munge
-#  notify: Restart MUNGE
+  notify: Restart MUNGE
+
+# Prepare MUNGE
 
 - name: Crete MUNGE group
   group:
     gid: "{{ munge_user_id }}"
     name: munge
-#  notify: Restart MUNGE
+  notify: Restart MUNGE
 
 - name: Crete MUNGE user
   user:
@@ -22,7 +24,7 @@
     group: munge
     shell: /bin/bash
     home: /home/munge
-#  notify: Restart MUNGE
+  notify: Restart MUNGE
 
 - name: Copy MUNGE key
   copy:
@@ -31,7 +33,7 @@
     owner: munge
     group: munge
     mode: 0400
-#  notify: Restart MUNGE
+  notify: Restart MUNGE
 
 - name: Adjust MUNGE directories
   file:
@@ -46,4 +48,4 @@
   - { dir: '/var/lib/munge', perm: '0711' }
   - { dir: '/var/log/munge', perm: '0700' }
   - { dir: '/var/run/munge', perm: '0755' }
-#  notify: Restart MUNGE
+  notify: Restart MUNGE
