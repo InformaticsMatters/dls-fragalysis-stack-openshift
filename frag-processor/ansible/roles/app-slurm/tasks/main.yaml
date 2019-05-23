@@ -1,6 +1,9 @@
 ---
 
-# Install packages slurm
+# Install packages for slurm.
+# As this role is applied to every node in the cluster
+# we also use it to install additional things
+# like Singularity and Java
 
 - name: Install slurm packages
   yum:
@@ -12,6 +15,16 @@
     - lua
     - libibmad
     - libibumad
+
+- name: Install Singularity
+  yum:
+    name:
+    - singularity
+
+- name: Install Java
+  yum:
+    name:
+    - java-1.8.0-openjdk
 
 # Install slurm from a pre-built RPM
 # (expected to reside on the shared volume).
