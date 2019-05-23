@@ -18,7 +18,7 @@
     regexp: "{{ line }}"
     line: "{{ line }}"
   vars:
-    line: "{{ head_addr }} {{ slurm_instance_base_name }}-head"
+    line: "{{ hostvars['localhost']['head_addr'] }} {{ slurm_instance_base_name }}-head"
 
 # Setup NFS share and head node mounts
 

@@ -18,7 +18,7 @@
     regexp: "{{ line }}"
     line: "{{ line }}"
   vars:
-    line: "{{ head_addr }} {{ slurm_instance_base_name }}-head"
+    line: "{{ hostvars['localhost']['head_addr'] }} {{ slurm_instance_base_name }}-head"
 
 # Mount NFS share
 
@@ -45,4 +45,4 @@
     passno: '2'
     state: mounted
   vars:
-    nfs_ip: "{{ head_addr }}"
+    nfs_ip: "{{ hostvars['localhost']['head_addr'] }}"
