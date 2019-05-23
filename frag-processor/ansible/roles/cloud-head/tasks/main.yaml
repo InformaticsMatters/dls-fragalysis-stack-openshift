@@ -20,7 +20,7 @@
     regexp: "{{ line }}"
     line: "{{ line }}"
   vars:
-    line: "{{ hostvars['localhost']['head_addr'] }} {{ hostvars['localhost']['head_name'] }}"
+    line: "{{ hostvars['localhost']['head_addr'] }} {{ hostvars['localhost']['base_name'] }}-head"
 
 # Setup NFS share and head node mounts
 
