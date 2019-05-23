@@ -14,7 +14,7 @@
     region_name: "{{ os_region_name }}"
     server: "{{ slurm_instance_base_name }}-head"
 
-- name: Adjust to head node group
+- name: Adjust head node group
   add_host:
     groups: head
     name: "{{ openstack_servers[0].interface_ip }}"
@@ -44,9 +44,10 @@
     groups: worker
     name: "{{ item.private_v4 }}"
   loop: "{{ openstack_servers }}"
+  no_log: yes
 
 # Now set a 'worker_nodes' fact.
-# This contains their names, addresses and vCPU value.
+# This contains worker names, addresses and vCPU value.
 
 - name: Create worker nodes fact
   set_fact:
@@ -54,6 +55,7 @@
   vars:
     vcpus: "{{ openstack_flavors[0]['vcpus'] }}"
   loop: "{{ openstack_servers }}"
+  no_log: yes
 
 - name: Display worker nodes
   debug:
