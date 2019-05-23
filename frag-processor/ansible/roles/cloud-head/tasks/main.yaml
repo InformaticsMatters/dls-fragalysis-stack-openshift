@@ -7,6 +7,10 @@
     - nfs-utils
     - nfs-utils-lib
 
+- name: Display mounts
+  debug:
+    var: ansible_mounts
+
 # Setup NFS share and head node mounts
 # The
 

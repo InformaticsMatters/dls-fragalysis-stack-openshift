@@ -1,8 +1,14 @@
 ---
 
+# Create the cloud instances.
+# This sets up some facts
+# and dynamically adjusts inventory groups
+
 - hosts: localhost
   roles:
   - cloud
+
+# Configure the head and worker nodes
 
 - hosts: head
   become: yes
@@ -13,6 +19,8 @@
   become: yes
   roles:
   - cloud-worker
+
+# Install common head and worker applications
 
 - hosts: head:worker
   become: yes
