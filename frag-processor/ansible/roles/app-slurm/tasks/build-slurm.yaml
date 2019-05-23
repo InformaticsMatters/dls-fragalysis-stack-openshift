@@ -29,23 +29,23 @@
     - python-virtualenv
     - readline-devel
     - rpm-build
-  when: not rpmbuild.stat.isdir
+  when: not rpmbuild.stat.exists
 
 - name: Get slurm
   get_url:
     url: https://download.schedmd.com/slurm/slurm-{{ slurm_version }}.tar.bz2
     dest: "{{ slurm_home_path }}/slurm-{{ slurm_version }}.tar.bz2"
-  when: not rpmbuild.stat.isdir
+  when: not rpmbuild.stat.exists
 
 - name: Build slurm
   shell: rpmbuild -ta slurm-{{ slurm_version }}.tar.bz2
   args:
     chdir: "{{ slurm_home_path }}"
-  when: not rpmbuild.stat.isdir
+  when: not rpmbuild.stat.exists
 
 - name: Move slurm
   shell: mv /root/rpmbuild {{ slurm_home_path}}/rpmbuild
-  when: not rpmbuild.stat.isdir
+  when: not rpmbuild.stat.exists
 
 - name: Remove download
   file:
