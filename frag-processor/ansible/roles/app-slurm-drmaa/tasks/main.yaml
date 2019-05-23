@@ -26,6 +26,8 @@
   unarchive:
     src: "{{ slurm_home_path }}/slurm-drmaa-{{ drmaa_version }}.tar.gz"
     dest: "{{ slurm_home_path }}/slurm-drmaa-{{ drmaa_version }}"
+    creates: "{{ slurm_home_path }}/slurm-drmaa-{{ drmaa_version }}"
+    remote_src: yes
 
 - name: Configure DRMAA
   shell: ./configure
