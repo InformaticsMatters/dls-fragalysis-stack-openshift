@@ -1,15 +1,5 @@
 ---
 
-- name: Inspect slurm (home) mount
-  set_fact:
-    mounted_test: "{{ ansible_mounts|json_query(query)|length }}"
-  vars:
-    query: "[?mount=='no-such-path']"
-
-- name: debug
-  debug:
-    var: mounted_test
-
 - name: Install head packages
   yum:
     name:
@@ -18,7 +8,29 @@
     - nfs-utils-lib
 
 # Setup NFS share and head node mounts
-# The
+
+# Ansible provides a 'ansible_mounts' variable.
+# It's a map of mounts. We just want to know if
+# out mount (slurm_home_path) is in it.
+#
+# The map looks something like this (ansible 2.7.1): -
+#
+# "ansible_mounts": [{
+#            "block_available": 122405946,
+#            "block_size": 4096,
+#            "block_total": 128982080,
+#            "block_used": 6576134,
+#            "device": "/dev/vdb",
+#            "fstype": "ext4",
+#            "inode_available": 32767989,
+#            "inode_total": 32768000,
+#            "inode_used": 11,
+#            "mount": "/slurm-home",
+#            "options": "rw,relatime,data=ordered",
+#            "size_available": 501374754816,
+#            "size_total": 528310599680,
+#            "uuid": "dc613974-7fc1-48ad-9448-b78003aecaa5"
+#        }]
 
 - name: Inspect slurm (home) mount
   set_fact:
