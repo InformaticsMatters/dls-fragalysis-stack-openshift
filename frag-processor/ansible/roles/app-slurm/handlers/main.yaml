@@ -2,6 +2,6 @@
 
 - name: Restart slurm
   service:
-    name: slurmctl
+    name: slurmctld
     enabled: yes
     state: restarted
