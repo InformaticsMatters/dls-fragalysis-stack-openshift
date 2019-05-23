@@ -38,12 +38,12 @@
     path: "{{ item.dir }}"
     owner: munge
     group: munge
-    mode: "{{ item.perm|int }}"
+    mode: "'{{ item.perm }}'"
     state: directory
     recurse: yes
   with_items:
-  - { dir: '/etc/munge', perm: 0700 }
-  - { dir: '/var/lib/munge', perm: 0711 }
-  - { dir: '/var/log/munge', perm: 0700 }
-  - { dir: '/var/run/munge', perm: 0755 }
+  - { dir: '/etc/munge', perm: '0700' }
+  - { dir: '/var/lib/munge', perm: '0711' }
+  - { dir: '/var/log/munge', perm: '0700' }
+  - { dir: '/var/run/munge', perm: '0755' }
 #  notify: Restart MUNGE
