@@ -1,6 +1,6 @@
 ---
 
-# Builds (and installs) DRMAA from source.
+# Builds (and installs) slurm-DRMAA from source.
 
 - name: Install build environment
   yum:
@@ -25,7 +25,7 @@
 - name: Unpack DRMAA
   unarchive:
     src: "{{ slurm_home_path }}/slurm-drmaa-{{ drmaa_version }}.tar.gz"
-    dest: "{{ slurm_home_path }}/slurm-drmaa-{{ drmaa_version }}"
+    dest: "{{ slurm_home_path }}"
     creates: "{{ slurm_home_path }}/slurm-drmaa-{{ drmaa_version }}"
     remote_src: yes
 
