@@ -24,13 +24,11 @@
   args:
     chdir: "{{ slurm_home_path }}"
     warn: no
-  notify: Restart slurm
 
 - name: Crete slurm group
   group:
     gid: "{{ slurm_user_id }}"
     name: slurm
-  notify: Restart slurm
 
 - name: Crete slurm user
   user:
@@ -40,7 +38,6 @@
     home: "{{ slurm_home_path }}"
     create_home: no
     shell: /sbin/bash
-  notify: Restart slurm
 
 - name: Create slurm config directory
   file:
@@ -48,7 +45,6 @@
     state: directory
     owner: slurm
     recurse: true
-  notify: Restart slurm
 
 - name: Copy slurm configuration template
   template:
@@ -57,21 +53,18 @@
     owner: slurm
   vars:
     worker_nodes: "{{ hostvars['localhost']['worker_nodes'] }}"
-  notify: Restart slurm
 
 - name: Copy slurm cgroup configuration
   copy:
     src: "{{ role_path }}/files/cgroup.conf"
     dest: /etc/slurm/cgroup.conf
     owner: slurm
-  notify: Restart slurm
 
 - name: Copy slurm cgroup allowed devices configuration
   copy:
     src: "{{ role_path }}/files/cgroup_allowed_devices_file.conf"
     dest: /etc/slurm/cgroup_allowed_devices_file.conf
     owner: slurm
-  notify: Restart slurm
 
 - name: Configure slurmd directory
   file:
@@ -81,7 +74,6 @@
     owner: slurm
     group: slurm
     recurse: true
-  notify: Restart slurm
 
 - name: Touch slurm log
   file:
@@ -89,4 +81,3 @@
     owner: slurm
     group: slurm
     state: touch
-  notify: Restart slurm
