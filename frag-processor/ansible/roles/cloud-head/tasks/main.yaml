@@ -1,15 +1,21 @@
 ---
 
+- name: Inspect slurm (home) mount
+  set_fact:
+    mounted: "{{ ansible_mounts|json_query(query)|length }}"
+  vars:
+    query: "[?mount=='{{ slurm_home_path }}']}"
+
+- name: debug
+  debug:
+    var: mounted
+
 - name: Install head packages
   yum:
     name:
     - epel-release
     - nfs-utils
     - nfs-utils-lib
-
-- name: Display mounts
-  debug:
-    var: ansible_mounts
 
 # Setup NFS share and head node mounts
 # The
