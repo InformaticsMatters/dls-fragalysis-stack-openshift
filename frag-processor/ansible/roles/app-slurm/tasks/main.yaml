@@ -53,6 +53,7 @@
     owner: slurm
   vars:
     worker_nodes: "{{ hostvars['localhost']['worker_nodes'] }}"
+    controller: "{{ slurm_instance_base_name }}-head"
 
 - name: Copy slurm cgroup configuration
   copy:
