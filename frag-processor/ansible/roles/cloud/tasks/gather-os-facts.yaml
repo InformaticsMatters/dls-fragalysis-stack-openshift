@@ -19,6 +19,10 @@
     groups: head
     name: "{{ openstack_servers[0].interface_ip }}"
 
+- name: Set head node facts
+  set_fact:
+    head_addr: "{{ openstack_servers[0].interface_ip }}"
+
 # Get information about the worker node 'flavour'.
 # We want the CPU count for slurm.
 
