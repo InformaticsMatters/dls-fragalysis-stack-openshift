@@ -61,7 +61,7 @@
 
 - name: Copy slurm configuration template
   template:
-    src: "{{ role_path }}/files/slurm.conf.j2"
+    src: slurm.conf.j2
     dest: /etc/slurm/slurm.conf
     owner: slurm
   vars:
@@ -70,13 +70,13 @@
 
 - name: Copy slurm cgroup configuration
   copy:
-    src: "{{ role_path }}/files/cgroup.conf"
+    src: cgroup.conf
     dest: /etc/slurm/cgroup.conf
     owner: slurm
 
 - name: Copy slurm cgroup allowed devices configuration
   copy:
-    src: "{{ role_path }}/files/cgroup_allowed_devices_file.conf"
+    src: cgroup_allowed_devices_file.conf
     dest: /etc/slurm/cgroup_allowed_devices_file.conf
     owner: slurm
 
