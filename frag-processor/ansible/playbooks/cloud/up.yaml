@@ -14,14 +14,11 @@
   become: yes
   roles:
   - cloud-head
+  - app-drmaa
   tasks:
-  - name: Build DRMAA
-    include_role:
-      name: slurm
-      tasks_from: install-drmaa.yaml
   - name: Build slurm
     include_role:
-      name: slurm
+      name: app-slurm
       tasks_from: build-slurm.yaml
 
 - hosts: worker
