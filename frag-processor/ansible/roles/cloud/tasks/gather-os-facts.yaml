@@ -13,7 +13,6 @@
     auth: "{{ os_auth }}"
     region_name: "{{ os_region_name }}"
     server: "{{ slurm_instance_base_name }}-head"
-    limit: 1
 
 - name: Display head node
   debug:
