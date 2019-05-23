@@ -4,7 +4,7 @@
   set_fact:
     mounted: "{{ ansible_mounts|json_query(query)|length }}"
   vars:
-    query: "[?mount=='{{ slurm_home_path }}']}"
+    query: "[?mount=='{{ slurm_home_path }}']"
 
 - name: debug
   debug:
