@@ -125,3 +125,4 @@
     state: restarted
 
 - include_tasks: create-users.yaml
+- include_tasks: create-bin.yaml

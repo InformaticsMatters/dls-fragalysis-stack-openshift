@@ -2,3 +2,5 @@
 
 os_volume_device: /dev/vdb
 os_volume_mount: /data
+
+bin_dir: /data/bin
