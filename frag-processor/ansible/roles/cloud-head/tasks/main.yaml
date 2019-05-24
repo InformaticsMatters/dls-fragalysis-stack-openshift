@@ -126,3 +126,13 @@
 
 - include_tasks: create-users.yaml
 - include_tasks: create-bin.yaml
+
+# No write public keys to the head node
+# to permit ssh access to the defined set of users...
+
+- name: Add authorised users ({{ ansible_user }})
+  authorized_key:
+    user: "{{ ansible_user }}"
+    key: "{{ lookup('file', item) }}"
+  with_fileglob:
+  - public-keys/*
