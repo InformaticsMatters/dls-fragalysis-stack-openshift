@@ -23,11 +23,26 @@
     name:
     - singularity
 
-# Install slurm from a pre-built RPM
-# (expected to reside on the shared volume).
+# We install slurm from a an RPM we build from source
+# in the build-slurm playbook. The RPM's been put on the shared (data) volume
+# so we can install is on every node in the cluster.
 #
+# First we need to defeat the 'remote_tmp' directory warning
+# that we receive...
+#
+#   Module remote_tmp /root/.ansible/tmp did not exist and was
+#   created with a mode of #0700, this may cause issues when
+#   running as another user.
+
+- name: Deafeat remote_tmp warning
+  file:
+    path: "{{ remote_tmp }}"
+    state: directory
+    owner: root
+    group: root
+
 # We disable warnings on the next task because ansible
-# wants us to use the yum module.
+# sees us using yum and wants us to use the yum module.
 
 - name: Install slurm
   shell: yum --nogpgcheck localinstall -y rpmbuild/RPMS/x86_64/slurm-*.rpm

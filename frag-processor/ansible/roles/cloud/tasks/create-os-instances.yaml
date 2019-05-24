@@ -8,7 +8,9 @@
 
 - name: Assert key variables
   assert:
-    that: os_auth_url is defined
+    that:
+    - os_auth_url is defined
+    - os_worker_count > 0
 
 - name: Create shared volume
   os_volume:
