@@ -2,6 +2,9 @@
 
 # Builds (and installs) slurm-DRMAA from source
 # unless it looks like it's already installed.
+#
+# Note: slurm must already be built and installed
+#       on the node we build slurm-DRMAA
 
 - name: Display expected slurm version
   debug:
@@ -69,7 +72,7 @@
     chdir: "{{ slurm_home_path }}/{{ drmaa_unpacked }}"
   when: not libdrmaa.stat.exists
 
-- name: Remove build
+- name: Remove source
   file:
     path: "{{ item }}"
     state: absent

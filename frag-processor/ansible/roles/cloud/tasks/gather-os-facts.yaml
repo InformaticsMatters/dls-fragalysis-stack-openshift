@@ -44,7 +44,7 @@
     region_name: "{{ os_region_name }}"
     server: "{{ os_instance_base_name }}-worker-*"
 
-- name: Adjust worker nodes group
+- name: Adjust worker node group
   add_host:
     groups: worker
     name: "{{ item.private_v4 }}"
@@ -54,7 +54,7 @@
 # Now set a 'worker_nodes' fact.
 # This contains worker names, addresses and vCPU value.
 
-- name: Create worker nodes fact
+- name: Create worker node fact
   set_fact:
     worker_nodes: "{{ worker_nodes|default([]) + [{'addr': item.private_v4, 'name': item.name, 'vcpus': vcpus}] }}"
   vars:

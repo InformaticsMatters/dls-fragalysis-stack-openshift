@@ -1,11 +1,11 @@
 ---
 
-- name: Crete slurm group
+- name: Create slurm group
   group:
     gid: "{{ slurm_user_id }}"
     name: slurm
 
-- name: Crete slurm user
+- name: Create slurm user
   user:
     name: slurm
     uid: "{{ slurm_user_id }}"

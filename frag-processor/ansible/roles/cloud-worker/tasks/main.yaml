@@ -20,7 +20,7 @@
 #   created with a mode of #0700, this may cause issues when
 #   running as another user.
 
-- name: Deafeat remote_tmp warning
+- name: Defeat remote_tmp warning
   file:
     path: /root/.ansible/tmp
     state: directory

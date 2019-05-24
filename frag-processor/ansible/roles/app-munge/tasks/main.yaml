@@ -11,13 +11,13 @@
 
 # Prepare MUNGE
 
-- name: Crete MUNGE group
+- name: Create MUNGE group
   group:
     gid: "{{ munge_user_id }}"
     name: munge
   notify: Restart MUNGE
 
-- name: Crete MUNGE user
+- name: Create MUNGE user
   user:
     name: munge
     uid: "{{ munge_user_id }}"
