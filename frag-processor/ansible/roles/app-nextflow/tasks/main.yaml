@@ -18,6 +18,7 @@
   uri:
     url: "{{ nf_origin }}/v{{ nextflow_version }}/nextflow"
     dest: "{{ install_dir }}/nextflow"
+    creates: "{{ install_dir }}/nextflow"
   vars:
     nf_origin: https://github.com/nextflow-io/nextflow/releases/download
 
