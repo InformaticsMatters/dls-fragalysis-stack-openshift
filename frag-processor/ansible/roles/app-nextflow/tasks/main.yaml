@@ -16,16 +16,20 @@
 
 - name: Get nextflow
   uri:
-    url: "{{ download }}/v{{ nextflow_version }}/nextflow"
+    url: "{{ nf_origin }}/v{{ nextflow_version }}/nextflow"
     dest: "{{ install_dir }}/nextflow"
-    vars:
-      download: https://github.com/nextflow-io/nextflow/releases/download
+  vars:
+    nf_origin: https://github.com/nextflow-io/nextflow/releases/download
 
 - name: Allow nextflow execution
   file:
     dest: "{{ install_dir }}/nextflow"
     mode: a+x
     owner: root
+
+# By getting nextflow version we trigger it to download
+# all its plug-ins and dependent JAR files
+# that are not present in the initial download.
 
 - name: Run nextflow version
   shell: "{{ install_dir }}/nextflow -version"
