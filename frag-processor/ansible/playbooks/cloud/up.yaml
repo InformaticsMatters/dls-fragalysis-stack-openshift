@@ -8,7 +8,13 @@
   roles:
   - cloud
 
-# Configure the head and worker nodes
+# Configure the head and worker nodes.
+#
+# It's a multi-stage process that requires application builds
+# (from source) prior to deployment. We visit the head node to set it up
+# (format external device and mount it) then build slurm before moving
+# to installing all the required apps (including slurm) on the head
+# and then on the worker(s)
 
 - hosts: head
   become: yes
@@ -20,6 +26,21 @@
     include_role:
       name: app-slurm
       tasks_from: build-slurm.yaml
+
+# Build on head done, install apps...
+
+- hosts: head
+  become: yes
+  roles:
+    - app-munge
+    - app-slurm
+    - app-nextflow
+    - app-slurm-drmaa
+  tasks:
+    - name: Start slurm controller daemon
+      include_role:
+        name: app-slurm
+        tasks_from: start-slurm-ctld.yaml
 
 - hosts: worker
   gather_facts: no
@@ -34,15 +55,3 @@
       name: app-slurm
       tasks_from: start-slurm-d.yaml
 
-- hosts: head
-  become: yes
-  roles:
-  - app-munge
-  - app-slurm
-  - app-nextflow
-  - app-slurm-drmaa
-  tasks:
-  - name: Start slurm controller daemon
-    include_role:
-      name: app-slurm
-      tasks_from: start-slurm-ctld.yaml

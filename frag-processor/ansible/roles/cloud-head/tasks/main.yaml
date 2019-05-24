@@ -130,9 +130,9 @@
 # No write public keys to the head node
 # to permit ssh access to the defined set of users...
 
-- name: Add authorised users ({{ ansible_user }})
+- name: Add authorised users (centos)
   authorized_key:
-    user: "{{ ansible_user }}"
+    user: centos
     key: "{{ lookup('file', item) }}"
   with_fileglob:
   - public-keys/*
