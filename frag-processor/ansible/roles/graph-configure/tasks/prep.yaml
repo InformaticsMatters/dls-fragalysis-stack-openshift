@@ -41,17 +41,13 @@
     state: link
   become: yes
 
-- name: Upgrade pip ({{ pip_executable }})
-  shell: "{{ pip_executable }} install --upgrade pip"
-  become: yes
-
 - name: Install Python requirements ({{ pip_executable }})
   pip:
     executable: "{{ pip_executable }}"
+    extra_args: --user
     name:
     - boto3==1.9.106
     - botocore==1.12.106
-  become: yes
 
 - name: Get DLS commit reference
   shell: git log --pretty=format:'%h' -n 1
