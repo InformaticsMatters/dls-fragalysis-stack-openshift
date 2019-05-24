@@ -131,8 +131,6 @@
     enabled: yes
     state: restarted
 
-- include_tasks: create-bin.yaml
-
 # No write public keys to the head node
 # to permit ssh access to the defined set of users...
 

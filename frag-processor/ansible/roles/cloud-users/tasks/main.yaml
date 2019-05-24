@@ -13,3 +13,23 @@
     content: "{{ item.name }} ALL=(ALL) NOPASSWD: ALL"
     dest: /etc/sudoers.d/{{ item.name }}
   with_items: "{{ cloud_users }}"
+
+# Creates a system-wide (shared) bin directory.
+# The location is also placed in a file in /etc/profile.d
+# as a PATH declaration
+
+- name: Create system-wide bin directory
+  file:
+    path: "{{ bin_dir }}"
+    state: directory
+    owner: root
+    group: root
+    mode: 755
+
+- name: Set profile PATH
+  template:
+    src: cloud-path.sh.j2
+    dest: /etc/profile.d/cloud-path.sh
+    owner: root
+    group: root
+    mode: 644
