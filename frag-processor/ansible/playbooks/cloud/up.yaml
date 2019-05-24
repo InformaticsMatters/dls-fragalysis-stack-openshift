@@ -12,6 +12,7 @@
 
 - hosts: head
   become: yes
+  gather_facts: no
   roles:
   - cloud-head
   tasks:
@@ -21,6 +22,7 @@
       tasks_from: build-slurm.yaml
 
 - hosts: worker
+  gather_facts: no
   become: yes
   roles:
   - cloud-worker

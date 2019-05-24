@@ -1,5 +1,18 @@
 ---
 
+# There's some SSH stability connecting to servers.
+# We assume fact gathering has been disabled for this role
+# so here we wait for a connection and then invoke gathger facts (setup)
+# ourselves.
+
+- name: Wait for connection
+  wait_for_connection:
+
+- name: Gather facts
+  setup:
+
+# Off we go...
+
 - name: Install worker packages
   package:
     name:
