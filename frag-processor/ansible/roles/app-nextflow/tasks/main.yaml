@@ -35,7 +35,6 @@
   shell: "{{ install_dir }}/nextflow -version"
   register: nf_v_result
   changed_when: false
-  when: nextflow_install
 
 - name: Display nextflow version
   debug:
