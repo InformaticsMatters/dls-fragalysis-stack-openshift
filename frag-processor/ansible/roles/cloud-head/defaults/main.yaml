@@ -6,4 +6,4 @@
 # shared data volume.
 
 cloud_users:
-- { name: xchemservices, groups: "wheel,sudo" }
+- xchemservices
