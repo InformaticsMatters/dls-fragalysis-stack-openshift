@@ -35,6 +35,7 @@
     - epel-release
     - nfs-utils
     - nfs-utils-lib
+    - git
 
 # We need to be able to resolve between our name and IP
 # on the head node. Workers also need to be able to
