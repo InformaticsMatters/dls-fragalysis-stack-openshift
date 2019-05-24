@@ -2,12 +2,18 @@
 
 os_instance_base_name: graph
 
+# Flavour        cores mem disk
+# ---------      ----- --- ----
+# c1.xlarge          4  16  100
+# c2.xlarge         16  16  160
+# c3.xlarge         16  32  160
+
 os_head_flavour: c1.xlarge
 os_head_image_name: ScientificLinux-7-NoGui
-os_worker_flavour: c3.xlarge
+os_worker_flavour: c2.xlarge
 os_worker_image_name: ScientificLinux-7-NoGui
 
-os_worker_count: 1
+os_worker_count: 4
 
-os_volume_size_g: 500
+os_volume_size_g: 2000
 os_volume_device: /dev/vdb
