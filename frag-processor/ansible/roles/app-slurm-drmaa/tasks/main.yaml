@@ -10,7 +10,7 @@
   debug:
     msg: slurm-DRMAA version={{ drmaa_version }}
 
-- name: Check DRMAA build library
+- name: Check slurm-DRMAA build library
   stat:
     path: /usr/local/lib/libdrmaa.so
   register: libdrmaa
@@ -33,19 +33,19 @@
     - rpm-build
   when: not libdrmaa.stat.exists
 
-- name: Set DRMAA origin facts
+- name: Set slurm-DRMAA origin facts
   set_fact:
     drmaa_tarball: slurm-drmaa-{{ drmaa_version }}.tar.gz
     drmaa_unpacked: slurm-drmaa-{{ drmaa_version }}
     download_origin: github.com/natefoo/slurm-drmaa/releases/download
 
-- name: Get DRMAA
+- name: Get slurm-DRMAA
   get_url:
     url: https://{{ download_origin }}/{{ drmaa_version }}/{{ drmaa_tarball }}
     dest: "{{ slurm_home_path }}/{{ drmaa_tarball }}"
   when: not libdrmaa.stat.exists
 
-- name: Unpack DRMAA
+- name: Unpack slurm-DRMAA
   unarchive:
     src: "{{ slurm_home_path }}/{{ drmaa_tarball }}"
     dest: "{{ slurm_home_path }}"
@@ -53,26 +53,26 @@
     remote_src: yes
   when: not libdrmaa.stat.exists
 
-- name: Configure DRMAA
+- name: Configure slurm-DRMAA
   shell: ./configure
   args:
     chdir: "{{ slurm_home_path }}/{{ drmaa_unpacked }}"
     creates: "{{ slurm_home_path }}/{{ drmaa_unpacked }}/Makefile"
   when: not libdrmaa.stat.exists
 
-- name: Make DRMAA
+- name: Make slurm-DRMAA
   shell: make
   args:
     chdir: "{{ slurm_home_path }}/{{ drmaa_unpacked }}"
   when: not libdrmaa.stat.exists
 
-- name: Make Install DRMAA
+- name: Make Install slurm-DRMAA
   shell: make install
   args:
     chdir: "{{ slurm_home_path }}/{{ drmaa_unpacked }}"
   when: not libdrmaa.stat.exists
 
-- name: Remove source
+- name: Remove slurm-DRMAA source
   file:
     path: "{{ item }}"
     state: absent
