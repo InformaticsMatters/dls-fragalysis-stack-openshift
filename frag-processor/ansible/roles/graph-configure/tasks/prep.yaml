@@ -30,6 +30,7 @@
     - epel-release
     - python36
     - python36-pip
+  become: yes
 
 - name: Link Python 3.6 to Python 3
   file:
@@ -38,6 +39,7 @@
     owner: root
     group: root
     state: link
+  become: yes
 
 - name: Install Python requirements ({{ pip_executable }})
   pip:
