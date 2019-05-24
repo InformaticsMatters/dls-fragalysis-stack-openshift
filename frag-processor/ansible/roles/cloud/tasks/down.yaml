@@ -21,7 +21,7 @@
     name: "{{ os_instance_base_name }}-head"
     state: absent
 
-- name: Delete woker nodes
+- name: Delete worker nodes
   os_server:
     auth: "{{ os_auth }}"
     region_name: "{{ os_region_name }}"
