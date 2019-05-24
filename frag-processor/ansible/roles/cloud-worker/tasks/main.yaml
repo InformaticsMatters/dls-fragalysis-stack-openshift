@@ -13,6 +13,20 @@
 
 # Off we go...
 
+# First we need to defeat the 'remote_tmp' directory warning
+# that we receive...
+#
+#   Module remote_tmp /root/.ansible/tmp did not exist and was
+#   created with a mode of #0700, this may cause issues when
+#   running as another user.
+
+- name: Deafeat remote_tmp warning
+  file:
+    path: /root/.ansible/tmp
+    state: directory
+    owner: root
+    group: root
+
 - name: Install worker packages
   package:
     name:
