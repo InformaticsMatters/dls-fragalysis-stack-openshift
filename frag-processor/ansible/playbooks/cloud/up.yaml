@@ -21,6 +21,7 @@
   gather_facts: no
   roles:
   - cloud-head
+  - cloud-users
   tasks:
   - name: Build slurm
     include_role:
@@ -47,6 +48,7 @@
   become: yes
   roles:
   - cloud-worker
+  - cloud-users
   - app-munge
   - app-slurm
   tasks:

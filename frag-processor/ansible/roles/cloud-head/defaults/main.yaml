@@ -1,9 +1,0 @@
----
-
-# A list of users to create.
-# They are each created on the head node
-# and given a home directory on the
-# shared data volume.
-
-cloud_users:
-- xchemservices
