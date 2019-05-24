@@ -8,7 +8,6 @@ clean_start: yes
 clean_finish: no
 
 fragalysis_version: 0.0.41
-nextflow_version: 19.01.0
 
 # The process 'id' is the S3 'tag'
 # of the source data ('raw', 'build' or 'standard')

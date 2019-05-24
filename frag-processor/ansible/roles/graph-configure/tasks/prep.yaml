@@ -20,13 +20,6 @@
   - "{{ lookup('env','HOME') }}/{{ github_dir }}"
   - "{{ lookup('env','HOME') }}/bin"
 
-- name: Install Packages
-  package:
-    name:
-    - singularity
-  become: yes
-  when: ansible_distribution != 'MacOSX'
-
 - name: Install Python requirements ({{ pip_executable }})
   pip:
     executable: "{{ pip_executable }}"
@@ -59,38 +52,3 @@
 - name: Set Fragalysis Facts
   set_fact:
     fragalysis_commit_ref: "{{ fragalysis_commit_result.stdout }}"
-
-# Install nextflow...
-
-- name: Remove nextflow
-  file:
-    path: "{{ lookup('env','HOME') }}/bin/nextflow"
-    state: absent
-  when: nextflow_install
-
-- name: Get nextflow
-  uri:
-    url: "{{ download }}/v{{ nextflow_version }}/nextflow"
-    dest: "{{ lookup('env','HOME') }}/bin/nextflow"
-  vars:
-    download: https://github.com/nextflow-io/nextflow/releases/download
-  when: nextflow_install
-
-- name: Allowing nextflow execution
-  file:
-    dest: "{{ lookup('env','HOME') }}/bin/nextflow"
-    mode: a+x
-    owner: "{{ ansible_user }}"
-  become: yes
-  when: nextflow_install
-
-- name: Check nextflow
-  shell: nextflow -version
-  register: nf_v_result
-  changed_when: false
-  when: nextflow_install
-
-- name: Display nextflow version
-  debug:
-    msg: "{{ nf_v_result.stdout_lines }}"
-  when: nextflow_install

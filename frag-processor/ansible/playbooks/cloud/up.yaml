@@ -39,6 +39,7 @@
   roles:
   - app-munge
   - app-slurm
+  - app-nextflow
   - app-slurm-drmaa
   tasks:
   - name: Start slurm controller daemon

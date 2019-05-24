@@ -2,25 +2,22 @@
 
 - import_tasks: create-user.yaml
 
-# Install packages for slurm.
+# Install packages for operating slurm.
 # As this role is applied to every node in the cluster
 # we also use it to install additional things
 # like Singularity and Java
 
-- name: Install slurm packages
+- name: Install packages
   package:
     name:
     - epel-release
-    - openssl
-    - numactl
     - hwloc
-    - lua
+    - java-1.8.0-openjdk-headless
     - libibmad
     - libibumad
-
-- name: Install Singularity
-  package:
-    name:
+    - lua
+    - openssl
+    - numactl
     - singularity
 
 # We install slurm from a an RPM we build from source

@@ -1,0 +1,38 @@
+---
+
+# We normally install nextflow on the head node.
+# It depends on singularity (and Java) on all nodes,
+# which is dealt with by the slurm installation.
+
+- name: Make installtion directories
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: root
+    group: root
+    mode: 0755
+  loop:
+  - "{{ install_dir }}"
+
+- name: Get nextflow
+  uri:
+    url: "{{ download }}/v{{ nextflow_version }}/nextflow"
+    dest: "{{ install_dir }}/nextflow"
+    vars:
+      download: https://github.com/nextflow-io/nextflow/releases/download
+
+- name: Allow nextflow execution
+  file:
+    dest: "{{ install_dir }}/nextflow"
+    mode: a+x
+    owner: root
+
+- name: Run nextflow version
+  shell: "{{ install_dir }}/nextflow -version"
+  register: nf_v_result
+  changed_when: false
+  when: nextflow_install
+
+- name: Display nextflow version
+  debug:
+    msg: "{{ nf_v_result.stdout_lines }}"
