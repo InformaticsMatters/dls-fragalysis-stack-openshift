@@ -123,3 +123,5 @@
     name: nfs
     enabled: yes
     state: restarted
+
+- include_tasks: create-users.yaml

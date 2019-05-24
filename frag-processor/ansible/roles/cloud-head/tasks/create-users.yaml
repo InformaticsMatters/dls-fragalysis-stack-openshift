@@ -1,0 +1,9 @@
+---
+
+- name: Create users
+  user:
+    name: "{{ item.name }}"
+    uid: "{{ item.uid }}"
+    groups: "{{ item.groups }}"
+    home: "{{ os_volume_mount }/{{ item.name }}"
+  with_items: "{{ cloud_users }}"
