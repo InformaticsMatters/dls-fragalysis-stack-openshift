@@ -36,6 +36,12 @@
     - nfs-utils
     - nfs-utils-lib
     - git
+    - python
+
+- name: Install Python modules
+  pip:
+    name:
+    - ansible==2.7.11
 
 # We need to be able to resolve between our name and IP
 # on the head node. Workers also need to be able to

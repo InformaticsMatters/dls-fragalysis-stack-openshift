@@ -20,6 +20,10 @@
   - "{{ lookup('env','HOME') }}/{{ github_dir }}"
   - "{{ lookup('env','HOME') }}/bin"
 
+# Note: If singularity is installed after this
+#       you might find it installs Python 3.4
+#       and breaks any links we've have to 3.6
+
 - name: Install Python 3.6
   package:
     name:
