@@ -35,6 +35,7 @@
     - nfs-utils-lib
     - git
     - python
+    - python-pip
 
 - name: Install Python modules
   pip:
