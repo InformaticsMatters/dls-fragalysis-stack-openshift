@@ -4,9 +4,13 @@
 # for the MUNGE key or, if it doesn't exist, generate a new one,
 # writing it to the key file for the next iteration.
 
+# We're in the cloud playbook directory.
+# Put the key in the root of the ansible project
+# (i.e. next to the roles directory)
+
 - name: Set MUNGE key filename
   set_fact:
-    munge_key_filename: "{{ hostvars['localhost']['base_name'] }}.munge.key"
+    munge_key_filename: "../../../{{ hostvars['localhost']['base_name'] }}.munge.key"
 
 - name: Check local MUNGE file
   stat:
@@ -23,6 +27,7 @@
   copy:
     content: "{{ munge_key }}"
     dest: "{{ munge_key_filename }}"
+    mode: 0666
   delegate_to: 127.0.0.1
   when: not key_file.stat.exists
 
