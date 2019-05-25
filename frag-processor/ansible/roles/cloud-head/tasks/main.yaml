@@ -61,7 +61,7 @@
     regexp: "{{ line }}"
     line: "{{ line }}"
   vars:
-    line: "{{ item.addr }} {{ item_name }}"
+    line: "{{ item.addr }} {{ item.name }}"
   with_items: "{{ hostvars['localhost']['worker_nodes'] }}"
 
 # Setup NFS share and head node mounts
