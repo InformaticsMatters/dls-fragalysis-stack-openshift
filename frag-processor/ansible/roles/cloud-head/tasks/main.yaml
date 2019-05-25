@@ -1,7 +1,5 @@
 ---
 
-- import_tasks: get-munge-key.yaml
-
 # There's some SSH stability connecting to servers.
 # We assume fact gathering has been disabled for this role
 # so here we wait for a connection and then invoke gathger facts (setup)
@@ -149,3 +147,5 @@
     key: "{{ lookup('file', item) }}"
   with_fileglob:
   - public-keys/*
+
+- include_tasks: get-munge-key.yaml
