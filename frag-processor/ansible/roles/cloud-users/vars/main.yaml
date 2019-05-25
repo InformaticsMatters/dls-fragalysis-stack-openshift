@@ -1,5 +1,5 @@
 ---
 
-os_volume_mount: /data
+volume_mount: /data
 
-bin_dir: "{{ os_volume_mount }}/bin"
+bin_dir: "{{ volume_mount }}/bin"

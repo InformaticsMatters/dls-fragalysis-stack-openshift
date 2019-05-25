@@ -1,15 +1,15 @@
 ---
 
-# Deletes our cluster on OpenStack.
+# Deletes our cluster.
 #
-# This is driven by variables that should be defined by
+# On OpenStack this is driven by variables that should be defined by
 # 'sourcing' your OpenStack Keystone file. The initial
-# 'assert' check that variables appear to be set.
+# 'assert' checks that these variables are set.
 
 - name: Delete Cloud?
   pause:
     prompt: |-
-      Are you sure you want to delete the '{{ os_instance_base_name }}' cloud instances?
+      Are you sure you want to delete the '{{ instance_base_name }}' cloud instances?
       Hit return to delete.
       Hit Ctrl+c and then "a" if you've changed your mind
 
@@ -25,19 +25,22 @@
   os_server:
     auth: "{{ os_auth }}"
     region_name: "{{ os_region_name }}"
-    name: "{{ os_instance_base_name }}-head"
+    name: "{{ instance_base_name }}-head"
     state: absent
+  when: provider=='openstack'
 
 - name: Delete worker nodes
   os_server:
     auth: "{{ os_auth }}"
     region_name: "{{ os_region_name }}"
-    name: "{{ os_instance_base_name }}-worker-{{ '%d'|format(item|int + 1) }}"
+    name: "{{ instance_base_name }}-worker-{{ '%d'|format(item|int + 1) }}"
     state: absent
-  loop: "{{ range(os_worker_count)|list }}"
+  loop: "{{ range(worker_count)|list }}"
+  when: provider=='openstack'
 
 - name: Delete shared volume
   os_volume:
     auth: "{{ os_auth }}"
-    display_name: "{{ os_instance_base_name }}-volume"
+    display_name: "{{ instance_base_name }}-volume"
     state: absent
+  when: provider=='openstack'

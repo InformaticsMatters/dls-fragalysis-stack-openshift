@@ -12,7 +12,7 @@
   os_server_facts:
     auth: "{{ os_auth }}"
     region_name: "{{ os_region_name }}"
-    server: "{{ os_instance_base_name }}-head"
+    server: "{{ instance_base_name }}-head"
 
 - name: Adjust head node group
   add_host:
@@ -22,7 +22,7 @@
 - name: Set head node facts
   set_fact:
     head_addr: "{{ openstack_servers[0].interface_ip }}"
-    base_name: "{{ os_instance_base_name }}"
+    base_name: "{{ instance_base_name }}"
 
 # Get information about the worker node 'flavour'.
 # We want the CPU count for slurm.
@@ -31,7 +31,7 @@
   os_flavor_facts:
     auth: "{{ os_auth }}"
     region_name: "{{ os_region_name }}"
-    name: "{{ os_worker_flavour }}"
+    name: "{{ worker_type }}"
     limit: 1
 
 # Get information about the worker nodes
@@ -42,7 +42,7 @@
   os_server_facts:
     auth: "{{ os_auth }}"
     region_name: "{{ os_region_name }}"
-    server: "{{ os_instance_base_name }}-worker-*"
+    server: "{{ instance_base_name }}-worker-*"
 
 - name: Adjust worker node group
   add_host:

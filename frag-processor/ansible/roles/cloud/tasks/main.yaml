@@ -6,7 +6,7 @@
 - name: Create Cloud?
   pause:
     prompt: |-
-      Are you sure you want to create the '{{ os_instance_base_name }}' cloud instances?
+      Are you sure you want to create the '{{ instance_base_name }}' cloud?
       Hit return to create.
       Hit Ctrl+c and then "a" if you've changed your mind
 
@@ -22,5 +22,5 @@
 
 # Off we go...
 
-- include_tasks: create-os-instances.yaml
-- include_tasks: gather-os-facts.yaml
+- include_tasks: create-{{ provider }}-instances.yaml
+- include_tasks: gather-{{ provider }}-facts.yaml

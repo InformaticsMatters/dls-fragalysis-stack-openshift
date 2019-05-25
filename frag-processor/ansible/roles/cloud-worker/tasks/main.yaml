@@ -57,7 +57,7 @@
 
 - name: Create volume mount-point
   file:
-    path: "{{ os_volume_mount }}"
+    path: "{{ volume_mount }}"
     state: directory
     mode: 0777
     owner: root
@@ -65,8 +65,8 @@
 
 - name: Mount volume
   mount:
-    path: "{{ os_volume_mount }}"
-    src: "{{ nfs_ip }}:{{ os_volume_mount }}"
+    path: "{{ volume_mount }}"
+    src: "{{ nfs_ip }}:{{ volume_mount }}"
     fstype: nfs
     opts: defaults
     passno: '2'

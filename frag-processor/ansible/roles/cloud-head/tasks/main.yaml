@@ -68,7 +68,7 @@
 
 # Ansible provides a 'ansible_mounts' variable.
 # It's a map of mounts and we just want to know if
-# our mount (os_volume_mount) is in it.
+# our mount (volume_mount) is in it.
 #
 # The map looks something like this (ansible 2.7.10): -
 #
@@ -93,11 +93,11 @@
   set_fact:
     mounted: "{{ ansible_mounts|json_query(query)|length }}"
   vars:
-    query: "[?mount=='{{ os_volume_mount }}']"
+    query: "[?mount=='{{ volume_mount }}']"
 
 - name: Create volume mount-point
   file:
-    path: "{{ os_volume_mount }}"
+    path: "{{ volume_mount }}"
     state: directory
     mode: 0777
     owner: root
@@ -106,20 +106,20 @@
 
 - name: Unmount device
   mount:
-    path: "{{ os_volume_mount }}"
+    path: "{{ volume_mount }}"
     state: unmounted
   when: not mounted|bool
 
 - name: Ensure device has a filesystem
   filesystem:
     fstype: ext4
-    dev: "{{ os_volume_device }}"
+    dev: "{{ volume_device }}"
   when: not mounted|bool
 
 - name: Mount device
   mount:
-    src: "{{ os_volume_device }}"
-    path: "{{ os_volume_mount }}"
+    src: "{{ volume_device }}"
+    path: "{{ volume_mount }}"
     fstype: ext4
     opts: defaults
     passno: 2
@@ -128,7 +128,7 @@
 
 - name: Create NFS exports
   copy:
-    content: "{{ os_volume_mount }} *(rw,no_root_squash)"
+    content: "{{ volume_mount }} *(rw,no_root_squash)"
     dest: /etc/exports
     owner: root
     group: root

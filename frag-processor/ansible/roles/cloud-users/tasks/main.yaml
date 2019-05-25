@@ -5,7 +5,7 @@
     name: "{{ item.name }}"
     uid: "{{ item.uid }}"
     groups: wheel
-    home: "{{ os_volume_mount }}/{{ item.name }}"
+    home: "{{ volume_mount }}/{{ item.name }}"
   with_items: "{{ cloud_users }}"
 
 - name: Add password-less sudo privilege
