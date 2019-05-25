@@ -6,6 +6,13 @@
 # 'sourcing' your OpenStack Keystone file. The initial
 # 'assert' check that variables appear to be set.
 
+- name: Delete Cloud?
+  pause:
+    prompt: |-
+      Are you sure you want to delete the '{{ os_instance_base_name }}' cloud instances?
+      Hit return to delete.
+      Hit Ctrl+c and then "a" if you've changed your mind
+
 - name: Assert key variables
   assert:
     that: os_auth_url is defined

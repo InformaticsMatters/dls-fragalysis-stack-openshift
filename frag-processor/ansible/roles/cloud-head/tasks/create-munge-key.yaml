@@ -1,5 +1,0 @@
----
-
-- name: Create MUNGE key
-  set_fact:
-    munge_key: "{{ lookup('password', '/dev/null length=1024') }}"

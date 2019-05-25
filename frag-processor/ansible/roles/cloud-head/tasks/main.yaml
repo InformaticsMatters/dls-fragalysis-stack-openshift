@@ -1,6 +1,6 @@
 ---
 
-- import_tasks: create-munge-key.yaml
+- import_tasks: get-munge-key.yaml
 
 # There's some SSH stability connecting to servers.
 # We assume fact gathering has been disabled for this role
@@ -48,13 +48,22 @@
 # locate the head node by name so their hosts files
 # are also adjusted.
 
-- name: Adjust /etc/hosts
+- name: Adjust /etc/hosts (head)
   lineinfile:
     path: /etc/hosts
     regexp: "{{ line }}"
     line: "{{ line }}"
   vars:
     line: "{{ hostvars['localhost']['head_addr'] }} {{ hostvars['localhost']['base_name'] }}-head"
+
+- name: Adjust /etc/hosts (worker)
+  lineinfile:
+    path: /etc/hosts
+    regexp: "{{ line }}"
+    line: "{{ line }}"
+  vars:
+    line: "{{ item.addr }} {{ item_name }}"
+  with_items: "{{ hostvars['localhost']['worker_nodes'] }}"
 
 # Setup NFS share and head node mounts
 
