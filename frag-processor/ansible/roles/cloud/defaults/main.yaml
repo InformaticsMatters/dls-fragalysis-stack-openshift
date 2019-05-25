@@ -13,7 +13,7 @@ os_head_image_name: ScientificLinux-7-NoGui
 os_worker_flavour: c2.xlarge
 os_worker_image_name: ScientificLinux-7-NoGui
 
-os_worker_count: 4
+os_worker_count: 5
 
 os_volume_size_g: 2000
 os_volume_device: /dev/vdb
