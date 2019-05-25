@@ -29,6 +29,7 @@ s2g-processor/report.*
 **/*.zip
 **/*.retry
 **/*.swp
+**/*.munge.key
 .pytest_cache/
 
 # Following created by .ignore support plugin (hsz.mobi)
