@@ -10,6 +10,7 @@
   assert:
     that:
     - os_auth_url is defined
+    - os_key_name is defined and os_key_name|length > 0
     - worker_count > 0
 
 - name: Create shared volume
