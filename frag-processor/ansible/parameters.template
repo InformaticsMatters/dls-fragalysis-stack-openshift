@@ -4,6 +4,8 @@
 # ------
 # These variables are used by all roles.
 
+# Destroy working data and directories when
+# we start and when we finish?
 clean_start: yes
 clean_finish: no
 
@@ -37,6 +39,7 @@ process_skip: 0
 # Input molecules to process (0 implies all)
 process_limit: 0
 
+# -------------------------
 # Standardisation Variables
 # -------------------------
 # The following variables are only used by the 'Standardise' role
@@ -56,6 +59,7 @@ standard_dir: afp-standard
 s_workflow_dir: afp-s-workflow
 s_nextflow_poll_period_minutes: 5
 
+# --------------------------
 # Graph Processing Variables
 # --------------------------
 # The following variables are only used by the 'Graph Processor' role
@@ -73,6 +77,7 @@ process_max_hac: 36
 process_max_frag: 12
 process_standard_number: 1
 
+# ------------------
 # Combiner Variables
 # ------------------
 # The following variables are only used by the 'Combiner' role
