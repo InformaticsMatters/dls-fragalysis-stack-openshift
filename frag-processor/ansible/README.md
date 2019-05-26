@@ -53,6 +53,7 @@ set and then run the following, and inspect the progress with
 
     $ cp parameters.template parameters
     [edit parameters]
+    $ rm nohup.out 
     $ nohup ./run-standardise.sh &
     $ tail -f nohup.out
 
@@ -73,6 +74,7 @@ set and then run the following, and inspect the progress with
 
     $ cp parameters.template parameters
     [edit parameters]
+    $ rm nohup.out 
     $ nohup ./run-graph-processor.sh &
     $ tail -f nohup.out
 
@@ -94,6 +96,7 @@ set and then run the following, and inspect the progress with
 
     $ cp parameters.template parameters
     [edit parameters]
+    $ rm nohup.out 
     $ nohup ./run-combiner.sh &
     $ tail -f nohup.out
 
