@@ -9,7 +9,7 @@
 clean_start: yes
 clean_finish: no
 
-fragalysis_version: 0.0.42
+fragalysis_version: 0.0.43
 
 # The process 'id' is the S3 'tag'vof the source data
 # where you'll typically find 'raw', 'build' or 'standard' paths.
