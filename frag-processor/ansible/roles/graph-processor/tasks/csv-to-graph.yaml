@@ -33,6 +33,8 @@
     --process-id {{ process_id }}
     --build-number {{ build_number }}
     --limit {{ process_limit }}
+    --min-hac {{ process_min_hac }}
+    --max-hac {{ process_max_hac }}
   args:
     chdir: "{{ scripts }}"
   vars:
