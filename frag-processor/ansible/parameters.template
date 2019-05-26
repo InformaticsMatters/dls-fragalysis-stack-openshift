@@ -9,6 +9,10 @@
 clean_start: yes
 clean_finish: no
 
+# The tag of the fragalyis repo
+# Used for the basic of graph processing outside of nextflow.
+# The nextflow stages (standardising and fragmentation)
+# use a fragalysis that's distributed in a container.
 fragalysis_version: 0.0.43
 
 # The process 'id' is the S3 'tag'vof the source data
