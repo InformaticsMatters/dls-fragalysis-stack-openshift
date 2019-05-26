@@ -9,9 +9,9 @@ clean_finish: no
 
 fragalysis_version: 0.0.42
 
-# The process 'id' is the S3 'tag'
-# of the source data ('raw', 'build' or 'standard')
-# For example, for the 'ID' that's 'vendor/molport/2018-11'
+# The process 'id' is the S3 'tag'vof the source data
+# where you'll typically find 'raw', 'build' or 'standard' paths.
+# For example, for a 'process_id' of 'vendor/molport/2018-11' ID
 # you can expect...
 #   'raw' molecule data in 'raw/vendor/molport/2018-11'
 #   'standardised' molecule data (created by the standardise play)
@@ -19,6 +19,17 @@ fragalysis_version: 0.0.42
 #   'graph data' (created by the graph-processor play)
 #       in 'build/vendor/molport/2018-11'
 process_id: vendor/molport/2019-05
+# The process type is the embedded string found in the name
+# of the fragalysis 'standardise' and 'process' Python modules.
+# For example, a 'proces_type' of 'molport' you should expect
+# to find a `frag/network/scripts/standardise_molport_compounds.py` and a
+# 'process_molport_compounds.py'.
+#
+# For eMolecules compounds we have a single standardisation module
+# but a number of different processing modules (bb,  plus, sc).
+# When we 'standardise' eMolecules the type would typically be
+# 'emolecules' but when we process it it's one of 'emolecules_bb',
+# ''emolecules_plus' or 'emolecules_sc'
 process_type: molport
 
 # Input molecules to skip (0 implies none)
@@ -30,6 +41,7 @@ process_limit: 0
 # -------------------------
 # The following variables are only used by the 'Standardise' role
 #
+# Prefix for eMolecules data is typically 'version'
 # Prefix for HTS data is typically 'HTS_'
 # Prefix for MolPort data is typically 'iis_smiles-'
 # Prefix for Enamine data is typically a date, i.e. 'Jun2018_'
