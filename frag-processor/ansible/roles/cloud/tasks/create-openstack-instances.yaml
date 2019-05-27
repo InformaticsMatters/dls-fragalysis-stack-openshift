@@ -6,11 +6,10 @@
 # 'sourcing' your OpenStack Keystone file. The initial
 # 'assert' checks that these variables are set.
 
-- name: Assert key variables
+- name: Assert cloud variables
   assert:
     that:
     - os_auth_url is defined
-    - worker_count > 0
 
 - name: Create shared volume
   os_volume:

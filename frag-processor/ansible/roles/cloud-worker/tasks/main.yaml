@@ -55,22 +55,6 @@
     enabled: yes
     state: restarted
 
-# We seem to have to 'Check the mount volume'.
-# Today (27 May 2019), without this I got this from the
-# 'Create volume mount-point' task...
-#
-#   fatal: [192.168.253.4]: FAILED! =>
-#     {"changed": false,
-#      "msg": "There was an issue creating /data as requested:
-#              [Errno 17] File exists: '/data'",
-#      "path": "/data",
-#      "state": "absent"}
-
-- name: Check the volume mount
-  stat:
-     path: "{{ volume_mount }}"
-  register: mount_dir
-
 - name: Create volume mount-point
   file:
     path: "{{ volume_mount }}"
@@ -78,7 +62,6 @@
     mode: 0777
     owner: root
     group: root
-  when: not mount_dir.stat.exists
 
 - name: Mount volume
   mount:

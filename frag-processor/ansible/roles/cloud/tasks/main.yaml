@@ -3,6 +3,11 @@
 # Before we continue,
 # make sure the user actually wants to create the cloud...
 
+- name: Assert key variables
+  assert:
+    that:
+    - worker_count > 0
+
 - name: Create Cloud?
   pause:
     prompt: |-

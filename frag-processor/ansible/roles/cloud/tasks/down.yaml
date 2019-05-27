@@ -29,6 +29,16 @@
     state: absent
   when: provider=='openstack'
 
+- name: Get worker node facts
+  os_server_facts:
+    auth: "{{ os_auth }}"
+    region_name: "{{ os_region_name }}"
+    server: "{{ instance_base_name }}-worker-*"
+
+- name:
+  debug:
+    var: openstack_servers
+
 - name: Delete worker nodes
   os_server:
     auth: "{{ os_auth }}"
