@@ -17,7 +17,7 @@ head_type: c1.xlarge
 head_image_name: ScientificLinux-7-NoGui
 worker_type: c2.xlarge
 worker_image_name: ScientificLinux-7-NoGui
-worker_count: 5
+worker_count: 0
 
-volume_size_g: 2000
+volume_size_g: 1500
 volume_device: /dev/vdb

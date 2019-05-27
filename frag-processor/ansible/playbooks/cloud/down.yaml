@@ -1,9 +1,7 @@
 ---
 
 - hosts: localhost
-
   tasks:
-  - name: Run the Squonk Role Undeploy Tasks
-    include_role:
+  - include_role:
       name: cloud
       tasks_from: down.yaml

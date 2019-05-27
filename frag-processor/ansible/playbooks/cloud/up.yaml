@@ -5,10 +5,14 @@
 # and dynamically adjusts inventory groups
 
 - hosts: localhost
-  roles:
-  - cloud
+  tasks:
+  - include_role:
+      name: cloud
+    vars:
+      worker_count: 3
 
-# Configure the head node.
+# The above will have created head and worker groups.
+# Now we configure the head node.
 # The head node is used to build slurm and slurm-DRMAA
 # before the app is deployed there
 
