@@ -43,6 +43,7 @@
     name: "{{ item['name'] }}"
     state: absent
   loop: "{{ openstack_servers }}"
+  no_log: yes
   when: provider=='openstack'
 
 - name: Delete shared volume
