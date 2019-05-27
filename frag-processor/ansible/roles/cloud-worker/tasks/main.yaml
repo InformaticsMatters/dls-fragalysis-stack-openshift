@@ -55,7 +55,7 @@
     enabled: yes
     state: restarted
 
-# We seem to have to check the mount volume
+# We seem to have to 'Check the mount volume'.
 # Today (27 May 2019), without this I got this from the
 # 'Create volume mount-point' task...
 #
@@ -66,7 +66,7 @@
 #      "path": "/data",
 #      "state": "absent"}
 
-- name: Check volume mount
+- name: Check the volume mount
   stat:
      path: "{{ volume_mount }}"
   register: mount_dir
