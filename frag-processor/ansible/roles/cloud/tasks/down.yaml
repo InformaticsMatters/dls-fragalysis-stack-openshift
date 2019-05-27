@@ -34,18 +34,15 @@
     auth: "{{ os_auth }}"
     region_name: "{{ os_region_name }}"
     server: "{{ instance_base_name }}-worker-*"
-
-- name:
-  debug:
-    var: openstack_servers
+  when: provider=='openstack'
 
 - name: Delete worker nodes
   os_server:
     auth: "{{ os_auth }}"
     region_name: "{{ os_region_name }}"
-    name: "{{ instance_base_name }}-worker-{{ '%d'|format(item|int + 1) }}"
+    name: "{{ item['name'] }}"
     state: absent
-  loop: "{{ range(worker_count)|list }}"
+  loop: "{{ openstack_servers }}"
   when: provider=='openstack'
 
 - name: Delete shared volume
