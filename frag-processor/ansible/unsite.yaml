@@ -1,7 +1,0 @@
----
-
-- hosts: localhost
-  tasks:
-  - include_role:
-      name: cloud
-      tasks_from: down.yaml
