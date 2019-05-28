@@ -8,8 +8,6 @@
   tasks:
   - include_role:
       name: cloud
-    vars:
-      worker_count: 3
 
 # The above will have created head and worker groups.
 # Now we configure the head node.

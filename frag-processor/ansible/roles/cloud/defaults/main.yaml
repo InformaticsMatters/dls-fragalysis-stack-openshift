@@ -1,9 +1,11 @@
 ---
 
 # The cloud provider
-# (also embedded in the the filenames of the tasks we'll run)
+# (also embedded in the the file names of the tasks we'll run)
 provider: openstack
 
+# A string pre-pended to each cloud object we create
+# (e.g. the data volume and compute instances)
 instance_base_name: graph
 
 # OpenStack
@@ -19,7 +21,7 @@ head_addr: 130.246.215.45
 
 worker_type: c2.xlarge
 worker_image_name: ScientificLinux-7-NoGui
-worker_count: 0
+worker_count: 3
 
 volume_size_g: 1500
 volume_device: /dev/vdb
