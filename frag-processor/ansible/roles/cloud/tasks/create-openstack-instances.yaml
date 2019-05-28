@@ -10,6 +10,8 @@
   assert:
     that:
     - os_auth_url is defined
+    - head_addr is defined
+    - head_addr|ipaddr
 
 - name: Create shared volume
   os_volume:
@@ -27,7 +29,9 @@
     image: "{{ head_image_name }}"
     flavor: "{{ head_type }}"
     key_name: "{{ os_key_name }}"
-    auto_floating_ip: true
+    auto_floating_ip: no
+    floating_ips:
+    - "{{ head_addr }}"
 
 - name: Attach the shared volume to the head node
   os_server_volume:
@@ -45,5 +49,5 @@
     image: "{{ worker_image_name }}"
     flavor: "{{ worker_type }}"
     key_name: "{{ os_key_name }}"
-    auto_floating_ip: false
+    auto_floating_ip: no
   loop: "{{ range(worker_count)|list }}"

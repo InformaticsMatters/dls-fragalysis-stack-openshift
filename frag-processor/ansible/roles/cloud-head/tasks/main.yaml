@@ -139,8 +139,8 @@
     enabled: yes
     state: restarted
 
-# No write public keys to the head node
-# to permit ssh access to the defined set of users...
+# Now permit ssh access to the head node by adding
+# the built-in public keys to the head node's 'centos' account.
 
 - name: Add authorised users (centos)
   authorized_key:
