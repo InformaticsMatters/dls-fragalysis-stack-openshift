@@ -11,6 +11,9 @@ Distributed amongst a number of sub-directories: -
     A directory of roles and playbooks used to deploy
     (and un-deploy) the stack and related software into an OpenShift cluster
     as paired projects used for development/test and production.
+
+-   **cluster-config**:
+    Ansible plays to configure the OKD cluster nodes (prior to orchestration)
     
 -   **images**:
     Dockerfiles and Jenkinsfiles for additional container images.
@@ -27,6 +30,9 @@ Distributed amongst a number of sub-directories: -
     A simple and early deployment of the stack to a local
     [Minishift] installation allowing experimentation on the desktop.
     
+-   **okd-orchestrator**:
+    OKD-Orchestrator deployment file for the Verne cluster.
+
 -   **openshift**:
     All the OpenShift templates required to deploy the
     developer/test and production application, used in conjunction with the
