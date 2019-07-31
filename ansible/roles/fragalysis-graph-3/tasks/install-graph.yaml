@@ -81,22 +81,22 @@
 
 # Create the Graph Deployment
 
-#- name: Check Graph Deployment
-#  command: oc get deploymentconfigs
-#  register: graph_dc
-#  changed_when: False
+- name: Check Graph Deployment
+  command: oc get deploymentconfigs
+  register: graph_dc
+  changed_when: False
 
-#- name: Create Graph Deployment
-#  shell: >
-#    oc process -f {{ role_path }}/files/fs-graph.yaml
-#    -p NEO4J_PAGECACHE_G={{ graph_3_pagecache_g }}
-#    -p NEO4J_CPU_LIMIT_M={{ graph_3_cpu_limit_cores|int * 1000 }}
-#    -p NEO4J_CPU_REQUEST_M={{ graph_3_cpu_request_cores|int * 1000 }}
-#    -p NEO4J_MEM_LIMIT_G={{ graph_3_memory_limit_g }}
-#    -p NEO4J_MEM_REQUEST_G={{ graph_3_memory_request_g }}
-#    | oc create -f -
-#  when:
-#  - '"graph-molport" not in graph_dc.stdout'
+- name: Create Graph Deployment
+  shell: >
+    oc process -f {{ role_path }}/files/fs-graph.yaml
+    -p NEO4J_PAGECACHE_G={{ graph_3_pagecache_g }}
+    -p NEO4J_CPU_LIMIT_M={{ graph_3_cpu_limit_cores|int * 1000 }}
+    -p NEO4J_CPU_REQUEST_M={{ graph_3_cpu_request_cores|int * 1000 }}
+    -p NEO4J_MEM_LIMIT_G={{ graph_3_memory_limit_g }}
+    -p NEO4J_MEM_REQUEST_G={{ graph_3_memory_request_g }}
+    | oc create -f -
+  when:
+  - '"graph-3" not in graph_dc.stdout'
 
 # We do not wait for the graph.
 # Depending on the loader data this may take minutes or hours!

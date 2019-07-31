@@ -1,0 +1,150 @@
+---
+
+# The Graph database deployment.
+#
+# oc process -f fs-graph.yaml | oc create -f -
+# oc delete all --selector template=fs-graph
+
+kind: Template
+apiVersion: v1
+metadata:
+  name: fs-graph
+  annotations:
+    description: Fragalysis Stack's Neo4J Definition
+    tags: fragalysis,graph,neo4j
+labels:
+  template: fs-graph
+
+parameters:
+
+- name: GRAPH_IMAGE
+  value: 'informaticsmatters/neo4j:3.5'
+- name: NEO4J_AUTH
+  value: none
+- name: NEO4J_PAGECACHE_G
+  value: '350'
+- name: NEO4J_HEAP
+  value: 8g
+- name: NEO4J_CPU_REQUEST_M
+  value: '4000'
+- name: NEO4J_CPU_LIMIT_M
+  value: '8000'
+- name: NEO4J_MEM_REQUEST_G
+  value: '200'
+- name: NEO4J_MEM_LIMIT_G
+  value: '400'
+
+- name: NEO4J_LOG_DIR
+  value: '/graph-logs'
+
+- name: NEO4J_DATA_LOADER_DIR
+  value: '/data-loader'
+
+objects:
+
+- kind: ConfigMap
+  apiVersion: v1
+  metadata:
+    name: cypher-script
+  data:
+    cypher.script: |
+      CREATE INDEX ON :F2(smiles);
+      CREATE INDEX ON :Available(cmpd_id);
+
+- kind: DeploymentConfig
+  apiVersion: v1
+  metadata:
+    name: graph-3
+  spec:
+    replicas: 1
+    selector:
+      name: graph-3
+    template:
+      metadata:
+        labels:
+          name: graph-3
+      spec:
+#        nodeSelector:
+#          purpose: 'graph'
+        serviceAccountName: diamond
+
+        # Application containers
+        containers:
+        - image: ${GRAPH_IMAGE}
+          name: graph-3
+          env:
+          - name: NEO4J_AUTH
+            value: ${NEO4J_AUTH}
+          - name: NEO4J_dbms_memory_pagecache_size
+            value: ${NEO4J_PAGECACHE_G}g
+          - name: NEO4J_dbms_memory_heap_initial__size
+            value: ${NEO4J_HEAP}
+          - name: NEO4J_dbms_memory_heap_max__size
+            value: ${NEO4J_HEAP}
+          - name: NEO4J_dbms_directories_logs
+            value: ${NEO4J_LOG_DIR}
+          - name: NEO4J_EDITION
+            value: community
+          - name: IMPORT_DIRECTORY
+            value: ${NEO4J_DATA_LOADER_DIR}
+          - name: IMPORT_TO
+            value: graph
+          - name: EXTENSION_SCRIPT
+            value: "${NEO4J_DATA_LOADER_DIR}/load-neo4j.sh"
+          ports:
+          - containerPort: 7474
+          - containerPort: 7687
+          resources:
+            limits:
+              cpu: ${NEO4J_CPU_LIMIT_M}m
+              memory: ${NEO4J_MEM_LIMIT_G}Gi
+            requests:
+              cpu: ${NEO4J_CPU_REQUEST_M}m
+              memory: ${NEO4J_MEM_REQUEST_G}Gi
+          volumeMounts:
+          - name: fs-graph-data-loader
+            mountPath: ${NEO4J_DATA_LOADER_DIR}
+          - name: fs-graph-data
+            mountPath: /data
+          - name: fs-graph-logs
+            mountPath: ${NEO4J_LOG_DIR}
+          - name: cypher-script
+            mountPath: /cypher-script/cypher.script
+            subPath: cypher.script
+
+        volumes:
+        - name: fs-graph-data-loader
+          persistentVolumeClaim:
+            claimName: fs-graph-3-data-loader-claim
+        - name: fs-graph-data
+          persistentVolumeClaim:
+            claimName: fs-graph-3-data-claim
+        - name: fs-graph-logs
+          persistentVolumeClaim:
+            claimName: fs-graph-3-logs-claim
+        - name: cypher-script
+          configMap:
+            name: cypher-script
+
+        restartPolicy: Always
+
+    strategy:
+      type: Recreate
+
+    triggers:
+     - type: ConfigChange
+
+- kind: Service
+  apiVersion: v1
+  metadata:
+    name: neo4j
+  spec:
+    ports:
+    - name: http
+      port: 7474
+      targetPort: 7474
+    - name: bolt
+      port: 7687
+      targetPort: 7687
+    selector:
+      name: graph-3
