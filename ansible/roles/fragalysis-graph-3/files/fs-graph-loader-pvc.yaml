@@ -1,0 +1,48 @@
+---
+
+# The Graph Database Persistent Volume Claims (loader).
+#
+# oc process -f fs-graph-loader-pvc.yaml | oc create -f -
+# oc delete pvc --selector template=fs-graph-loader-pvc
+
+kind: Template
+apiVersion: v1
+metadata:
+  name: fs-graph-loader-pvc
+  annotations:
+    description: Fragalysis Stack's Persistent Volume Claims
+    tags: fragalysis,graph,neo4j
+labels:
+  template: fs-graph-loader-pvc
+
+parameters:
+
+- name: GRAPH_DATA_LOADER_SIZE
+  value: 50Gi
+
+objects:
+
+# The 'loader' volume.
+# This is 'transient' volume where the data to be used
+# to form the graph database resides. It contains the
+# crucial 'load' neo4j EXTENSION script and the node and
+# relationship CSV files used during the initial (bulk) import.
+
+  # To avoid the loader claim from creating a volume
+  # from the default storage class (glusterfs-storage)
+  # we set the storage-class annotation to a blank string (' ')
+- apiVersion: v1
+  kind: PersistentVolumeClaim
+  metadata:
+    name: fs-graph-3-data-loader-claim
+    annotations:
+      volume.beta.kubernetes.io/storage-class: ' '
+  spec:
+    accessModes:
+    - ReadWriteMany
+    resources:
+      requests:
+        storage: ${GRAPH_DATA_LOADER_SIZE}
+    selector:
+      matchLabels:
+        target-graph: graph-3

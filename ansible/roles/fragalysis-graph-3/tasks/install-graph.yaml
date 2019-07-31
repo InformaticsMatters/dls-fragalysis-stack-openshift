@@ -44,40 +44,40 @@
 
 # Create the Graph PVCs (loader)
 
-#- name: Check Graph PVCs (loader)
-#  command: oc get pvc
-#  register: pvc_result
-#  changed_when: False
+- name: Check Graph PVCs (loader)
+  command: oc get pvc
+  register: pvc_result
+  changed_when: False
 
-#- name: Create Graph PVCs (loader)
-#  shell: >
-#    oc process -f {{ role_path }}/files/fs-graph-loader-pvc.yaml
-#    | oc create -f -
-#  when:
-#  - '"fs-graph-data-loader-claim" not in pvc_result.stdout'
+- name: Create Graph PVCs (loader)
+  shell: >
+    oc process -f {{ role_path }}/files/fs-graph-loader-pvc.yaml
+    | oc create -f -
+  when:
+  - '"fs-graph-3-data-loader-claim" not in pvc_result.stdout'
 
 # Create the Graph PVCs (graph)
 
-#- name: Create Graph PVCs (graph)
-#  shell: >
-#    oc process -f {{ role_path }}/files/fs-graph-graph-pvc.yaml
-#    | oc create -f -
-#  when:
-#  - '"fs-graph-data-claim" not in pvc_result.stdout'
+- name: Create Graph PVCs (graph & log)
+  shell: >
+    oc process -f {{ role_path }}/files/fs-graph-graph-pvc.yaml
+    | oc create -f -
+  when:
+  - '"fs-graph-3-data-claim" not in pvc_result.stdout'
 
 # Wait for PVCs to become "Bound"...
 
-#- name: Wait for Graph PVCs to become Bound
-#  shell: oc get pvc/{{ item }} | grep Bound
-#  delay: 5
-#  retries: "{{ (pvc_bind_timeout_s|int / 5)|int }}"
-#  register: result
-#  until: result.rc == 0
-#  loop:
-#  - fs-graph-data-loader-claim
-#  - fs-graph-data-claim
-#  - fs-graph-logs-claim
-#  changed_when: False
+- name: Wait for Graph PVCs to become Bound
+  shell: oc get pvc/{{ item }} | grep Bound
+  delay: 5
+  retries: "{{ (pvc_bind_timeout_s|int / 5)|int }}"
+  register: result
+  until: result.rc == 0
+  loop:
+  - fs-graph-3-data-loader-claim
+  - fs-graph-3-data-claim
+  - fs-graph-3-logs-claim
+  changed_when: False
 
 # Create the Graph Deployment
 

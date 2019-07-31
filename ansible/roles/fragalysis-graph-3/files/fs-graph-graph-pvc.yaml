@@ -1,0 +1,54 @@
+---
+
+# The Graph Database Persistent Volume Claims (excluding the loader).
+#
+# oc process -f fs-graph-graph-pvc.yaml | oc create -f -
+# oc delete pvc --selector template=fs-graph-graph-pvc
+
+kind: Template
+apiVersion: v1
+metadata:
+  name: fs-graph-3-graph-pvc
+  annotations:
+    description: Fragalysis Stack's Persistent Volume Claims
+    tags: fragalysis,graph,neo4j
+labels:
+  template: fs-graph-3-graph-pvc
+
+parameters:
+
+- name: GRAPH_DATA_SIZE
+  value: 500Gi
+- name: GRAPH_LOGS_SIZE
+  value: 2Gi
+
+objects:
+
+# The following are volumes are for the
+# loaded graph database
+# (constructed at boot-time from the loader volume contents)
+# and the graph database logs.
+
+- apiVersion: v1
+  kind: PersistentVolumeClaim
+  metadata:
+    name: fs-graph-3-data-claim
+  spec:
+    accessModes:
+    - ReadWriteMany
+    resources:
+      requests:
+        storage: ${GRAPH_DATA_SIZE}
+    storageClassName: glusterfs-storage
+
+- apiVersion: v1
+  kind: PersistentVolumeClaim
+  metadata:
+    name: fs-graph-3-logs-claim
+  spec:
+    accessModes:
+    - ReadWriteMany
+    resources:
+      requests:
+        storage: ${GRAPH_LOGS_SIZE}
+    storageClassName: glusterfs-storage
