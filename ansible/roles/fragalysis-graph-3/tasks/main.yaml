@@ -1,4 +1,4 @@
 ---
 
 - import_tasks: create-project.yaml
-#- import_tasks: install-graph.yaml
+- import_tasks: install-graph.yaml

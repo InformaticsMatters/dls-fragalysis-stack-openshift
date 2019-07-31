@@ -1,0 +1,102 @@
+---
+
+# Install the Graph database.
+# This includes the loader's Persistent Volume
+# and the Volume Claims.
+
+- name: Login (admin at {{ cluster_url }})
+  command: oc login {{ cluster_url }} -u admin -p {{ admin_password }}
+  changed_when: False
+
+- name: Move to Graph Project
+  command: oc project {{ graph_3_namespace }}
+  changed_when: False
+
+# Create the Graph PVs
+
+- name: Check Graph PV
+  command: oc get pv
+  register: pv_result
+  changed_when: False
+
+- name: Create Graph PV
+  shell: >
+    oc process -f {{ role_path }}/files/fs-graph-pv-nfs.yaml
+    -p GRAPH_NAMESPACE={{ graph_3_namespace }}
+    | oc create -f -
+  when:
+  - '"fs-graph-3-data-loader" not in pv_result.stdout'
+
+# Wait for Graph PV to become "Available"...
+# We only do this if we created the PV in this session.
+
+- name: Wait for Graph PV to become Available
+  shell: oc get pv/{{ item }} | grep Available
+  delay: 5
+  retries: "{{ (pv_create_timeout_s|int / 5)|int }}"
+  register: result
+  until: result.rc == 0
+  loop:
+  - fs-graph-3-data-loader
+  when:
+  - '"fs-graph-3-data-loader" not in pv_result.stdout'
+  changed_when: False
+
+# Create the Graph PVCs (loader)
+
+#- name: Check Graph PVCs (loader)
+#  command: oc get pvc
+#  register: pvc_result
+#  changed_when: False
+
+#- name: Create Graph PVCs (loader)
+#  shell: >
+#    oc process -f {{ role_path }}/files/fs-graph-loader-pvc.yaml
+#    | oc create -f -
+#  when:
+#  - '"fs-graph-data-loader-claim" not in pvc_result.stdout'
+
+# Create the Graph PVCs (graph)
+
+#- name: Create Graph PVCs (graph)
+#  shell: >
+#    oc process -f {{ role_path }}/files/fs-graph-graph-pvc.yaml
+#    | oc create -f -
+#  when:
+#  - '"fs-graph-data-claim" not in pvc_result.stdout'
+
+# Wait for PVCs to become "Bound"...
+
+#- name: Wait for Graph PVCs to become Bound
+#  shell: oc get pvc/{{ item }} | grep Bound
+#  delay: 5
+#  retries: "{{ (pvc_bind_timeout_s|int / 5)|int }}"
+#  register: result
+#  until: result.rc == 0
+#  loop:
+#  - fs-graph-data-loader-claim
+#  - fs-graph-data-claim
+#  - fs-graph-logs-claim
+#  changed_when: False
+
+# Create the Graph Deployment
+
+#- name: Check Graph Deployment
+#  command: oc get deploymentconfigs
+#  register: graph_dc
+#  changed_when: False
+
+#- name: Create Graph Deployment
+#  shell: >
+#    oc process -f {{ role_path }}/files/fs-graph.yaml
+#    -p NEO4J_PAGECACHE_G={{ graph_3_pagecache_g }}
+#    -p NEO4J_CPU_LIMIT_M={{ graph_3_cpu_limit_cores|int * 1000 }}
+#    -p NEO4J_CPU_REQUEST_M={{ graph_3_cpu_request_cores|int * 1000 }}
+#    -p NEO4J_MEM_LIMIT_G={{ graph_3_memory_limit_g }}
+#    -p NEO4J_MEM_REQUEST_G={{ graph_3_memory_request_g }}
+#    | oc create -f -
+#  when:
+#  - '"graph-molport" not in graph_dc.stdout'
+
+# We do not wait for the graph.
+# Depending on the loader data this may take minutes or hours!
