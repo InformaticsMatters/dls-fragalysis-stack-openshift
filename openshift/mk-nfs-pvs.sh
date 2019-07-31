@@ -8,6 +8,7 @@ mkdir pv-fs-jenkins
 mkdir pv-fs-input
 mkdir pv-fs-graph-data
 mkdir pv-fs-graph-data-loader
+mkdir pv-fs-graph-3-data-loader
 mkdir pv-fs-graph-logs
 mkdir pv-fs-molport-enamine-data
 mkdir pv-fs-molport-enamine-data-loader
@@ -37,6 +38,7 @@ echo ${EXPORT_DIR}/pv-fs-jenkins *(rw,root_squash) >> frag.exports
 echo ${EXPORT_DIR}/pv-fs-input *(rw,root_squash) >> frag.exports
 echo ${EXPORT_DIR}/pv-fs-graph-data *(rw,root_squash) >> frag.exports
 echo ${EXPORT_DIR}/pv-fs-graph-data-loader *(rw,root_squash) >> frag.exports
+echo ${EXPORT_DIR}/pv-fs-graph-3-data-loader *(rw,root_squash) >> frag.exports
 echo ${EXPORT_DIR}/pv-fs-graph-logs *(rw,root_squash) >> frag.exports
 echo ${EXPORT_DIR}/pv-fs-molport-enamine-data *(rw,root_squash) >> frag.exports
 echo ${EXPORT_DIR}/pv-fs-molport-enamine-data-loader *(rw,root_squash) >> frag.exports

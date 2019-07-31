@@ -19,7 +19,7 @@ various `pvc` templates for details.
 ## Playbooks
 Each project is driven by its own set of playbooks, e.g.: -
 
-    $ ansible-playbook playbooks/fragalysis-graph-2/deploy.yaml \
+    $ ansible-playbook playbooks/fragalysis-graph-3/deploy.yaml \
         --vault-password-file vault-pass.txt
 
 ## Creating encrypted secrets

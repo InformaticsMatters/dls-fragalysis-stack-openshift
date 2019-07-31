@@ -1,0 +1,37 @@
+---
+
+# Setup the Graph Project.
+# Ths includes the project and its service account.
+
+- name: Login (admin at {{ cluster_url }})
+  command: oc login {{ cluster_url }} -u admin -p {{ admin_password }}
+  changed_when: False
+
+- name: Get Projects
+  command: oc get projects
+  register: projects_result
+  changed_when: False
+
+- name: Create Graph Project
+  command: >
+    oc new-project {{ graph_3_namespace }}
+    --display-name="{{ graph_3_namespace_display_name }}"
+    --description="{{ graph_3_namespace_description }}"
+  when: graph_3_namespace not in projects_result.stdout
+
+- name: Move to Graph Project
+  command: oc project {{ graph_3_namespace }}
+  changed_when: False
+
+- name: Check Graph Diamond Service Account exists
+  command: oc get sa
+  register: sa_result
+  changed_when: False
+
+- name: Create Graph Diamond Service Account (Graph Project)
+  command: "{{ item }}"
+  loop:
+  - oc create sa {{ service_account }}
+  - oc adm policy add-role-to-user admin -z {{ service_account }}
+  - oc adm policy add-scc-to-user anyuid -z {{ service_account }}
+  when: service_account not in sa_result.stdout

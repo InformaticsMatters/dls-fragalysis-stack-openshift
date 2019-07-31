@@ -1,0 +1,14 @@
+---
+
+# Our project/namespace...
+graph_3_namespace: fragalysis-graph-3
+graph_3_namespace_display_name: Fragalysis (Graph 3)
+graph_3_namespace_description: >
+  The Fragalysis Graph '3' Project.
+  A neo4j graph database.
+
+graph_3_pagecache_g: 40
+graph_3_cpu_request_cores: 4
+graph_3_cpu_limit_cores: 8
+graph_3_memory_request_g: 80
+graph_3_memory_limit_g: 100
