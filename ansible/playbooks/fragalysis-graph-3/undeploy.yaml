@@ -1,0 +1,10 @@
+---
+
+- hosts: localhost
+  gather_facts: No
+
+  tasks:
+  - name: Run the Graph-3 Undeploy Tasks
+    include_role:
+      name: fragalysis-graph-3
+      tasks_from: undeploy.yaml
