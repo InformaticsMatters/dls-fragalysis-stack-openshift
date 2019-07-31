@@ -12,21 +12,20 @@
   <description>The Web Image is the production container image for the Django application. This is based on the fragalysis-stack container image.</description>
   <keepDependencies>false</keepDependencies>
   <properties>
-    <io.fabric8.jenkins.openshiftsync.BuildConfigProjectProperty plugin="openshift-sync@1.0.35">
-      <uid></uid>
-      <namespace></namespace>
-      <name></name>
-      <resourceVersion></resourceVersion>
-    </io.fabric8.jenkins.openshiftsync.BuildConfigProjectProperty>
-    <jenkins.model.BuildDiscarderProperty>
-      <strategy class="hudson.tasks.LogRotator">
-        <daysToKeep>-1</daysToKeep>
-        <numToKeep>25</numToKeep>
-        <artifactDaysToKeep>-1</artifactDaysToKeep>
-        <artifactNumToKeep>-1</artifactNumToKeep>
-      </strategy>
-    </jenkins.model.BuildDiscarderProperty>
-    <org.jenkinsci.plugins.workflow.job.properties.DisableConcurrentBuildsJobProperty/>
+    <org.jenkinsci.plugins.workflow.job.properties.PipelineTriggersJobProperty>
+      <triggers>
+        <jenkins.triggers.ReverseBuildTrigger>
+          <spec></spec>
+          <upstreamProjects>Fragalysis Stack (InLoopX)</upstreamProjects>
+          <threshold>
+            <name>SUCCESS</name>
+            <ordinal>0</ordinal>
+            <color>BLUE</color>
+            <completeBuild>true</completeBuild>
+          </threshold>
+        </jenkins.triggers.ReverseBuildTrigger>
+      </triggers>
+    </org.jenkinsci.plugins.workflow.job.properties.PipelineTriggersJobProperty>
     <hudson.model.ParametersDefinitionProperty>
       <parameterDefinitions>
         <hudson.model.StringParameterDefinition>
@@ -44,7 +43,7 @@
         <hudson.model.StringParameterDefinition>
           <name>STACK_DC</name>
           <description>The name of the DeploymentConfig that controls the Stack image deployment. This is used to set replicas when deploying and it&apos;s used by the security probe to scale-down the stack if there&apos;s a security error.</description>
-          <defaultValue>web</defaultValue>
+          <defaultValue>web-inloopx</defaultValue>
           <trim>false</trim>
         </hudson.model.StringParameterDefinition>
         <hudson.model.StringParameterDefinition>
@@ -61,20 +60,21 @@
         </hudson.model.StringParameterDefinition>
       </parameterDefinitions>
     </hudson.model.ParametersDefinitionProperty>
-    <org.jenkinsci.plugins.workflow.job.properties.PipelineTriggersJobProperty>
-      <triggers>
-        <jenkins.triggers.ReverseBuildTrigger>
-          <spec></spec>
-          <upstreamProjects>Fragalysis Stack (RG)</upstreamProjects>
-          <threshold>
-            <name>SUCCESS</name>
-            <ordinal>0</ordinal>
-            <color>BLUE</color>
-            <completeBuild>true</completeBuild>
-          </threshold>
-        </jenkins.triggers.ReverseBuildTrigger>
-      </triggers>
-    </org.jenkinsci.plugins.workflow.job.properties.PipelineTriggersJobProperty>
+    <io.fabric8.jenkins.openshiftsync.BuildConfigProjectProperty plugin="openshift-sync@1.0.35">
+      <uid></uid>
+      <namespace></namespace>
+      <name></name>
+      <resourceVersion></resourceVersion>
+    </io.fabric8.jenkins.openshiftsync.BuildConfigProjectProperty>
+    <jenkins.model.BuildDiscarderProperty>
+      <strategy class="hudson.tasks.LogRotator">
+        <daysToKeep>-1</daysToKeep>
+        <numToKeep>25</numToKeep>
+        <artifactDaysToKeep>-1</artifactDaysToKeep>
+        <artifactNumToKeep>-1</artifactNumToKeep>
+      </strategy>
+    </jenkins.model.BuildDiscarderProperty>
+    <org.jenkinsci.plugins.workflow.job.properties.DisableConcurrentBuildsJobProperty/>
   </properties>
   <definition class="org.jenkinsci.plugins.workflow.cps.CpsScmFlowDefinition" plugin="workflow-cps@2.65">
     <scm class="hudson.plugins.git.GitSCM" plugin="git@3.9.3">
@@ -97,5 +97,5 @@
     <lightweight>true</lightweight>
   </definition>
   <triggers/>
-  <disabled>true</disabled>
+  <disabled>false</disabled>
 </flow-definition>

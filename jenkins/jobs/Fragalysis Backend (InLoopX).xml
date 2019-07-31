@@ -9,25 +9,28 @@
       <options/>
     </org.jenkinsci.plugins.pipeline.modeldefinition.actions.DeclarativeJobPropertyTrackerAction>
   </actions>
-  <description>Promotes a web image identified by a Jenkins Web Image build NUMBER to a Production VERSION.</description>
+  <description>Backend build for the InLoopX project</description>
   <keepDependencies>false</keepDependencies>
   <properties>
-    <hudson.model.ParametersDefinitionProperty>
-      <parameterDefinitions>
-        <hudson.model.StringParameterDefinition>
-          <name>PROMOTE_BUILD</name>
-          <description>The Jenkins Job build number of the development project&apos;s Web Image to promote, i.e. &quot;268&quot;. This build must exist if the the promotion is to be successful.</description>
-          <defaultValue></defaultValue>
-          <trim>false</trim>
-        </hudson.model.StringParameterDefinition>
-        <hudson.model.StringParameterDefinition>
-          <name>AS_VERSION</name>
-          <description>The semantic version to apply to the promoted image, e.g. &quot;0.0.7&quot;. The promoted image version must not exist. You can promote built &quot;268&quot; as &quot;0.0.7&quot; as long as version &quot;0.0.7&quot; does not exist but you cannot promote any build to &quot;0.0.7&quot; once it exists.</description>
-          <defaultValue></defaultValue>
-          <trim>false</trim>
-        </hudson.model.StringParameterDefinition>
-      </parameterDefinitions>
-    </hudson.model.ParametersDefinitionProperty>
+    <org.jenkinsci.plugins.workflow.job.properties.PipelineTriggersJobProperty>
+      <triggers>
+        <jenkins.triggers.ReverseBuildTrigger>
+          <spec></spec>
+          <upstreamProjects>Fragalysis</upstreamProjects>
+          <threshold>
+            <name>SUCCESS</name>
+            <ordinal>0</ordinal>
+            <color>BLUE</color>
+            <completeBuild>true</completeBuild>
+          </threshold>
+        </jenkins.triggers.ReverseBuildTrigger>
+        <hudson.triggers.SCMTrigger>
+          <spec># Every 3 minutes
+H/3 * * * *</spec>
+          <ignorePostCommitHooks>false</ignorePostCommitHooks>
+        </hudson.triggers.SCMTrigger>
+      </triggers>
+    </org.jenkinsci.plugins.workflow.job.properties.PipelineTriggersJobProperty>
     <io.fabric8.jenkins.openshiftsync.BuildConfigProjectProperty plugin="openshift-sync@1.0.35">
       <uid></uid>
       <namespace></namespace>
@@ -49,7 +52,7 @@
       <configVersion>2</configVersion>
       <userRemoteConfigs>
         <hudson.plugins.git.UserRemoteConfig>
-          <url>https://github.com/InformaticsMatters/dls-fragalysis-stack-openshift.git</url>
+          <url>https://github.com/informaticsmatters/fragalysis-backend.git</url>
         </hudson.plugins.git.UserRemoteConfig>
       </userRemoteConfigs>
       <branches>
@@ -61,7 +64,7 @@
       <submoduleCfg class="list"/>
       <extensions/>
     </scm>
-    <scriptPath>images/promote-web/Jenkinsfile</scriptPath>
+    <scriptPath>Jenkinsfile</scriptPath>
     <lightweight>true</lightweight>
   </definition>
   <triggers/>

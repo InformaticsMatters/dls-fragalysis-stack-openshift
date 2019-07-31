@@ -12,6 +12,16 @@
   <description>Demotes a Web image identified by a version number previously promoted.</description>
   <keepDependencies>false</keepDependencies>
   <properties>
+    <hudson.model.ParametersDefinitionProperty>
+      <parameterDefinitions>
+        <hudson.model.StringParameterDefinition>
+          <name>TO_VERSION</name>
+          <description>The semantic version to to use as the demoted image, e.g. &quot;1.14.7&quot;. The version must have been previously promoted.</description>
+          <defaultValue></defaultValue>
+          <trim>false</trim>
+        </hudson.model.StringParameterDefinition>
+      </parameterDefinitions>
+    </hudson.model.ParametersDefinitionProperty>
     <io.fabric8.jenkins.openshiftsync.BuildConfigProjectProperty plugin="openshift-sync@1.0.35">
       <uid></uid>
       <namespace></namespace>
@@ -27,16 +37,6 @@
       </strategy>
     </jenkins.model.BuildDiscarderProperty>
     <org.jenkinsci.plugins.workflow.job.properties.DisableConcurrentBuildsJobProperty/>
-    <hudson.model.ParametersDefinitionProperty>
-      <parameterDefinitions>
-        <hudson.model.StringParameterDefinition>
-          <name>TO_VERSION</name>
-          <description>The semantic version to to use as the demoted image, e.g. &quot;1.14.7&quot;. The version must have been previously promoted.</description>
-          <defaultValue></defaultValue>
-          <trim>false</trim>
-        </hudson.model.StringParameterDefinition>
-      </parameterDefinitions>
-    </hudson.model.ParametersDefinitionProperty>
   </properties>
   <definition class="org.jenkinsci.plugins.workflow.cps.CpsScmFlowDefinition" plugin="workflow-cps@2.65">
     <scm class="hudson.plugins.git.GitSCM" plugin="git@3.9.3">

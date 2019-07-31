@@ -12,6 +12,41 @@
   <description></description>
   <keepDependencies>false</keepDependencies>
   <properties>
+    <org.jenkinsci.plugins.workflow.job.properties.PipelineTriggersJobProperty>
+      <triggers>
+        <jenkins.triggers.ReverseBuildTrigger>
+          <spec></spec>
+          <upstreamProjects>Fragalysis Backend (InLoopX),Fragalysis Frontend (InLoopX), </upstreamProjects>
+          <threshold>
+            <name>SUCCESS</name>
+            <ordinal>0</ordinal>
+            <color>BLUE</color>
+            <completeBuild>true</completeBuild>
+          </threshold>
+        </jenkins.triggers.ReverseBuildTrigger>
+        <hudson.triggers.SCMTrigger>
+          <spec>#Â Every 3 minutes
+H/3 * * * *</spec>
+          <ignorePostCommitHooks>false</ignorePostCommitHooks>
+        </hudson.triggers.SCMTrigger>
+      </triggers>
+    </org.jenkinsci.plugins.workflow.job.properties.PipelineTriggersJobProperty>
+    <hudson.model.ParametersDefinitionProperty>
+      <parameterDefinitions>
+        <hudson.model.StringParameterDefinition>
+          <name>FE_GIT_PROJECT</name>
+          <description>The Git repository name for the source of the code for the stack. If you&apos;ve forked the fragslysis-frontend project (say to &quot;informaticsmatters/fragslysis-frontend&quot;) then set the project to &quot;informaticsmatters&quot;. This is picked up in the Jenkinsfile and passed through to the build using via &quot;Dockerfiles-cicd&quot;.</description>
+          <defaultValue>xchem</defaultValue>
+          <trim>false</trim>
+        </hudson.model.StringParameterDefinition>
+        <hudson.model.StringParameterDefinition>
+          <name>IMAGE_TAG</name>
+          <description>The image tag to apply to the constructed docker images. This must be unique as all stack images are (at the moment) written to the development registry as &quot;xchem/fragalysis-stack:&lt;TAG&gt;&quot;.</description>
+          <defaultValue>inloopx</defaultValue>
+          <trim>false</trim>
+        </hudson.model.StringParameterDefinition>
+      </parameterDefinitions>
+    </hudson.model.ParametersDefinitionProperty>
     <io.fabric8.jenkins.openshiftsync.BuildConfigProjectProperty plugin="openshift-sync@1.0.35">
       <uid></uid>
       <namespace></namespace>
@@ -27,48 +62,13 @@
       </strategy>
     </jenkins.model.BuildDiscarderProperty>
     <org.jenkinsci.plugins.workflow.job.properties.DisableConcurrentBuildsJobProperty/>
-    <hudson.model.ParametersDefinitionProperty>
-      <parameterDefinitions>
-        <hudson.model.StringParameterDefinition>
-          <name>FE_GIT_PROJECT</name>
-          <description>The Git repository name for the source of the frontend code for the stack. This is picked up in the Jenkinsfile and passed through to the build using via &quot;Dockerfiles-cicd&quot;.</description>
-          <defaultValue>ricgillams</defaultValue>
-          <trim>false</trim>
-        </hudson.model.StringParameterDefinition>
-        <hudson.model.StringParameterDefinition>
-          <name>IMAGE_TAG</name>
-          <description>The image tag to apply to the constructed docker images. This must be unique as all stack images are (at the moment) written to the development registry as &quot;xchem/fragalysis-stack:&lt;TAG&gt;&quot;.</description>
-          <defaultValue>ricgillams</defaultValue>
-          <trim>false</trim>
-        </hudson.model.StringParameterDefinition>
-      </parameterDefinitions>
-    </hudson.model.ParametersDefinitionProperty>
-    <org.jenkinsci.plugins.workflow.job.properties.PipelineTriggersJobProperty>
-      <triggers>
-        <jenkins.triggers.ReverseBuildTrigger>
-          <spec></spec>
-          <upstreamProjects>Fragalysis Backend,Fragalysis Frontend (RG), </upstreamProjects>
-          <threshold>
-            <name>SUCCESS</name>
-            <ordinal>0</ordinal>
-            <color>BLUE</color>
-            <completeBuild>true</completeBuild>
-          </threshold>
-        </jenkins.triggers.ReverseBuildTrigger>
-        <hudson.triggers.SCMTrigger>
-          <spec>#Â Every 3 minutes
-H/3 * * * *</spec>
-          <ignorePostCommitHooks>false</ignorePostCommitHooks>
-        </hudson.triggers.SCMTrigger>
-      </triggers>
-    </org.jenkinsci.plugins.workflow.job.properties.PipelineTriggersJobProperty>
   </properties>
   <definition class="org.jenkinsci.plugins.workflow.cps.CpsScmFlowDefinition" plugin="workflow-cps@2.65">
     <scm class="hudson.plugins.git.GitSCM" plugin="git@3.9.3">
       <configVersion>2</configVersion>
       <userRemoteConfigs>
         <hudson.plugins.git.UserRemoteConfig>
-          <url>https://github.com/xchem/fragalysis-stack.git</url>
+          <url>https://github.com/informaticsmatters/fragalysis-stack.git</url>
         </hudson.plugins.git.UserRemoteConfig>
       </userRemoteConfigs>
       <branches>
@@ -84,5 +84,5 @@ H/3 * * * *</spec>
     <lightweight>true</lightweight>
   </definition>
   <triggers/>
-  <disabled>true</disabled>
+  <disabled>false</disabled>
 </flow-definition>
