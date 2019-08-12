@@ -1,0 +1,42 @@
+---
+
+# The Graph Database Persistent Volume Claims.
+#
+# oc process -f fs-graph-database-pvc.yaml | oc create -f -
+# oc delete pvc --selector template=fs-graph-database-pvc
+
+kind: Template
+apiVersion: v1
+metadata:
+  name: fs-graph-3-database-pvc
+  annotations:
+    description: Fragalysis Stack's Persistent Volume Claims
+    tags: fragalysis,graph,neo4j
+labels:
+  template: fs-graph-3-database-pvc
+
+parameters:
+
+- name: GRAPH_DATABASE_SIZE
+  value: 800Gi
+
+objects:
+
+  # To avoid the loader claim from creating a volume
+  # from the default storage class (glusterfs-storage)
+  # we set the storage-class annotation to a blank string (' ')
+- apiVersion: v1
+  kind: PersistentVolumeClaim
+  metadata:
+    name: fs-graph-3-database-claim
+    annotations:
+      volume.beta.kubernetes.io/storage-class: ' '
+  spec:
+    accessModes:
+    - ReadWriteOnce
+    resources:
+      requests:
+        storage: ${GRAPH_DATABASE_SIZE}
+    selector:
+      matchLabels:
+        target-graph: graph-3

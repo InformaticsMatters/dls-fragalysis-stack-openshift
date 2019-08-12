@@ -1,0 +1,56 @@
+---
+
+# The Graph Database's Persistent Volumes (NFS).
+#
+# This expects these volumes:
+#
+#   ${NFS_PATH}/${DATA_LOADER_PV_DIR}
+#
+# oc process -f fs-graph-pv-nfs.yaml | oc create -f -
+# oc delete pv --selector template=fs-graph-pv-nfs
+
+kind: Template
+apiVersion: v1
+metadata:
+  name: fs-graph-pv-nfs
+  annotations:
+    description: Fragalysis Stack's Graph-3 Volumes (using NFS)
+    tags: fragalysis,graph,graph-3,neo4j
+labels:
+  template: fs-graph-pv-nfs
+
+parameters:
+
+- name: NFS_SERVER
+  value: xchem-graph-001.novalocal
+- name: NFS_PATH
+  value: /data
+
+- name: GRAPH_NAMESPACE
+  value: fragalysis-graph-3
+
+- name: DATABASE_PV_DIR
+  value: pv-fs-graph-3-database
+- name: DATABASE_PV_SIZE
+  value: 800Gi
+
+objects:
+
+- kind: PersistentVolume
+  apiVersion: v1
+  metadata:
+    name: fs-graph-3-database
+    labels:
+      target-graph: graph-3
+  spec:
+    capacity:
+      storage: ${DATABASE_PV_SIZE}
+    accessModes:
+    - ReadWriteOnce
+    persistentVolumeReclaimPolicy: Retain
+    nfs:
+      server: ${NFS_SERVER}
+      path: ${NFS_PATH}/${DATABASE_PV_DIR}
+    claimRef:
+      name: fs-graph-3-database-claim
+      namespace: ${GRAPH_NAMESPACE}

@@ -19,51 +19,63 @@
   register: pv_result
   changed_when: False
 
-- name: Create Graph PV
+- name: Create Graph PV (loader)
   shell: >
-    oc process -f {{ role_path }}/files/fs-graph-pv-nfs.yaml
+    oc process -f {{ role_path }}/files/fs-graph-pv-data-loader-nfs.yaml
     -p GRAPH_NAMESPACE={{ graph_3_namespace }}
     | oc create -f -
   when:
   - '"fs-graph-3-data-loader" not in pv_result.stdout'
 
+- name: Create Graph PV (database)
+  shell: >
+    oc process -f {{ role_path }}/files/fs-graph-pv-database-nfs.yaml
+    -p GRAPH_NAMESPACE={{ graph_3_namespace }}
+    | oc create -f -
+  when:
+  - '"fs-graph-3-database" not in pv_result.stdout'
+
 # Wait for Graph PV to become "Available"...
 # We only do this if we created the PV in this session.
 
-- name: Wait for Graph PV to become Available
-  shell: oc get pv/{{ item }} | grep Available
+- name: Wait for Graph PVs to become Available or Bound
+  shell: oc get pv/{{ item }} | grep -E 'Available|Bound'
   delay: 5
   retries: "{{ (pv_create_timeout_s|int / 5)|int }}"
   register: result
   until: result.rc == 0
   loop:
   - fs-graph-3-data-loader
-  when:
-  - '"fs-graph-3-data-loader" not in pv_result.stdout'
+  - fs-graph-3-database
   changed_when: False
 
-# Create the Graph PVCs (loader)
+# Create the Graph PVCs (loader, logs and graph)
 
 - name: Check Graph PVCs (loader)
   command: oc get pvc
   register: pvc_result
   changed_when: False
 
-- name: Create Graph PVCs (loader)
+- name: Create Graph PVC (loader)
   shell: >
     oc process -f {{ role_path }}/files/fs-graph-loader-pvc.yaml
     | oc create -f -
   when:
   - '"fs-graph-3-data-loader-claim" not in pvc_result.stdout'
 
-# Create the Graph PVCs (graph)
-
-- name: Create Graph PVCs (graph & log)
+- name: Create Graph PVC (database)
   shell: >
-    oc process -f {{ role_path }}/files/fs-graph-graph-pvc.yaml
+    oc process -f {{ role_path }}/files/fs-graph-database-pvc.yaml
     | oc create -f -
   when:
-  - '"fs-graph-3-data-claim" not in pvc_result.stdout'
+  - '"fs-graph-3-database-claim" not in pvc_result.stdout'
+
+- name: Create Graph PVs (log)
+  shell: >
+    oc process -f {{ role_path }}/files/fs-graph-graph-logs-pvc.yaml
+    | oc create -f -
+  when:
+  - '"fs-graph-3-logs-claim" not in pvc_result.stdout'
 
 # Wait for PVCs to become "Bound"...
 
@@ -75,7 +87,7 @@
   until: result.rc == 0
   loop:
   - fs-graph-3-data-loader-claim
-  - fs-graph-3-data-claim
+  - fs-graph-3-database-claim
   - fs-graph-3-logs-claim
   changed_when: False
 

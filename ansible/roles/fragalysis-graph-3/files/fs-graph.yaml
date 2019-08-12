@@ -118,7 +118,7 @@ objects:
             claimName: fs-graph-3-data-loader-claim
         - name: fs-graph-data
           persistentVolumeClaim:
-            claimName: fs-graph-3-data-claim
+            claimName: fs-graph-3-database-claim
         - name: fs-graph-logs
           persistentVolumeClaim:
             claimName: fs-graph-3-logs-claim
