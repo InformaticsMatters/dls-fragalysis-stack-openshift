@@ -94,6 +94,10 @@ objects:
             value: graph
           - name: EXTENSION_SCRIPT
             value: "${NEO4J_DATA_LOADER_DIR}/load-neo4j.sh"
+          - name: NEO4J_USERNAME
+            value: neo4j
+          - name: NEO4J_PASSWORD
+            value: neo4j
           ports:
           - containerPort: 7474
           - containerPort: 7687
