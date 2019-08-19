@@ -18,7 +18,7 @@ labels:
 parameters:
 
 - name: GRAPH_IMAGE
-  value: 'informaticsmatters/neo4j:3.5'
+  value: informaticsmatters/neo4j:3.5
 - name: NEO4J_AUTH
   value: none
 - name: NEO4J_PAGECACHE_G
@@ -35,10 +35,11 @@ parameters:
   value: '400'
 
 - name: NEO4J_LOG_DIR
-  value: '/graph-logs'
-
+  value: /graph-logs
 - name: NEO4J_DATA_LOADER_DIR
-  value: '/data-loader'
+  value: /data-loader
+- name: NEO4J_DATA_DIR
+  value: /data
 
 objects:
 
@@ -64,8 +65,8 @@ objects:
         labels:
           name: graph-3
       spec:
-#        nodeSelector:
-#          purpose: 'graph'
+        nodeSelector:
+          purpose: 'graph'
         serviceAccountName: diamond
 
         # Application containers
@@ -81,6 +82,8 @@ objects:
             value: ${NEO4J_HEAP}
           - name: NEO4J_dbms_memory_heap_max__size
             value: ${NEO4J_HEAP}
+          - name: NEO4J_dbms_directories_data
+            value: ${NEO4J_DATA_DIR}
           - name: NEO4J_dbms_directories_logs
             value: ${NEO4J_LOG_DIR}
           - name: NEO4J_EDITION
@@ -105,7 +108,7 @@ objects:
           - name: fs-graph-data-loader
             mountPath: ${NEO4J_DATA_LOADER_DIR}
           - name: fs-graph-data
-            mountPath: /data
+            mountPath: ${NEO4J_DATA_DIR}
           - name: fs-graph-logs
             mountPath: ${NEO4J_LOG_DIR}
           - name: cypher-script
