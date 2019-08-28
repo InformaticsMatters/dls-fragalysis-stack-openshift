@@ -21,7 +21,7 @@ parameters:
   value: busybox:1.28.0
 
 - name: LOADER_NAMESPACE
-  value: fragalysis-dev
+  value: fragalysis-inloopx
 - name: LOADER_REGISTRY
   value: docker-registry.default.svc:5000
 - name: LOADER_IMAGE

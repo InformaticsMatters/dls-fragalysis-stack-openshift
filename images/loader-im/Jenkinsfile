@@ -165,7 +165,7 @@ pipeline {
         expression { LOADER_RUNNING == '0' }
       }
       steps {
-        dir('images/loader') {
+        dir('images/loader-im') {
           script {
             if (LOADER_EXISTS == '1') {
               echo "Deleting prior loader Job..."
