@@ -116,7 +116,7 @@ pipeline {
 
     stage('Build Image') {
       steps {
-        dir('images/loader') {
+        dir('images/loader-im') {
           sh "buildah bud --tls-verify=false --creds=${REGISTRY_USER}:${REGISTRY_USER_TOKEN} --format docker --build-arg DATA_ORIGIN=${DATA_ORIGIN} --build-arg BUILD_NUMBER=${BUILD_NUMBER} -f Dockerfile -t ${STREAM_IMAGE} ."
         }
       }

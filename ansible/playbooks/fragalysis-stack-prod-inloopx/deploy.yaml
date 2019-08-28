@@ -23,6 +23,8 @@
     web_hostname: fragalysis-inloopx.apps.xchem.diamond.ac.uk
     web_name: web-inloopx
     web_image_tag: latest
+    graph_svc: neo4j.fragalysis-graph-3.svc
+    graph_bolt_url: bolt://neo4j:test@neo4j.fragalysis-graph-3.svc:7687
 
   roles:
   - fragalysis-stack-prod
