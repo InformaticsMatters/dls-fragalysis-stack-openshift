@@ -1,0 +1,236 @@
+#!groovy​
+
+// The Fragalysis Stack (loader application) Builder.
+
+pipeline {
+
+  agent { label 'buildah-slave' }
+
+  environment {
+    // Registry details
+    PROJECT = 'fragalysis-cicd'
+    REGISTRY_USER = 'jenkins'
+    REGISTRY = 'docker-registry.default.svc:5000'
+    PROJECT_IMAGE = "${PROJECT}/loader-stream:im"
+    STREAM_IMAGE = "${REGISTRY}/${PROJECT_IMAGE}"
+    TARGET_PROJECT = 'fragalysis-inloopx'
+
+    // get_unbuilt_data_directory environment...
+
+    SOURCE_DATA_ROOT = '/fragalysis/django_data'
+    TARGET_IMAGE = "${PROJECT}/loader-stream"
+    INSIST_ON_READY = 'Yes'
+    READY_FILE = 'READY'
+    HOURLY_DATA = 'Yes'
+
+    // Slack channel for all notifications
+    SLACK_BUILD_CHANNEL = 'dls-builds'
+    // Slack channel to be used for errors/failures
+    // (which also go to the CI/CD channel)
+    SLACK_ALERT_CHANNEL = 'dls-alerts'
+
+  }
+
+  stages {
+
+    stage('Inspect') {
+      steps {
+        dir('images') {
+
+          // List the possible data source directories...
+          sh "ls ${SOURCE_DATA_ROOT}"
+
+          script {
+
+            // Set an environment variable based on the build trigger.
+            // This way we know if the build was upstream, a timer or user-driven.
+            // (see https://javadoc.jenkins.io/hudson/model/Cause.html)
+            //
+            // We must always build the image if: -
+            //
+            //   this build is the result of a cURL trigger
+            //   or the user action
+            //
+            // And, in fact, a remote/curl trigger should be the only way into
+            // this build process. And a remote trigger will result in a new
+            // loader image and a deployment, whether one was required or not.
+            //
+            // Note: if FORCE_BUILD is in the environment block above
+            //       I can't seem to change its value here...
+            //
+            env.CAUSE = 'DATA'
+            env.FORCE_BUILD = 'No'
+            def UpstreamCause = currentBuild.rawBuild.getCause(hudson.model.Cause$UpstreamCause)
+            def UserIdCause = currentBuild.rawBuild.getCause(hudson.model.Cause$UserIdCause)
+            def RemoteCause = currentBuild.rawBuild.getCause(hudson.model.Cause$RemoteCause)
+            def TimerTriggerCause = currentBuild.rawBuild.getCause(hudson.triggers.TimerTrigger$TimerTriggerCause)
+            def SCMTriggerCause = currentBuild.rawBuild.getCause(hudson.triggers.SCMTrigger$SCMTriggerCause)
+            if (UpstreamCause != null) {
+              env.CAUSE = 'UPSTREAM'
+            } else if (SCMTriggerCause != null) {
+              env.CAUSE = 'SCM'
+            } else if (UserIdCause != null) {
+              env.CAUSE = 'USER'
+              env.FORCE_BUILD = 'Yes'
+            } else if (RemoteCause != null) {
+              env.CAUSE = 'REMOTE'
+              env.FORCE_BUILD = 'Yes'
+            } else if (TimerTriggerCause != null) {
+              env.CAUSE = 'TIMER'
+            }
+            echo "The build cause is '${env.CAUSE}'"
+
+          }
+
+          // For some reason I have to separate these script
+          // instructions from the previous block to avoid the exception...
+          // java.io.NotSerializableException: hudson.triggers.TimerTrigger$TimerTriggerCause
+          script {
+
+            // - Get the registry user API token (used in the Python module)
+            // - Run the get_unbuilt_data_directory module to find the latest data
+            // - Dump the script log.
+            //
+            // We peek at the image in the current registry.
+            // If it's built from the latest data there's nothing to do
+            // (DATA_ORIGIN will be blank). If FORCE_BUILD is set then
+            // the latest data will be returned.
+            env.REGISTRY_USER_TOKEN = sh(script: 'oc whoami -t', returnStdout: true).trim()
+            echo "FORCE_BUILD is '${env.FORCE_BUILD}'"
+            env.DATA_ORIGIN = sh(script: './get_unbuilt_data_directory.py', returnStdout: true).trim()
+            sh 'cat get_unbuilt_data_directory.log'
+
+            // For this build to work we must have some data...
+            if (env.DATA_ORIGIN.length() == 0) {
+              error('Unable to build - there is no new data (DATA_ORIGIN is blank)')
+            }
+
+          }
+
+          slackSend channel: "#${SLACK_BUILD_CHANNEL}",
+                    message: "${JOB_NAME} build ${BUILD_NUMBER} - using '${DATA_ORIGIN}' data"
+
+        }
+      }
+    }
+
+    stage('Build Image') {
+      steps {
+        dir('images/loader') {
+          sh "buildah bud --tls-verify=false --creds=${REGISTRY_USER}:${REGISTRY_USER_TOKEN} --format docker --build-arg DATA_ORIGIN=${DATA_ORIGIN} --build-arg BUILD_NUMBER=${BUILD_NUMBER} -f Dockerfile -t ${STREAM_IMAGE} ."
+        }
+      }
+    }
+
+    stage('Push Image') {
+      steps {
+        withCredentials([string(credentialsId: 'clusterUrl', variable: 'CLUSTER_URL'),
+                         string(credentialsId: 'ocUser', variable: 'OC_USER'),
+                         string(credentialsId: 'ocUserPassword', variable: 'OC_USER_PASSWORD')]) {
+
+          sh "podman login --tls-verify=false --username ${REGISTRY_USER} --password ${REGISTRY_USER_TOKEN} ${REGISTRY}"
+          sh "buildah push --tls-verify=false ${STREAM_IMAGE} docker://${STREAM_IMAGE}"
+          // Done with buildah/podman
+          sh "podman logout ${REGISTRY}"
+          sh "buildah images"
+
+          // Each build pushes a 'latest' image (done above)
+          // but we also create a 'latest-${BUILD_NUMBER}'
+          // for use when promoting the image to production...
+          sh "oc login ${CLUSTER_URL} -u ${OC_USER} -p ${OC_USER_PASSWORD}"
+          sh "oc project ${PROJECT}"
+          sh "oc tag ${PROJECT_IMAGE} ${PROJECT_IMAGE}-${BUILD_NUMBER}"
+
+        }
+      }
+    }
+
+    stage('Check Prior Deployment') {
+      steps {
+        // We need to launch the Loader 'Job'.
+        // But we protect ourselves from doing this if a prior
+        // instance of the 'Job' is running (which would be unusual).
+        // To successfully launch the Job we first delete prior instances.
+        // All of this takes place in the 'deploy.sh'
+        script {
+          LOADER_EXISTS = sh(script: "oc get jobs -n ${TARGET_PROJECT} | grep fs-loader | wc -l", returnStdout: true).trim()
+          LOADER_RUNNING = sh(script: "oc get jobs -n ${TARGET_PROJECT} | grep fs-loader | grep Running | wc -l", returnStdout: true).trim()
+        }
+        echo "RUNNING=${LOADER_RUNNING}"
+      }
+    }
+
+    stage('Deploy Image') {
+      when {
+        expression { LOADER_RUNNING == '0' }
+      }
+      steps {
+        dir('images/loader') {
+          script {
+            if (LOADER_EXISTS == '1') {
+              echo "Deleting prior loader Job..."
+              sh "oc delete job/fs-loader -n ${TARGET_PROJECT}"
+              sleep 4
+            } else {
+              echo "No prior loader Job, nothing to delete"
+            }
+          }
+
+          sh "oc process -f fs-loader.yaml | oc create -f -"
+
+          slackSend channel: "#${SLACK_BUILD_CHANNEL}",
+                    color: 'good',
+                    message: "${JOB_NAME} build ${BUILD_NUMBER} - complete (deployed)"
+        }
+      }
+    }
+
+    stage('Blocked Image') {
+      when {
+        expression { LOADER_RUNNING != '0' }
+      }
+      steps {
+        echo "A prior loader is still running (deployment is blocked)"
+        script {
+          slackSend channel: "#${SLACK_BUILD_CHANNEL}",
+                    color: 'warning',
+                    message: "${JOB_NAME} build ${BUILD_NUMBER} - complete (deployment blocked)"
+
+          // Everything's OK but we were blocked from deploying it
+          // as it appears a prior Job instance is running.
+          // Here we just set the build status to UNSTABLE.
+          currentBuild.result = 'UNSTABLE'
+        }
+      }
+    }
+
+  }
+
+  // Post-job actions.
+  // See https://jenkins.io/doc/book/pipeline/syntax/#post
+  post {
+
+    failure {
+      slackSend channel: "#${SLACK_BUILD_CHANNEL}",
+                color: 'danger',
+                message: "${JOB_NAME} build ${BUILD_NUMBER} - failed (${BUILD_URL})"
+      slackSend channel: "#${SLACK_ALERT_CHANNEL}",
+                color: 'danger',
+                message: "${JOB_NAME} build ${BUILD_NUMBER} - failed (${BUILD_URL})"
+    }
+
+    unstable {
+      slackSend channel: "#${SLACK_BUILD_CHANNEL}",
+                color: 'warning',
+                message: "${JOB_NAME} build ${BUILD_NUMBER} - complete (unstable)"
+    }
+
+    fixed {
+      slackSend channel: "#${SLACK_ALERT_CHANNEL}",
+                color: 'good',
+                message: "${JOB_NAME} build - fixed"
+    }
+
+  }
+
+}
