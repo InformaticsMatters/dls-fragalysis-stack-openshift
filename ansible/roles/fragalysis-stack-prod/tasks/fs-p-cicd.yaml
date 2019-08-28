@@ -1,6 +1,6 @@
 ---
 
-- name: Move to Fragalysis Project (Production)
+- name: Move to Fragalysis Project ({{ namespace }})
   shell: oc project {{ namespace }}
   changed_when: False
 
@@ -53,7 +53,7 @@
     --namespace={{ namespace }}
   when: jenkins_user not in who_can_result.stdout
 
-- name: Move to Fragalysis Project (Production)
+- name: Move to Fragalysis Project ({{ namespace }})
   shell: oc project {{ namespace }}
   changed_when: False
 

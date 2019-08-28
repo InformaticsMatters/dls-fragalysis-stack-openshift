@@ -3,7 +3,7 @@
 # Deploy the Web image.
 # Which consists of a PV, image stream, PVC and deployment configuration.
 
-- name: Move to Fragalysis Project (Web)
+- name: Move to Fragalysis Project ({{ namespace }}) for Web
   shell: oc project {{ namespace }}
   changed_when: False
 

@@ -43,14 +43,25 @@ parameters:
 
 objects:
 
+# The Cypher script that will run once
+# (after the import data import)
 - kind: ConfigMap
   apiVersion: v1
   metadata:
-    name: cypher-script
+    name: cypher-script-once
   data:
-    cypher.script: |
+    cypher-script.once: |
       CREATE INDEX ON :F2(smiles);
       CREATE INDEX ON :Available(cmpd_id);
+
+# The Cypher script that will run on every graph container start
+- kind: ConfigMap
+  apiVersion: v1
+  metadata:
+    name: cypher-script-always
+  data:
+    cypher-script.always: |
+      CALL apoc.warmup.run(true, true);
 
 - kind: DeploymentConfig
   apiVersion: v1
@@ -115,9 +126,9 @@ objects:
             mountPath: ${NEO4J_DATA_DIR}
           - name: fs-graph-logs
             mountPath: ${NEO4J_LOG_DIR}
-          - name: cypher-script
-            mountPath: /cypher-script/cypher.script
-            subPath: cypher.script
+          - name: cypher-script-once
+            mountPath: /cypher-script/cypher-script.once
+            subPath: cypher-script.once
 
         volumes:
         - name: fs-graph-data-loader
@@ -129,9 +140,9 @@ objects:
         - name: fs-graph-logs
           persistentVolumeClaim:
             claimName: fs-graph-3-logs-claim
-        - name: cypher-script
+        - name: cypher-script-once
           configMap:
-            name: cypher-script
+            name: cypher-script-once
 
         restartPolicy: Always
 

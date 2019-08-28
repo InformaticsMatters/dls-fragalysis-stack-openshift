@@ -2,7 +2,7 @@
 
 # Create the Backup PV
 
-- name: Move to Fragalysis Project (Backup)
+- name: Move to Fragalysis Project ({{ namespace }}) for Backup
   shell: oc project {{ namespace }}
   changed_when: False
 

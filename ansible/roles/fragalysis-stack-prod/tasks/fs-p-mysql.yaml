@@ -1,6 +1,6 @@
 ---
 
-- name: Move to Fragalysis Project (MySQL)
+- name: Move to Fragalysis Project ({{ namespace }}) for MySQL
   shell: oc project {{ namespace }}
   changed_when: False
 

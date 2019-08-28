@@ -12,14 +12,14 @@
   register: projects_result
   changed_when: False
 
-- name: Create Fraglysis Project
+- name: Create Fraglysis Project ({{ namespace }})
   shell: >
     oc new-project {{ namespace }}
     --display-name="{{ namespace_display_name }}"
     --description="{{ namespace_description }}"
   when: namespace not in projects_result.stdout
 
-- name: Move to Fragalysis Project
+- name: Move to Fragalysis Project ({{ namespace }})
   shell: oc project {{ namespace }}
   changed_when: False
 
