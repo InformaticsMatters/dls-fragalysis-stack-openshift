@@ -1,0 +1,136 @@
+---
+
+# The Fragalysis Stack Loader Job Template.
+# This uses the loader image but replaces its built-in DATA_ORIGIN
+# environment variable, replacing it with ALL_TARGETS.
+#
+# This us used by the Jenkins CI/CD framework when deleting and launching
+# loader Jobs.
+#
+# oc process -f fs-loader-all-targets.yaml | oc create -f -
+# oc delete job --selector template=fs-loader-all-targets
+
+kind: Template
+apiVersion: v1
+metadata:
+  name: fs-loader-all-targets
+labels:
+  template: fs-loader-all-targets
+
+parameters:
+
+- name: BUSYBOX_IMAGE
+  value: busybox:1.28.0
+
+- name: LOADER_NAMESPACE
+  value: fragalysis-inloopx
+- name: LOADER_REGISTRY
+  value: docker-registry.default.svc:5000
+- name: LOADER_IMAGE
+  value: fragalysis-cicd/loader-stream:im
+- name: LOADER_INPUT_VOLUME_CLAIM_NAME
+  value: fs-input-claim
+- name: LOADER_MEDIA_VOLUME_CLAIM_NAME
+  value: fs-web-media-claim
+- name: LOADER_DATA_ORIGIN
+  value: ALL_TARGETS
+
+- name: LOADER_CPU_REQUEST
+  value: 500m
+- name: LOADER_MEM_REQUEST
+  value: 8Gi
+
+objects:
+
+# -----------------------------------------------------------------------------
+# Fragalysis Loader (Job)
+# -----------------------------------------------------------------------------
+
+- kind: Job
+  apiVersion: batch/v1
+  metadata:
+    name: fs-loader-all-targets
+    namespace: ${LOADER_NAMESPACE}
+  spec:
+    template:
+      metadata:
+        name: fs-loader-all-targets
+      spec:
+        nodeSelector:
+          purpose: 'app'
+        serviceAccountName: diamond
+
+        # Init Containers
+        initContainers:
+        - image: ${BUSYBOX_IMAGE}
+          name: wait-for-db
+          command:
+          - 'sh'
+          - '-c'
+          - 'until nslookup ${MYSQL_HOST}; do echo waiting for db; sleep 1; done;'
+          env:
+          - name: MYSQL_HOST
+            valueFrom:
+              secretKeyRef:
+                name: fs-mysql-secrets
+                key: database-host
+
+        containers:
+        - image: ${LOADER_REGISTRY}/${LOADER_IMAGE}
+          name: fs-loader-all-targets
+          imagePullPolicy: Always
+          resources:
+            requests:
+              cpu: ${LOADER_CPU_REQUEST}
+              memory: ${LOADER_MEM_REQUEST}
+          command:
+          - 'sh'
+          - '-c'
+          - './docker-entrypoint.sh'
+          env:
+          - name: MYSQL_HOST
+            valueFrom:
+              secretKeyRef:
+                name: fs-mysql-secrets
+                key: database-host
+          - name: MYSQL_PORT
+            valueFrom:
+              secretKeyRef:
+                name: fs-mysql-secrets
+                key: database-port
+          - name: MYSQL_USER
+            valueFrom:
+              secretKeyRef:
+                name: fs-mysql-secrets
+                key: database-user
+          - name: MYSQL_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: fs-mysql-secrets
+                key: database-password
+          - name: MYSQL_DATABASE
+            valueFrom:
+              secretKeyRef:
+                name: fs-mysql-secrets
+                key: database
+          - name: MYSQL_ROOT_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: fs-mysql-secrets
+                key: database-root-password
+          - name: DATA_ORIGIN
+            value: ${LOADER_DATA_ORIGIN}
+          volumeMounts:
+          - name: fs-web-media
+            mountPath: /code/media
+          - name: fs-input
+            mountPath: /fragalysis
+        volumes:
+        - name: fs-web-media
+          persistentVolumeClaim:
+            claimName: ${LOADER_MEDIA_VOLUME_CLAIM_NAME}
+        - name: fs-input
+          persistentVolumeClaim:
+            claimName: ${LOADER_INPUT_VOLUME_CLAIM_NAME}
+
+        restartPolicy: Never
