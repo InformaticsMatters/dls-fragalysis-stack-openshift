@@ -1,0 +1,5 @@
+---
+
+- import_tasks: ls-project.yaml
+- import_tasks: ls-provisioner-template.yaml
+- import_tasks: ls-provisioner.yaml
