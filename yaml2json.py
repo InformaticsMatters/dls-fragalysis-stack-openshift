@@ -14,4 +14,4 @@ import yaml
 
 # just read the YAML file with yaml.load...
 # and write out using json.dump
-sys.stdout.write(json.dumps(yaml.load(sys.stdin), indent=2))
+sys.stdout.write(json.dumps(yaml.load(sys.stdin, Loader=yaml.FullLoader), indent=2))
