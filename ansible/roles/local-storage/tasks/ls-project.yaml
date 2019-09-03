@@ -1,0 +1,35 @@
+---
+
+# Creates the 'local storage' project
+
+- name: Login (admin)
+  command: oc login {{ cluster_url }} -u admin -p {{ admin_password }}
+  changed_when: False
+
+- name: Get Projects
+  command: oc get projects
+  register: projects_result
+  changed_when: False
+
+- name: Create Local Storage Project ({{ namespace }})
+  command: >
+    oc new-project {{ namespace }}
+    --display-name="{{ namespace_display_name }}"
+    --description="{{ namespace_description }}"
+  when: namespace not in projects_result.stdout
+
+- name: Move to Local Storage Project ({{ namespace }})
+  command: oc project {{ namespace }}
+  changed_when: False
+
+- name: Get Service Accounts
+  command: oc get sa
+  register: sa_result
+  changed_when: False
+
+- name: Create Service Account
+  command: "{{ item }}"
+  loop:
+  - oc create sa {{ ls_sa }}
+  - oc adm policy add-scc-to-user privileged -z {{ ls_sa }}
+  when: ls_sa not in sa_result.stdout

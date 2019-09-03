@@ -1,0 +1,37 @@
+---
+
+# Deploys the local storage configuration.
+# This consists of a ConfigMap defining the mount points for the
+# classifications of the drives and the 'StorageClass' declarations.
+
+- name: Get ConfigMaps
+  command: oc get configmap
+  register: cm_result
+  changed_when: False
+
+- name: Create Storage Class Map
+  command: oc create -f {{ role_path }}/files/storageclass-configmap.yaml
+  when: '"local-volume-config" not in cm_result.stdout'
+
+- name: Get StorageClasses
+  command: oc get storageclass
+  register: sc_result
+  changed_when: False
+
+- name: Create Storage Classes
+  command: oc create -f {{ role_path }}/files/local-ssd-storageclass.yaml
+  when: '"local-ssd" not in sc_result.stdout'
+
+- name: Get DaemonSets
+  command: oc get daemonset
+  register: ds_result
+  changed_when: False
+
+- name: Create Local Volume Provisioner DaemonSet (from Template)
+  command: >-
+    oc new-app
+    -p CONFIGMAP=local-volume-config
+    -p NAMESPACE={{ namespace }}
+    -p SERVICE_ACCOUNT={{ ls_sa }}
+    -p PROVISIONER_IMAGE={{ ls_provisioner_image }}
+    local-storage-provisioner

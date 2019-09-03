@@ -1,0 +1,23 @@
+---
+
+# Deploy the local storage provisioner.
+#
+# This is done from a template named on the OpenShift documentation...
+#
+#   https://docs.openshift.com/container-platform/3.11/install_config/configuring_local.html
+#
+# The local storage provisioner template we're using in this playbook
+# (taken at 14:00 on the 3rd September) is from...
+#
+#   https://raw.githubusercontent.com/openshift/origin/release-3.11/examples/
+#       storage-examples/local-examples/local-storage-provisioner-template.yaml
+
+- name: Get Templates
+  command: oc get template
+  register: t_result
+  changed_when: False
+
+- name: Create Local Storage Provisioner Template
+  command: >-
+    oc create -f {{ role_path }}/files/local-storage-provisioner-template.yaml
+  when: '"local-storage-provisioner" not in t_result.stdout'

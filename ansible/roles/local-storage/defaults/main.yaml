@@ -1,0 +1,9 @@
+---
+
+# Our project/namespace...
+namespace: local-storage
+namespace_display_name: "Local Storage"
+namespace_description: "The Local Storage Project"
+
+ls_sa: local-storage-admin
+ls_provisioner_image: quay.io/external_storage/local-volume-provisioner:v2.3.2

@@ -1,0 +1,10 @@
+---
+
+- hosts: localhost
+  gather_facts: No
+
+  tasks:
+  - name: Run the Local Storage Undeploy Tasks
+    include_role:
+      name: local-storage
+      tasks_from: undeploy.yaml

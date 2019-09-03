@@ -11,7 +11,9 @@ Before running any playbook: -
 1.  A Python 3 conda/virtual environment from which to run these playbooks
 
 If using NFS make sure you've configured it with all the appropriate mounts.
-The playbook will create the PVs and PVCs: -
+If using LocalStorage you must first provision local storage volumes
+and run the `local-storage` playbook in order to generate the PVs for use
+by applications like the graph database.
 
 You will need to accommodate at least 1,420Gi of disk space. Check the
 various `pvc` templates for details.

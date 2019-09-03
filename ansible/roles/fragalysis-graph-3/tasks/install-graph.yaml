@@ -1,8 +1,6 @@
 ---
 
 # Install the Graph database.
-# This includes the loader's Persistent Volume
-# and the Volume Claims.
 
 - name: Login (admin at {{ cluster_url }})
   command: oc login {{ cluster_url }} -u admin -p {{ admin_password }}
@@ -10,43 +8,6 @@
 
 - name: Move to Graph Project
   command: oc project {{ graph_3_namespace }}
-  changed_when: False
-
-# Create the Graph PVs
-
-- name: Check Graph PV
-  command: oc get pv
-  register: pv_result
-  changed_when: False
-
-- name: Create Graph PV (loader)
-  shell: >
-    oc process -f {{ role_path }}/files/fs-graph-pv-data-loader-nfs.yaml
-    -p GRAPH_NAMESPACE={{ graph_3_namespace }}
-    | oc create -f -
-  when:
-  - '"fs-graph-3-data-loader" not in pv_result.stdout'
-
-- name: Create Graph PV (database)
-  shell: >
-    oc process -f {{ role_path }}/files/fs-graph-pv-database-nfs.yaml
-    -p GRAPH_NAMESPACE={{ graph_3_namespace }}
-    | oc create -f -
-  when:
-  - '"fs-graph-3-database" not in pv_result.stdout'
-
-# Wait for Graph PV to become "Available"...
-# We only do this if we created the PV in this session.
-
-- name: Wait for Graph PVs to become Available or Bound
-  shell: oc get pv/{{ item }} | grep -E 'Available|Bound'
-  delay: 5
-  retries: "{{ (pv_create_timeout_s|int / 5)|int }}"
-  register: result
-  until: result.rc == 0
-  loop:
-  - fs-graph-3-data-loader
-  - fs-graph-3-database
   changed_when: False
 
 # Create the Graph PVCs (loader, logs and graph)
@@ -59,6 +20,8 @@
 - name: Create Graph PVC (loader)
   shell: >
     oc process -f {{ role_path }}/files/fs-graph-loader-pvc.yaml
+    -p GRAPH_LOADER_VOLUME={{ graph_3_loader_local_storage_pv }}
+    -p GRAPH_LOADER_SIZE={{ graph_3_loader_local_storage_size }}
     | oc create -f -
   when:
   - '"fs-graph-3-data-loader-claim" not in pvc_result.stdout'
@@ -66,11 +29,13 @@
 - name: Create Graph PVC (database)
   shell: >
     oc process -f {{ role_path }}/files/fs-graph-database-pvc.yaml
+    -p GRAPH_DATABASE_VOLUME={{ graph_3_database_local_storage_pv }}
+    -p GRAPH_DATABASE_SIZE={{ graph_3_database_local_storage_size }}
     | oc create -f -
   when:
   - '"fs-graph-3-database-claim" not in pvc_result.stdout'
 
-- name: Create Graph PVs (log)
+- name: Create Graph PVC (log)
   shell: >
     oc process -f {{ role_path }}/files/fs-graph-graph-logs-pvc.yaml
     | oc create -f -

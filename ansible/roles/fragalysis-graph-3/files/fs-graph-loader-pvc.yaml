@@ -17,8 +17,10 @@ labels:
 
 parameters:
 
-- name: GRAPH_DATA_LOADER_SIZE
-  value: 50Gi
+- name: GRAPH_LOADER_SIZE
+  value: 49Gi
+- name: GRAPH_LOADER_VOLUME
+  value: local-pv-521dab9a
 
 objects:
 
@@ -28,21 +30,16 @@ objects:
 # crucial 'load' neo4j EXTENSION script and the node and
 # relationship CSV files used during the initial (bulk) import.
 
-  # To avoid the loader claim from creating a volume
-  # from the default storage class (glusterfs-storage)
-  # we set the storage-class annotation to a blank string (' ')
 - apiVersion: v1
   kind: PersistentVolumeClaim
   metadata:
     name: fs-graph-3-data-loader-claim
     annotations:
-      volume.beta.kubernetes.io/storage-class: ' '
+      volume.beta.kubernetes.io/storage-class: 'local-ssd'
   spec:
     accessModes:
-    - ReadWriteMany
+    - ReadWriteOnce
     resources:
       requests:
-        storage: ${GRAPH_DATA_LOADER_SIZE}
-    selector:
-      matchLabels:
-        target-graph: graph-3
+        storage: ${GRAPH_LOADER_SIZE}
+    volumeName: ${GRAPH_LOADER_VOLUME}

@@ -1,0 +1,52 @@
+---
+
+# Removes the Local Storage deployment.
+# This essentially consists of removing the project (and waiting for it)
+# and then removing other stuff.
+
+- name: Delete Local Storage Project?
+  pause:
+    prompt: |-
+      Delete the LocalStorage project from {{ cluster_url }}?
+      Hit return to delete it.
+      Hit Ctrl+c and then "a" if you've changed your mind.
+
+# Go...
+
+- name: Login (admin at {{ cluster_url }})
+  shell: oc login {{ cluster_url }} -u admin -p {{ admin_password }}
+  changed_when: False
+
+# Remove LocalStorage namespace
+
+- name: Check projects
+  shell: oc get projects
+  register: p_result
+  changed_when: False
+
+- name: Delete Local Storage project
+  shell: oc delete project/{{ namespace }}
+  when: namespace in p_result.stdout
+
+- name: Wait for Local Storage project deletion
+  shell: oc get projects
+  register: wait_cmd
+  retries: 12
+  delay: 10
+  until: namespace not in wait_cmd.stdout
+  changed_when: False
+
+# Remove the ClusterRoleBindings that may have been setup
+# by the provisioner installation...
+
+- name: Get ClusterRoleBindings
+  command: oc get clusterrolebindings
+  register: crb_result
+  changed_when: False
+
+- name: Delete ClusterRoleBindings
+  command: oc delete clusterrolebindings {{ item }}
+  when: crb_result.stdout|regex_search('^%s\s' % item, multiline=True)
+  loop:
+  - local-storage:provisioner-node-binding
+  - local-storage:provisioner-pv-binding
