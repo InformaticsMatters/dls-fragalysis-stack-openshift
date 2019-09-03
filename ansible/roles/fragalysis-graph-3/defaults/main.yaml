@@ -7,6 +7,13 @@ graph_3_namespace_description: >
   The Fragalysis Graph '3' Project.
   A neo4j graph database.
 
+# The name of the PV (in local storage)
+# where the graph's active DB is maintained.
+graph_3_loader_local_storage_pv: local-pv-521dab9a
+graph_3_loader_local_storage_size: 49Gi
+graph_3_database_local_storage_pv: local-pv-b83d1b47
+graph_3_database_local_storage_size: 787Gi
+
 graph_3_pagecache_g: 40
 graph_3_cpu_request_cores: 4
 graph_3_cpu_limit_cores: 8

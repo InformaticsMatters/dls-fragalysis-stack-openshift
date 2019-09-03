@@ -18,7 +18,9 @@ labels:
 parameters:
 
 - name: GRAPH_DATABASE_SIZE
-  value: 800Gi
+  value: 787Gi
+- name: GRAPH_DATABASE_VOLUME
+  value: local-pv-b83d1b47
 
 objects:
 
@@ -30,13 +32,11 @@ objects:
   metadata:
     name: fs-graph-3-database-claim
     annotations:
-      volume.beta.kubernetes.io/storage-class: ' '
+      volume.beta.kubernetes.io/storage-class: 'local-ssd'
   spec:
     accessModes:
     - ReadWriteOnce
     resources:
       requests:
         storage: ${GRAPH_DATABASE_SIZE}
-    selector:
-      matchLabels:
-        target-graph: graph-3
+    volumeName: ${GRAPH_DATABASE_VOLUME}
