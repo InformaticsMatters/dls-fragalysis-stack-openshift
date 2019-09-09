@@ -14,8 +14,8 @@ graph_3_loader_local_storage_size: 49Gi
 graph_3_database_local_storage_pv: local-pv-b83d1b47
 graph_3_database_local_storage_size: 787Gi
 
-graph_3_pagecache_g: 40
+graph_3_pagecache_g: 380
 graph_3_cpu_request_cores: 4
 graph_3_cpu_limit_cores: 8
-graph_3_memory_request_g: 80
-graph_3_memory_limit_g: 100
+graph_3_memory_request_g: 200
+graph_3_memory_limit_g: 460

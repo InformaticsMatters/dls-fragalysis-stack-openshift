@@ -30,7 +30,7 @@ parameters:
 - name: WEB_REPLICAS
   value: '1'
 - name: WEB_GRAPH_SERVICE
-  value: neo4j.fragalysis-graph-1
+  value: neo4j.fragalysis-graph-3
 - name: WEB_MYSQL_SERVICE
   value: mysql
 - name: WEB_VOLUME_CLAIM_NAME

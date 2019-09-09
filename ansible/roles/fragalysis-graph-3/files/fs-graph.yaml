@@ -32,7 +32,7 @@ parameters:
 - name: NEO4J_MEM_REQUEST_G
   value: '200'
 - name: NEO4J_MEM_LIMIT_G
-  value: '400'
+  value: '450'
 
 - name: NEO4J_LOG_DIR
   value: /graph-logs
@@ -61,7 +61,7 @@ objects:
     name: cypher-script-always
   data:
     cypher-script.always: |
-      CALL apoc.warmup.run(true, true);
+      CALL apoc.warmup.run(true, true, true);
 
 - kind: DeploymentConfig
   apiVersion: v1
@@ -129,6 +129,9 @@ objects:
           - name: cypher-script-once
             mountPath: /cypher-script/cypher-script.once
             subPath: cypher-script.once
+          - name: cypher-script-always
+            mountPath: /cypher-script/cypher-script.always
+            subPath: cypher-script.always
 
         volumes:
         - name: fs-graph-data-loader
@@ -143,6 +146,9 @@ objects:
         - name: cypher-script-once
           configMap:
             name: cypher-script-once
+        - name: cypher-script-always
+          configMap:
+            name: cypher-script-always
 
         restartPolicy: Always
 
