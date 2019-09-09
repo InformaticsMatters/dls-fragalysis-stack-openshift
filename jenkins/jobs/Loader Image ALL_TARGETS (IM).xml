@@ -9,33 +9,9 @@
       <options/>
     </org.jenkinsci.plugins.pipeline.modeldefinition.actions.DeclarativeJobPropertyTrackerAction>
   </actions>
-  <description>Promotes the latest loader image to this project.</description>
+  <description>The Loader Image is the data-loader container image for the Django application. This variant uses a Jenkinsfile and Job YAML that replaces the built-in DATA_ORIGIN with &apos;ALL_TARGETS&apos;</description>
   <keepDependencies>false</keepDependencies>
   <properties>
-    <org.jenkinsci.plugins.workflow.job.properties.PipelineTriggersJobProperty>
-      <triggers>
-        <jenkins.triggers.ReverseBuildTrigger>
-          <spec></spec>
-          <upstreamProjects>Loader Image</upstreamProjects>
-          <threshold>
-            <name>SUCCESS</name>
-            <ordinal>0</ordinal>
-            <color>BLUE</color>
-            <completeBuild>true</completeBuild>
-          </threshold>
-        </jenkins.triggers.ReverseBuildTrigger>
-      </triggers>
-    </org.jenkinsci.plugins.workflow.job.properties.PipelineTriggersJobProperty>
-    <hudson.model.ParametersDefinitionProperty>
-      <parameterDefinitions>
-        <hudson.model.StringParameterDefinition>
-          <name>TGT_PROJECT</name>
-          <description>The project to promote the loader image to.</description>
-          <defaultValue>fragalysis-inloopx</defaultValue>
-          <trim>false</trim>
-        </hudson.model.StringParameterDefinition>
-      </parameterDefinitions>
-    </hudson.model.ParametersDefinitionProperty>
     <io.fabric8.jenkins.openshiftsync.BuildConfigProjectProperty plugin="openshift-sync@1.0.35">
       <uid></uid>
       <namespace></namespace>
@@ -69,7 +45,7 @@
       <submoduleCfg class="list"/>
       <extensions/>
     </scm>
-    <scriptPath>images/promote-loader/Jenkinsfile</scriptPath>
+    <scriptPath>images/loader-im/Jenkinsfile-all-targets</scriptPath>
     <lightweight>true</lightweight>
   </definition>
   <triggers/>
