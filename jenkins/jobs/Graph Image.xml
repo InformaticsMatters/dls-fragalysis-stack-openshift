@@ -58,5 +58,5 @@ H 3 * * *</spec>
   </definition>
   <triggers/>
   <authToken>wD4DsKq28ucT9q</authToken>
-  <disabled>false</disabled>
+  <disabled>true</disabled>
 </flow-definition>

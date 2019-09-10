@@ -26,14 +26,14 @@ Distributed amongst a number of sub-directories: -
 -   **okd-orchestrator**:
     OKD-Orchestrator deployment file for the Verne cluster.
 
--   **local-development**:
-    Notes and scripts to simplify local development of the stack.
-
 -   **openshift**:
     All the OpenShift templates required to deploy the
     developer/test and production application, used in conjunction with the
     Ansible roles & playbooks.
     
+-   **local-development**:
+    Notes and scripts to simplify local development of the stack.
+
 ---
 
 Alan Christie  

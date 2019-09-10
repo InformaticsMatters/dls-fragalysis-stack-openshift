@@ -9,7 +9,7 @@
       <options/>
     </org.jenkinsci.plugins.pipeline.modeldefinition.actions.DeclarativeJobPropertyTrackerAction>
   </actions>
-  <description>The frontend project for the InLoopX repository (master branch)</description>
+  <description>The frontend project for the Informatics Matters repository (master branch)</description>
   <keepDependencies>false</keepDependencies>
   <properties>
     <io.fabric8.jenkins.openshiftsync.BuildConfigProjectProperty plugin="openshift-sync@1.0.35">
@@ -42,7 +42,7 @@ H/3 * * * *</spec>
       <configVersion>2</configVersion>
       <userRemoteConfigs>
         <hudson.plugins.git.UserRemoteConfig>
-          <url>https://github.com/ricgillams/fragalysis-frontend.git</url>
+          <url>https://github.com/informaticsmatters/fragalysis-frontend.git</url>
         </hudson.plugins.git.UserRemoteConfig>
       </userRemoteConfigs>
       <branches>
