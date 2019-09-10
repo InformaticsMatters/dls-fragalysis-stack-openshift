@@ -24,6 +24,11 @@ Each project is driven by its own set of playbooks, e.g.: -
     $ ansible-playbook playbooks/fragalysis-graph-3/deploy.yaml \
         --vault-password-file vault-pass.txt
 
+The following playbooks are _deprecated_: -
+ 
+ -  `fragalysis-graph-1`
+ -  `fragalysis-graph-2`
+ 
 ## Creating encrypted secrets
 If you have the Ansible vault password you can encrypt strings
 for the `defauls/main.yaml` file by running something like this: -
