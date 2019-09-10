@@ -24,7 +24,7 @@ do
   TGT=fragalysis-"$REPO"
   if [ ! -d "$TGT" ]
   then
-    git clone https://github.com/"$ACCOUNT"/fragalysis-"$REPO"
+    git clone https://github.com/"$ACCOUNT"/"$TGT"
   fi
 done
 # Clone 'fragalsys'...
