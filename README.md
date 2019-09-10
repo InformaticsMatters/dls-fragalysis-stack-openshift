@@ -1,9 +1,7 @@
-# OpenShift, CI/CD and Graph processing support for Fragalysis Stack
+# OpenShift and CI/CD processing support for Fragalysis Stack
 A collection of software and files to support the CI/CD deployment of the
 [Fragalysis] Stack. This essentially contains the tools to manage the
-[Jenkins] CI/CD deployment to [OpenShift] using [ansible] and the material
-used to assist the generation of a [neo4j] graph representation of the
-underlying molecule data using [nextflow].
+[Jenkins] CI/CD deployment to [OpenShift] using [ansible].
 
 Distributed amongst a number of sub-directories: -
  
@@ -23,6 +21,9 @@ Distributed amongst a number of sub-directories: -
     utilities, this code uses the Jenkins API to write and read job
     configurations and write job-related secrets.
     
+-   **local-development**:
+    Notes and scripts to simplify local development of the stack.
+
 -   **okd-orchestrator**:
     OKD-Orchestrator deployment file for the Verne cluster.
 
@@ -31,9 +32,6 @@ Distributed amongst a number of sub-directories: -
     developer/test and production application, used in conjunction with the
     Ansible roles & playbooks.
     
--   **local-development**:
-    Notes and scripts to simplify local development of the stack.
-
 ---
 
 Alan Christie  
