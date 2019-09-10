@@ -4,11 +4,7 @@ set -e
 
 # Having checked this repo out to a directory
 # you can use this script to quickly setup the local development.
-# Typically, assuming you've forked all the corresponding repos,
-# (say to the informaticsmatters organisation) you'd: -
-#
-#   git clone https://github.com/InformaticsMatters/dls-fragalysis-stack-openshift.git
-#   ./dls-fragalysis-stack-openshift/setup-local-dev.sh informaticsmatters
+# See the directory's README.md.
 
 if [ "$1" == "" ]
 then
