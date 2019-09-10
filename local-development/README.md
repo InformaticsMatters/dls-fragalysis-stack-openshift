@@ -69,13 +69,15 @@ Done via `docker-compose` in the Fragalysis Stack project: -
     $ cd fragalysis-stack
     $ docker-compose up -d
 
-Initial initialisation of the stack can take some time but you should
-be able to navigate to the stack at [https::/localhost:8080](https::/localhost:8080).
-Much of the material should be ready when the **loader** exits - its
-role is load the SQL database from the input data and stop.
+Initial initialisation of the individual containers can take some time but
+you should be able to navigate to the stack at
+[https::/localhost:8080](https::/localhost:8080).
+
+Much of the material should be ready when the **loader** exits. The loader's
+role is load the SQL database from the input data and then stop.
 
 ## Deleting the application
-You can then stop and remove containers from thew fragalysis project with: -
+You can then stop and remove containers from thew Fragalysis project with: -
 
     $ cd fragalysis-stack
     $ docker-compose down
