@@ -24,14 +24,14 @@ do
   TGT=fragalysis-"$REPO"
   if [ ! -d "$TGT" ]
   then
-    git clone https://github.com/"ACCOUNT"/fragalysis-"$REPO"
+    git clone https://github.com/"$ACCOUNT"/fragalysis-"$REPO"
   fi
 done
 # Clone 'fragalsys'...
 TGT=fragalysis
 if [ ! -d "$TGT" ]
 then
-  git clone https://github.com/"ACCOUNT"/"$TGT"
+  git clone https://github.com/"$ACCOUNT"/"$TGT"
 fi
 
 # Create some key data directories

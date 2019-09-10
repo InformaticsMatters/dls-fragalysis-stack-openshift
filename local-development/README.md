@@ -31,7 +31,7 @@ Create a development directory, say `~/Code/FRAGALYSIS` and clone this repositor
 there. If you've forked the repositories to the `xyz` account you'd run
 the following: -
 
-    $ ACCOUNT=xyz
+    $ ACCOUNT=informaticsmatters
     $ mkdir -p ~/Code/FRAGALYSIS
     $ cd ~/Code/FRAGALYSIS
     $ git clone https://github.com/InformaticsMatters/dls-fragalysis-stack-openshift.git
