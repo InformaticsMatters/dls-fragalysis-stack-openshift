@@ -9,17 +9,9 @@
       <options/>
     </org.jenkinsci.plugins.pipeline.modeldefinition.actions.DeclarativeJobPropertyTrackerAction>
   </actions>
-  <description>The Graph Image is a daily build of the custom Neo4J Graph service image.</description>
+  <description>The Loader Image is the data-loader container image for the Django application. Driven by changes to the fragalysis-loader repo and changes to the most recent Django data.</description>
   <keepDependencies>false</keepDependencies>
   <properties>
-    <org.jenkinsci.plugins.workflow.job.properties.PipelineTriggersJobProperty>
-      <triggers>
-        <hudson.triggers.TimerTrigger>
-          <spec># Every day (sometime between 3 and 4 AM)
-H 3 * * *</spec>
-        </hudson.triggers.TimerTrigger>
-      </triggers>
-    </org.jenkinsci.plugins.workflow.job.properties.PipelineTriggersJobProperty>
     <io.fabric8.jenkins.openshiftsync.BuildConfigProjectProperty plugin="openshift-sync@1.0.35">
       <uid></uid>
       <namespace></namespace>
@@ -29,7 +21,7 @@ H 3 * * *</spec>
     <jenkins.model.BuildDiscarderProperty>
       <strategy class="hudson.tasks.LogRotator">
         <daysToKeep>-1</daysToKeep>
-        <numToKeep>28</numToKeep>
+        <numToKeep>25</numToKeep>
         <artifactDaysToKeep>-1</artifactDaysToKeep>
         <artifactNumToKeep>-1</artifactNumToKeep>
       </strategy>
@@ -53,10 +45,10 @@ H 3 * * *</spec>
       <submoduleCfg class="list"/>
       <extensions/>
     </scm>
-    <scriptPath>images/graph/Jenkinsfile</scriptPath>
+    <scriptPath>images/loader-im/Jenkinsfile</scriptPath>
     <lightweight>true</lightweight>
   </definition>
   <triggers/>
-  <authToken>wD4DsKq28ucT9q</authToken>
+  <authToken>XT0uBUC60xd0TD</authToken>
   <disabled>true</disabled>
 </flow-definition>

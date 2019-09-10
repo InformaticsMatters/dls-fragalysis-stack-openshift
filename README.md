@@ -12,9 +12,6 @@ Distributed amongst a number of sub-directories: -
     (and un-deploy) the stack and related software into an OpenShift cluster
     as paired projects used for development/test and production.
 
--   **cluster-config**:
-    Ansible plays to configure the OKD cluster nodes (prior to orchestration)
-    
 -   **images**:
     Dockerfiles and Jenkinsfiles for additional container images.
     This includes a data loader, specialised graph and jobs to automate
@@ -26,10 +23,6 @@ Distributed amongst a number of sub-directories: -
     utilities, this code uses the Jenkins API to write and read job
     configurations and write job-related secrets.
     
--   **minishift**:
-    A simple and early deployment of the stack to a local
-    [Minishift] installation allowing experimentation on the desktop.
-    
 -   **okd-orchestrator**:
     OKD-Orchestrator deployment file for the Verne cluster.
 
@@ -38,9 +31,8 @@ Distributed amongst a number of sub-directories: -
     developer/test and production application, used in conjunction with the
     Ansible roles & playbooks.
     
--   **s2g-processor**:
-    Material used to support the generation of the graph
-    representation of molecule data using Fragalysis utilities and Nextflow.
+-   **local-development**:
+    Notes and scripts to simplify local development of the stack.
 
 ---
 

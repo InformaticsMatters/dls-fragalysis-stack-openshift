@@ -1,0 +1,29 @@
+---
+
+# A developer-specific project deployment (for Informatics Matters).
+#
+# This re-uses the production playbook with key variables set
+# to create a separate project that has its own database
+# (without running backups) and one that uses the graph database
+# from the development project.
+#
+# Variables defined here replace any role defaults.
+
+- hosts: localhost
+  gather_facts: No
+
+  vars:
+    namespace: fragalysis-im
+    namespace_display_name: "Fragalysis (Development-IM)"
+    namespace_description: "The Fragalysis Project (Development-IM)"
+
+    backup_deploy: no
+
+    input_vol_name: fs-im-input
+    wait_for_mysql: yes
+    web_hostname: fragalysis-im.apps.xchem.diamond.ac.uk
+    web_name: web-im
+    web_image_tag: latest
+
+  roles:
+  - fragalysis-stack-prod

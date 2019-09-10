@@ -1,4 +1,0 @@
----
-
-- name: Start worker background tasks
-  shell: "./nextflow node -bg -cluster.join path:{{ efs_mount }}/cluster"

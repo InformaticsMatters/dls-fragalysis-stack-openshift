@@ -17,14 +17,19 @@ labels:
 
 parameters:
 
+# You can run...
+#   bin/neo4j-admin memrec --database=graph.db
+# ...in the graph Pod's terminal to get an idea of the memory needs
+# of the current database.
+
 - name: GRAPH_IMAGE
   value: informaticsmatters/neo4j:3.5
 - name: NEO4J_AUTH
   value: none
 - name: NEO4J_PAGECACHE_G
-  value: '350'
+  value: '460'
 - name: NEO4J_HEAP
-  value: 8g
+  value: 31g
 - name: NEO4J_CPU_REQUEST_M
   value: '4000'
 - name: NEO4J_CPU_LIMIT_M
@@ -32,7 +37,7 @@ parameters:
 - name: NEO4J_MEM_REQUEST_G
   value: '200'
 - name: NEO4J_MEM_LIMIT_G
-  value: '400'
+  value: '500'
 
 - name: NEO4J_LOG_DIR
   value: /graph-logs
@@ -54,14 +59,21 @@ objects:
       CREATE INDEX ON :F2(smiles);
       CREATE INDEX ON :Available(cmpd_id);
 
-# The Cypher script that will run on every graph container start
+# The Cypher script that will run on every graph container start.
+#
+# Here we run the very basic cache warm-up, which should
+# load all nodes and relationships into the page cache.
+# There are three optional arguments to the call that (if set to 'true')
+# should also load 'properties', 'dynamic properties' and 'indexes'.
+# See https://neo4j.com/developer/kb/warm-the-cache-to-improve-performance-from-cold-start/
+
 - kind: ConfigMap
   apiVersion: v1
   metadata:
     name: cypher-script-always
   data:
     cypher-script.always: |
-      CALL apoc.warmup.run(true, true);
+      CALL apoc.warmup.run();
 
 - kind: DeploymentConfig
   apiVersion: v1
@@ -129,6 +141,9 @@ objects:
           - name: cypher-script-once
             mountPath: /cypher-script/cypher-script.once
             subPath: cypher-script.once
+          - name: cypher-script-always
+            mountPath: /cypher-script/cypher-script.always
+            subPath: cypher-script.always
 
         volumes:
         - name: fs-graph-data-loader
@@ -143,6 +158,9 @@ objects:
         - name: cypher-script-once
           configMap:
             name: cypher-script-once
+        - name: cypher-script-always
+          configMap:
+            name: cypher-script-always
 
         restartPolicy: Always
 
