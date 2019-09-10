@@ -10,7 +10,7 @@ if [ ! -d /data/databases/${DATABASE} ]; then
     /var/lib/neo4j/bin/neo4j-admin import \
         --database ${DATABASE} \
         --nodes "nodes-header.csv,nodes.csv" \
-        --relationships:F2EDGE "edges-header.csv,edges.csv" \
+        --relationships:FRAG "edges-header.csv,edges.csv" \
         --ignore-duplicate-nodes
 
     echo "(load_neo4j.sh) $(date) Imported."
