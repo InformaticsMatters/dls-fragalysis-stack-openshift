@@ -71,7 +71,7 @@ Done via `docker-compose` in the Fragalysis Stack project: -
 
 Initial initialisation of the individual containers can take some time but
 you should be able to navigate to the stack at
-[https::/localhost:8080](https::/localhost:8080).
+[http://localhost:8080](http://localhost:8080).
 
 Much of the material should be ready when the **loader** exits. The loader's
 role is load the SQL database from the input data and then stop.
