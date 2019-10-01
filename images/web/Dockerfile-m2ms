@@ -1,4 +1,4 @@
-FROM xchem/fragalysis-stack:inloopx
+FROM xchem/fragalysis-stack:m2ms
 
 # The image build number.
 # This should be different and ideally incrementing for each build.
