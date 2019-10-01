@@ -4,9 +4,9 @@
   gather_facts: No
 
   vars:
-    namespace: fragalysis-m2m
+    namespace: fragalysis-m2ms
     deploy_backup: no
-    input_vol_name: fs-m2m-input
+    input_vol_name: fs-m2ms-input
 
   tasks:
   - name: Run the Fragalysis Undeploy Tasks
