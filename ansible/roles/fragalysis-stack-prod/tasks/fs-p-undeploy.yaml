@@ -50,3 +50,10 @@
   when:
   - backup_deploy|bool
   - item in pv_result.stdout
+
+- name: Delete Persistent Volumes (Input)
+  shell: oc delete pv/{{ item }}
+  loop:
+  - "{{ input_vol_name }}"
+  when:
+  - item in pv_result.stdout

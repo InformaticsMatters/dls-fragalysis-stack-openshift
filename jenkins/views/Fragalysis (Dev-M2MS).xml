@@ -1,7 +1,6 @@
 <?xml version="1.1" encoding="UTF-8"?>
 <hudson.model.ListView>
-  <name>Fragalysis (Dev-IM)</name>
-  <description>Jobs for the InformaticsMatters deployment of the stack</description>
+  <name>Fragalysis (Dev-M2MS)</name>
   <filterExecutors>false</filterExecutors>
   <filterQueue>false</filterQueue>
   <properties class="hudson.model.View$PropertyList"/>
@@ -19,6 +18,6 @@
     <hudson.views.BuildButtonColumn/>
     <hudson.plugins.favorite.column.FavoriteColumn plugin="favorite@2.3.2"/>
   </columns>
-  <includeRegex>^.* \(IM\)$</includeRegex>
+  <includeRegex>^.* \(M2MS\)$</includeRegex>
   <recurse>false</recurse>
 </hudson.model.ListView>

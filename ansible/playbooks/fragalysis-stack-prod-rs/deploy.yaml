@@ -12,11 +12,11 @@
   gather_facts: No
 
   vars:
-    namespace: fragalysis-im
-    namespace_display_name: "Fragalysis (Development-IM)"
-    namespace_description: "The Fragalysis Project (Development-IM)"
-    input_vol_name: fs-im-input
-    web_hostname: fragalysis-im.apps.xchem.diamond.ac.uk
+    namespace: fragalysis-rs
+    namespace_display_name: "Fragalysis (Development-Rachael)"
+    namespace_description: "The Fragalysis Project (Development-Rachael)"
+    input_vol_name: fs-rs-input
+    web_hostname: fragalysis-rs.apps.xchem.diamond.ac.uk
 
     backup_deploy: no
 

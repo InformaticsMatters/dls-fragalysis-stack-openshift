@@ -1,5 +1,16 @@
 ---
 
+# Enacts the named deployment.
+# This essentially consists of creating the project and all the objects
+# that belong to it.
+
+- name: Create the {{ namespace }} Project?
+  pause:
+    prompt: |-
+      Create the {{ namespace }} project at {{ cluster_url }}?
+      Hit return to create it.
+      Hit Ctrl+c and then "a" if you've changed your mind.
+
 - import_tasks: fs-p-project.yaml
 - import_tasks: fs-p-cicd.yaml
 - import_tasks: fs-p-secrets.yaml
