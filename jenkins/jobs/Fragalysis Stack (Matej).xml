@@ -9,14 +9,14 @@
       <options/>
     </org.jenkinsci.plugins.pipeline.modeldefinition.actions.DeclarativeJobPropertyTrackerAction>
   </actions>
-  <description></description>
+  <description>The stack build for Matej</description>
   <keepDependencies>false</keepDependencies>
   <properties>
     <org.jenkinsci.plugins.workflow.job.properties.PipelineTriggersJobProperty>
       <triggers>
         <jenkins.triggers.ReverseBuildTrigger>
           <spec></spec>
-          <upstreamProjects>Fragalysis Backend,Fragalysis Frontend</upstreamProjects>
+          <upstreamProjects>Fragalysis Backend (Matej),Fragalysis Frontend (Matej)</upstreamProjects>
           <threshold>
             <name>SUCCESS</name>
             <ordinal>0</ordinal>
@@ -36,19 +36,19 @@ H/3 * * * *</spec>
         <hudson.model.StringParameterDefinition>
           <name>FE_GIT_PROJECT</name>
           <description>The Git repository name for the source of the frontend code for the stack. This is picked up in the Jenkinsfile and passed through to the build using via &quot;Dockerfiles-cicd&quot;.</description>
-          <defaultValue>xchem</defaultValue>
+          <defaultValue>m2ms</defaultValue>
           <trim>false</trim>
         </hudson.model.StringParameterDefinition>
         <hudson.model.StringParameterDefinition>
           <name>IMAGE_TAG</name>
           <description>The image tag to apply to the constructed docker images. This must be unique as all stack images are (at the moment) written to the development registry as &quot;xchem/fragalysis-stack:&lt;TAG&gt;&quot;.</description>
-          <defaultValue>latest</defaultValue>
+          <defaultValue>matej</defaultValue>
           <trim>false</trim>
         </hudson.model.StringParameterDefinition>
         <hudson.model.StringParameterDefinition>
           <name>FE_GIT_PROJECT_BRANCH</name>
           <description>The branch in the FE_GIT_PROJECT/fragalysis-frontend repository to clone.</description>
-          <defaultValue>master</defaultValue>
+          <defaultValue>develop</defaultValue>
           <trim>false</trim>
         </hudson.model.StringParameterDefinition>
       </parameterDefinitions>

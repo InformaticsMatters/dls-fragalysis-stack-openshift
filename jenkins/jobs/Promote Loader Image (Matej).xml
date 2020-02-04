@@ -9,7 +9,7 @@
       <options/>
     </org.jenkinsci.plugins.pipeline.modeldefinition.actions.DeclarativeJobPropertyTrackerAction>
   </actions>
-  <description></description>
+  <description>Promotes the latest loader image to Matej&apos;s project</description>
   <keepDependencies>false</keepDependencies>
   <properties>
     <io.fabric8.jenkins.openshiftsync.BuildConfigProjectProperty plugin="openshift-sync@1.0.35">
@@ -30,21 +30,9 @@
     <hudson.model.ParametersDefinitionProperty>
       <parameterDefinitions>
         <hudson.model.StringParameterDefinition>
-          <name>FE_GIT_PROJECT</name>
-          <description>The Git repository name for the source of the frontend code for the stack. This is picked up in the Jenkinsfile and passed through to the build using via &quot;Dockerfiles-cicd&quot;.</description>
-          <defaultValue>xchem</defaultValue>
-          <trim>false</trim>
-        </hudson.model.StringParameterDefinition>
-        <hudson.model.StringParameterDefinition>
-          <name>IMAGE_TAG</name>
-          <description>The image tag to apply to the constructed docker images. This must be unique as all stack images are (at the moment) written to the development registry as &quot;xchem/fragalysis-stack:&lt;TAG&gt;&quot;.</description>
-          <defaultValue>rs</defaultValue>
-          <trim>false</trim>
-        </hudson.model.StringParameterDefinition>
-        <hudson.model.StringParameterDefinition>
-          <name>FE_GIT_PROJECT_BRANCH</name>
-          <description>The branch in the FE_GIT_PROJECT/fragalysis-frontend repository to clone.</description>
-          <defaultValue>master</defaultValue>
+          <name>TGT_PROJECT</name>
+          <description>The project to promote the image to. Typically &apos;fragalysis-prod&apos;</description>
+          <defaultValue>fragalysis-matej</defaultValue>
           <trim>false</trim>
         </hudson.model.StringParameterDefinition>
       </parameterDefinitions>
@@ -53,7 +41,7 @@
       <triggers>
         <jenkins.triggers.ReverseBuildTrigger>
           <spec></spec>
-          <upstreamProjects>Fragalysis Backend (Rachael),Fragalysis Frontend (Rachael)</upstreamProjects>
+          <upstreamProjects>Loader Image</upstreamProjects>
           <threshold>
             <name>SUCCESS</name>
             <ordinal>0</ordinal>
@@ -61,11 +49,6 @@
             <completeBuild>true</completeBuild>
           </threshold>
         </jenkins.triggers.ReverseBuildTrigger>
-        <hudson.triggers.SCMTrigger>
-          <spec>#Â Every 3 minutes
-H/3 * * * *</spec>
-          <ignorePostCommitHooks>false</ignorePostCommitHooks>
-        </hudson.triggers.SCMTrigger>
       </triggers>
     </org.jenkinsci.plugins.workflow.job.properties.PipelineTriggersJobProperty>
   </properties>
@@ -74,7 +57,7 @@ H/3 * * * *</spec>
       <configVersion>2</configVersion>
       <userRemoteConfigs>
         <hudson.plugins.git.UserRemoteConfig>
-          <url>https://github.com/xchem/fragalysis-stack.git</url>
+          <url>https://github.com/InformaticsMatters/dls-fragalysis-stack-openshift.git</url>
         </hudson.plugins.git.UserRemoteConfig>
       </userRemoteConfigs>
       <branches>
@@ -86,7 +69,7 @@ H/3 * * * *</spec>
       <submoduleCfg class="list"/>
       <extensions/>
     </scm>
-    <scriptPath>Jenkinsfile</scriptPath>
+    <scriptPath>images/promote-loader/Jenkinsfile</scriptPath>
     <lightweight>true</lightweight>
   </definition>
   <triggers/>
