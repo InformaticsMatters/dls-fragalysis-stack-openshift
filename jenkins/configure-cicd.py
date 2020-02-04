@@ -34,7 +34,7 @@ if os.path.isfile(LOGGING_CONFIG_FILE):
     LOGGING_CONFIG = None
     with open(LOGGING_CONFIG_FILE, 'r') as stream:
         try:
-            LOGGING_CONFIG = yaml.load(stream)
+            LOGGING_CONFIG = yaml.load(stream, Loader=yaml.FullLoader)
         except yaml.YAMLError as exc:
             print(exc)
     dictConfig(LOGGING_CONFIG)
