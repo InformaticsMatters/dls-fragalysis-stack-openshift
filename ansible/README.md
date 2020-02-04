@@ -51,7 +51,7 @@ and **PROD** stacks) you will need to address two deployment areas: -
 >   The following assumes you already have a viable/working deployment of
     the essential **DEV** and **PROD** projects.
 
-### Create the Ansible playbooks (and their variables)
+### Creating new Stack deployments
 
 A project replicates what you see in the **PROD** project, which contains the
 following significant OpenStack/Kubernetes objects: -
@@ -62,8 +62,8 @@ following significant OpenStack/Kubernetes objects: -
 -   Dynamic **volumes** for MySQL data the stack's media
 -   Numerous **secrets**
 
-There are other objects (like Pods/Jobs for the  loader and probe but the
-above represent the significant (visible) items.
+There are other objects (like Pods/Jobs for the loader and probe) but the
+above represents the significant (visible) items.
 
 To create and deploy a new project there are number of steps to satisfy: -
  
@@ -84,44 +84,44 @@ To create and deploy a new project there are number of steps to satisfy: -
     user-specific values for the variables it uses (i.e. the project/namespace
     name amongst other things).
 
-1.  Create `deploy.yaml` and `undeploy,.yaml` files in your new directory.
+2.  Create `deploy.yaml` and `undeploy,.yaml` files in your new directory.
     You can copy the files from `playbooks/fragalysis-stack-prod-im` as these
     will contain all the information we need.
     
         cp playbooks/fragalysis-stack-prod-im/*.yaml \
             playbooks/fragalysis-stack-prod-${PRJ_NAME}
 
-1.  Edit your new `deploy.yaml` and define values for the variables: -
+3.  Edit your new `deploy.yaml` and define values for the variables: -
     
     - `namespace` (a unique lower-case tag like `fragalysis-<name>`)
     - `namespace_display_name`
     - `namespace_description`
     - `input_vol_name` (typically using the `<name>` from your namespace)
+    - `web_hostname` (typically using the `<name>` from your namespace)
     
-1.  Edit your `undeploy.yaml` ansible playbook and replace the values for the
+4.  Edit your `undeploy.yaml` ansible playbook and replace the values for the
     following variables (this will match the ones you used for the
     `deploy.yaml`): -
  
     - `namespace`
     - `input-vol-name`
 
-1.  As we currently do not use build-chain tools that support
+5.  As we currently do not use build-chain tools that support
     ARG-before-FROM you will need to create a Dockerfile in the
     project's `images/web` directory with the suffix `<name>` from your
     namespace. Crucially the `FROM` line in that Dockerfile must
     use a tag that matches the `<name>`.
  
-1.  Add, commit and push all your files to revision control.
+6.  Add, commit and push all your files to revision control.
 
->   Before deploying you **MUST** make sure that you have defined
-    **NEW AND UNIQUE** values for your `namespace`. 
-
->   **EXTREME CAUTION**: If you forget to set the
+7.  Think - before deploying you **MUST** make sure that you have defined
+    **NEW AND UNIQUE** values for your `namespace`. If you forget to set the
     `namespace` properly you could damage an existing deployment.
     **ALL PROJECTS MUST HAVE THEIR OWN (UNIQUE) NAMESPACES**.
     
-With the above steps satisfied (and the `PRJ_NAME` environment variable set)
-you can deploy the new project: -
+With the above steps satisfied, the `PRJ_NAME` environment variable set,
+an active login to the OpenShift cluster in place and a `vault-pass.txt` file
+you can deploy the new project with the following Ansible command: -
 
     ansible-playbook \
         playbooks/fragalysis-stack-prod-${PRJ_NAME}/deploy.yaml \
@@ -133,7 +133,7 @@ relies on Jenkins jobs, which build the various stack images based on the git
 repositories you define as their source. All this is described in the next
 section.
 
-In the meantime, (if you wish) you can test destroying you shiny new OpenShift
+In the meantime, (if you wish) you can test destroying your shiny new OpenShift
 project with the following playbook: -
 
     ansible-playbook \

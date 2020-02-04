@@ -1,0 +1,14 @@
+FROM xchem/fragalysis-stack:boris
+
+# The image build number.
+# This should be different and ideally incrementing for each build.
+# It's probably just the Jenkins BUILD_ID.
+ARG BUILD_NUMBER
+LABEL build.number=${BUILD_NUMBER}
+
+# Upstream Git commits
+WORKDIR ${APP_ROOT}/frontend
+RUN git log --pretty=format:'%h' -n 1
+
+WORKDIR ${APP_ROOT}
+RUN git log --pretty=format:'%h' -n 1
