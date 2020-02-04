@@ -114,7 +114,7 @@ To create and deploy a new project there are number of steps to satisfy: -
  
 6.  Add, commit and push all your files to revision control.
 
-7.  Think - before deploying you **MUST** make sure that you have defined
+7.  Stop. Think. Before deploying you **MUST** make sure that you have defined
     **NEW AND UNIQUE** values for your `namespace`. If you forget to set the
     `namespace` properly you could damage an existing deployment.
     **ALL PROJECTS MUST HAVE THEIR OWN (UNIQUE) NAMESPACES**.
