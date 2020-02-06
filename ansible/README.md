@@ -132,6 +132,11 @@ relies on Jenkins jobs, which build the various stack images based on the git
 repositories you define as their source. All this is described in the next
 section.
 
+>   Once the project has been installed remember to adjust the **Route**
+    definition for the **Web** deployment, it is likely to have
+    a `kubernetes.io/tls-acme` value of `false`. Set this to `true` by
+    editing the Route's YAML to ensure certificates are deployed.
+ 
 In the meantime, (if you wish) you can test destroying your shiny new OpenShift
 project with the following playbook: -
 
@@ -302,6 +307,22 @@ to replicate and adjust a few jobs that run in the Jenkins CI/CD project.
     respectively.
     
     Add, commit and push any changes.
+
+### Keeping builds synchronised (front-end development)
+With a new dev-based Fragalysis Stack deployed the developer will
+need to make sure the repositories and branches referred to in the Jenkins
+Jobs are kept up to date. Two jobs are driven by knowing the
+repository namespace (the fork) and branch that's in use.
+
+For those working on the front-end they will need to: -
+
+-   Ensure the corresponding `Fragalysis Frontend (???)` Job's
+    **Repositories -> Repository URL** and
+    **Branches to build -> Branch Specifier (blank for 'any')**
+    values are correct.
+
+-   The corresponding `Fragalysis Stack (???)` Job's parameter values for 
+    **FE_GIT_PROJECT** and **FE_GIT_PROJECT_BRANCH** are correct.
     
 ## Creating encrypted secrets
 If you have the Ansible vault password you can encrypt strings
