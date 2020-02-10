@@ -148,7 +148,7 @@ project with the following playbook: -
 In order to deploy the project-specific stack container image you will need
 to replicate and adjust a few jobs that run in the Jenkins CI/CD project.
 
-1.  Navigate to the [Jenkins CICD] console for your OpenShift deployment
+1.  Navigate to the [Jenkins] console for your OpenShift deployment
     and login.
 
 2.  To create a more organised Job workspace, create a _view_ for your project
@@ -293,10 +293,19 @@ to replicate and adjust a few jobs that run in the Jenkins CI/CD project.
     You can monitor the loader progress by observing the log for the loader
     `Pod` that is created in your OpenShift project.
 
-6.  Once you've setup your Jenkins jobs you can optionally _get_ them as XML
-    into this project using the `configure-cicd.py` script in the `jenkins`
-    directory. Once fetched you can add and commit the files to revision
-    control so that they can be restored from the fetched content if needed.
+6.  Before you can run the loader you need to trigger the creation of two
+    tables in the external database that are related to the Stack viewer
+    (tables `frag.viewer_target` and `frag.viewer_project`). This will be
+    evident if you inspect the **Loader** Job's log. The easiest way to
+    do this is to navigate the Stack/Web container's front-end console at the
+    advertised Route endpoint. Once you've done this you should then be able
+    to re-run the Loader Job without encountering table errors.
+    
+7.  Once you've setup and tested your Jenkins jobs you can optionally _get_
+    them as XML into this project using the `configure-cicd.py` script in the
+    `jenkins` directory. Once fetched you can add and commit the files to
+    revision control so that they can be restored from the fetched content
+    if needed.
     
     To fetch the Jenkins configuration (which includes the jobs and the view)
     run the following (from the `jenkins`) directory: -
@@ -333,4 +342,4 @@ for the `defauls/main.yaml` file by running something like this: -
 
 ---
 
-[jenkins cicd]: https://jenkins-fragalysis-cicd.apps.xchem.diamond.ac.uk
+[jenkins]: https://jenkins-fragalysis-cicd.apps.xchem.diamond.ac.uk
