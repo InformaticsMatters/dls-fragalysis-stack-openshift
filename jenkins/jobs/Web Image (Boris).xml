@@ -55,7 +55,7 @@
         <hudson.model.StringParameterDefinition>
           <name>DOCKERFILE</name>
           <description>The Dockerfile (in the &quot;images/web&quot; directory) to use as when building the image. Typically &quot;Dockerfile&quot; but it can be &quot;Dockerfile-ricgillams&quot; for example.</description>
-          <defaultValue>Dockerfile-boris</defaultValue>
+          <defaultValue>Dockerfile-tibor</defaultValue>
           <trim>false</trim>
         </hudson.model.StringParameterDefinition>
       </parameterDefinitions>
@@ -66,6 +66,7 @@
       <name></name>
       <resourceVersion></resourceVersion>
     </io.fabric8.jenkins.openshiftsync.BuildConfigProjectProperty>
+    <org.jenkinsci.plugins.workflow.job.properties.DisableConcurrentBuildsJobProperty/>
     <jenkins.model.BuildDiscarderProperty>
       <strategy class="hudson.tasks.LogRotator">
         <daysToKeep>-1</daysToKeep>
@@ -74,7 +75,6 @@
         <artifactNumToKeep>-1</artifactNumToKeep>
       </strategy>
     </jenkins.model.BuildDiscarderProperty>
-    <org.jenkinsci.plugins.workflow.job.properties.DisableConcurrentBuildsJobProperty/>
   </properties>
   <definition class="org.jenkinsci.plugins.workflow.cps.CpsScmFlowDefinition" plugin="workflow-cps@2.65">
     <scm class="hudson.plugins.git.GitSCM" plugin="git@3.9.3">

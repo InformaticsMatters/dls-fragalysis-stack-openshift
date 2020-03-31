@@ -9,14 +9,14 @@
       <options/>
     </org.jenkinsci.plugins.pipeline.modeldefinition.actions.DeclarativeJobPropertyTrackerAction>
   </actions>
-  <description>Promotes the latest loader image to Tibor&apos;s project</description>
+  <description></description>
   <keepDependencies>false</keepDependencies>
   <properties>
     <org.jenkinsci.plugins.workflow.job.properties.PipelineTriggersJobProperty>
       <triggers>
         <jenkins.triggers.ReverseBuildTrigger>
           <spec></spec>
-          <upstreamProjects>Loader Image</upstreamProjects>
+          <upstreamProjects>Fragalysis Backend (RAL Facilities),Fragalysis Frontend (RAL Facilities)</upstreamProjects>
           <threshold>
             <name>SUCCESS</name>
             <ordinal>0</ordinal>
@@ -24,14 +24,31 @@
             <completeBuild>true</completeBuild>
           </threshold>
         </jenkins.triggers.ReverseBuildTrigger>
+        <hudson.triggers.SCMTrigger>
+          <spec>#Â Every 3 minutes
+H/3 * * * *</spec>
+          <ignorePostCommitHooks>false</ignorePostCommitHooks>
+        </hudson.triggers.SCMTrigger>
       </triggers>
     </org.jenkinsci.plugins.workflow.job.properties.PipelineTriggersJobProperty>
     <hudson.model.ParametersDefinitionProperty>
       <parameterDefinitions>
         <hudson.model.StringParameterDefinition>
-          <name>TGT_PROJECT</name>
-          <description>The project to promote the image to. Typically &apos;fragalysis-prod&apos;</description>
-          <defaultValue>fragalysis-tibor</defaultValue>
+          <name>FE_GIT_PROJECT</name>
+          <description>The Git repository name for the source of the frontend code for the stack. This is picked up in the Jenkinsfile and passed through to the build using via &quot;Dockerfiles-cicd&quot;.</description>
+          <defaultValue>ral-facilities</defaultValue>
+          <trim>false</trim>
+        </hudson.model.StringParameterDefinition>
+        <hudson.model.StringParameterDefinition>
+          <name>IMAGE_TAG</name>
+          <description>The image tag to apply to the constructed docker images. This must be unique as all stack images are (at the moment) written to the development registry as &quot;xchem/fragalysis-stack:&lt;TAG&gt;&quot;.</description>
+          <defaultValue>ral-facilities</defaultValue>
+          <trim>false</trim>
+        </hudson.model.StringParameterDefinition>
+        <hudson.model.StringParameterDefinition>
+          <name>FE_GIT_PROJECT_BRANCH</name>
+          <description>The branch in the FE_GIT_PROJECT/fragalysis-frontend repository to clone.</description>
+          <defaultValue>master</defaultValue>
           <trim>false</trim>
         </hudson.model.StringParameterDefinition>
       </parameterDefinitions>
@@ -42,6 +59,7 @@
       <name></name>
       <resourceVersion></resourceVersion>
     </io.fabric8.jenkins.openshiftsync.BuildConfigProjectProperty>
+    <org.jenkinsci.plugins.workflow.job.properties.DisableConcurrentBuildsJobProperty/>
     <jenkins.model.BuildDiscarderProperty>
       <strategy class="hudson.tasks.LogRotator">
         <daysToKeep>-1</daysToKeep>
@@ -50,14 +68,13 @@
         <artifactNumToKeep>-1</artifactNumToKeep>
       </strategy>
     </jenkins.model.BuildDiscarderProperty>
-    <org.jenkinsci.plugins.workflow.job.properties.DisableConcurrentBuildsJobProperty/>
   </properties>
   <definition class="org.jenkinsci.plugins.workflow.cps.CpsScmFlowDefinition" plugin="workflow-cps@2.65">
     <scm class="hudson.plugins.git.GitSCM" plugin="git@3.9.3">
       <configVersion>2</configVersion>
       <userRemoteConfigs>
         <hudson.plugins.git.UserRemoteConfig>
-          <url>https://github.com/InformaticsMatters/dls-fragalysis-stack-openshift.git</url>
+          <url>https://github.com/ral-facilities/fragalysis-stack.git</url>
         </hudson.plugins.git.UserRemoteConfig>
       </userRemoteConfigs>
       <branches>
@@ -69,7 +86,7 @@
       <submoduleCfg class="list"/>
       <extensions/>
     </scm>
-    <scriptPath>images/promote-loader/Jenkinsfile</scriptPath>
+    <scriptPath>Jenkinsfile</scriptPath>
     <lightweight>true</lightweight>
   </definition>
   <triggers/>
