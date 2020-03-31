@@ -4,7 +4,7 @@
   gather_facts: No
 
   vars:
-    namespace: fragalysis-ral-facilties
+    namespace: fragalysis-ral-facilities
     deploy_backup: no
     input_vol_name: fs-ral-f-input
 

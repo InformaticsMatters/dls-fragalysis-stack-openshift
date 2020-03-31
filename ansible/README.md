@@ -156,7 +156,7 @@ to replicate and adjust a few jobs that run in the Jenkins CI/CD project.
 2.  To create a more organised Job workspace, create a _view_ for your project
     by selecting the **New View** option from the Jenkins side-bar and provide
     something project-specific following the pattern
-    **Fragalysis (Dev-${PRJ_NAME})**, using the upper-case version of the name
+    **Fragalysis (${PRJ_NAME})**, using the upper-case version of the name
     by convention.
     
     It should be a **List View**.
@@ -204,7 +204,9 @@ to replicate and adjust a few jobs that run in the Jenkins CI/CD project.
     listed.
 
 4.  We now need to configure the parameters of each of the copied jobs
-    before we can enable them.
+    before we can enable them. For each step below select the corresponding
+    Job from your View's list and then click the **Configure** option from
+    the side-panel.
     
     1.  In _your_ new `Fragalysis Backend (*)` job set the following
         **Pipeline** section variables accordingly: -
@@ -246,6 +248,8 @@ to replicate and adjust a few jobs that run in the Jenkins CI/CD project.
             the Git namespace of your Frontend project
         -   The `Default Value` of the **IMAGE_TAG** parameter should be
             your project namespace, i.e. the value of your `PRJ_NAME`.
+        -   The `Default Value` of the **FE_GIT_PROJECT_BRANCH** parameter
+            should be set accordingly (typically `master`).
 
         Enable the Job and save it as before.
 
@@ -295,13 +299,10 @@ to replicate and adjust a few jobs that run in the Jenkins CI/CD project.
     You can monitor the loader progress by observing the log for the loader
     `Pod` that is created in your OpenShift project.
 
-6.  Before you can run the loader you need to trigger the creation of two
-    tables in the external database that are related to the Stack viewer
-    (tables `frag.viewer_target` and `frag.viewer_project`). This will be
-    evident if you inspect the **Loader** Job's log. The easiest way to
-    do this is to navigate the Stack/Web container's front-end console at the
-    advertised Route endpoint. Once you've done this you should then be able
-    to re-run the Loader Job without encountering table errors.
+6.  Do not navigate to the stack before running the loader as the loader will
+    fail. This will be evident if you inspect the **Loader** Job's log.
+    
+    See https://github.com/xchem/fragalysis-loader/issues/19
     
 7.  Once you've setup and tested your Jenkins jobs you can optionally _get_
     them as XML into this project using the `configure-cicd.py` script in the

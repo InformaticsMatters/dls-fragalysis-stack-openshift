@@ -12,7 +12,7 @@
   gather_facts: No
 
   vars:
-    namespace: fragalysis-ral-facilties
+    namespace: fragalysis-ral-facilities
     namespace_display_name: "Fragalysis (RAL Facilities)"
     namespace_description: "The Fragalysis Project (RAL Facilities)"
     input_vol_name: fs-ral-f-input
