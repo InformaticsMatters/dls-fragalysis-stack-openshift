@@ -52,6 +52,11 @@ and **PROD** stacks) you will need to address two deployment areas: -
     the essential **DEV** and **PROD** projects.
 
 ### Creating new Fragalysis Stack OpenShift projects
+
+>   Set-aside at least 90 minutes in order to complete this set of actions
+    to add a new Stack deployment to the OpenShift cluster, which should
+    cover the deployment of the Stack Image 
+
 A project replicates what you see in the **PROD** project, which contains the
 following significant OpenStack/Kubernetes objects: -
 
@@ -214,21 +219,11 @@ to replicate and adjust a few jobs that run in the Jenkins CI/CD project.
         - `Repository URL`
         - `Branch Specifier (blank for 'any')`
         
-        Enable the Job (by de-selecting the **Disable this project**
-        option in the **Build Triggers** section) and click **Save**.
-        
-        As the Job runs periodically in the background, once saved, a new
-        Jenkins **Build** will start after a minute or two. You'll see its
-        activity in the **Build Executor Status** section of the Jenkins
-        side-panel.
-        
     2.  In _your_ new `Fragalysis Frontend (*)` job set the following
         **Pipeline** section variables accordingly: -
         
         - `Repository URL`
         - `Branch Specifier (blank for 'any')`
-
-        Enable the Job and save it as before.
 
     3.  In _your_ new `Fragalysis Stack (*)` job set the following
         **Pipeline** section variables accordingly: -
@@ -251,8 +246,6 @@ to replicate and adjust a few jobs that run in the Jenkins CI/CD project.
         -   The `Default Value` of the **FE_GIT_PROJECT_BRANCH** parameter
             should be set accordingly (typically `master`).
 
-        Enable the Job and save it as before.
-
     4.  In _your_ new `Web Image (*)` job set the following
         **Build Triggers** section variables: -
         
@@ -274,17 +267,33 @@ to replicate and adjust a few jobs that run in the Jenkins CI/CD project.
             the name of the Dockerfile in your images/web directory
             you created when making the changes to deploy the project.
 
-        Enable the Job and save it as before.
-
     5.  In _your_ new `Promote Loader Image (*)` job set the following
         **Parameters**: -
         
         -   The `Default Value` of the **TGT_PROJECT** parameter must be
             the namespace of your OpenShift project
 
-        Enable the Job and save it as before.
+5.  Enable the jobs and trigger their execution.
 
-5.  With jobs configured we need to wait for the `Web Image` job to run
+    With configurations set for your stack navigate to each Job's configuration
+    and, in the **Build Triggers** section de-select **Disable this project**
+    (i.e. enable the Job) and click **Save**.
+    
+    Once enabled trigger a build and do this for the following Jobs,
+    in order: -
+    
+    - Fragalysis Frontend
+    - Fragalysis Backend
+    - Fragalysis Stack
+    - Web Image
+
+    You don't have to wait for the jobs to complete before starting the next,
+    they will go into the Jenkins *Build Queue*.
+
+    Allow approximately **30 minutes** from the start of the Frontend
+    build before the Web image completes.
+        
+6.  With jobs in the build queue we need to wait for the `Web Image` job to run
     before we can load data into the MySQL database.
     
     Once the `Web Image` has run and the container image has initialised you
@@ -299,12 +308,17 @@ to replicate and adjust a few jobs that run in the Jenkins CI/CD project.
     You can monitor the loader progress by observing the log for the loader
     `Pod` that is created in your OpenShift project.
 
-6.  Do not navigate to the stack before running the loader as the loader will
-    fail. This will be evident if you inspect the **Loader** Job's log.
+    The loader Job is likely to finish rapidly but the loading process,
+    which can take a considerable time (up to 40 minutes for example),
+    takes place in a Pod in the Project you're loading to.
+    
+7.  Do not navigate to the stack before the loader has clearly loaded
+    some data as the loader may fail. This will be evident if you inspect
+    the **Loader** Job's log.
     
     See https://github.com/xchem/fragalysis-loader/issues/19
     
-7.  Once you've setup and tested your Jenkins jobs you can optionally _get_
+8.  Once you've setup and tested your Jenkins jobs you can optionally _get_
     them as XML into this project using the `configure-cicd.py` script in the
     `jenkins` directory. Once fetched you can add and commit the files to
     revision control so that they can be restored from the fetched content
