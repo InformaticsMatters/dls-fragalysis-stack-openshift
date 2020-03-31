@@ -1,0 +1,15 @@
+---
+
+- hosts: localhost
+  gather_facts: No
+
+  vars:
+    namespace: fragalysis-ral-facilities
+    deploy_backup: no
+    input_vol_name: fs-ral-f-input
+
+  tasks:
+  - name: Run the Fragalysis Undeploy Tasks
+    include_role:
+      name: fragalysis-stack-prod
+      tasks_from: fs-p-undeploy.yaml

@@ -1,0 +1,28 @@
+---
+
+# A developer-specific project deployment.
+#
+# This re-uses the production playbook with key variables set
+# to create a new project that has its own database
+# (without running backups) and uses the main graph database.
+#
+# Variables defined here replace any production role defaults.
+
+- hosts: localhost
+  gather_facts: No
+
+  vars:
+    namespace: fragalysis-ral-facilities
+    namespace_display_name: "Fragalysis (RAL Facilities)"
+    namespace_description: "The Fragalysis Project (RAL Facilities)"
+    input_vol_name: fs-ral-f-input
+    web_hostname: fragalysis-ral-f.apps.xchem.diamond.ac.uk
+
+    backup_deploy: no
+
+    wait_for_mysql: yes
+    web_name: web
+    web_image_tag: latest
+
+  roles:
+  - fragalysis-stack-prod
