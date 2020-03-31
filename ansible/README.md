@@ -122,6 +122,8 @@ With the above steps satisfied, the `PRJ_NAME` environment variable set,
 an active login to the OpenShift cluster in place and a `vault-pass.txt` file
 you can deploy the new project with the following Ansible command: -
 
+    oc login https://okd.xchem.diamond.ac.uk
+    [...]
     ansible-playbook \
         playbooks/fragalysis-stack-prod-${PRJ_NAME}/deploy.yaml \
         --vault-password-file vault-pass.txt
