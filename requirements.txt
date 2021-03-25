@@ -5,5 +5,5 @@ ansible == 2.7.16
 awscli == 1.16.249
 netaddr == 0.7.19
 openstacksdk == 0.28.0
-PyYAML == 5.1.2
+PyYAML == 5.4
 tqdm == 4.26.0
